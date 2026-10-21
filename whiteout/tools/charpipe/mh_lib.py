@@ -177,8 +177,11 @@ class Proxy:
                     continue
                 if p[0] in ("x_scale", "y_scale", "z_scale"):
                     self.scales[p[0][0]] = (int(p[1]), int(p[2]), float(p[3])); mode = None
-                elif p[0] == "obj_file": self.obj_file = p[1]; mode = None
-                elif p[0] == "material": self.material = p[1]; mode = None
+                elif p[0] == "obj_file": self.obj_file = p[1]
+                elif p[0] == "material": self.material = p[1]
+                elif p[0] in ("vertexboneweights_file", "z_depth", "max_pole", "name", "uuid", "basemesh", "tag",
+                              "subdivide", "shrinkwrap", "wrap_distance"):
+                    pass
                 else:
                     mode = None
         self.idx = np.array([e[0] for e in self.entries], dtype=np.int64)

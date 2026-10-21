@@ -41,7 +41,7 @@ func _build() -> void:
 	var hub := Vector3(0, 3.0, -1.0)
 	# main radiating columns (back hemisphere, fanning up and out)
 	for i in 70:
-		var d := Vector3(rng.randf_range(-1.0, 1.0), rng.randf_range(-0.55, 1.0), rng.randf_range(-1.0, 0.25)).normalized()
+		var d := Vector3(rng.randf_range(-1.0, 1.0), rng.randf_range(-0.55, 1.0), rng.randf_range(-1.0, -0.12)).normalized()
 		var start := hub + Vector3(rng.randf_range(-1, 1), rng.randf_range(-0.6, 0.8), rng.randf_range(-0.5, 0.5))
 		var len := rng.randf_range(2.5, 8.5)
 		var m: Material = deep if i % 4 else (glow if i % 9 == 0 else ice)

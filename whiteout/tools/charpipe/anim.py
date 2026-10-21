@@ -141,10 +141,14 @@ def mocap_frames(rig, bvh_path, f0, f1, speed_scale=1.0):
         return None
     leg_b = np.linalg.norm(b.offset[b.idx("LeftLeg")]) + np.linalg.norm(b.offset[b.idx("LeftFoot")])
     scale = rig.leg_len / leg_b
+    DIRJ = {"pelvis": "Spine", "spine_01": "Spine", "spine_02": "Spine1", "spine_03": "Neck1", "neck_01": "Neck1"}
     Q = {}
     for tb, bj in MAP.items():
         j = b.idx(bj)
-        d = desc_dir(j)
+        if tb in DIRJ:
+            d = P[b.idx(DIRJ[tb])] - P[j]
+        else:
+            d = desc_dir(j)
         if d is None:
             d = b.offset[j]
         Q[tb] = swing(rig.rdir[tb], C @ (d / np.linalg.norm(d))) @ rig.Rr[tb]
@@ -349,7 +353,7 @@ def pose_frame(rig, base_Rw, base_loc, spec, curl_default=(12.0, 12.0)):
             S = pos[ua]
             l1 = np.linalg.norm(rig.head[la] - rig.head[ua]); l2 = np.linalg.norm(rig.head[f"hand_{s}"] - rig.head[la])
             T = spec[("hand", s)]
-            pole = np.array([0.45 if s == "l" else -0.45, 0.2, -1.0])
+            pole = np.array([0.25 if s == "l" else -0.25, 0.55, -1.0])
             E = ik2(S, T, l1, l2, pole)
             prop(ua, swing(full[ua][:, 1], E - S))
             pos = fk_pos(rig, full, ploc)
@@ -380,6 +384,7 @@ def pose_frame(rig, base_Rw, base_loc, spec, curl_default=(12.0, 12.0)):
     if ("loc", "_") in spec:
         ploc = ploc + spec[("loc", "_")]
     ploc_local = rig.Rr["pelvis"].T @ ploc
+    pose_frame.last = (full, ploc)
     return {b: to_quat(basis[b]) for b in rig.order}, ploc_local
 
 

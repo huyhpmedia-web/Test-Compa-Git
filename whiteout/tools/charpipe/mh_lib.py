@@ -202,7 +202,7 @@ class Proxy:
 
     def skin_weights(self, body_w):
         """body_w: (13380, nb) dense -> proxy vertex weights (barycentric blend)."""
-        ids = np.minimum(self.idx, body_w.shape[0] - 1)
+        ids = self.idx
         return (body_w[ids] * self.w[:, :, None]).sum(axis=1)
 
 

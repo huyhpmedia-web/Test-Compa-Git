@@ -1012,7 +1012,8 @@ func _break_room() -> void:
 # =================================================================== pipeline head
 func _pipeline_head() -> void:
 	var warm := Color(1.0, 0.62, 0.3)
-	glow(Vector3(18, 7.5, -80), Color(0.8, 0.9, 1.0), 2.0, 22.0, true)
+	glow(Vector3(18, 7.0, -80), Color(0.8, 0.9, 1.0), 3.5, 24.0, true)
+	glow(Vector3(18, 5.0, -93), Color(1.0, 0.85, 0.6), 2.5, 14.0)
 	glow(Vector3(18, 1.2, -88), warm, 4.0, 14.0, true)
 	glow(Vector3(10, 3.0, -72), Color(0.75, 0.88, 1.0), 1.2, 10.0)
 	glow(Vector3(26, 3.0, -72), Color(0.75, 0.88, 1.0), 1.2, 10.0)

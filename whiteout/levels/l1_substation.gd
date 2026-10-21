@@ -815,6 +815,7 @@ func _control_house() -> void:
 	Props.box(geo, Vector3(0.5, 0.9, 0.35), Vector3(18.3, 0.45, -84.7), _mat(Color(0.5, 0.15, 0.1), 0.5, 0.4), true)
 	Props.box(geo, Vector3(0.38, 0.5, 0.04), Vector3(18.3, 0.5, -84.5), Mats.emissive(Color(1.0, 0.4, 0.1), 3.0), false)
 	light(Vector3(18.5, 0.9, -83.6), Color(1.0, 0.5, 0.2), 3.0, 9.0, true, true)
+	light(Vector3(22.0, 2.7, -81.0), Color(0.8, 0.85, 1.0), 0.9, 9.0, false, false)
 	# desk lamp: warm pool for reading
 	light(Vector3(21.0, 1.35, -84.3), Color(1.0, 0.82, 0.55), 1.4, 5.0, false, false)
 	# field radio (save), supply crate, lockers, cot

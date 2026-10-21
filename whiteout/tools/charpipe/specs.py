@@ -143,7 +143,7 @@ def paint_skin(cb, skin_name, details):
 def jacket_texture(cb, label, P, pos, comp, jacket_ids, size=2048, orig=None):
     """hi-vis orange/black quilted jacket texture + metallic-roughness map (silver reflective bands)."""
     H = cb.H
-    Wd = P.skin_weights(cb.W)
+    Wd = P.skin_weights(cb.Wfull)
     names = cb.bones
     def wsum(*bn):
         return sum(Wd[:, names.index(b)] for b in bn if b in names)[:, None]
@@ -345,7 +345,7 @@ def assemble(cb, spec):
         if label == "trousers":
             mask = mask & (pos[:, 2] > boot_top - 0.02)
         sub, fv, ft, remap, used = cb.sub_mesh(ppos, P.faces, mask)
-        Wd = P.skin_weights(cb.W)[used]
+        Wd = P.skin_weights(cb.Wfull)[used]
         cb.add_mesh(label, sub, fv, ft, P.uv, W=Wd, mat=mat)
     del_verts = set(P.delete_verts)
 
@@ -365,7 +365,7 @@ def assemble(cb, spec):
     sc_ = np.ones(len(spos), dtype=np.int64)
     sd = recolor_texture(cb, "boots", Ps, spos, np.zeros(len(spos), dtype=np.int64), {0}, (0.075, 0.062, 0.05), 1024, so, contrast=0.55)
     bmat = make_pbr(n + "_boots", sd, rough=0.7)
-    bo = cb.add_mesh("boots", spos, [f[0] for f in Ps.faces], [f[1] for f in Ps.faces], Ps.uv, W=Ps.skin_weights(cb.W), mat=bmat)
+    bo = cb.add_mesh("boots", spos, [f[0] for f in Ps.faces], [f[1] for f in Ps.faces], Ps.uv, W=Ps.skin_weights(cb.Wfull), mat=bmat)
     cb.decimate(bo, 0.6)
     del_verts |= set(Ps.delete_verts)
     # shaft: body leg surface from ankle up to the top of the boot
@@ -470,4 +470,4 @@ def assemble(cb, spec):
     Ph = mh.Proxy(A("hair/short02/short02.mhclo"))
     hm = make_pbr(n + "_hair", hair_png(cb, "hair", A("hair/short02/short02_diffuse.png"), 1024, tint=spec.get("hair_tint", (0.34, 0.3, 0.28))), rough=0.7, alpha=True, color=(0.10, 0.085, 0.075, 1))
     hp = cb.conv(Ph.fit(H.v, H.base_v))
-    cb.add_mesh("hair", hp, [f[0] for f in Ph.faces], [f[1] for f in Ph.faces], Ph.uv, W=Ph.skin_weights(cb.W), mat=hm)
+    cb.add_mesh("hair", hp, [f[0] for f in Ph.faces], [f[1] for f in Ph.faces], Ph.uv, W=Ph.skin_weights(cb.Wfull), mat=hm)

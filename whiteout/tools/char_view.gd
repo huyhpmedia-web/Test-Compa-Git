@@ -36,7 +36,7 @@ func _ready() -> void:
 		push_error("cannot load " + path)
 		get_tree().quit(1)
 		return
-	var yaws: Array = {"trio": [0.0, 0.7, PI], "front": [0.0], "three_q": [0.7], "back": [PI], "face": [0.0], "wide": [0.0]}[view]
+	var yaws: Array = {"trio": [0.0, 0.7, PI], "front": [0.0], "three_q": [0.7], "back": [PI], "face": [0.0], "wide": [0.0], "poses": [0.0]}[view]
 	if poses.size() > 0:
 		yaws = []
 		for p in poses: yaws.append(yaw_arg)

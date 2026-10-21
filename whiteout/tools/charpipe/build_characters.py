@@ -33,6 +33,7 @@ class CharBuilder:
         self.W = mh.dense_weights(self.wts, self.bones)
         self._xform()
         self.objs = []
+        self._full_weights()
 
     # ---------------- morph ----------------
     def _morph(self):
@@ -53,6 +54,17 @@ class CharBuilder:
         b = mh.mh_to_blender(v_mh) * self.s
         b[..., 2] += self.z0
         return b
+
+    def _full_weights(self):
+        """weights for all 19158 base vertices (helper geometry copies the nearest body vertex)."""
+        v = self.H.v
+        Wf = np.zeros((len(v), self.W.shape[1])); Wf[:mh.N_BODY] = self.W
+        body = v[:mh.N_BODY]
+        for s in range(mh.N_BODY, len(v), 500):
+            chunk = v[s:s + 500]
+            d = ((chunk[:, None, :] - body[None, :, :]) ** 2).sum(2)
+            Wf[s:s + 500] = self.W[d.argmin(1)]
+        self.Wfull = Wf
 
     # ---------------- armature ----------------
     def build_armature(self):

@@ -13,7 +13,7 @@ def sc_of(rig):
 
 
 def idle_hands(sc):
-    return {"l": V(0.255, -0.09, 0.86) * sc, "r": V(-0.255, -0.09, 0.86) * sc}
+    return {"l": V(0.225, -0.08, 0.86) * sc, "r": V(-0.225, -0.08, 0.86) * sc}
 
 
 def aim_hands(sc):
@@ -227,7 +227,7 @@ def build_clips(rig, with_mocap=True):
                 nout = int(round(dur * FPS))
                 zc = Clip("zw", dur, True)
                 for t, a in ((0, 0), (dur * 0.25, 1), (dur * 0.5, 0), (dur * 0.75, -1), (dur, 0)):
-                    zc.key(t, rot={"spine_01": (8, 0, 3 * a), "spine_02": (14, 0, -4 * a), "spine_03": (8, 0, 3 * a), "head": (10, 0, 16 * a), "pelvis": (4, 0, 0)},
+                    zc.key(t, rot={"spine_01": (3, 0, 3 * a), "spine_02": (6, 0, -4 * a), "spine_03": (4, 0, 3 * a), "head": (2, 0, 14 * a), "pelvis": (0, 0, 0)},
                            hand={"l": V(0.2, -0.62, 1.30 + 0.05 * a) * sc, "r": V(-0.2, -0.60, 1.30 - 0.05 * a) * sc}, curl={"l": 40, "r": 40})
                 for i in range(nout + 1):
                     k = (i / nout * nz) % nz

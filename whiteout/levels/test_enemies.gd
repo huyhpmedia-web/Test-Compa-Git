@@ -22,9 +22,9 @@ func build() -> void:
 	var dorm := {"dormant": true} if calm else {}
 	# general lighting: soft cold fills + warm sources
 	for x in range(-60, 80, 14):
-		light(Vector3(x, 5.5, -16), Color(0.65, 0.78, 1.0), 1.1, 16.0, false)
+		light(Vector3(x, 5.5, -16), Color(0.65, 0.78, 1.0), 2.2, 18.0, false)
 	for x in range(-52, 80, 14):
-		light(Vector3(x, 3.0, -8), Color(1.0, 0.75, 0.5), 0.9, 10.0, false)
+		light(Vector3(x, 3.0, -12), Color(1.0, 0.75, 0.5), 1.6, 11.0, false)
 	# Shamblers
 	var zx: float = EXHIBITS.zombies
 	var i := 0

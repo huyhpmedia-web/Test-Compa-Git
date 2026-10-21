@@ -228,7 +228,8 @@ func _dz(uid: String, x: float, z: float, opts := {}, y := FY) -> Node3D:
 	return door(uid, Vector3(x, y, z), PI * 0.5, _dopts(opts))
 
 func _L(pos: Vector3, col: Color, energy: float, rng: float, shadows := false, kind := "weak", em: Material = null) -> OmniLight3D:
-	var l := light(pos, col, energy, rng, shadows, false)
+	var l := light(pos, col, energy, rng, shadows and OS.get_environment("L2_NOSH") == "", false)
+	l.visible = OS.get_environment("L2_NOL") == ""
 	_lamps.append([l, energy, randf() * 20.0, kind, em])
 	return l
 
@@ -542,7 +543,7 @@ func _build_courtyard() -> void:
 	_mound(Vector3(24.5, 0, 12.0), 2.8, 0.3, 1.8)
 	_mound(Vector3(-24.0, 0, -6.0), 2.2, 0.35, 1.6)
 	_mound(Vector3(24.0, 0, -7.0), 2.4, 0.35, 1.6)
-	_mound(Vector3(0, 0, 23.0), 3.0, 0.2, 2.5)
+	_mound(Vector3(0, 0, 23.0), 2.0, 0.12, 2.5)
 	_mound(Vector3(12.0, 0, -7.5), 2.0, 0.45, 1.3)
 	_mound(Vector3(8.0, 0, 6.0), 1.6, 0.25, 1.4)
 	_mound(Vector3(-8.0, 0, 11.0), 1.3, 0.3, 1.3)
@@ -869,7 +870,7 @@ func _build_shell() -> void:
 # ====================================================================== MAIN HALL
 func _build_hall() -> void:
 	# ceiling lamps (weak: brown out until the boiler is on)
-	_fluor(Vector3(-3.0, FY + HC, -13.0), 0.0, 1.6, 9.0, true)
+	_fluor(Vector3(-3.0, FY + HC, -13.0), 0.0, 1.6, 9.0, false)
 	_fluor(Vector3(3.0, FY + HC, -13.0), 0.0, 1.6, 9.0, false)
 	_fluor(Vector3(0.0, FY + HC, -19.0), PI * 0.5, 1.5, 9.0, false)
 	_red_lamp(Vector3(0, FY + 3.5, -21.8), 1.0, 5.0)
@@ -1167,7 +1168,7 @@ func _build_gym() -> void:
 		Props.cyl(geo, 0.3, 0.12, p + Vector3(0, -0.2, 0), _m("highbay", Color(0.2, 0.22, 0.22), 0.5, 0.6), false)
 		var em := Mats.emissive(Color(0.85, 0.92, 1.0), 3.0)
 		Props.cyl(geo, 0.22, 0.06, p + Vector3(0, -0.28, 0), em, false)
-		_L(p + Vector3(0, -1.2, 0), Color(0.85, 0.92, 1.0), 2.4, 12.0, p.x < 14.0 and p.z > -20.0, "late" if late else "weak", em)
+		_L(p + Vector3(0, -1.2, 0), Color(0.85, 0.92, 1.0), 2.4, 12.0, false, "late" if late else "weak", em)
 	var cold := light(Vector3(14.5, FY + 5.6, -20.0), Color(0.55, 0.7, 1.0), 0.7, 16.0, false, false)
 	_lamps.append([cold, 0.7, 1.0, "steady", null])
 	_lantern(Vector3(15.0, FY + 0.82, -10.9), 0.9, 5.0)

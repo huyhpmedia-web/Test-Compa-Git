@@ -3,14 +3,14 @@ extends "res://actors/enemy.gd"
 ## passes beneath it, when it has been lit by the flashlight for ~1.2 s, or when hurt/woken.
 ## Lands with a grab (20 dmg), chases, and CAN CLIMB BACK UP (retract) if it hasn't caught the
 ## player for `climb_after` seconds and there is ceiling overhead.
-## params: on_ceiling (true), ceiling_height (3.6; the spawn Y is ignored while hanging),
+## params: on_ceiling (true), ceiling_height (default: spawn Y + 0.3, i.e. spawn it at ceiling - 0.3 m; Y is then re-set to hang),
 ##         strand_len (0.5), drop_radius (2.2), climb_after (10.0), rime
 
 const Kit = preload("res://actors/kit.gd")
 const RimeLook = preload("res://actors/rime_look.gd")
 
 var on_ceiling := true
-var ceiling_height := 3.6
+var ceiling_height := -1.0   # < 0: derived from the spawn Y (spawned at ceiling - 0.3 m)
 var strand_len := 0.5
 var drop_radius := 2.2
 var climb_after := 10.0
@@ -38,6 +38,8 @@ func _ready() -> void:
 	fire_weakness = 2.0
 	can_revive = false
 	if on_ceiling:
+		if ceiling_height < 0.0:
+			ceiling_height = position.y + 0.3 if position.y > 1.5 else 3.6
 		position.y = ceiling_height - strand_len - BODY_H
 	super._ready()
 	if on_ceiling:

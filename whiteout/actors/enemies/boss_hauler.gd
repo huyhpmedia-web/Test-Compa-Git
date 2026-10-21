@@ -51,6 +51,15 @@ func _setup_collision() -> void:
 func _make_model() -> Node3D:
 	return HaulerModel.new()
 
+func stun(sec: float) -> void:
+	if state in ["dead", "dormant"]:
+		return
+	_set_state("stunned")
+	_stun_len = sec
+
+func stagger() -> void:
+	pass
+
 func _weak_pos() -> Vector3:
 	return model.heart_world()
 
@@ -106,7 +115,8 @@ func _think(delta: float) -> void:
 		"stunned":
 			velocity.x = move_toward(velocity.x, 0, delta * 10)
 			velocity.z = move_toward(velocity.z, 0, delta * 10)
-			if _state_t > 3.0:
+			if _state_t > max(3.0, _stun_len):
+				_stun_len = 1.0
 				_charge_cd = 3.0
 				_set_state("chase")
 		"windup":

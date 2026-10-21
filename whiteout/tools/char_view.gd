@@ -10,6 +10,7 @@ func _ready() -> void:
 	var bg := Color(0.16, 0.17, 0.2)
 	var poses: PackedStringArray = []
 	var yaw_arg := 0.5
+	var cm_args := ""
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("out="): out = a.substr(4)
 		elif a.begins_with("model="): model = a.substr(6)
@@ -18,6 +19,7 @@ func _ready() -> void:
 		elif a.begins_with("t="): t = float(a.substr(2))
 		elif a.begins_with("poses="): poses = a.substr(6).split(",")
 		elif a.begins_with("yaw="): yaw_arg = float(a.substr(4))
+		elif a.begins_with("cm="): cm_args = a.substr(3)
 	var e := Environment.new()
 	e.background_mode = Environment.BG_COLOR
 	e.background_color = bg
@@ -30,6 +32,9 @@ func _ready() -> void:
 	var key := DirectionalLight3D.new(); key.rotation_degrees = Vector3(-35, 30, 0); key.light_energy = 1.7; key.shadow_enabled = true; add_child(key)
 	var fill := DirectionalLight3D.new(); fill.rotation_degrees = Vector3(-15, -60, 0); fill.light_energy = 0.55; fill.light_color = Color(0.8, 0.85, 1.0); add_child(fill)
 	var rim := DirectionalLight3D.new(); rim.rotation_degrees = Vector3(-20, 200, 0); rim.light_energy = 1.0; rim.light_color = Color(0.7, 0.8, 1.0); add_child(rim)
+	if cm_args != "":
+		await _cm_mode(cm_args, model, out, yaw_arg)
+		return
 	var path := "res://assets/characters/%s.glb" % model
 	var ps: PackedScene = load(path)
 	if ps == null:
@@ -72,7 +77,7 @@ func _ready() -> void:
 		var span := 1.25 * n
 		cam.position = Vector3(0, 1.0 + span * 0.04, span * 0.95 + 1.5); cam.look_at(Vector3(0, 0.85, 0)); cam.fov = 40
 	elif view == "wide":
-		cam.position = Vector3(0, 0.45, 4.2); cam.look_at(Vector3(0, 0.3, 0)); cam.fov = 40
+		cam.position = Vector3(0, 0.95, 4.6); cam.look_at(Vector3(0, 0.85, 0)); cam.fov = 40
 	elif view == "trio":
 		cam.position = Vector3(0, 1.15, 4.2); cam.look_at(Vector3(0, 0.95, 0)); cam.fov = 42
 	else:
@@ -90,3 +95,45 @@ func _find_ap(n: Node) -> AnimationPlayer:
 		var r := _find_ap(c)
 		if r: return r
 	return null
+
+
+## CharacterModel test: cm="speed=2.3,aim=1,pitch=0.2,pose=normal,play=shoot@20,hold=handgun,frames=60,zoom=1"
+func _cm_mode(args: String, model: String, out: String, yaw: float) -> void:
+	var kv := {}
+	for p in args.split(","):
+		var q := p.split("=")
+		kv[q[0]] = q[1] if q.size() > 1 else "1"
+	var CM = load("res://actors/character_model.gd")
+	var h: Node3D = CM.new()
+	h.setup({"model": model, "zombie": kv.get("zombie", "0") == "1"})
+	add_child(h)
+	h.rotation.y = yaw
+	h.move_speed = float(kv.get("speed", 0))
+	h.aim = kv.get("aim", "0") == "1"
+	h.aim_pitch = float(kv.get("pitch", 0))
+	h.pose = kv.get("pose", "normal")
+	if kv.has("hold"):
+		var FX = load("res://world/fx.gd")
+		h.hold(FX.weapon_mesh(kv.hold))
+	var frames := int(kv.get("frames", 60))
+	var play_at := -1
+	var play_name := ""
+	if kv.has("play"):
+		var pp: PackedStringArray = kv.play.split("@")
+		play_name = pp[0]; play_at = int(pp[1]) if pp.size() > 1 else 5
+	var cam := Camera3D.new(); add_child(cam)
+	var z := float(kv.get("zoom", 1))
+	if z > 1.5:
+		cam.position = Vector3(0, 1.3, 2.2); cam.look_at(Vector3(0, 1.25, 0)); cam.fov = 40
+	else:
+		cam.position = Vector3(0, 1.1, 3.6); cam.look_at(Vector3(0, 0.9, 0)); cam.fov = 42
+	cam.current = true
+	var f := MeshInstance3D.new(); var pm := PlaneMesh.new(); pm.size = Vector2(12, 12); f.mesh = pm
+	var fm := StandardMaterial3D.new(); fm.albedo_color = Color(0.13, 0.14, 0.16); f.material_override = fm
+	add_child(f)
+	for i in frames:
+		if i == play_at: h.play(play_name)
+		await get_tree().process_frame
+	get_viewport().get_texture().get_image().save_png(out)
+	print("CHAR_VIEW_DONE ", out, " playing=", h.is_playing())
+	get_tree().quit()

@@ -86,7 +86,7 @@ def solid_mat(name, color, rough=0.8, metal=0.0):
 
 
 # ------------------------------------------------------------------ skin
-def paint_skin(cb, skin_name, details):
+def paint_skin(cb, skin_name, details, stubble=1.0, weather=1.0, tint=(0.97, 0.90, 0.85)):
     """Bake stubble/weathering into a copy of the MakeHuman skin texture."""
     size = 2048
     base = pt.load_rgb(A("skins", skin_name, [f for f in os.listdir(A("skins", skin_name)) if f.endswith(".png")][0]), size)
@@ -116,24 +116,24 @@ def paint_skin(cb, skin_name, details):
     w = w * (0.75 + 0.25 * n2)
     speck = (n1 > 0.52).astype(np.float32)
     dark = np.array([0.20, 0.15, 0.12])
-    shadow = 0.34 * w                                       # smooth 5 o'clock shadow
+    shadow = 0.34 * w * stubble                                       # smooth 5 o'clock shadow
     rgb = rgb * (1 - shadow[:, None]) + (rgb * dark) * shadow[:, None] * 0.0
-    rgb = rgb * (1 - 0.5 * (w * speck)[:, None]) + dark * (0.5 * (w * speck))[:, None]
+    rgb = rgb * (1 - 0.5 * stubble * (w * speck)[:, None]) + dark * (0.5 * stubble * (w * speck))[:, None]
     # ---- weathering: ruddy cheeks / nose, eye bags, forehead lines
     flush = np.exp(-(((ax - 0.055) / 0.035) ** 2 + ((z - (eye_z - 0.04)) / 0.03) ** 2)) * fwd
     nose = np.exp(-(((x) / 0.02) ** 2 + ((z - (eye_z - 0.038)) / 0.02) ** 2)) * fwd
     ruddy = np.array([1.0, 0.80, 0.76])
-    k = np.clip(0.55 * flush + 0.5 * nose, 0, 0.6)[:, None]
+    k = np.clip((0.55 * flush + 0.5 * nose) * weather, 0, 0.6)[:, None]
     rgb = rgb * (1 - k) + rgb * ruddy * k
     bag = np.exp(-(((ax - 0.032) / 0.026) ** 2 + ((z - (eye_z - 0.017)) / 0.008) ** 2)) * fwd
-    rgb = rgb * (1 - 0.18 * bag[:, None]) + rgb * np.array([0.85, 0.75, 0.85]) * 0.18 * bag[:, None]
+    rgb = rgb * (1 - 0.18 * weather * bag[:, None]) + rgb * np.array([0.85, 0.75, 0.85]) * 0.18 * weather * bag[:, None]
     for off in (0.036, 0.052, 0.068):
         line = np.exp(-(((z - (eye_z + off + 0.006 * np.sin(x * 90))) / 0.0016) ** 2)) * pt.smoothstep(0.075, 0.05, ax) * fwd
-        rgb = rgb * (1 - 0.10 * line[:, None])
+        rgb = rgb * (1 - 0.10 * weather * line[:, None])
     # tone: slightly deeper / less pale
-    rgb = rgb * np.array([0.97, 0.90, 0.85])
+    rgb = rgb * np.array(tint)
     cov = np.zeros((size, size), dtype=bool); cov[py_, px_] = True
-    out = base.copy() * np.array([0.97, 0.90, 0.85])
+    out = base.copy() * np.array(tint)
     out[py_, px_] = np.clip(rgb, 0, 1)
     out = pt.dilate(out, cov, 6)
     return jtex(f"{cb.name}_skin.jpg", out, 92)
@@ -306,7 +306,7 @@ def merge_meshes(parts):
 def assemble(cb, spec):
     n = spec["name"]
     H = cb.H
-    skin_png = paint_skin(cb, spec["skin"], spec["details"])
+    skin_png = paint_skin(cb, spec["skin"], spec["details"], spec.get("stubble", 1.0), spec.get("weather", 1.0), spec.get("skin_tint", (0.97, 0.90, 0.85)))
     skin_mat = make_pbr(n + "_skin", skin_png, rough=0.58, spec=0.4)
 
     # ---------- suit proxy (casualsuit05): jacket / liner / trousers

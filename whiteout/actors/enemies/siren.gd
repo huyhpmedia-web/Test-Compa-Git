@@ -185,7 +185,7 @@ func _emit_hum() -> void:
 			continue
 		if e.global_position.distance_to(global_position) > hum_radius:
 			continue
-		if e.get("dormant") == true or e.get("state") == "dormant":
+		if e.get("dormant") == true or e.get("state") in ["dormant", "down"]:
 			e.wake()
 		elif e.has_method("hear"):
 			e.hear(global_position)

@@ -80,6 +80,12 @@ func is_headshot(pos: Vector3) -> bool:
 		return pos.distance_to(model.head_world()) < 0.45
 	return pos.distance_to(_heart()) < 1.0
 
+func stun(_sec: float) -> void:
+	pass
+
+func stagger() -> void:
+	pass
+
 func fear(_pos: Vector3, _dur: float = 4.0) -> void:
 	pass
 

@@ -86,6 +86,36 @@ func wake() -> void:
 	if state == "dormant":
 		state = "chase"
 		awake = true
+	elif state == "down" and not _is_dead_for_good():
+		# Sleepers / fake-dead: stand up immediately and chase
+		hp = max(hp, max_hp * 0.5)
+		awake = true
+		if model:
+			model.pose = "crawl" if get("crawler") == true else "zombie"
+		Sfx.play_at(_sound("groan"), global_position)
+		_set_state("chase")
+
+func _is_dead_for_good() -> bool:
+	return hp <= 0.0
+
+var _stun_len := 1.0
+
+## Public: knock the enemy into its stagger state for ~1 s.
+func stagger() -> void:
+	if state in ["dead", "dormant", "down"]:
+		return
+	_stagger_acc = 0.0
+	_stun_len = 1.0
+	_set_state("stagger")
+	if model and model.has_method("play"):
+		model.play("stagger")
+
+## Public: stun for `sec` seconds (church bell, flashbang...). Bosses override sensibly.
+func stun(sec: float) -> void:
+	if state in ["dead", "dormant", "down"]:
+		return
+	stagger()
+	_stun_len = max(1.0, sec)
 
 func is_headshot(pos: Vector3) -> bool:
 	return pos.y - global_position.y > head_height
@@ -189,6 +219,7 @@ func take_hit(dmg: float, _pos: Vector3, dir: Vector3, headshot: bool) -> void:
 		return
 	if _stagger_acc >= stagger_threshold or headshot and randf() < 0.5:
 		_stagger_acc = 0.0
+		_stun_len = 1.0
 		_set_state("stagger")
 		if model and model.has_method("play"):
 			model.play("stagger")
@@ -257,7 +288,8 @@ func _physics_process(delta: float) -> void:
 		"stagger":
 			velocity.x = move_toward(velocity.x, 0, delta * 6)
 			velocity.z = move_toward(velocity.z, 0, delta * 6)
-			if _state_t > 1.0:
+			if _state_t > _stun_len:
+				_stun_len = 1.0
 				_set_state("chase")
 		"attack":
 			velocity.x = move_toward(velocity.x, 0, delta * 10)

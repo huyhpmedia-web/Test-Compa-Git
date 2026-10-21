@@ -197,8 +197,24 @@ func hear(pos: Vector3) -> void:
 		_search_to = pos
 		_set_state("search")
 
-func fear(_pos: Vector3, _dur: float = 4.0) -> void:
-	pass  # only real fire drives him off (burn())
+## Burning barrels / flares call fear(): he recoils and retreats (dur x2, max 8 s).
+func fear(pos: Vector3, dur: float = 4.0) -> void:
+	if state in ["dead", "vanish", "dormant"]:
+		return
+	_retreat_t = max(_retreat_t, min(dur * 2.0, 8.0))
+	_retreat_from = pos
+	if state != "recoil":
+		_set_state("recoil")
+		_set_hunting(false)
+
+func stun(sec: float) -> void:
+	if state in ["dead", "vanish", "dormant"]:
+		return
+	_stagger_acc = 0.0
+	_stun_len = clamp(sec * 0.4, 1.0, 2.5)   # he is a stalker: the bell only staggers him briefly
+	_set_state("stagger")
+	if model:
+		model.play("stagger")
 
 func take_hit(dmg: float, pos: Vector3, dir: Vector3, headshot: bool) -> void:
 	if state in ["vanish"]:

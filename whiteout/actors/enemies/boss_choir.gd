@@ -59,6 +59,21 @@ func _setup_collision() -> void:
 func _make_model() -> Node3D:
 	return ChoirModel.new()
 
+func wake() -> void:
+	dormant = false
+	awake = true
+	if state in ["dormant", "idle"]:
+		_set_state("fight")
+
+## The bell rattles it: attacks are delayed (it cannot be staggered).
+func stun(sec: float) -> void:
+	_shard_cd += sec
+	_sweep_cd += sec
+	_pulse_cd += sec
+
+func stagger() -> void:
+	pass
+
 func _head_at(pos: Vector3) -> int:
 	var best := -1
 	var bd := 0.65

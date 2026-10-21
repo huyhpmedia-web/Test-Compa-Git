@@ -8,12 +8,16 @@ func _ready() -> void:
 	var anim := ""
 	var t := 0.0
 	var bg := Color(0.16, 0.17, 0.2)
+	var poses: PackedStringArray = []
+	var yaw_arg := 0.5
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("out="): out = a.substr(4)
 		elif a.begins_with("model="): model = a.substr(6)
 		elif a.begins_with("view="): view = a.substr(5)
 		elif a.begins_with("anim="): anim = a.substr(5)
 		elif a.begins_with("t="): t = float(a.substr(2))
+		elif a.begins_with("poses="): poses = a.substr(6).split(",")
+		elif a.begins_with("yaw="): yaw_arg = float(a.substr(4))
 	var e := Environment.new()
 	e.background_mode = Environment.BG_COLOR
 	e.background_color = bg
@@ -33,26 +37,40 @@ func _ready() -> void:
 		get_tree().quit(1)
 		return
 	var yaws: Array = {"trio": [0.0, 0.7, PI], "front": [0.0], "three_q": [0.7], "back": [PI], "face": [0.0], "wide": [0.0]}[view]
+	if poses.size() > 0:
+		yaws = []
+		for p in poses: yaws.append(yaw_arg)
+		view = "poses"
 	var n: int = yaws.size()
 	var inst_list := []
 	for i in n:
 		var h: Node3D = ps.instantiate()
 		add_child(h)
-		h.position = Vector3((i - (n - 1) * 0.5) * 1.1, 0, 0)
+		h.position = Vector3((i - (n - 1) * 0.5) * (1.25 if poses.size() > 0 else 1.1), 0, 0)
 		h.rotation.y = yaws[i]
 		inst_list.append(h)
-		if anim != "":
+		var an := anim
+		var tt := t
+		if poses.size() > 0:
+			var pp := poses[i].split("@")
+			an = pp[0]; tt = float(pp[1]) if pp.size() > 1 else 0.0
+		if an != "":
 			var ap: AnimationPlayer = _find_ap(h)
-			if ap and ap.has_animation(anim):
-				ap.play(anim)
-				ap.seek(t, true)
+			if ap and ap.has_animation(an):
+				ap.play(an)
+				ap.seek(tt, true)
 				ap.pause()
+			elif ap:
+				print("NO ANIM ", an, " have: ", ap.get_animation_list())
 	var f := MeshInstance3D.new(); var pm := PlaneMesh.new(); pm.size = Vector2(12, 12); f.mesh = pm
 	var fm := StandardMaterial3D.new(); fm.albedo_color = Color(0.13, 0.14, 0.16); fm.roughness = 0.9; f.material_override = fm
 	add_child(f)
 	var cam := Camera3D.new(); add_child(cam)
 	if view == "face":
 		cam.position = Vector3(0, 1.66, 0.75); cam.look_at(Vector3(0, 1.66, 0)); cam.fov = 30
+	elif view == "poses":
+		var span := 1.25 * n
+		cam.position = Vector3(0, 1.0 + span * 0.04, span * 0.95 + 1.5); cam.look_at(Vector3(0, 0.85, 0)); cam.fov = 40
 	elif view == "wide":
 		cam.position = Vector3(0, 0.45, 4.2); cam.look_at(Vector3(0, 0.3, 0)); cam.fov = 40
 	elif view == "trio":

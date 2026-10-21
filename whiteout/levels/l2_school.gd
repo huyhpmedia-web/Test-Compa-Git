@@ -1927,7 +1927,6 @@ func _foreman_scene() -> void:
 		return
 	_scene_running = true
 	lock_player(true)
-	Sfx.music("", -80.0)
 	Sfx.play("stinger_a")
 	var H = load("res://actors/humanoid.gd")
 	# the Foreman: tall, wrong-jointed, hard hat with its headlamp still burning

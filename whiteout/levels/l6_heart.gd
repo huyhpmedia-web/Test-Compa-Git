@@ -270,6 +270,7 @@ func _build_path_dressing() -> void:
 	Props.box(geo, Vector3(0.7, 0.12, 1.8), Vector3(-1.1, 0.07, 52.0), Mats.color(Color(0.3, 0.12, 0.12), 1.0), false, Vector3(0, 0.1, 0))
 	Props.cyl(geo, 0.1, 0.22, Vector3(-0.3, 0.12, 51.0), Mats.get_mat("metal_rust"), false)
 	Props.box(geo, Vector3(0.18, 0.04, 0.18), Vector3(-1.5, 0.08, 53.0), Mats.get_mat("paper"), false)
+	note("l6_ruth", Vector3(-1.5, 0.1, 53.0), "Ruth's Last Note", "[i]Pencil, on the back of a shelter sign-in sheet. The handwriting gets larger and looser toward the end.[/i]\n\nEli —\n\nIf you're reading this you came. I knew you would. You always came late but you always came.\n\nI can hear your father. I know what it is. I was a nurse for thirty-one years, I know what a voice in the dark is. I went anyway. I want you to know I chose it with my eyes open.\n\nThe cold isn't the worst part. The worst part is it's so kind. It doesn't want anything from you except to stop. It tells you that you've done enough. Nobody has ever told me that.\n\nDon't let it tell June that.\n\nTake her home. Tell her Gran was brave. Lie if you have to.\n\nI love you. I was never angry that you left. I was angry that you thought you had to.\n\n— Mom")
 	_crystal(Vector3(-1.5, 0, 50.0), 1.1, 0.14, Vector3(0.2, 0, -0.3))
 	_crystal(Vector3(-0.9, 0, 54.0), 0.8, 0.12, Vector3(-0.25, 0, 0.2))
 	# frozen miners along the path
@@ -404,7 +405,7 @@ func _build_station() -> void:
 		Props.cyl(r, 0.05, 0.9, Vector3(hx, 1.7, 0.2), Mats.get_mat("metal"), false, -1.0, Vector3(-0.5, 0, 0), 8)
 		Props.sphere(r, 0.12, Vector3(hx, 2.05, 0.4), Mats.color(hc, 0.4, 0.2))
 		Props.sphere(r, 0.04, Vector3(hx, 1.0, -0.12), Mats.emissive(hc, 3.0))
-	_station_light = light(Vector3(16.8, 3.2, -4.0), Color(1.0, 0.55, 0.28), 1.8, 9.0, false)
+	_station_light = light(Vector3(16.8, 3.2, -4.0), Color(1.0, 0.55, 0.28), 4.0, 12.0, false)
 	Props.box(geo, Vector3(1.6, 0.05, 1.6), Vector3(17.2, 0.02, -4.0), Mats.get_mat("metal"), false)
 	interact(Vector3(17.2, 1.0, -4.0), "Use pipeline control", func(_p): _station_use(), 2.4)
 

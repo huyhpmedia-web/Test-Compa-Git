@@ -108,6 +108,58 @@ class CharBuilder:
         self.objs.append(ob)
         return ob, P
 
+
+    # ---------------- generic helpers ----------------
+    def add_mesh(self, label, pos, fvs, fts=None, uv=None, W=None, bone=None, mat=None, smooth=True):
+        """pos (n,3) blender coords; fvs list of vertex-index lists; W dense weights (n, nbones)."""
+        ob = bc.make_mesh(f"{self.name}_{label}", pos, fvs, uv, fts)
+        if not smooth:
+            for p in ob.data.polygons: p.use_smooth = False
+        arm = getattr(self, 'arm', None)
+        if arm is not None:
+            if bone is not None:
+                for b in self.bones: ob.vertex_groups.new(name=b)
+                ob.vertex_groups[bone].add(list(range(len(pos))), 1.0, 'REPLACE')
+            elif W is not None:
+                bc.set_weights(ob, W, self.bones)
+            bc.parent_to_armature(ob, arm)
+        if mat is not None:
+            ob.data.materials.append(mat)
+        self.objs.append(ob)
+        return ob
+
+    def components(self, P):
+        n = len(P.v0); par = list(range(n))
+        def f(a):
+            while par[a] != a:
+                par[a] = par[par[a]]; a = par[a]
+            return a
+        for fc, _ in P.faces:
+            for i in fc[1:]:
+                par[f(i)] = f(fc[0])
+        roots = {}
+        comp = np.zeros(n, dtype=np.int64)
+        for i in range(n):
+            comp[i] = roots.setdefault(f(i), len(roots))
+        return comp
+
+    def sub_mesh(self, pos, faces, vsel_mask):
+        """faces whose verts are all in mask -> (pos_sub, [fv], [ft], remap, vidx)"""
+        keep = [fc for fc in faces if all(vsel_mask[i] for i in fc[0])]
+        used = sorted({i for fc in keep for i in fc[0]})
+        remap = -np.ones(len(pos), dtype=np.int64); remap[used] = np.arange(len(used))
+        return (pos[used], [[int(remap[i]) for i in fc[0]] for fc in keep], [fc[1] for fc in keep],
+                remap, np.array(used, dtype=np.int64))
+
+    def body_dense_W_for_pos_nearest(self, pos):
+        """weights for arbitrary new geometry: copy from nearest body vertex (blender coords)."""
+        bp = self.conv(self.H.v[:mh.N_BODY])
+        out = np.zeros((len(pos), self.W.shape[1]))
+        for i, p in enumerate(pos):
+            d = ((bp - p) ** 2).sum(1)
+            out[i] = self.W[int(np.argmin(d))]
+        return out
+
     # ---------------- materials ----------------
     def mat_from_mhmat(self, name, mhmat_path, color=(1, 1, 1, 1), rough=0.9, max_size=1024,
                        use_normal=True, alpha=False, **kw):

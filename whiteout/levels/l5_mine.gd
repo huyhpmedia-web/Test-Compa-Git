@@ -1046,7 +1046,10 @@ func _build_cavern() -> void:
 	Props.box(geo, Vector3(3.0, 1.2, 1.6), Vector3(88.0, y + 0.6, 14.0), Mats.get_mat("metal_rust", 1.0), true)
 	Props.pipe(geo, Vector3(88.0, y + 1.2, 14.0), Vector3(91.0, y + 2.4, 14.4), 0.12, "metal_rust")
 	# cavern lighting: red work lamp on the pillar, big cold fill from a rime mass, flickering truck headlamps
-	light(Vector3(100.0, y + 5.0, 0.0), Color(0.5, 0.75, 1.0), 2.4, 18.0, true)
+	light(Vector3(100.0, y + 5.0, 0.0), Color(0.5, 0.75, 1.0), 3.0, 22.0, true)
+	light(Vector3(92.0, y + 4.0, 0.0), Color(0.45, 0.7, 1.0), 1.6, 14.0, false)
+	light(Vector3(108.0, y + 4.0, 12.0), Color(0.45, 0.7, 1.0), 1.6, 14.0, false)
+	light(Vector3(112.0, y + 4.0, -10.0), Color(0.45, 0.7, 1.0), 1.6, 14.0, false)
 	light(Vector3(88.0, y + 2.6, -10.0), Color(1.0, 0.8, 0.5), 1.3, 7.0, false, true)
 	work_light(Vector3(96.0, y + 5.0, -14.0), true, Color(1.0, 0.8, 0.5), 2.0, true, 1.5)
 	work_light(Vector3(104.0, y + 6.0, 12.0), false, Color(1, 1, 1), 1.0, false, 1.5)

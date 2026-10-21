@@ -34,7 +34,7 @@ func build() -> void:
 	light(Vector3(-8, 3.2, bz + 1.2), Color(1, 0.8, 0.55), 1.5, 7.0)
 	pickup("ty_ammo", "ammo_9mm", 15, Vector3(2, 0.02, 6))
 	pickup("ty_gel", "gel", 1, Vector3(-3, 0.02, 3))
-	note("ty_note", Vector3(1, 0.02, 8), "Shelter Notice", "[b]HOLLOW CREEK EMERGENCY MANAGEMENT[/b]\n\nThis building is a designated warming shelter.\nHALCYON has assigned your household a priority score.\nPlease wait for your score to be called.")
+	note("ty_note", Vector3(1, 0.02, 8), "Shelter Notice", "[b]KETTLE FALLS WARMING SHELTER[/b]\n\nDue to Lakeshore Electric load shedding, this building is a designated warming shelter.\nDO NOT SLEEP OUTSIDE THE GYM.\n— R. Kade, shelter coordinator")
 	enemy("ty_z1", "zombie", Vector3(3, 0, -3), 0.5)
 	enemy("ty_z2", "zombie", Vector3(-6, 0, 0), 0.0, {"variant": "cop"})
 

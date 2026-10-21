@@ -3,8 +3,8 @@ config_version=5
 
 [application]
 
-config/name="Hollow Creek: Whiteout"
-config/description="A survival-horror game inspired by classic late-90s survival horror."
+config/name="Whiteout: Kettle Falls"
+config/description="A survival-horror game inspired by late-90s survival horror."
 run/main_scene="res://ui/main_menu.tscn"
 config/features=PackedStringArray("4.5", "Forward Plus")
 

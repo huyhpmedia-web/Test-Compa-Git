@@ -550,6 +550,7 @@ func save_point(pos: Vector3, yaw := 0.0) -> Node3D:
 	root.position = pos
 	root.rotation.y = yaw
 	add_child(root)
+	# field radio
 	Props.box(root, Vector3(0.36, 0.14, 0.24), Vector3(0, 0.07, 0), Mats.color(Color(0.12, 0.12, 0.12), 0.5, 0.4), false)
 	Props.box(root, Vector3(0.12, 0.06, 0.01), Vector3(-0.08, 0.09, 0.121), Mats.emissive(Color(0.2, 1.0, 0.4), 2.0), false)
 	Props.cyl(root, 0.006, 0.35, Vector3(0.14, 0.3, -0.08), Mats.get_mat("metal"), false)
@@ -560,7 +561,7 @@ func save_point(pos: Vector3, yaw := 0.0) -> Node3D:
 	l.position = Vector3(0, 0.3, 0.2)
 	root.add_child(l)
 	var it := Interactable.new()
-	it.prompt = "Use field recorder (Save)"
+	it.prompt = "Use field radio (Save)"
 	root.add_child(it)
 	it.action = func(_p): UI.open_save()
 	return root
@@ -572,9 +573,9 @@ func item_box(pos: Vector3, yaw := 0.0) -> Node3D:
 	add_child(root)
 	Props.box(root, Vector3(1.1, 0.6, 0.55), Vector3(0, 0.3, 0), Mats.get_mat("metal_painted", 0.8))
 	Props.box(root, Vector3(1.12, 0.06, 0.57), Vector3(0, 0.6, 0), Mats.color(Color(0.15, 0.2, 0.18), 0.5, 0.5), false)
-	Props.sign(root, Vector3(0, 0.35, 0.29), 0.0, "EMERGENCY SUPPLY", 28, Color(0.9, 0.8, 0.2), false)
+	Props.sign(root, Vector3(0, 0.35, 0.29), 0.0, "CO-OP SUPPLY", 28, Color(0.9, 0.8, 0.2), false)
 	var it := Interactable.new()
-	it.prompt = "Open supply box"
+	it.prompt = "Open supply crate"
 	root.add_child(it)
 	it.action = func(_p): UI.open_item_box()
 	return root
@@ -597,7 +598,7 @@ func enemy(uid: String, type: String, pos: Vector3, yaw := 0.0, params := {}) ->
 	add_child(e)
 	return e
 
-## Dialogue helper: await say([["MAYA", "text"], ["???", "text"]])
+## Dialogue helper: await say([["ELIAS", "text"], ["???", "text"]])
 func say(lines: Array) -> void:
 	await UI.dialogue(lines)
 

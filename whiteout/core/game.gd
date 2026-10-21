@@ -83,10 +83,11 @@ func new_game() -> void:
 	objective = ""
 	add_item("knife", 1)
 	add_item("handgun", 1)
+	add_item("radio", 1)
 	set_ammo_loaded("handgun", 12)
 	add_item("ammo_9mm", 15)
 	equipped = "handgun"
-	goto_level("l1_overpass", "start")
+	goto_level("l1_substation", "start")
 
 func goto_level(id: String, spawn: String = "start") -> void:
 	level_id = id
@@ -255,6 +256,14 @@ func use_item(id: String) -> bool:
 				remove_item(id, 1)
 				UI.toast("Inventory expanded to %d slots." % inv_slots)
 				return true
+		"resource":
+			if id == "flare" and player != null and is_instance_valid(player):
+				remove_item(id, 1)
+				var FX = load("res://world/fx.gd")
+				FX.flare(current_level, player.global_position + player.model.global_transform.basis.z * 0.8)
+				UI.toast("You strike a flare.")
+				return true
+			UI.toast("Combine it with something.")
 		"key":
 			# Let the level/interactable under focus consume it.
 			if current_level != null and current_level.has_method("try_use_item"):

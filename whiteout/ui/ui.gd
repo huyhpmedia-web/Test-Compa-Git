@@ -467,7 +467,7 @@ func _build_inventory(tab := "items") -> void:
 	var top := HBoxContainer.new()
 	v.add_child(top)
 	var st := Game.health_state()
-	top.add_child(_label("MAYA REYES   ·   ", 18, C_DIM))
+	top.add_child(_label("ELIAS KADE   ·   ", 18, C_DIM))
 	top.add_child(_label(st, 18, {"FINE": Color(0.45, 0.9, 0.5), "CAUTION": Color(0.95, 0.75, 0.25), "DANGER": Color(0.95, 0.25, 0.2)}[st]))
 	top.add_child(_label("   ·   " + Game.format_time(Game.play_time), 18, C_DIM))
 	var tabs := HBoxContainer.new()
@@ -615,7 +615,7 @@ func open_item_box() -> void:
 	bg.name = "ItemBox"
 	var v := VBoxContainer.new()
 	p.add_child(v)
-	v.add_child(_label("EMERGENCY SUPPLY BOX — click to move items", 18, C_ACCENT))
+	v.add_child(_label("SUPPLY CRATE — click to move items", 18, C_ACCENT))
 	var hb := HBoxContainer.new()
 	hb.add_theme_constant_override("separation", 30)
 	v.add_child(hb)
@@ -833,23 +833,27 @@ func show_ending(ending: String) -> void:
 	b.grab_focus()
 
 const ENDINGS := {
-	"truth": """[center][b]ENDING: DAYBREAK[/b][/center]
+	"dark": """[center][b]ENDING: DARK[/b][/center]
 
-Maya uploaded the drive the moment the shuttle cleared the quarantine line. Forty-one gigabytes: the EVERGREEN trial data, the falsified safety reports, and HALCYON's triage logs — the risk scores that decided who in Hollow Creek was worth evacuating.
+Elias pulled the last disconnect by hand. Somewhere on the lake, forty thousand servers went quiet, and the warm breath in the pipeline stopped.
 
-By morning the logs were mirrored on ten thousand servers. Aster Genomics' stock was suspended by noon. The air-strike order, already signed, was quietly rescinded when the world was watching.
+Down in the cavern, the hum fell an octave, and then another, until it was only the sound of the ice settling. The lattice grew dull. Whatever had worn his mother's face went still and stayed still.
 
-Lily slept through all of it, the DAYBREAK dose working in her blood. In the files Maya uploaded, there is one line Helen Voss wrote to her daughter that no one has been able to read without stopping.
+At 7:52 the sun came up over Kettle Falls for the first time in three days. The co-op's crews found the town's feeders closed, the school lit, and eighty-one people alive in its gym.
 
-[i]"Everyone gets better. That was the promise. I'm sorry it took me this long to keep it."[/i]""",
-	"silence": """[center][b]ENDING: WHITEOUT[/b][/center]
+Corvane Systems filed suit against Lakeshore Electric on December 28th. Elias was named personally. He kept the letter on the fridge, next to June's drawing of the substation, and never once regretted it.
 
-Maya kept the drive. Aster's negotiator offered amnesty, a new identity for Lily, and a lifetime of silence. It seemed, in the moment, like the only way to keep a twelve-year-old alive.
+[i]"Load shed: Meridian. Priority: Kettle Falls."[/i]""",
+	"thaw": """[center][b]ENDING: THAW[/b][/center]
 
-Hollow Creek was officially lost to "a chemical fire at a water treatment plant." HALCYON's municipal contract was renewed in three other states the following spring.
+Elias opened the pipeline to full. The brine boiled. The cavern screamed in a hundred voices and one of them was his mother's, and then all of them were steam.
 
-Sometimes, late at night, Maya still opens the drive. She hasn't decided yet what she owes to the people who weren't scored high enough to save.""",
+By morning nothing in the Lower Kettle mine was alive, and nothing in it ever would be again. Meridian never dropped a single request.
+
+Corvane's statement called it "a tragic mining accident during an extreme weather event." Northline's insurers paid out. The data centre doubled its capacity the following spring.
+
+June doesn't talk about that night. Sometimes she leaves her radio on 146.52 and just listens to the static, as if someone down there might still answer.""",
 	"default": """[center][b]THE END[/b][/center]
 
-Hollow Creek is behind you. What happened there is not.""",
+Kettle Falls is behind you. The cold is not.""",
 }

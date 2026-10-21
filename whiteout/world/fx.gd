@@ -157,9 +157,63 @@ static func explosion(parent: Node, pos: Vector3, radius: float, damage: float) 
 		if is_instance_valid(e) and e.has_method("take_hit"):
 			var d: float = e.global_position.distance_to(pos)
 			if d < radius:
-				e.take_hit(damage * (1.0 - d / radius * 0.6), e.global_position + Vector3(0, 1, 0), (e.global_position - pos).normalized(), false)
+				var dmg := damage * (1.0 - d / radius * 0.6)
+				if e.has_method("burn"):
+					e.burn(dmg, pos)
+				else:
+					e.take_hit(dmg, e.global_position + Vector3(0, 1, 0), (e.global_position - pos).normalized(), false)
 	for p in parent.get_tree().get_nodes_in_group("player"):
 		var d2: float = p.global_position.distance_to(pos)
 		if d2 < radius * 0.6:
 			p.hurt(int(30 * (1.0 - d2 / radius)), pos)
 	decal(parent, pos, Vector3.UP, Color(0.03, 0.03, 0.03, 0.9), radius * 0.6)
+
+## A burning road flare on the ground: bright red light, smoke, burns and repels the
+## Rimebound within `radius` for `life` seconds.
+static func flare(parent: Node, pos: Vector3, life := 25.0, radius := 4.0) -> Node3D:
+	if parent == null:
+		return null
+	var root := Node3D.new()
+	parent.add_child(root)
+	root.global_position = pos + Vector3(0, 0.05, 0)
+	var stick := _box(Vector3(0.04, 0.04, 0.3), Mats.color(Color(0.8, 0.1, 0.05), 0.6))
+	root.add_child(stick)
+	var l := OmniLight3D.new()
+	l.light_color = Color(1.0, 0.25, 0.12)
+	l.light_energy = 5.0
+	l.omni_range = 9.0
+	l.shadow_enabled = true
+	l.position = Vector3(0, 0.3, 0)
+	root.add_child(l)
+	var p := CPUParticles3D.new()
+	p.amount = 40
+	p.lifetime = 1.2
+	p.direction = Vector3.UP
+	p.spread = 15.0
+	p.initial_velocity_min = 0.6
+	p.initial_velocity_max = 1.4
+	p.gravity = Vector3(0, 0.6, 0)
+	p.scale_amount_min = 0.04
+	p.scale_amount_max = 0.14
+	var sm := SphereMesh.new()
+	sm.radius = 0.5
+	sm.height = 1.0
+	p.mesh = sm
+	p.material_override = Mats.emissive(Color(1.0, 0.4, 0.2), 4.0)
+	root.add_child(p)
+	Sfx.play_at("flare_ignite", pos)
+	var tick := Timer.new()
+	tick.wait_time = 0.5
+	tick.autostart = true
+	root.add_child(tick)
+	var t := [0.0]
+	tick.timeout.connect(func():
+		t[0] += 0.5
+		l.light_energy = 4.5 + randf() * 1.5
+		for e in root.get_tree().get_nodes_in_group("enemy"):
+			if is_instance_valid(e) and e.global_position.distance_to(root.global_position) < radius:
+				if e.has_method("burn"):
+					e.burn(4.0, root.global_position)
+		if t[0] >= life:
+			root.queue_free())
+	return root

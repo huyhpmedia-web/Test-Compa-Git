@@ -1,5 +1,5 @@
 extends CharacterBody3D
-## Maya Reyes — over-the-shoulder third-person survival-horror controller.
+## Elias Kade — over-the-shoulder third-person survival-horror controller.
 
 const Humanoid = preload("res://actors/humanoid.gd")
 const Mats = preload("res://core/mats.gd")
@@ -49,9 +49,9 @@ func _ready() -> void:
 	add_child(col)
 
 	model = Humanoid.new()
-	model.setup({"height": 1.66, "female": true, "skin": Color(0.72, 0.53, 0.42),
-		"shirt": Color(0.36, 0.33, 0.38), "pants": Color(0.11, 0.13, 0.19), "hair": Color(0.13, 0.08, 0.05),
-		"hair_style": "ponytail", "shoes": Color(0.09, 0.07, 0.06), "coat": false, "long_sleeves": true})
+	model.setup({"height": 1.82, "female": false, "skin": Color(0.74, 0.58, 0.47),
+		"shirt": Color(0.85, 0.35, 0.08), "pants": Color(0.12, 0.12, 0.13), "hair": Color(0.1, 0.08, 0.06),
+		"hair_style": "short", "shoes": Color(0.15, 0.11, 0.08), "coat": false, "long_sleeves": true, "gloves": true})
 	add_child(model)
 
 	yaw_pivot = Node3D.new()
@@ -371,7 +371,7 @@ func hurt(amount: int, from: Vector3 = Vector3.ZERO, grab: bool = false) -> void
 	stun = 0.8 if grab else 0.35
 	model.play("hurt")
 	shake = 1.0
-	Sfx.play("hurt_f")
+	Sfx.play("hurt_m")
 	UI.flash_damage()
 	if from != Vector3.ZERO:
 		var push := (global_position - from)

@@ -85,6 +85,29 @@ func wake() -> void:
 func is_headshot(pos: Vector3) -> bool:
 	return pos.y - global_position.y > head_height
 
+## Fire/flares: flee from pos for dur seconds (bosses/stalkers may override to ignore).
+var _fear_t := 0.0
+var _fear_from := Vector3.ZERO
+var fire_weakness := 1.5      # damage multiplier from fire (FX.explosion / flares)
+
+func fear(pos: Vector3, dur: float = 4.0) -> void:
+	if state in ["dead", "dormant", "down"]:
+		return
+	_fear_t = dur
+	_fear_from = pos
+
+func burn(dmg: float, pos: Vector3) -> void:
+	take_hit(dmg * fire_weakness, global_position + Vector3(0, 1, 0), (global_position - pos).normalized(), false)
+	fear(pos, 3.0)
+
+## Effective sight range: the Rimebound sense light and heat. A player with the
+## flashlight off in the dark is much harder to notice.
+func _sight_range() -> float:
+	var p = Game.player
+	if p != null and is_instance_valid(p) and p.get("flashlight") != null and not p.flashlight.visible:
+		return sight * 0.35
+	return sight
+
 func hear(pos: Vector3) -> void:
 	if state in ["dead", "dormant"]:
 		return
@@ -202,7 +225,7 @@ func _think(delta: float) -> void:
 	to.y = 0
 	var dist := to.length()
 	if state in ["idle", "wander"]:
-		if dist < sight and _can_see(target) or dist < 3.0:
+		if dist < _sight_range() and _can_see(target) or dist < 2.2:
 			_set_state("chase")
 			awake = true
 		else:
@@ -217,6 +240,12 @@ func _think(delta: float) -> void:
 				velocity.x = 0
 				velocity.z = 0
 			return
+	if _fear_t > 0.0:
+		_fear_t -= delta
+		var away := global_position - _fear_from
+		away.y = 0
+		_move_to(global_position + away.normalized() * 4.0, run_speed * 1.2, delta)
+		return
 	if state == "chase":
 		if Game.hp <= 0:
 			velocity.x = 0

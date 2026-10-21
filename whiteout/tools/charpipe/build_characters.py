@@ -128,6 +128,14 @@ class CharBuilder:
         self.objs.append(ob)
         return ob
 
+    def decimate(self, ob, ratio):
+        bpy.context.view_layer.objects.active = ob
+        for o in bpy.data.objects: o.select_set(False)
+        ob.select_set(True)
+        m = ob.modifiers.new("dec", 'DECIMATE'); m.ratio = ratio; m.use_collapse_triangulate = False
+        bpy.ops.object.modifier_move_to_index(modifier="dec", index=0)
+        bpy.ops.object.modifier_apply(modifier="dec")
+
     def components(self, P):
         n = len(P.v0); par = list(range(n))
         def f(a):

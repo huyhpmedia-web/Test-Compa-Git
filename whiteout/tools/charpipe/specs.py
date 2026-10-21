@@ -31,7 +31,7 @@ SPECS = {
 
 ORANGE = np.array([0.93, 0.34, 0.035])
 BLACK = np.array([0.045, 0.047, 0.05])
-SILVER = np.array([0.74, 0.76, 0.78])
+SILVER = np.array([0.62, 0.64, 0.67])
 
 
 def ensure(path):
@@ -80,7 +80,8 @@ def make_pbr(name, base_path, normal_path=None, mr_path=None, rough=0.85, metal=
 
 
 def solid_mat(name, color, rough=0.8, metal=0.0):
-    c = [*color, 1.0] if len(color) == 3 else list(color)
+    """color given in sRGB (0..1)"""
+    c = [float(v) ** 2.2 for v in color[:3]] + [1.0]
     return make_pbr(name, None, rough=rough, metal=metal, color=tuple(c))
 
 
@@ -191,7 +192,7 @@ def jacket_texture(cb, label, P, pos, comp, jacket_ids, size=2048, orig=None):
     silver = torso * np.maximum(band(chest_z - 0.02, 0.026, z), band(waist_z - 0.01, 0.026, z))
     silver += arm * np.maximum(band(0.20, 0.02, s), band(0.43, 0.02, s)) * (s < arm_len - 0.01)
     # vertical shoulder-to-hem straps (front and back)
-    strap = torso * (1 - pt.smoothstep(0.016, 0.02, np.abs(ax - 0.085))) * (z > waist_z - 0.07) * (z < neck_z - 0.04)
+    strap = torso * (1 - pt.smoothstep(0.016, 0.02, np.abs(ax - 0.085))) * (z > waist_z - 0.07) * (z < neck_z - 0.04) * (y > S[1] + 0.02)
     silver = np.clip(silver + strap, 0, 1)
     # ---- quilting baffles: horizontal seams on torso, rings on sleeves
     per_t = 0.082; per_a = 0.075
@@ -324,7 +325,7 @@ def assemble(cb, spec):
     jmat = make_pbr(n + "_jacket", jd, nrm_jpg, jmr, rough=0.8)
     td = recolor_texture(cb, "trousers", P, pos, comp, set(trousers), (0.115, 0.125, 0.145), 1024, pt.load_rgb(A("clothes/male_casualsuit05/male_casualsuit05_diffuse.png"), 1024), contrast=0.35)
     tmat = make_pbr(n + "_trousers", td, nrm_jpg, rough=0.9)
-    lmat = solid_mat(n + "_liner", (0.05, 0.052, 0.056), 0.9)
+    lmat = solid_mat(n + "_liner", (0.16, 0.16, 0.17), 0.9)
 
     # puff the jacket (insulated): inflate + baffle displacement
     npos = pos.copy()
@@ -360,17 +361,18 @@ def assemble(cb, spec):
     sc_ = np.ones(len(spos), dtype=np.int64)
     sd = recolor_texture(cb, "boots", Ps, spos, np.zeros(len(spos), dtype=np.int64), {0}, (0.075, 0.062, 0.05), 1024, so, contrast=0.55)
     bmat = make_pbr(n + "_boots", sd, rough=0.7)
-    cb.add_mesh("boots", spos, [f[0] for f in Ps.faces], [f[1] for f in Ps.faces], Ps.uv, W=Ps.skin_weights(cb.W), mat=bmat)
+    bo = cb.add_mesh("boots", spos, [f[0] for f in Ps.faces], [f[1] for f in Ps.faces], Ps.uv, W=Ps.skin_weights(cb.W), mat=bmat)
+    cb.decimate(bo, 0.6)
     del_verts |= set(Ps.delete_verts)
     # shaft: body leg surface from ankle up to the top of the boot
     bpos = cb.conv(H.v[:mh.N_BODY])
     shaft_mask = (bpos[:, 2] > 0.045) & (bpos[:, 2] < 0.215) & (np.abs(bpos[:, 0]) > 0.05)
     sp, sfv, sft, used = body_surface_patch(cb, shaft_mask, 0.016)
-    cb.add_mesh("boot_shaft", sp, sfv, None, None, W=cb.W[used], mat=solid_mat(n + "_bootshaft", (0.07, 0.06, 0.05), 0.65))
+    cb.add_mesh("boot_shaft", sp, sfv, None, None, W=cb.W[used], mat=solid_mat(n + "_bootshaft", (0.20, 0.17, 0.14), 0.65))
     # a thicker cuff ring at the top of the shaft
     ring_mask = (bpos[:, 2] > 0.15) & (bpos[:, 2] < 0.23) & (np.abs(bpos[:, 0]) > 0.05)
     rp, rfv, rft, rused = body_surface_patch(cb, ring_mask, 0.026)
-    cb.add_mesh("boot_cuff", rp, rfv, None, None, W=cb.W[rused], mat=solid_mat(n + "_bootcuff", (0.045, 0.04, 0.035), 0.8))
+    cb.add_mesh("boot_cuff", rp, rfv, None, None, W=cb.W[rused], mat=solid_mat(n + "_bootcuff", (0.13, 0.12, 0.11), 0.8))
     # delete body below boot top (covered by boots), under trousers & jacket
     below = set(np.where(bpos[:, 2] < 0.215)[0].tolist())
     del_verts |= below
@@ -386,8 +388,9 @@ def assemble(cb, spec):
     near = (np.minimum(np.linalg.norm(bpos - wristL, axis=1), np.linalg.norm(bpos - wristR, axis=1)) < 0.075) & (lw > 0.3)
     gmask = gmask | near
     gp, gfv, gft, gused = body_surface_patch(cb, gmask, 0.005)
-    gl = solid_mat(n + "_gloves", (0.22, 0.17, 0.11), 0.7)
-    cb.add_mesh("gloves", gp, gfv, None, None, W=cb.W[gused], mat=gl)
+    gl = solid_mat(n + "_gloves", (0.42, 0.33, 0.22), 0.75)
+    go = cb.add_mesh("gloves", gp, gfv, None, None, W=cb.W[gused], mat=gl)
+    cb.decimate(go, 0.36)
     del_verts |= set(np.where(gmask)[0].tolist())
 
     # ---------- tool belt (over the jacket hem)
@@ -428,15 +431,16 @@ def assemble(cb, spec):
     # carabiner/hammer handle
     hv, hf = box_mesh([at_angle(165, 0.03)[0][0], at_angle(165, 0.03)[0][1], belt_z - 0.20], (0.03, 0.03, 0.34), rot_z=0.0)
     pouch_parts.append((hv, hf))
-    belt_mat = solid_mat(n + "_belt", (0.09, 0.07, 0.05), 0.75)
+    belt_mat = solid_mat(n + "_belt", (0.28, 0.22, 0.17), 0.75)
     pv, pf = merge_meshes(belt_parts)
     cb.add_mesh("belt", pv, pf, bone="pelvis", mat=belt_mat, smooth=False)
     pv, pf = merge_meshes(pouch_parts)
-    cb.add_mesh("pouches", pv, pf, bone="pelvis", mat=solid_mat(n + "_pouch", (0.13, 0.11, 0.08), 0.8), smooth=False)
+    cb.add_mesh("pouches", pv, pf, bone="pelvis", mat=solid_mat(n + "_pouch", (0.25, 0.22, 0.18), 0.8), smooth=False)
 
     # ---------- body (head, neck + whatever is not covered)
     body = cb.build_body(sorted(del_verts))
     body.data.materials.append(skin_mat)
+    cb.decimate(body, 0.8)
 
     # ---------- eyes / brows / lashes / hair
     eye_png = os.path.join(mh.MH_DATA, "eyes/materials/brown_eye.png")

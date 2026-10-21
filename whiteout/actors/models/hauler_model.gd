@@ -32,7 +32,6 @@ func _build() -> void:
 	rock.roughness = 0.85
 	mass = Node3D.new()
 	add_child(mass)
-	mass.scale = Vector3.ONE * 1.25
 	# the mountain: overlapping lumps of fused flesh, ore and ice
 	Kit.mi(mass, Kit.blob(2.3, 4, 0.16, Vector3(1.0, 0.8, 1.15), 16, 24), flesh, Vector3(0, 1.5, 0))
 	for i in 9:

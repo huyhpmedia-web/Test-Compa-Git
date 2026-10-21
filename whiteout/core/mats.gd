@@ -7,8 +7,8 @@ extends RefCounted
 
 const PRESETS := {
 	# name: [base colour, roughness, metallic, uv metres-per-tile]
-	"brick": [Color(0.55, 0.32, 0.27), 0.9, 0.0, 2.0],
-	"brick_dark": [Color(0.35, 0.22, 0.2), 0.92, 0.0, 2.0],
+	"brick": [Color(0.55, 0.32, 0.27), 0.9, 0.0, 1.8],
+	"brick_dark": [Color(0.35, 0.22, 0.2), 0.92, 0.0, 2.4],
 	"concrete": [Color(0.55, 0.55, 0.53), 0.95, 0.0, 3.0],
 	"plaster": [Color(0.72, 0.7, 0.64), 0.9, 0.0, 3.0],
 	"plaster_dirty": [Color(0.55, 0.52, 0.45), 0.92, 0.0, 3.0],
@@ -25,7 +25,7 @@ const PRESETS := {
 	"metal": [Color(0.5, 0.52, 0.55), 0.4, 0.9, 2.0],
 	"metal_rust": [Color(0.42, 0.28, 0.2), 0.8, 0.5, 2.0],
 	"metal_painted": [Color(0.25, 0.32, 0.3), 0.55, 0.3, 2.0],
-	"corrugated": [Color(0.45, 0.3, 0.24), 0.75, 0.6, 1.5],
+	"corrugated": [Color(0.45, 0.3, 0.24), 0.75, 0.6, 3.0],
 	"sewer": [Color(0.3, 0.32, 0.27), 0.85, 0.0, 2.5],
 	"lab_floor": [Color(0.78, 0.8, 0.82), 0.3, 0.0, 2.0],
 	"lab_wall": [Color(0.86, 0.88, 0.9), 0.4, 0.0, 3.0],

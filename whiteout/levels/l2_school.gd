@@ -228,8 +228,7 @@ func _dz(uid: String, x: float, z: float, opts := {}, y := FY) -> Node3D:
 	return door(uid, Vector3(x, y, z), PI * 0.5, _dopts(opts))
 
 func _L(pos: Vector3, col: Color, energy: float, rng: float, shadows := false, kind := "weak", em: Material = null) -> OmniLight3D:
-	var l := light(pos, col, energy, rng, shadows and OS.get_environment("L2_NOSH") == "", false)
-	l.visible = OS.get_environment("L2_NOL") == ""
+	var l := light(pos, col, energy, rng, shadows, false)
 	_lamps.append([l, energy, randf() * 20.0, kind, em])
 	return l
 
@@ -1904,8 +1903,8 @@ func _build_breath() -> void:
 	_breath.initial_velocity_min = 0.2
 	_breath.initial_velocity_max = 0.5
 	_breath.gravity = Vector3(0, 0.1, 0)
-	_breath.scale_amount_min = 0.03
-	_breath.scale_amount_max = 0.09
+	_breath.scale_amount_min = 0.012
+	_breath.scale_amount_max = 0.035
 	var sm := SphereMesh.new()
 	sm.radius = 0.5
 	sm.height = 1.0

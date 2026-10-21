@@ -189,7 +189,7 @@ def export_glb(cb, path, anims=True):
     bpy.ops.export_scene.gltf(
         filepath=path, export_format='GLB', use_selection=True,
         export_apply=False, export_yup=True, export_skins=True, export_animations=anims,
-        export_animation_mode='ACTIONS' if anims else 'ACTIVE_ACTIONS',
+        export_animation_mode='NLA_TRACKS' if anims else 'ACTIVE_ACTIONS',
         export_image_format='AUTO', export_texcoords=True, export_normals=True,
         export_tangents=False, export_materials='EXPORT', export_cameras=False, export_lights=False,
         export_force_sampling=True, export_optimize_animation_size=True,
@@ -203,6 +203,14 @@ def build(name, anims=True, out_dir=OUT_DIR):
     cb = CharBuilder(spec)
     cb.build_armature()
     specs.assemble(cb, spec)
+    if anims:
+        import anim as anim_mod, clips as clips_mod
+        rig = anim_mod.Rig(cb.arm)
+        only = os.environ.get("CHARPIPE_CLIPS")
+        meta = clips_mod.add_all(rig, with_mocap=True, only=only.split(",") if only else None)
+        mp = os.path.join(out_dir, "anim_meta.json")
+        os.makedirs(out_dir, exist_ok=True)
+        json.dump(meta, open(mp, "w"), indent=1)
     export_glb(cb, os.path.join(out_dir, spec["file"]), anims)
     tris = 0
     for ob in bpy.data.objects:

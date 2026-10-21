@@ -480,7 +480,7 @@ func _build_hardware() -> void:
 	wall(Vector2(hx0, 14.0), Vector2(hx1, 14.0), 3.4, "plaster_dirty", -0.05, 0.2, [[3.0, 1.5, 2.4], [13.0, 1.7, 2.5]])
 	wall(Vector2(10.0, 14.0), Vector2(10.0, hz1), 3.4, "plaster_dirty", -0.05, 0.2, [])
 	door("l3_office_door", Vector3(3.0, 0.0, 14.0), 0.0, {"width": 1.3, "height": 2.3, "mat": "wood", "prompt": "Open office door"})
-	_sign(Vector3(3.0, 2.65, 13.82), 0.0, "OFFICE", 28, Color(0.85, 0.85, 0.8), true)
+	_sign(Vector3(3.0, 2.65, 13.84), PI, "OFFICE", 28, Color(0.85, 0.85, 0.8), true)
 	# sales floor
 	_b(Vector3(9.0, 1.05, 0.8), Vector3(6.5, 0.55, 10.4), "wood_panel", true)    # counter x 2..11
 	_b(Vector3(9.2, 0.06, 1.0), Vector3(6.5, 1.1, 10.4), "wood", false)
@@ -542,7 +542,7 @@ func _build_hardware() -> void:
 	_cy(0.15, 0.7, Vector3(3.1, 0.35, 19.4), _c(Color(0.75, 0.75, 0.78), 0.4, 0.6), false, -1.0, Vector3.ZERO, 12)
 	light(Vector3(2.4, 1.0, 18.2), Color(1.0, 0.55, 0.25), 2.6, 9.0, true)
 	light(Vector3(7.6, 1.4, 18.7), Color(1.0, 0.82, 0.55), 1.3, 7.0, false)
-	_sign(Vector3(5.0, 2.4, 13.88), PI, "WARM — COME IN — SHUT THE DOOR", 22, Color(0.95, 0.85, 0.55), false)
+	_sign(Vector3(5.0, 2.4, 14.14), 0.0, "WARM — COME IN — SHUT THE DOOR", 22, Color(0.95, 0.85, 0.55), false)
 	Props.papers(geo, Vector3(8.4, 0.82, 19.4), 3)
 	_b(Vector3(0.5, 0.3, 0.4), Vector3(1.1, 1.0, 16.6), _c(Color(0.35, 0.3, 0.25), 0.9), false)   # blankets
 	save_point(Vector3(7.5, 0.80, 19.5), PI)

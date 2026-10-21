@@ -368,7 +368,7 @@ def assemble(cb, spec):
     sp, sfv, sft, used = body_surface_patch(cb, shaft_mask, 0.016)
     cb.add_mesh("boot_shaft", sp, sfv, None, None, W=cb.W[used], mat=solid_mat(n + "_bootshaft", (0.07, 0.06, 0.05), 0.65))
     # a thicker cuff ring at the top of the shaft
-    ring_mask = (bpos[:, 2] > 0.185) & (bpos[:, 2] < 0.215) & (np.abs(bpos[:, 0]) > 0.05)
+    ring_mask = (bpos[:, 2] > 0.15) & (bpos[:, 2] < 0.23) & (np.abs(bpos[:, 0]) > 0.05)
     rp, rfv, rft, rused = body_surface_patch(cb, ring_mask, 0.026)
     cb.add_mesh("boot_cuff", rp, rfv, None, None, W=cb.W[rused], mat=solid_mat(n + "_bootcuff", (0.045, 0.04, 0.035), 0.8))
     # delete body below boot top (covered by boots), under trousers & jacket
@@ -446,6 +446,7 @@ def assemble(cb, spec):
     ob = cb.add_mesh("eyes", epos, [f[0] for f in P_e.faces], [f[1] for f in P_e.faces], P_e.uv, bone="head", mat=emat)
     sub = ob.modifiers.new("sub", 'SUBSURF'); sub.levels = 1; sub.render_levels = 1
     bpy.context.view_layer.objects.active = ob
+    bpy.ops.object.modifier_move_to_index(modifier="sub", index=0)
     bpy.ops.object.modifier_apply(modifier="sub")
     for nm, d, col, mat_alpha in (("brows", "eyebrows/eyebrow001/eyebrow001", (0.09, 0.07, 0.06), True),
                                    ("lashes", "eyelashes/eyelashes01/eyelashes01", (0.05, 0.04, 0.04), True)):

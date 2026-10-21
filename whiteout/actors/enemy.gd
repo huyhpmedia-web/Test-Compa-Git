@@ -31,6 +31,9 @@ var target: Node3D
 var awake := false
 var dormant := false          # set true to keep it inert until wake() (scripted)
 var invulnerable := false
+var dark_sight := 0.35        # sight multiplier when the player's flashlight is off
+var sep_radius := 1.0         # separation steering: keeps groups from stacking (0 strength = off)
+var sep_strength := 1.0
 
 var _atk_cd := 0.0
 var _state_t := 0.0
@@ -41,6 +44,8 @@ var _wander_to := Vector3.ZERO
 var _groan := 0.0
 var _last_heard := Vector3.ZERO
 var _revived := false
+var _sep := Vector3.ZERO
+var _sep_t := 0.0
 
 func _ready() -> void:
 	add_to_group("enemy")
@@ -104,9 +109,63 @@ func burn(dmg: float, pos: Vector3) -> void:
 ## flashlight off in the dark is much harder to notice.
 func _sight_range() -> float:
 	var p = Game.player
-	if p != null and is_instance_valid(p) and p.get("flashlight") != null and not p.flashlight.visible:
-		return sight * 0.35
+	if not _light_on():
+		return sight * dark_sight
 	return sight
+
+## True when the player's flashlight is on (or there is no flashlight to check).
+func _light_on() -> bool:
+	var p = Game.player
+	if p != null and is_instance_valid(p) and p.get("flashlight") != null:
+		return p.flashlight.visible
+	return true
+
+## True if world point `pos` is inside the player's flashlight beam (within `range_m`).
+func _in_player_beam(pos: Vector3, range_m := 20.0, extra_deg := 4.0) -> bool:
+	var p = Game.player
+	if p == null or not is_instance_valid(p) or p.get("flashlight") == null or not p.flashlight.visible:
+		return false
+	var fl: SpotLight3D = p.flashlight
+	var to := pos - fl.global_position
+	var d := to.length()
+	if d > range_m or d < 0.1:
+		return d < 0.1
+	var fwd := -fl.global_transform.basis.z
+	return rad_to_deg(fwd.angle_to(to)) < fl.spot_angle + extra_deg
+
+## True if `pos` lies inside any Area3D of group "safe_zone" (box/sphere/cylinder shapes).
+func _in_safe_zone(pos: Vector3, margin := 0.0) -> bool:
+	for a in get_tree().get_nodes_in_group("safe_zone"):
+		if not (a is Area3D) or not is_instance_valid(a):
+			continue
+		for c in a.get_children():
+			if c is CollisionShape3D and c.shape != null:
+				var lp: Vector3 = c.global_transform.affine_inverse() * pos
+				var sh: Shape3D = c.shape
+				if sh is BoxShape3D:
+					var h: Vector3 = sh.size * 0.5 + Vector3.ONE * margin
+					if abs(lp.x) <= h.x and abs(lp.y) <= h.y and abs(lp.z) <= h.z:
+						return true
+				elif sh is SphereShape3D:
+					if lp.length() <= sh.radius + margin:
+						return true
+				elif sh is CylinderShape3D:
+					if Vector2(lp.x, lp.z).length() <= sh.radius + margin and abs(lp.y) <= sh.height * 0.5 + margin:
+						return true
+	return false
+
+## Spawn another enemy type as a sibling (child of this node's parent / the level).
+func _spawn_minion(type: String, pos: Vector3, params := {}) -> Node3D:
+	var path := "res://actors/enemies/%s.gd" % type
+	var par := get_parent()
+	if par == null or not ResourceLoader.exists(path):
+		return null
+	var e: Node3D = load(path).new()
+	for k in params:
+		e.set(k, params[k])
+	e.position = pos
+	par.add_child(e)
+	return e
 
 func hear(pos: Vector3) -> void:
 	if state in ["dead", "dormant"]:
@@ -209,6 +268,7 @@ func _physics_process(delta: float) -> void:
 				_set_state("chase")
 		_:
 			_think(delta)
+	_apply_separation(delta)
 	move_and_slide()
 	if model:
 		model.move_speed = Vector2(velocity.x, velocity.z).length()
@@ -216,6 +276,31 @@ func _physics_process(delta: float) -> void:
 	if _groan <= 0.0 and state != "dead" and state != "dormant":
 		_groan = randf_range(4.0, 10.0)
 		Sfx.play_at(_sound("groan"), global_position, -6.0, randf_range(0.85, 1.1))
+
+## Separation steering: nudge away from nearby enemies so groups do not stack.
+func _apply_separation(delta: float) -> void:
+	if sep_strength <= 0.0 or state in ["dead", "dormant", "down", "hang"]:
+		return
+	_sep_t -= delta
+	if _sep_t <= 0.0:
+		_sep_t = 0.12 + randf() * 0.05
+		_sep = Vector3.ZERO
+		for e in get_tree().get_nodes_in_group("enemy"):
+			if e == self or not is_instance_valid(e) or not (e is Node3D):
+				continue
+			var d: Vector3 = global_position - e.global_position
+			d.y = 0
+			var l := d.length()
+			var r: float = sep_radius + (e.get("sep_radius") if e.get("sep_radius") != null else 1.0) * 0.5
+			if l < r:
+				if l < 0.05:
+					d = Vector3(randf() - 0.5, 0, randf() - 0.5)
+					l = 0.1
+				_sep += d / l * (1.0 - l / r)
+		if _sep.length() > 1.0:
+			_sep = _sep.normalized()
+	velocity.x += _sep.x * sep_strength * delta * 7.0
+	velocity.z += _sep.z * sep_strength * delta * 7.0
 
 ## Default AI: idle until the player is seen/heard, then chase and attack.
 func _think(delta: float) -> void:

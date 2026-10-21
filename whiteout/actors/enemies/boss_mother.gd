@@ -137,7 +137,7 @@ func start_phase2() -> void:
 	_set_state("transform")
 	Sfx.play_at(_sound("roar"), global_position, 8.0)
 	if model:
-		model.ruth.play("roar", 2.5)
+		model.ruth.play("roar")
 
 func _enter_phase2(initial := false) -> void:
 	phase = 2
@@ -368,6 +368,11 @@ func _think_p2(delta: float, to: Vector3, dist: float) -> void:
 				_set_state("lunge_wind")
 			else:
 				_move_to(target.global_position, run_speed, delta)
+
+func _attack() -> void:
+	super._attack()
+	if model and model.ruth:
+		model.ruth.play("attack")
 
 func _attack_hit() -> void:
 	if target == null:

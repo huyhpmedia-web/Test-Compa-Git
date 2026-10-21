@@ -128,7 +128,7 @@ func _think(delta: float) -> void:
 				target.hurt(40, global_position, true)
 				target.velocity += _dir * 10.0
 			# wall impact: we stopped moving although we should be at full tilt
-			if _state_t > 0.4 and Vector2(velocity.x, velocity.z).length() < 4.0 or _hit_wall():
+			if _hit_wall() or (_state_t > 0.6 and Vector2(velocity.x, velocity.z).length() < 3.0 and global_position.distance_to(target.global_position) > 3.8):
 				_wall_crash()
 			elif _state_t > 2.6:
 				_charge_cd = 4.0

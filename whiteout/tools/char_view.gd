@@ -48,7 +48,7 @@ func _ready() -> void:
 				ap.seek(t, true)
 				ap.pause()
 	var f := MeshInstance3D.new(); var pm := PlaneMesh.new(); pm.size = Vector2(12, 12); f.mesh = pm
-	var fm := StandardMaterial3D.new(); fm.albedo_color = Color(0.28, 0.29, 0.31); fm.roughness = 0.9; f.material_override = fm
+	var fm := StandardMaterial3D.new(); fm.albedo_color = Color(0.13, 0.14, 0.16); fm.roughness = 0.9; f.material_override = fm
 	add_child(f)
 	var cam := Camera3D.new(); add_child(cam)
 	if view == "face":

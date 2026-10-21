@@ -110,7 +110,7 @@ def paint_skin(cb, skin_name, details):
     below = pt.smoothstep(chin_z - 0.095, chin_z - 0.035, z)           # fade down the neck
     side = pt.smoothstep(0.105, 0.075, ax)
     lips = 1 - pt.smoothstep(0.0, 1.0, np.clip(1 - (np.abs(z - (mouth_z - 0.002)) / 0.011) , 0, 1)) * pt.smoothstep(0.034, 0.026, ax)
-    lips = np.where((np.abs(z - (mouth_z - 0.002)) < 0.010) & (ax < 0.028), 0.0, 1.0)
+    lips = 1.0 - np.clip(1.2 - np.sqrt((np.abs(z - (mouth_z - 0.002)) / 0.013) ** 2 + (ax / 0.034) ** 2), 0, 1)
     nostril = pt.smoothstep(mouth_z + 0.022, mouth_z + 0.012, z) * 0 + 1
     w = low * below * side * fwd * lips
     w = w * (0.75 + 0.25 * n2)
@@ -184,7 +184,7 @@ def jacket_texture(cb, label, P, pos, comp, jacket_ids, size=2048, orig=None):
     black += torso * pt.smoothstep(0.155, 0.185, ax) * (z < chest_z + 0.17)              # side panels
     black += arm * pt.smoothstep(arm_len - 0.17, arm_len - 0.15, s)                       # forearm cuffs
     black += arm * (1 - pt.smoothstep(0.03, 0.06, s)) * 0.0
-    black += arm * pt.smoothstep(neck_z - 0.11, neck_z - 0.085, z) * (s < 0.12)           # shoulder cap
+    black += arm * pt.smoothstep(neck_z - 0.085, neck_z - 0.06, z) * (s < 0.10)           # shoulder cap
     black = np.clip(black, 0, 1)
     # reflective silver bands
     def band(c, wd, v):
@@ -244,9 +244,13 @@ def normals_jpg(cb, label, src, size):
     return jtex(f"{cb.name}_{label}_normal.jpg", im, 92)
 
 
-def hair_png(cb, label, src, size=1024):
+def hair_png(cb, label, src, size=1024, tint=None):
     from PIL import Image
     im = Image.open(src).convert("RGBA").resize((size, size), Image.LANCZOS)
+    if tint is not None:
+        a = np.asarray(im, dtype=np.float32) / 255.0
+        a[..., :3] = np.clip(a[..., :3] * np.array(tint)[None, None, :], 0, 1)
+        im = Image.fromarray((a * 255 + 0.5).astype(np.uint8))
     p = ensure(os.path.join(TEX, f"{cb.name}_{label}.png")); im.save(p); return p
 
 
@@ -335,7 +339,7 @@ def assemble(cb, spec):
     puff = 0.012 + 0.006 * np.sin(2 * math.pi * pos[:, 2] / 0.082)
     npos[jm] = pos[jm] + nrm[jm] * puff[jm][:, None]
     # trousers: cut off below boot-top, keep the rest
-    boot_top = 0.17
+    boot_top = 0.24
     for ids, label, mat, ppos in ((jacket_ids, "jacket", jmat, npos), (liner_ids, "liner", lmat, pos), (set(trousers), "trousers", tmat, pos)):
         mask = np.isin(comp, list(ids))
         if label == "trousers":
@@ -366,15 +370,15 @@ def assemble(cb, spec):
     del_verts |= set(Ps.delete_verts)
     # shaft: body leg surface from ankle up to the top of the boot
     bpos = cb.conv(H.v[:mh.N_BODY])
-    shaft_mask = (bpos[:, 2] > 0.045) & (bpos[:, 2] < 0.215) & (np.abs(bpos[:, 0]) > 0.05)
+    shaft_mask = (bpos[:, 2] > 0.045) & (bpos[:, 2] < 0.26) & (np.abs(bpos[:, 0]) > 0.05)
     sp, sfv, sft, used = body_surface_patch(cb, shaft_mask, 0.016)
-    cb.add_mesh("boot_shaft", sp, sfv, None, None, W=cb.W[used], mat=solid_mat(n + "_bootshaft", (0.20, 0.17, 0.14), 0.65))
+    cb.add_mesh("boot_shaft", sp, sfv, None, None, W=cb.W[used], mat=solid_mat(n + "_bootshaft", (0.11, 0.095, 0.08), 0.65))
     # a thicker cuff ring at the top of the shaft
-    ring_mask = (bpos[:, 2] > 0.15) & (bpos[:, 2] < 0.23) & (np.abs(bpos[:, 0]) > 0.05)
+    ring_mask = (bpos[:, 2] > 0.19) & (bpos[:, 2] < 0.28) & (np.abs(bpos[:, 0]) > 0.05)
     rp, rfv, rft, rused = body_surface_patch(cb, ring_mask, 0.026)
     cb.add_mesh("boot_cuff", rp, rfv, None, None, W=cb.W[rused], mat=solid_mat(n + "_bootcuff", (0.13, 0.12, 0.11), 0.8))
     # delete body below boot top (covered by boots), under trousers & jacket
-    below = set(np.where(bpos[:, 2] < 0.215)[0].tolist())
+    below = set(np.where(bpos[:, 2] < 0.28)[0].tolist())
     del_verts |= below
 
     # ---------- gloves from the hand region of the body
@@ -444,7 +448,10 @@ def assemble(cb, spec):
 
     # ---------- eyes / brows / lashes / hair
     eye_png = os.path.join(mh.MH_DATA, "eyes/materials/brown_eye.png")
-    emat = make_pbr(n + "_eyes", eye_png, rough=0.12, spec=0.8, max_size=512)
+    from PIL import Image
+    eim = np.asarray(Image.open(eye_png).convert("RGB").resize((512, 512)), dtype=np.float32) / 255.0
+    eim = np.clip(eim * np.array(spec.get("eye_tint", (0.72, 0.8, 0.9)))[None, None, :] * 0.9, 0, 1)
+    emat = make_pbr(n + "_eyes", jtex(n + "_eye.jpg", eim, 92), rough=0.12, spec=0.8)
     P_e = mh.Proxy(A("eyes/low-poly/low-poly.mhclo"))
     epos = cb.conv(P_e.fit(H.v, H.base_v))
     ob = cb.add_mesh("eyes", epos, [f[0] for f in P_e.faces], [f[1] for f in P_e.faces], P_e.uv, bone="head", mat=emat)
@@ -457,10 +464,10 @@ def assemble(cb, spec):
         Pp = mh.Proxy(A(d + ".mhclo"))
         tex = [f for f in os.listdir(os.path.dirname(A(d))) if f.endswith(".png")][0]
         png = os.path.join(os.path.dirname(A(d)), tex)
-        m = make_pbr(n + "_" + nm, hair_png(cb, nm, png, 512), rough=0.8, alpha=True, color=(*col, 1))
+        m = make_pbr(n + "_" + nm, hair_png(cb, nm, png, 512, tint=spec.get("brow_tint", (0.45, 0.4, 0.38)) if nm == "brows" else (0.5, 0.45, 0.45)), rough=0.8, alpha=True)
         pp = cb.conv(Pp.fit(H.v, H.base_v))
         cb.add_mesh(nm, pp, [f[0] for f in Pp.faces], [f[1] for f in Pp.faces], Pp.uv, bone="head", mat=m)
     Ph = mh.Proxy(A("hair/short02/short02.mhclo"))
-    hm = make_pbr(n + "_hair", hair_png(cb, "hair", A("hair/short02/short02_diffuse.png"), 1024), rough=0.7, alpha=True, color=(0.30, 0.25, 0.22, 1))
+    hm = make_pbr(n + "_hair", hair_png(cb, "hair", A("hair/short02/short02_diffuse.png"), 1024, tint=spec.get("hair_tint", (0.34, 0.3, 0.28))), rough=0.7, alpha=True, color=(0.10, 0.085, 0.075, 1))
     hp = cb.conv(Ph.fit(H.v, H.base_v))
     cb.add_mesh("hair", hp, [f[0] for f in Ph.faces], [f[1] for f in Ph.faces], Ph.uv, W=Ph.skin_weights(cb.W), mat=hm)

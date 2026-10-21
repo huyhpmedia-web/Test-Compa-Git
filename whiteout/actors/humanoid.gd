@@ -77,6 +77,8 @@ func _skin_mat() -> StandardMaterial3D:
 	m.rim = 0.15
 	if cfg.zombie and ResourceLoader.exists("res://textures/skin_dead_albedo.png"):
 		m.albedo_texture = load("res://textures/skin_dead_albedo.png")
+		# the texture averages ~0.22 linear: compensate so the tint colour keeps its brightness
+		m.albedo_color = Color(m.albedo_color.r * 3.4, m.albedo_color.g * 3.4, m.albedo_color.b * 3.4)
 		m.uv1_triplanar = true
 		m.uv1_scale = Vector3.ONE * 2.0
 	return m
@@ -92,6 +94,10 @@ func _cloth(c: Color, rough := 0.95) -> StandardMaterial3D:
 		m.normal_texture = load("res://textures/fabric_normal.png")
 	if cfg.bloody > 0.0:
 		m.albedo_color = c.lerp(Color(0.25, 0.03, 0.02), clamp(cfg.bloody * _rng.randf_range(0.2, 0.6), 0.0, 0.7))
+	if m.albedo_texture != null:
+		# fabric texture averages ~0.09 linear: compensate (else every garment renders near-black)
+		var k := 3.6
+		m.albedo_color = Color(m.albedo_color.r * k, m.albedo_color.g * k, m.albedo_color.b * k)
 	return m
 
 func _pivot(parent: Node3D, pos: Vector3, n: String) -> Node3D:

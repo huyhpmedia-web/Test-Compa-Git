@@ -708,7 +708,7 @@ func _build_plow(p: Vector3) -> void:
 	r.position = p
 	r.rotation.y = 0.12
 	geo.add_child(r)
-	var orange := _c(Color(0.75, 0.38, 0.05), 0.5, 0.3)
+	var orange := _c(Color(0.95, 0.5, 0.08), 0.5, 0.2)
 	var dark := _c(Color(0.08, 0.08, 0.09), 0.6)
 	Props.box(r, Vector3(7.0, 0.9, 2.6), Vector3(0, 1.0, 0), orange, true)
 	Props.box(r, Vector3(2.3, 1.8, 2.5), Vector3(-1.6, 2.35, 0), orange, true)
@@ -741,6 +741,7 @@ func _build_plow(p: Vector3) -> void:
 	sp2.rotation = Vector3(deg_to_rad(-8), PI, 0)
 	_beacon.add_child(sp2)
 	light(p + Vector3(-1.6, 3.7, 0), Color(1.0, 0.55, 0.1), 1.0, 7.0, false)
+	light(p + Vector3(1.0, 3.0, -3.5), Color(0.8, 0.85, 1.0), 1.4, 11.0, false)
 	_drift(p + Vector3(-5.3, 0, 2.6), Vector3(3.0, 1.0, 2.2))
 	Props.corpse(geo, p + Vector3(-2.7, 0.02, 2.2), 0.5, {"shirt": Color(0.9, 0.5, 0.1), "bloody": 0.2, "coat": true, "coat_color": Color(0.9, 0.45, 0.08), "skin": Color(0.72, 0.8, 0.85)})
 

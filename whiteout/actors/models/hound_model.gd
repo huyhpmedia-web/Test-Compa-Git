@@ -21,13 +21,13 @@ func _build() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = _seed * 31
 	var fur := StandardMaterial3D.new()
-	fur.albedo_color = Color(0.2, 0.19, 0.21)
+	fur.albedo_color = Color(0.42, 0.4, 0.45)
 	fur.roughness = 0.95
 	fur.rim_enabled = true
 	fur.rim = 0.4
 	fur.rim_tint = 0.9
 	var fur2 := fur.duplicate() as StandardMaterial3D
-	fur2.albedo_color = Color(0.32, 0.31, 0.34)
+	fur2.albedo_color = Color(0.6, 0.6, 0.66)
 	var frost := Kit.mat("frost")
 	var ice := Kit.mat("ice")
 	var bone := Kit.mat("bone")

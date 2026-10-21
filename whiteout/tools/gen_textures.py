@@ -50,7 +50,7 @@ BIG = {"brick", "concrete", "snow", "asphalt", "asphalt_snow", "plaster", "plast
 # albedo grade: gain (sRGB multiply), sat (multiplier), hue (degrees shift), tint (RGB multiplier)
 # roughness remap: (mul, add)
 REAL_SPEC = {
-    "brick": dict(gain=0.88, sat=1.0, rough=(1.3, 0.0)),
+    "brick": dict(gain=0.66, sat=1.5, tint=(1.06, 0.92, 0.88), rough=(1.3, 0.0)),
     "brick_dark": dict(gain=0.62, sat=0.95, rough=(1.35, 0.0)),
     "concrete": dict(gain=1.3, sat=0.9, rough=(1.3, 0.0)),
     "plaster": dict(gain=0.88, sat=1.0, tint=(1.0, 0.97, 0.9), rough=(1.1, 0.0)),

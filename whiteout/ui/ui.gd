@@ -735,6 +735,29 @@ func open_pause() -> void:
 	_open_modal(bg)
 	b.grab_focus()
 
+const CREDITS_TEXT := """[center][b]WHITEOUT: KETTLE FALLS[/b]
+A fan-made survival-horror game built with Godot Engine 4.5 (MIT).[/center]
+
+[b]Characters[/b]
+Human models built from MakeHuman / MPFB assets (CC0), assembled in Blender.
+
+[b]Textures[/b]
+ambientCG (CC0) and Poly Haven (CC0) materials. Full list: textures/LICENSES.md
+
+[b]Music[/b] — CC BY-SA 4.0
+"Decoherence", "Helios", "Primal Carnage" by Scott Buckley — www.scottbuckley.com.au
+Other music and ambience: CC0 sources (see audio/LICENSES.md).
+
+[b]Sound effects[/b] — CC BY 3.0 (attribution required)
+ermfilm — "Rossi-Revolver" · steveygos93 — "Explosion2" · Nicistarful — "Fast Throttle Mechanic Lever"
+jesabat — "Steam Hiss" · juskiddink — "Dogs growling" · poots — "deep_under"
+(all via freesound.org)
+
+Plus CC0 sounds by Kenney, MrFossy, LeMudCrab, michorvath, artisticdude and many Freesound contributors.
+Full list: audio/LICENSES.md
+
+Inspired by the late-90s survival-horror genre. Story, characters and setting are original."""
+
 const CONTROLS_TEXT := """[b]WASD[/b] move   ·   [b]Shift[/b] run   ·   [b]Mouse[/b] look
 [b]Right mouse[/b] aim   ·   [b]Left mouse[/b] fire (while aiming)
 [b]R[/b] reload   ·   [b]F[/b] knife   ·   [b]Q[/b] quick turn

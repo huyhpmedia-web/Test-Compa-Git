@@ -158,6 +158,15 @@ func _physics_process(delta: float) -> void:
 	var spd := AIM_WALK if aiming else (RUN if running else WALK)
 	if Game.health_state() == "DANGER":
 		spd *= 0.7
+	# frost clouds (burster) slow the player via node meta, refreshed while inside
+	if has_meta("slow"):
+		var st: float = get_meta("slow_t", 0.0) - delta
+		if st <= 0.0 and has_meta("slow_t"):
+			remove_meta("slow")
+			remove_meta("slow_t")
+		else:
+			set_meta("slow_t", st)
+			spd *= float(get_meta("slow", 1.0))
 	var target := dir * spd
 	velocity.x = move_toward(velocity.x, target.x, delta * 20.0)
 	velocity.z = move_toward(velocity.z, target.z, delta * 20.0)

@@ -32,6 +32,7 @@ func _build() -> void:
 	rock.roughness = 0.85
 	mass = Node3D.new()
 	add_child(mass)
+	mass.scale = Vector3.ONE * 1.25
 	# the mountain: overlapping lumps of fused flesh, ore and ice
 	Kit.mi(mass, Kit.blob(2.3, 4, 0.16, Vector3(1.0, 0.8, 1.15), 16, 24), flesh, Vector3(0, 1.5, 0))
 	for i in 9:
@@ -76,11 +77,11 @@ func _build() -> void:
 		# arm in local space: +Z outward
 		var l1 := rng.randf_range(0.9, 1.3)
 		var l2 := rng.randf_range(1.1, 1.6)
-		Kit.limb(sh, Vector3.ZERO, Vector3(0, -l1 * 0.3, l1), 0.13, 0.09, flesh, true, 6)
+		Kit.limb(sh, Vector3.ZERO, Vector3(0, -l1 * 0.3, l1), 0.2, 0.14, flesh, true, 6)
 		var el := Node3D.new()
 		el.position = Vector3(0, -l1 * 0.3, l1)
 		sh.add_child(el)
-		Kit.limb(el, Vector3.ZERO, Vector3(0, -l2 * 0.8, l2 * 0.5), 0.09, 0.06, Kit.mat("skin_frost"), true, 6)
+		Kit.limb(el, Vector3.ZERO, Vector3(0, -l2 * 0.8, l2 * 0.5), 0.14, 0.09, Kit.mat("skin_frost"), true, 6)
 		var hand := Node3D.new()
 		hand.position = Vector3(0, -l2 * 0.8, l2 * 0.5)
 		el.add_child(hand)

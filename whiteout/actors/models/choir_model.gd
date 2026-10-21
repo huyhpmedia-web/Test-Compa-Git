@@ -29,25 +29,25 @@ func _build() -> void:
 	Kit.mi(column, Kit.blob(1.5, 5, 0.18, Vector3(1.15, 0.7, 1.15), 12, 18), frost, Vector3(0, 0.45, 0))
 	Kit.mi(column, Kit.blob(1.1, 8, 0.2, Vector3(1.0, 1.0, 1.0), 12, 18), flesh, Vector3(0, 0.9, 0))
 	# core pillar
-	Kit.limb(column, Vector3(0, 0.6, 0), Vector3(0, 4.9, 0), 0.95, 0.35, flesh, false, 14)
-	Kit.mi(column, Kit.blob(0.9, 13, 0.1, Vector3(1.0, 2.6, 1.0), 12, 16), ice, Vector3(0, 2.8, 0))
+	Kit.limb(column, Vector3(0, 0.6, 0), Vector3(0, 4.9, 0), 0.6, 0.25, flesh, false, 14)
 	for i in 12:
 		var f := float(i) / 11.0
 		var y := 0.85 + i * 0.36
 		var a := PI * 0.5 + (1.0 if i % 2 == 0 else -1.0) * (0.25 + 0.22 * float(i % 6))
 		if i in [1, 5, 9, 11, 0, 7]:
 			a += PI * 0.9 + rng.randf_range(-0.3, 0.3)
-		var rad: float = lerp(0.8, 0.45, f)
+		var rad: float = lerp(1.0, 0.62, f)
 		var out := Vector3(cos(a), 0, sin(a))
 		var p := out * rad + Vector3(0, y, 0)
 		# torso + robe
-		var tor := Kit.mi(column, Kit.blob(0.3, 20 + i, 0.1, Vector3(1.1, 1.35, 0.8), 10, 14), robe if i % 3 else flesh, p)
+		var tor := Kit.mi(column, Kit.blob(0.4, 20 + i, 0.1, Vector3(1.1, 1.35, 0.8), 10, 14), robe if i % 3 else flesh, p)
 		tor.look_at_from_position(p, p - out, Vector3.UP)
 		tor.rotate_object_local(Vector3.RIGHT, -0.25)
-		Kit.mi(column, Kit.blob(0.26, 40 + i, 0.15, Vector3(1.0, 1.6, 0.9), 8, 12), robe, p + Vector3(0, -0.35, 0) - out * 0.05)
+		Kit.mi(column, Kit.blob(0.34, 40 + i, 0.15, Vector3(1.0, 1.6, 0.9), 8, 12), robe, p + Vector3(0, -0.45, 0) - out * 0.05)
 		# head
 		var hd := Node3D.new()
-		hd.position = p + out * 0.28 + Vector3(0, 0.52, 0)
+		hd.position = p + out * 0.36 + Vector3(0, 0.66, 0)
+		hd.scale = Vector3.ONE * 1.35
 		column.add_child(hd)
 		hd.transform.basis = Basis.looking_at(-out, Vector3.UP).rotated(out.cross(Vector3.UP).normalized(), 0.0)
 		var weak: bool = i in WEAK
@@ -83,7 +83,7 @@ func _build() -> void:
 		# fused arms reaching into the core / neighbours
 		for s: float in [-1.0, 1.0]:
 			var perp := out.cross(Vector3.UP).normalized() * s
-			var sh := p + perp * 0.3 + Vector3(0, 0.2, 0)
+			var sh := p + perp * 0.4 + Vector3(0, 0.25, 0)
 			var el := sh + perp * 0.15 + Vector3(0, -0.3, 0) + out * 0.1
 			var hand := Vector3(0, y + rng.randf_range(-0.2, 0.5), 0) + perp * rng.randf_range(0.05, 0.5)
 			Kit.limb(column, sh, el, 0.07, 0.06, flesh, true, 6)

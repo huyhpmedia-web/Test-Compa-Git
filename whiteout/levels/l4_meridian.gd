@@ -541,17 +541,19 @@ func _hallc_hint() -> void:
 
 # =================================================================== electrical room
 func _electrical() -> void:
-	glow(Vector3(-23, 3.9, -22), Color(0.85, 0.92, 1.0), 1.6, 12.0, true, true)
-	glow(Vector3(-27, 3.6, -16), Color(0.85, 0.9, 1.0), 0.9, 8.0)
+	glow(Vector3(-23, 3.9, -22), Color(0.85, 0.92, 1.0), 2.6, 14.0, true)
+	glow(Vector3(-23, 3.4, -28), Color(0.85, 0.92, 1.0), 2.4, 9.0, false, true)
+	glow(Vector3(-27, 3.6, -16), Color(0.85, 0.9, 1.0), 1.8, 9.0)
+	glow(Vector3(-20, 3.6, -16), Color(0.85, 0.9, 1.0), 1.8, 9.0)
 	strip(-23, -22, 8.0, true, HT - 0.04, Color(0.85, 0.92, 1.0))
 	strip(-27, -22, 6.0, true, HT - 0.04, Color(0.85, 0.92, 1.0))
 	# switchboard on the north wall
 	Props.box(geo, Vector3(9.5, 3.0, 0.3), Vector3(-23, 1.7, -31.7), Mats.color(Color(0.22, 0.26, 0.28), 0.5, 0.5), true)
-	label("MANUAL FEEDER ISOLATION", Vector3(-23, 3.5, -31.5), 0.0, 52, Color(1.0, 0.85, 0.3), 0.006, true)
+	label("MANUAL FEEDER ISOLATION", Vector3(-23, 3.7, -31.5), 0.0, 52, Color(1.0, 0.85, 0.3), 0.006, true)
 	var defs := [["l4_sw_pdu7", -26.5, "PDU-7\nRACK ROW 7"], ["l4_sw_pdu9", -23.0, "PDU-9\nRACK ROW 9"], ["l4_sw_ch3", -19.5, "CH-3\nREDUNDANT CHILLER"]]
 	for d in defs:
 		_build_switch(d[0], d[1], d[2])
-	_total_label = label("LOAD REDUCTION: 0 kW", Vector3(-23, 2.95, -31.5), 0.0, 40, Color(0.5, 1.0, 0.6), 0.006)
+	_total_label = label("LOAD REDUCTION: 0 kW", Vector3(-23, 3.1, -31.5), 0.0, 56, Color(0.5, 1.0, 0.6), 0.008)
 	label("OPEN REQUESTS\nHALL C ... 40 kW\nNOC ...... 54 kW", Vector3(-28.5, 1.9, -31.5), 0.0, 28, Color(0.9, 0.9, 0.95), 0.004, true)
 	# transformers + cable reels + lockers
 	for x in [-29.0]:
@@ -581,8 +583,8 @@ func _build_switch(id: String, x: float, title: String) -> void:
 	lever.rotation.x = 0.6
 	var lamp := Mats.emissive(Color(0.2, 1.0, 0.4), 3.0)
 	Props.box(geo, Vector3(0.18, 0.1, 0.04), Vector3(x, 2.0, -31.35), lamp, false)
-	var t := label("", Vector3(x, 2.35, -31.5), 0.0, 30, Color(0.9, 0.95, 1.0), 0.004)
-	var k := label("%d kW" % kw, Vector3(x, 0.78, -31.35), 0.0, 60, Color(1.0, 0.85, 0.3), 0.006)
+	var t := label("", Vector3(x, 2.45, -31.5), 0.0, 40, Color(0.9, 0.95, 1.0), 0.006)
+	var k := label("%d kW" % kw, Vector3(x, 0.8, -31.35), 0.0, 90, Color(1.0, 0.85, 0.3), 0.008)
 	_sw_lever[id] = lever
 	_sw_lamp[id] = lamp
 	_sw_text[id] = [t, title, kw, k]

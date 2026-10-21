@@ -111,8 +111,8 @@ func music(name: String, db: float = -8.0, fade: float = 2.0) -> void:
 	var old := _music
 	_music = _music_b
 	_music_b = old
-	var tw := create_tween()
 	if old.playing:
+		var tw := create_tween()
 		tw.tween_property(old, "volume_db", -60.0, fade)
 		tw.tween_callback(old.stop)
 	if name == "":

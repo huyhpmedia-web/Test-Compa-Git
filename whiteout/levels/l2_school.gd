@@ -778,7 +778,7 @@ func _unchain() -> void:
 	Game.set_flag("l2_front_open")
 	for c in _front_chain:
 		if is_instance_valid(c):
-			var tw := c.create_tween()
+			var tw: Tween = c.create_tween()
 			tw.tween_property(c, "position:y", c.position.y - 1.6, 0.5).set_trans(Tween.TRANS_QUAD)
 			tw.tween_callback(c.queue_free)
 	await get_tree().create_timer(0.6).timeout
@@ -1122,8 +1122,8 @@ func _build_gym() -> void:
 	for z in rows:
 		for x in [12.2, 13.2, 17.4, 18.4]:
 			var st := 0
-			var sleeper := (x == 12.2 and z == -19.4) or (x == 13.2 and z == -24.6) or (x == 17.4 and z == -16.8) or (x == 18.4 and z == -22.0) or (x == 17.4 and z == -27.2)
-			var cov := (k % 5 == 1) or (x == 13.2 and z == -14.2)
+			var sleeper: bool = (x == 12.2 and z == -19.4) or (x == 13.2 and z == -24.6) or (x == 17.4 and z == -16.8) or (x == 18.4 and z == -22.0) or (x == 17.4 and z == -27.2)
+			var cov: bool = (k % 5 == 1) or (x == 13.2 and z == -14.2)
 			if sleeper:
 				st = 3
 			elif cov:
@@ -1163,7 +1163,7 @@ func _build_gym() -> void:
 		_paper_chain(Vector3(7.2, FY + 5.6, z), Vector3(21.8, FY + 5.6, z - 0.4), 0.9, 40)
 	# light: weak high-bays (more come on with the boiler), cold moon fill, warm stage pars, lanterns
 	for p in [Vector3(11.5, FY + HG, -16.0), Vector3(17.5, FY + HG, -16.0), Vector3(11.5, FY + HG, -25.0), Vector3(17.5, FY + HG, -25.0)]:
-		var late := p.x > 14.0
+		var late: bool = p.x > 14.0
 		Props.cyl(geo, 0.3, 0.12, p + Vector3(0, -0.2, 0), _m("highbay", Color(0.2, 0.22, 0.22), 0.5, 0.6), false)
 		var em := Mats.emissive(Color(0.85, 0.92, 1.0), 3.0)
 		Props.cyl(geo, 0.22, 0.06, p + Vector3(0, -0.28, 0), em, false)

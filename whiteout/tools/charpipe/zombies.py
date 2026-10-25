@@ -255,11 +255,11 @@ def build_zombie(cb, spec):
     elif o == "nurse":
         s_rel, s_png = SUIT["felegant"]
         pieces = [dict(match=lambda zmin, zmax, n_: zmax > 1.0 and n_ > 1000, label="uniform", painter=P_(col, 0.25, "uniform"), dec=0.6),
-                  dict(match=lambda zmin, zmax, n_: zmax < 1.1 and n_ < 1000, label="skirt", painter=P_(col2, 0.25, "skirt"), dec=0.6)]
+                  dict(match=lambda zmin, zmax, n_: zmax < 1.25 and n_ < 1000, label="skirt", painter=P_(col2, 0.25, "skirt"), dec=0.6)]
     elif o == "dress":
         s_rel, s_png = SUIT["felegant"]
         pieces = [dict(match=lambda zmin, zmax, n_: zmax > 1.0 and n_ > 1000, label="gown", painter=P_(col, 0.25, "gown"), dec=0.6),
-                  dict(match=lambda zmin, zmax, n_: zmax < 1.1 and n_ < 1000, label="skirt", painter=P_(col2, 0.25, "skirt"), dec=0.6, stretch=(None, 1.7, 0.1))]
+                  dict(match=lambda zmin, zmax, n_: zmax < 1.25 and n_ < 1000, label="skirt", painter=P_(col2, 0.25, "skirt"), dec=0.6, stretch=(None, 1.7, 0.1))]
     elif o == "miner":
         s_rel, s_png = SUIT["work"]
         pieces = [dict(match=lambda zmin, zmax, n_: zmin < 0.4 and zmax > 1.2 and n_ > 1500, label="overalls", painter=P_(col, 0.7, "overalls"), dec=0.5),

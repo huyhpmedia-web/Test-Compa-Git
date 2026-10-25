@@ -226,14 +226,14 @@ static func tube_mesh(pts: PackedVector3Array, radius: float, sides := 8, taper 
 
 # =================================================================== decals
 static func _basis(normal: Vector3, tangent: Vector3, roll := 0.0) -> Basis:
-	var y := normal.normalized()
+	var y := normal.normalized() if normal.length_squared() > 1e-6 else Vector3.UP
 	var x := tangent - y * tangent.dot(y)
 	if x.length() < 0.01:
 		x = y.cross(Vector3.FORWARD if abs(y.z) < 0.95 else Vector3.RIGHT)
 	x = x.normalized()
 	var z := x.cross(y).normalized()
 	var b := Basis(x, y, z)
-	if roll != 0.0:
+	if roll != 0.0 and y.length_squared() > 0.5:
 		b = b.rotated(y, roll)
 	return b
 

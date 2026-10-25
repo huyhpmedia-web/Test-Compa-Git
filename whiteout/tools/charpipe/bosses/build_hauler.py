@@ -55,7 +55,7 @@ for i in range(n_mound):
         theta = rng.uniform(0, math.tau)
         phi = rng.uniform(0.25, 1.75)
         pt = surface_point(theta, phi)
-        if all((pt - q).length > 0.75 for q in placed):
+        if all((pt - q).length > 0.9 for q in placed):
             break
     placed.append(pt)
     nrm = surface_normal(theta, phi)
@@ -74,7 +74,7 @@ for i in range(n_mound):
     p.pose([("spine_03", "X", 6), ("neck_01", "X", -10), ("head", "X", -18 + 10 * (i % 3))] + ARMS[i % len(ARMS)])
     p.mark("m_lower", ["thigh_l", "thigh_r", "calf_l", "calf_r", "foot_l", "foot_r", "ball_l", "ball_r"])
     lean = 25 + 25 * ((i * 7) % 4) / 3.0 + (20 if phi < 0.6 else 0)
-    Mx = person_matrix(pt + nrm * 0.0 + Vector((0, 0, 0.1)), yaw, lean, (0, -0.02, 1.2), 1.0, roll_deg=rng.uniform(-18, 18))
+    Mx = person_matrix(pt + nrm * 0.0 + Vector((0, 0, 0.1)), yaw, lean, (0, -0.02, 1.2), 1.5, roll_deg=rng.uniform(-18, 18))
     fn = vcol_grime(axis=(BODY_C.x, BODY_C.y), r0=0.5, r1=2.4, dark=0.6, seed=i)
     res = finalize_person(p, Mx, dec={"body": 0.1, "hair": 0.25, "default": 0.12}, vcol_fn=fn, select="m_lower", thr=0.5, invert=True, name=f"m{i}")
     people.extend(res.values())
@@ -103,7 +103,7 @@ for i in range(NC):
     p.mark("m_lower", ["thigh_l", "thigh_r", "calf_l", "calf_r", "foot_l", "foot_r", "ball_l", "ball_r"])
     shoulder = Vector((0, -0.02, 1.28))
     # local frame: pivot at the shoulder, leaning forward (negative lean) ~50 deg
-    Mloc = person_matrix(Vector((0, 0, 0)), -90, -50 - 6 * (i % 3), shoulder, 1.0)
+    Mloc = person_matrix(Vector((0, 0, 0)), -90, -50 - 6 * (i % 3), shoulder, 1.5)
     fn = vcol_grime(axis=(0, 0), r0=10, r1=20, dark=0.75, seed=i)
     res = finalize_person(p, Mloc, dec={"body": 0.1, "hair": 0.25, "default": 0.12}, vcol_fn=fn, select="m_lower", thr=0.5, invert=True, name=f"c{i}")
     # pelvis stump flesh + shoulder fixed: join to one object, root empty at the shoulder world position
@@ -169,12 +169,12 @@ elems = []
 for k in range(18):
     f = k / 17.0
     y = -2.1 + 4.4 * f
-    elems.append((Vector((0, y, 1.3 + 0.35 * math.sin(f * 3.14))), 1.45, 2.0, (1.2, 1.0, 0.95)))
+    elems.append((Vector((0, y * 0.85, 1.2 + 0.3 * math.sin(f * 3.14))), 1.0, 2.0, (1.2, 1.0, 0.95)))
 for k in range(16):
     th = rng.uniform(0, math.tau)
     ph = rng.uniform(0.3, 1.6)
     q = surface_point(th, ph) * 0.8 + BODY_C * 0.2
-    elems.append((q, rng.uniform(0.5, 0.8), 2.0, (1, 1, 1)))
+    elems.append((q * 0.9 + BODY_C * 0.1, rng.uniform(0.35, 0.55), 2.0, (1, 1, 1)))
 elems.append((Vector((0, -0.3, 2.45)), 1.0, 2.0, (1.0, 1.0, 0.8)))
 mortar = metaball_mesh("Mortar", elems, resolution=0.11, threshold=0.55, mat=flesh)
 smooth_mesh(mortar, 3, 0.55)

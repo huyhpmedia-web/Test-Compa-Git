@@ -22,11 +22,13 @@ CACHE = os.environ.get("BOSS_CACHE", os.path.join(tempfile.gettempdir(), "boss_c
 os.makedirs(CACHE, exist_ok=True)
 
 MATS = {}
+_TEXCACHE = {}
 
 
 def reset():
     bpy.ops.wm.read_factory_settings(use_empty=True)
     MATS.clear()
+    _TEXCACHE.clear()
 
 
 # ----------------------------------------------------------------------------- materials

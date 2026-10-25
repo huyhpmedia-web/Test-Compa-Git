@@ -118,8 +118,16 @@ func _build() -> void:
 		death_variant = int(cfg.death_variant)
 	var path := MODEL_DIR + model_name + ".glb"
 	if not ResourceLoader.exists(path):
-		push_warning("CharacterModel: missing " + path)
-		return
+		push_warning("CharacterModel: missing " + path + " (falling back)")
+		for fb in ["rimebound_parka_m", "elias"]:
+			if ResourceLoader.exists(MODEL_DIR + fb + ".glb"):
+				model_name = fb
+				path = MODEL_DIR + fb + ".glb"
+				break
+		if not ResourceLoader.exists(path):
+			_make_pivots()
+			_setup_held()
+			return
 	var ps: PackedScene = load(path)
 	model_root = ps.instantiate()
 	add_child(model_root)
@@ -261,10 +269,16 @@ func _setup_held() -> void:
 	held.transform = Transform3D(Basis(Vector3.RIGHT, PI), Vector3(0, 0.07, 0))
 
 ## Attachment point following a bone (use for frost growths, hard-hat lamps, etc.).
-func bone_attachment(bone_name: String) -> BoneAttachment3D:
-	if skeleton == null or skeleton.find_bone(bone_name) < 0:
-		return null
+func bone_attachment(bone_name: String) -> Node3D:
 	var nm := "BA_" + bone_name
+	if skeleton == null or skeleton.find_bone(bone_name) < 0:
+		# never null: a plain node at the model origin keeps callers (lamps, crystals, hats) safe
+		var dn := get_node_or_null(nm)
+		if dn == null:
+			dn = Node3D.new()
+			dn.name = nm
+			add_child(dn)
+		return dn as Node3D
 	var ex := skeleton.get_node_or_null(nm)
 	if ex:
 		return ex as BoneAttachment3D

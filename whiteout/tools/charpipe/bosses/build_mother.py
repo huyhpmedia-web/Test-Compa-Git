@@ -10,7 +10,7 @@ from bosslib import *
 from common import *
 
 ONLY = os.environ.get("MOTHER_ONLY", "")
-SC = 1.28           # Ruth is larger than life
+SC = 2.6           # Ruth is larger than life
 
 
 def mats():
@@ -97,7 +97,7 @@ def build_p1():
     ib = MeshBuilder("Ice")
     imats = [M["ice"], M["ice_deep"], M["ice_glow"], M["ice_blood"]]
     cores = []
-    for i in range(86):
+    for i in range(60):
         d = Vector((rng.uniform(-1.0, 1.0), rng.uniform(0.12, 1.0), rng.uniform(-0.55, 1.0))).normalized()
         start = hub + Vector((rng.uniform(-1, 1), rng.uniform(-0.5, 0.5), rng.uniform(-0.6, 0.8)))
         L = rng.uniform(2.5, 8.5)
@@ -106,7 +106,7 @@ def build_p1():
         add_crystal(ib, start, d, L, R, sides=6, tip=0.18, jitter=0.2, rng=rng, mat_index=mi, taper=0.8)
         if i % 2 == 0:   # inner glowing core: reads as light trapped inside the crystal
             add_crystal(ib, start + d * 0.1, d, L * 0.8, R * 0.38, sides=5, tip=0.2, jitter=0.1, rng=rng, mat_index=2, taper=0.7)
-    for i in range(36):  # floor spikes behind
+    for i in range(24):  # floor spikes behind
         x = rng.uniform(-10, 10)
         y = rng.uniform(1.5, 7)
         d = Vector((rng.uniform(-0.3, 0.3) - x * 0.03, rng.uniform(-0.4, 0.2), 1.0))
@@ -115,7 +115,7 @@ def build_p1():
         add_crystal(ib, Vector((x, y, -0.2)), d, L, R, tip=0.2, rng=rng, mat_index=1)
         if i % 3 == 0:
             add_crystal(ib, Vector((x, y, -0.1)), d, L * 0.75, R * 0.35, sides=5, tip=0.2, rng=rng, mat_index=2)
-    for i in range(40):   # small shards close to her
+    for i in range(14):   # small shards close to her
         a = rng.uniform(0, math.tau)
         base = Vector((math.cos(a) * rng.uniform(0.8, 2.4), rng.uniform(0.2, 1.4), 2.0 + math.sin(a) * rng.uniform(0.5, 1.8)))
         add_crystal(ib, base, Vector((math.cos(a), 0.2, math.sin(a))), rng.uniform(0.4, 1.2), rng.uniform(0.04, 0.1), rng=rng, mat_index=rng.choice([0, 1, 2]))
@@ -126,7 +126,7 @@ def build_p1():
 
     lat = MeshBuilder("Lattice")
     # dark root tendrils draped over everything (glow faintly)
-    for i in range(26):
+    for i in range(8):
         top = hub + Vector((rng.uniform(-3, 3), rng.uniform(-0.5, 3), rng.uniform(0.5, 4)))
         pts = [top]
         for k in range(4):
@@ -137,11 +137,11 @@ def build_p1():
     ensure_col(root_o)
     shade_smooth(root_o)
     # thorax mass she is fused into: sculpted flesh/ice mortar (metaballs)
-    elems = [((0, 0.35, 2.1), 1.5, 2.0, (1.1, 0.9, 0.9)), ((0.0, 0.55, 2.5), 1.2, 2.0, (1.4, 0.8, 0.9)), ((-1.2, 0.4, 2.7), 0.7, 2.0, (1, 1, 1)), ((1.2, 0.4, 2.7), 0.7, 2.0, (1, 1, 1)),
-             ((0, 0.2, 1.3), 1.2, 2.0, (1.2, 0.9, 0.8)), ((-0.9, 0.2, 1.0), 0.6, 2.0, (1, 1, 1)), ((0.9, 0.2, 1.0), 0.6, 2.0, (1, 1, 1))]
-    for k in range(18):
+    elems = [((0, 0.5, 1.7), 0.9, 2.0, (1.1, 0.9, 0.9)), ((0.0, 0.6, 2.3), 0.8, 2.0, (1.3, 0.8, 0.9)),
+             ((0, 0.3, 0.9), 0.9, 2.0, (1.3, 0.9, 0.8)), ((-0.8, 0.3, 0.7), 0.5, 2.0, (1, 1, 1)), ((0.8, 0.3, 0.7), 0.5, 2.0, (1, 1, 1))]
+    for k in range(0):
         a = rng.uniform(0, math.tau)
-        elems.append(((math.cos(a) * rng.uniform(0.7, 1.7), rng.uniform(0.2, 0.9), 2.1 + math.sin(a) * rng.uniform(0.5, 1.5)), rng.uniform(0.35, 0.6), 2.0, (1, 1, 1)))
+        elems.append(((math.cos(a) * rng.uniform(0.6, 1.4), rng.uniform(0.4, 1.0), 1.8 + math.sin(a) * rng.uniform(0.4, 1.2)), rng.uniform(0.25, 0.4), 2.0, (1, 1, 1)))
     mortar = metaball_mesh("mortar", elems, resolution=0.09, threshold=0.55, mat=M["flesh"])
     smooth_mesh(mortar, 2, 0.5)
     displace_noise(mortar, 0.07, 2.8, seed=3.0, octaves=4)
@@ -149,7 +149,7 @@ def build_p1():
     uv_box(mortar, 0.5)
     shade_smooth(mortar)
     ensure_col(mortar)
-    set_vertex_color(mortar, vcol_flesh(seed=6, bloody=0.4))
+    set_vertex_color(mortar, vcol_flesh(seed=6, bloody=0.2))
     lattice = join([root_o, mortar], "Lattice")
     ice_all = join([ice, arm_ice_o], "Ice")
     print("P1 tris", total_tris())
@@ -169,6 +169,7 @@ def build_p2():
     chest_local = Vector(p.arm.pose.bones["spine_03"].head)
     # In game space the Ruth node sits at (0, 1.5, 0.2) (Blender (0,-0.2,1.5)); her waist is ~ (0, 0.2, ~2.0)
     head_posed = Vector(p.arm.pose.bones["head"].head) + Vector((0, -0.02, 0.1))
+    pelvis_posed = Vector(p.arm.pose.bones["pelvis"].head)
     HEART = Vector((0, -0.55, 3.0))
     Mx = Matrix.Translation(HEART) @ Matrix.Rotation(math.radians(-14), 4, 'X') @ Matrix.Scale(SC, 4) @ Matrix.Translation(-(chest_local + Vector((0, -0.07, 0.0))))
     res = finalize_person(p, Mx, dec={"body": 0.5, "hair": 0.5, "default": 0.5}, vcol_fn=vcol_grime(axis=(0, 0), r0=10, r1=20, dark=0.9),
@@ -177,7 +178,7 @@ def build_p2():
     ribs, heart, strands = open_chest(res, ctr, M["wet"], M["bone"], M["heart_glow"], rx=0.15, rz=0.21, strands=18, rng=rng, glow_scale=1.4)
     # torn waist: ragged flesh collar, exposed spine and ribs, strands trailing back to the abdomen
     wb = MeshBuilder("waist")
-    wc = Mx @ (Vector(p.bone_head("pelvis")) + Vector((0, 0.0, 0.05)))
+    wc = Mx @ (pelvis_posed + Vector((0, 0.0, 0.05)))
     add_blob(wb, wc + Vector((0, 0.05, 0.0)), (0.34, 0.26, 0.2), seg=12, rings=8, noise_amp=0.4, color=(0.85, 0.5, 0.52, 1))
     for k in range(16):
         a = rng.uniform(0, math.tau)
@@ -214,7 +215,7 @@ def build_p2():
     # abdomen: a translucent crystal sac glowing from within, trailing behind her
     ab = Vector((0, 1.0, 2.0))
     abm = MeshBuilder("Abdomen")
-    add_blob(abm, ab, (0.9, 1.35, 0.8), seg=14, rings=10, noise_amp=0.18, mat_index=0)
+    add_blob(abm, ab, (0.9, 1.35, 0.8), seg=14, rings=10, noise_amp=0.18, mat_index=1)
     for k in range(10):
         a = rng.uniform(0, math.tau)
         add_crystal(abm, ab + Vector((math.cos(a) * 0.5, rng.uniform(0.2, 0.9), 0.5 + 0.2 * math.sin(a))), Vector((math.cos(a) * 0.4, 0.5, 1)), rng.uniform(0.6, 1.3), rng.uniform(0.07, 0.14), rng=rng, mat_index=1)

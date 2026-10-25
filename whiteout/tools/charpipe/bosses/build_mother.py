@@ -88,7 +88,8 @@ def build_p1():
     origin_to(Ruth, ctr)
     hm = empty("HeadMark", Mx @ head_posed)
     hm.parent = Ruth
-    hm.matrix_parent_inverse = Ruth.matrix_world.inverted()
+    hm.matrix_parent_inverse = Matrix.Identity(4)
+    hm.location = hm.location - Ruth.location
     Heart = join([heart, chest_cr], "Heart")
     origin_to(Heart, ctr)
 
@@ -207,7 +208,8 @@ def build_p2():
     origin_to(Ruth, Vector((0, -0.2, 1.5)))
     hm = empty("HeadMark", Mx @ head_posed)
     hm.parent = Ruth
-    hm.matrix_parent_inverse = Ruth.matrix_world.inverted()
+    hm.matrix_parent_inverse = Matrix.Identity(4)
+    hm.location = hm.location - Ruth.location
     Heart = heart
     Heart.name = "Heart"
     origin_to(Heart, ctr)

@@ -257,8 +257,8 @@ for ob in (bodyobj, ice):
     ob.parent = mass
 for root, co in crawl_roots:
     root.parent = mass
-Driver.parent = crown
-Driver.matrix_parent_inverse = crown.matrix_world.inverted()
-cab.parent = crown
-cab.matrix_parent_inverse = crown.matrix_world.inverted()
+for ob in (Driver, cab):      # the glTF exporter ignores parent-inverse: store the offset in the local location
+    ob.parent = crown
+    ob.matrix_parent_inverse = Matrix.Identity(4)
+    ob.location = ob.location - CROWN
 tris = export(os.path.join(OUT_DIR, "hauler.glb"))

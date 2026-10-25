@@ -57,7 +57,7 @@ func _make_model() -> Node3D:
 	for i in 9:
 		var ang := TAU * float(i) / 9.0
 		var d := Vector3(sin(ang), rng.randf_range(-0.3, 0.9), cos(ang) * 0.9 + 0.2)
-		Kit.crystal(nk, Vector3(0, 0.05, 0.045) * s + d.normalized() * 0.045 * s, d, rng.randf_range(0.08, 0.17) * s, 0.016 * s, gm, i)
+		Kit.crystal(nk, Vector3(0, 0.05, 0.045) * s + d.normalized() * 0.045 * s, d, rng.randf_range(0.05, 0.11) * s, 0.011 * s, gm, i)
 	# crystal "teeth" in the dropped jaw
 	var teeth := Kit.mat("tooth")
 	var hb: Node3D = h.bone_attachment("head")

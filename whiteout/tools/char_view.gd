@@ -235,7 +235,7 @@ func _lineup(models: PackedStringArray, out: String, rows: int, pose: String, w:
 		svp.add_child(sl)
 		sl.position = cam.position + Vector3(0.35, -0.15, 0)
 		sl.look_at_from_position(sl.position, lk + Vector3(0, 0.1, 0), Vector3.UP)
-		sl.light_energy = 4.5
+		sl.light_energy = clampf(0.33 * cam.position.distance_squared_to(lk), 0.5, 4.5)
 		sl.spot_range = 14.0
 		sl.spot_angle = 30.0
 		sl.spot_attenuation = 0.6

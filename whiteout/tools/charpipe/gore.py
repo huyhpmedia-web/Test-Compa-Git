@@ -137,8 +137,8 @@ def fields(p, nrm, seed, anchors, cfg):
 
 BLOOD_FRESH = np.array([0.29, 0.024, 0.024])      # #4a0606  wet, glossy
 BLOOD_DRY = np.array([0.165, 0.039, 0.031])       # #2a0a08  old, matte brown
-FLESH = np.array([0.37, 0.055, 0.05])
-FLESH_DARK = np.array([0.15, 0.015, 0.015])
+FLESH = np.array([0.22, 0.032, 0.034])
+FLESH_DARK = np.array([0.075, 0.012, 0.014])
 FAT = np.array([0.55, 0.38, 0.3])
 FROST = np.array([0.80, 0.90, 0.96])
 

@@ -59,7 +59,7 @@ def cloth_painter(color, contrast, gcfg, seed, label, rough=0.9, tint2=None):
         col = col * (1 - 0.3 * pt.smoothstep(0.25, 0.0, p[:, 2])[:, None])        # dirty low
         mask = np.isin(comp, list(ids))
         zc = cb.conv(cb.H.joint("joint-spine-1"))[2]
-        cand = (pos[:, 2] > zc - 0.45) & (pos[:, 2] < zc + 0.12) & mask
+        cand = (pos[:, 2] > zc - 0.18) & (pos[:, 2] < zc + 0.16) & mask
         eye_z = cb.conv(cb.H.joint("joint-l-eye"))[2]
         wr = [tuple(bone_pts(cb, b_, 0.0)[0]) for b_ in ("hand_l", "hand_r")]
         anchors = dict(mouth=(0.0, 0.0, eye_z - 0.066), pts=pick_points(pos, cand, 60, seed), hem_z=float(pos[mask][:, 2].min()), wrists=wr)
@@ -115,7 +115,7 @@ def zombie_skin(cb, spec, size=1024):
     # livor mottling (purple, low contrast) + greenish decay patches + frost-pale patches
     m1 = gore.fbm(p, 20, seed)
     liv = pt.smoothstep(0.52, 0.74, m1) * (0.45 + 0.4 * ext + 0.25 * (1 - zbody))
-    col = col * (1 - 0.42 * liv[:, None]) + np.array([0.30, 0.25, 0.40])[None] * 0.42 * liv[:, None]
+    col = col * (1 - 0.55 * liv[:, None]) + np.array([0.30, 0.24, 0.40])[None] * 0.55 * liv[:, None]
     m3 = gore.fbm(p, 14, seed + 31)
     dec = pt.smoothstep(0.58, 0.76, m3) * 0.28
     col = col * (1 - dec[:, None]) + np.array([0.46, 0.50, 0.38])[None] * dec[:, None]
@@ -205,7 +205,7 @@ def zombie_face(cb, spec, hair, hair_tint, brow="eyebrows/eyebrow001/eyebrow001"
     from specs import milky_eye_image
     spec.setdefault("iris", (0.92, 0.95, 1.0))
     c2.face_parts(cb, spec, hair=hair, hair_tint=hair_tint, brow=brow, brow_tint=(0.55, 0.57, 0.6), lashes=True, eye_tint=(0.7, 0.85, 1.0),
-                  decim_hair=0.35, subdiv=False, eye_fn=milky_eye_image, lash_tint=(0.82, 0.88, 0.94), frost_hair=spec.get("hair_frost", 0.75), frost_brow=0.9)
+                  decim_hair=0.35, subdiv=False, eye_fn=milky_eye_image, lash_tint=(0.82, 0.88, 0.94), frost_hair=spec.get("hair_frost", 0.4), frost_brow=0.9)
 
 
 def load_nrm_img(P, size=1024):
@@ -516,3 +516,8 @@ def extra_foreman_hat(cb, spec):
     lm.node_tree.nodes["Principled BSDF"].inputs["Emission Color"].default_value = (1.0, 0.92, 0.7, 1.0)
     lm.node_tree.nodes["Principled BSDF"].inputs["Emission Strength"].default_value = 6.0
     cb.add_mesh("lamp", V, F, bone="head", mat=lm)
+
+
+def extra_filaments(cb, spec):
+    """ankle filaments are generated at runtime (actors/enemies/hanger.gd); nothing baked."""
+    return None

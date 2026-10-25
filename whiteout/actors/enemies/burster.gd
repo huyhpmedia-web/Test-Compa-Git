@@ -64,7 +64,7 @@ func _make_model() -> Node3D:
 	_sac_mat.rim_tint = 0.4
 	_sac_mat.emission_enabled = true
 	_sac_mat.emission = Color(0.2, 0.85, 0.9)
-	_sac_mat.emission_energy_multiplier = 1.8
+	_sac_mat.emission_energy_multiplier = 1.1
 	_sac_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	_core_mat = Kit.glow_unique(Color(0.45, 0.95, 1.0), 2.5)
 	# [bone, bone-local pos, radius]  (torso bones: y up / z forward / x left; limb bones run along +Y)
@@ -76,7 +76,7 @@ func _make_model() -> Node3D:
 	]
 	var i := 0
 	for d in defs:
-		var r: float = d[2] * s * 1.35
+		var r: float = d[2] * s * 0.9
 		var holder := Node3D.new()
 		holder.position = d[1] * s
 		var ba: Node3D = h.bone_attachment(d[0])

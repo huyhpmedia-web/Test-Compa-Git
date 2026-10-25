@@ -711,7 +711,7 @@ def person_material(p, role, orig_mat):
         out = os.path.join(CACHE, "tex", f"skin_{tag}.jpg")
         if src and not os.path.exists(out):
             texgen.dead_skin(src, out, seed=p.seed, size=st.get("size", 1024), frost=st.get("frost", 0.45), blood=st.get("blood", 0.25),
-                             livid=st.get("livid", 0.6), bruise=st.get("bruise", 0.5))
+                             livid=st.get("livid", 0.6), bruise=st.get("bruise", 0.5), tone=st.get("tone", (1, 1, 1)))
         m = make_mat("skin_" + tag, tex=out if src else None, color=(0.7, 0.72, 0.8, 1), rough=st.get("rough", 0.5), spec=0.55, sss=0.1)
     elif role == "hair":
         m = make_mat("hair_" + tag, tex=src, color=(0.3, 0.3, 0.33, 1), rough=0.6, alpha_tex=True, clip=True) if src else make_mat("hair_flat", color=(0.15, 0.15, 0.17, 1))

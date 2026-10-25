@@ -48,13 +48,13 @@ def lum(a):
     return (a[..., 0] * 0.3 + a[..., 1] * 0.59 + a[..., 2] * 0.11)[..., None]
 
 
-def dead_skin(src, out, seed=1, size=1024, frost=0.5, blood=0.25, livid=0.6, bruise=0.5):
+def dead_skin(src, out, seed=1, size=1024, frost=0.5, blood=0.25, livid=0.6, bruise=0.5, tone=(1, 1, 1)):
     """MakeHuman skin -> frostbitten, mottled, blue-grey dead skin with blood and frost speckle."""
     a = load(src, size)
     L = lum(a)
     cold = np.array([0.80, 0.87, 0.97], np.float32)
     base = a * 0.35 + (L * cold) * 0.65
-    base = base * 1.05
+    base = base * 1.05 * np.array(tone, np.float32)
     # lividity: purple/blue blotches
     n1 = fbm(size, seed, 4, 3)[..., None]
     liv = smooth(0.35, 0.8, n1) * livid

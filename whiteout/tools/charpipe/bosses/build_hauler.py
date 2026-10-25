@@ -12,7 +12,7 @@ from common import *
 reset()
 M = std_mats()
 flesh = flesh_mat("flesh_mortar", 5)
-wet = make_mat("blood_flesh", color=(0.42, 0.04, 0.05, 1), rough=0.1, spec=0.9, coat=1.0, coat_rough=0.05, sss=0.2)
+wet = make_mat("blood_flesh", color=(0.22, 0.02, 0.025, 1), rough=0.12, spec=0.9, coat=1.0, coat_rough=0.04, sss=0.2)
 rubber = make_mat("rubber", color=(0.04, 0.04, 0.045, 1), rough=0.85, spec=0.3)
 rock = make_mat("rock", color=(0.16, 0.16, 0.19, 1), rough=0.9, spec=0.3)
 heart_glow = make_mat("glow_heart", color=(0.6, 0.2, 0.1, 1), rough=0.3, emission=(1.0, 0.45, 0.2, 1), emit=4.0)

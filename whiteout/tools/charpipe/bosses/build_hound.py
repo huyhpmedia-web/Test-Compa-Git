@@ -15,29 +15,29 @@ rng = random.Random(404)
 
 def g(x, y, z):
     """model-space (x right, y up, z forward) -> Blender (x, -z, y); squashed/shortened to husky proportions"""
-    y = y * 0.87
+    y = y * 0.97
     if z > 0.45:
         z = 0.45 + (z - 0.45) * 0.78
     return Vector((x, -z, y))
 
 
 # ----------------------------------------------------------------------------- materials
-fur_tex = os.path.join(CACHE, "tex", "hound_fur.jpg")
+fur_tex = os.path.join(CACHE, "tex", "hound_fur2.jpg")
 if not os.path.exists(fur_tex):
     n1 = texgen.fbm(512, 3, 5, 6)
     n2 = texgen.fbm(512, 8, 3, 64)
     # streaky fur: stretch noise along one axis
     from PIL import Image
     st = np.asarray(Image.fromarray((n2 * 255).astype(np.uint8)).resize((512, 64), Image.BICUBIC).resize((512, 512), Image.BICUBIC), np.float32) / 255
-    a = 0.35 + 0.45 * n1[..., None] + 0.2 * st[..., None]
+    a = 0.2 + 0.6 * n1[..., None] + 0.35 * st[..., None]
     base = np.concatenate([a * 0.95, a, a * 1.05], axis=2)
     texgen.save(np.clip(base, 0, 1), fur_tex)
 fur = make_mat("fur", tex=fur_tex, rough=0.9, spec=0.25)
 fur_cards = make_mat("fur_tuft", color=(0.7, 0.72, 0.78, 1), rough=0.95, spec=0.2)
-raw = make_mat("blood_flesh", color=(0.4, 0.04, 0.05, 1), rough=0.1, spec=0.9, coat=1.0, coat_rough=0.05)
+raw = make_mat("blood_flesh", color=(0.2, 0.015, 0.02, 1), rough=0.12, spec=0.9, coat=1.0, coat_rough=0.04)
 bone_m = M["bone"]
 gum = make_mat("blood_gum", color=(0.18, 0.02, 0.03, 1), rough=0.2, spec=0.7, coat=0.8)
-eye_m = make_mat("glow_eye", color=(0.3, 0.7, 0.8, 1), rough=0.3, emission=(0.5, 0.95, 1.0, 1), emit=6.0)
+eye_m = make_mat("glow_eye", color=(0.8, 0.85, 0.9, 1), rough=0.2, emission=(0.7, 0.85, 0.95, 1), emit=2.5)
 nose_m = make_mat("nose", color=(0.03, 0.02, 0.03, 1), rough=0.3, spec=0.8)
 
 # ----------------------------------------------------------------------------- skeleton graph (model space)
@@ -45,22 +45,22 @@ nose_m = make_mat("nose", color=(0.03, 0.02, 0.03, 1), rough=0.3, spec=0.8)
 SPINE = [
     ("rump", (0, 0.60, -0.50), (0.075, 0.08)),
     ("pelvis", (0, 0.63, -0.38), (0.095, 0.10)),
-    ("loin", (0, 0.62, -0.12), (0.085, 0.095)),
-    ("ribs", (0, 0.63, 0.14), (0.105, 0.125)),
-    ("chest", (0, 0.65, 0.34), (0.105, 0.135)),
+    ("loin", (0, 0.62, -0.12), (0.062, 0.08)),
+    ("ribs", (0, 0.64, 0.14), (0.105, 0.15)),
+    ("chest", (0, 0.66, 0.34), (0.1, 0.165)),
     ("neckb", (0, 0.70, 0.50), (0.08, 0.10)),
     ("neckm", (0, 0.77, 0.64), (0.065, 0.078)),
     ("skull", (0, 0.83, 0.77), (0.062, 0.07)),
     ("brow", (0, 0.83, 0.86), (0.055, 0.058)),
-    ("muzzle1", (0, 0.805, 0.95), (0.04, 0.042)),
-    ("muzzle2", (0, 0.79, 1.04), (0.034, 0.036)),
-    ("nose", (0, 0.785, 1.115), (0.026, 0.028)),
+    ("muzzle1", (0, 0.805, 0.95), (0.034, 0.036)),
+    ("muzzle2", (0, 0.79, 1.04), (0.026, 0.028)),
+    ("nose", (0, 0.785, 1.12), (0.018, 0.02)),
 ]
 
 
 RS_DEF = 1.12
-RS = {"skull": 1.4, "brow": 1.4, "muzzle1": 1.35, "muzzle2": 1.35, "nose": 1.3, "neckb": 1.3, "neckm": 1.3, "ribs": 1.15, "chest": 1.25, "pelvis": 1.15,
-      "j0": 1.3, "j1": 1.3, "j2": 1.3, "j3": 1.3}
+RS = {"skull": 1.25, "brow": 1.25, "muzzle1": 1.0, "muzzle2": 1.0, "nose": 1.0, "neckb": 1.3, "neckm": 1.25, "ribs": 1.1, "chest": 1.15, "loin": 0.9, "pelvis": 1.1,
+      "j0": 1.1, "j1": 1.0, "j2": 1.0, "j3": 1.0}
 
 
 def build_skin(name, chains, subs=2, extra_edges=()):
@@ -257,13 +257,13 @@ def fur_color(co, n, i):
     saddle = smoothstep(0.58, 0.68, ym) * smoothstep(-0.55, -0.35, zm) * (1 - smoothstep(0.55, 0.75, zm))
     nz = 0.5 + 0.5 * noise.noise(co * 9.0)
     nb = 0.5 + 0.5 * noise.noise(co * 3.1 + Vector((5, 0, 0)))
-    base = Vector((0.80, 0.8, 0.84)).lerp(Vector((0.34, 0.34, 0.38)), saddle * (0.5 + 0.5 * nb))
+    base = Vector((0.62, 0.63, 0.67)).lerp(Vector((0.2, 0.2, 0.23)), saddle * (0.6 + 0.4 * nb))
     base *= 0.82 + 0.3 * nz
     # blood-matted fur around the wounds and muzzle
     bl = smoothstep(0.7, 0.2, (co - g(0.10, 0.60, 0.16)).length) * 0.8 + smoothstep(0.35, 0.05, (co - g(0, 0.76, 1.0)).length) * 0.5
     base = base.lerp(Vector((0.35, 0.05, 0.06)), min(1.0, bl) * (0.5 + 0.5 * nz))
     up = max(0.0, n.z)
-    fr = smoothstep(0.35, 0.9, up * (0.55 + 0.7 * nb)) * 0.8
+    fr = smoothstep(0.45, 0.95, up * (0.5 + 0.6 * nb)) * 0.6
     base = base.lerp(Vector((0.9, 0.96, 1.0)), fr)
     return (base.x, base.y, base.z, 1.0)
 
@@ -356,16 +356,16 @@ tf = MeshBuilder("tufts")
 def tuft_spots():
     spots = []
     # (position, direction) samples on the body: neck ruff, withers, back, tail, leg feathers, ears fringe
-    for k in range(70):   # back ridge + shoulders
+    for k in range(110):   # back ridge + shoulders
         zz = rng.uniform(-0.45, 0.55)
         yy = 0.70 + 0.03 * math.sin(zz * 3) + rng.uniform(-0.01, 0.02)
         spots.append((g(rng.uniform(-0.07, 0.07), yy, zz), g(rng.uniform(-0.2, 0.2), 0.35, -0.9)))
-    for k in range(60):   # neck ruff / chest
+    for k in range(90):   # neck ruff / chest
         a = rng.uniform(0, math.tau)
         zz = rng.uniform(0.42, 0.7)
         yy = 0.72 + 0.14 * (zz - 0.42) / 0.28
         spots.append((g(math.cos(a) * 0.075, yy + math.sin(a) * 0.08, zz), g(math.cos(a) * 0.6, math.sin(a) * 0.6 - 0.2, -0.8)))
-    for k in range(40):   # flanks
+    for k in range(70):   # flanks
         sd = rng.choice((-1, 1))
         spots.append((g(sd * 0.1, rng.uniform(0.5, 0.64), rng.uniform(-0.4, 0.3)), g(sd * 0.3, -0.3, -0.9)))
     for k in range(40):   # tail
@@ -381,7 +381,7 @@ def tuft_spots():
 
 
 for pos, d in tuft_spots():
-    L = rng.uniform(0.05, 0.1)
+    L = rng.uniform(0.06, 0.12)
     add_crystal(tf, pos - d.normalized() * 0.01, d, L, rng.uniform(0.007, 0.014), sides=3, tip=0.7, jitter=0.2, rng=rng, mat_index=0, taper=0.8,
                 color=(rng.uniform(0.8, 1.0),) * 3 + (1,))
 tufts = tf.build([fur_cards])
@@ -391,8 +391,8 @@ parts_by_bone.append((tufts, None))
 
 # crystal spines along the back + hanging icicles + frost crust patches
 ib = MeshBuilder("ice")
-for k in range(11):
-    zz = 0.45 - k * 0.092
+for k in range(7):
+    zz = 0.45 - k * 0.14
     L = rng.uniform(0.12, 0.28) * (1.4 if k % 3 == 0 else 1.0)
     add_crystal(ib, g(rng.uniform(-0.02, 0.02), 0.725 + 0.03 * math.sin(zz * 3), zz), g(rng.uniform(-0.2, 0.2), 1.0, -0.45 - 0.2 * rng.random()), L, rng.uniform(0.014, 0.026), rng=rng, mat_index=rng.choice([0, 1, 0]))
 for k in range(5):   # crystals growing from the shoulder / hip

@@ -15,7 +15,7 @@ SC = 2.6           # Ruth is larger than life
 
 def mats():
     M = std_mats()
-    M["wet"] = make_mat("blood_flesh", color=(0.42, 0.04, 0.05, 1), rough=0.1, spec=0.9, coat=1.0, coat_rough=0.05, sss=0.2)
+    M["wet"] = make_mat("blood_flesh", color=(0.22, 0.02, 0.025, 1), rough=0.12, spec=0.9, coat=1.0, coat_rough=0.04, sss=0.2)
     M["root"] = make_mat("root", color=(0.05, 0.05, 0.08, 1), rough=0.35, metal=0.3, emission=(0.1, 0.35, 0.5, 1), emit=0.5)
     M["heart_glow"] = make_mat("glow_heart", color=(0.3, 0.7, 0.8, 1), rough=0.3, emission=(0.5, 0.95, 1.0, 1), emit=5.0)
     M["flesh"] = flesh_mat("flesh_mortar", 5)
@@ -180,12 +180,12 @@ def build_p2():
     wb = MeshBuilder("waist")
     wc = Mx @ (pelvis_posed + Vector((0, 0.0, 0.05)))
     add_blob(wb, wc + Vector((0, 0.05, 0.0)), (0.34, 0.26, 0.2), seg=12, rings=8, noise_amp=0.4, color=(0.85, 0.5, 0.52, 1))
-    for k in range(16):
+    for k in range(24):
         a = rng.uniform(0, math.tau)
         pts = [wc + Vector((math.cos(a) * 0.2, math.sin(a) * 0.15, -0.05))]
-        for j in range(5):
-            pts.append(pts[-1] + Vector((math.cos(a) * 0.04 + rng.uniform(-0.05, 0.05), 0.2 + rng.uniform(0, 0.1), -0.08 - rng.uniform(0, 0.05))))
-        add_tube(wb, pts, [0.03 - 0.004 * j for j in range(6)], sides=5, color=(0.85, 0.45, 0.48, 1), noise_amp=0.2)
+        for j in range(8):
+            pts.append(pts[-1] + Vector((math.cos(a) * 0.04 + rng.uniform(-0.05, 0.05), 0.12 + rng.uniform(0, 0.1), -0.14 - rng.uniform(0, 0.08))))
+        add_tube(wb, pts, [0.035 - 0.0035 * j for j in range(9)], sides=5, color=(0.85, 0.45, 0.48, 1), noise_amp=0.2)
     for k in range(10):   # broken ribs / spine splinters
         a = rng.uniform(0, math.tau)
         add_crystal(wb, wc + Vector((math.cos(a) * 0.2, math.sin(a) * 0.16, 0.0)), Vector((math.cos(a) * 0.3, math.sin(a) * 0.3, -1)), rng.uniform(0.12, 0.3), 0.012, sides=5, rng=rng, mat_index=1)
@@ -233,15 +233,18 @@ def build_p2():
         mb = MeshBuilder(name)
         r_ = random.Random(hash(name) % 1000 + 1)
         if kind in ("up", "lo"):
-            n = 5 if kind == "up" else 4
-            for k in range(n):
-                ang = math.tau * k / n + r_.uniform(-0.3, 0.3)
-                off = Vector((math.cos(ang), 0, math.sin(ang))) * (0.0 if k == 0 else 0.45)
-                # blender: glTF Y up = Blender +Z ; unit piece along +Z
-                base = Vector((off.x, off.z, r_.uniform(-0.02, 0.1)))
-                L = r_.uniform(0.7, 1.05) if k else 1.0
-                add_crystal(mb, base, Vector((off.x * 0.12, off.z * 0.12, 1.0)), L, 0.62 if k == 0 else r_.uniform(0.25, 0.5), sides=6, tip=0.12 if kind == "up" else 0.2,
-                            jitter=0.25, rng=r_, mat_index=0, taper=0.78)
+            # segmented bone-ice: stacked vertebra-like segments with swollen joints, ridges and barbs
+            nseg = 5 if kind == "up" else 4
+            radii = [0.95, 0.62, 0.8, 0.55, 0.7, 0.5, 0.62, 0.42, 0.5]
+            pts = [Vector((0, 0, j / (nseg * 2.0))) for j in range(nseg * 2 + 1)]
+            rr = [radii[j % len(radii)] * (1.0 - 0.35 * j / (nseg * 2.0)) for j in range(len(pts))]
+            add_tube(mb, pts, rr, sides=7, mat_index=0, noise_amp=0.18, seed=len(name))
+            for j in range(0, len(pts), 2):   # joint swellings (organic knuckles)
+                add_blob(mb, pts[j], (rr[j] * 1.25, rr[j] * 1.25, 0.05), seg=8, rings=4, noise_amp=0.2, mat_index=1)
+            for k in range(7):                 # barbs / splintered crystal
+                z = r_.uniform(0.1, 0.9)
+                ang = r_.uniform(0, math.tau)
+                add_crystal(mb, Vector((math.cos(ang) * 0.5, math.sin(ang) * 0.5, z)), Vector((math.cos(ang) * 0.25, math.sin(ang) * 0.25, 1.0)), r_.uniform(0.15, 0.4), r_.uniform(0.12, 0.25), sides=4, rng=r_, mat_index=1)
         elif kind == "tip":
             add_crystal(mb, Vector((0, 0, 0)), Vector((0, 0, 1)), 1.0, 1.0, sides=5, tip=0.55, jitter=0.15, rng=r_, mat_index=1, taper=0.7)
         else:

@@ -15,6 +15,7 @@ flesh = flesh_mat("flesh_mortar", 5)
 # (char, skin seed, cloth style, yaw (deg from +X; -90 = faces glTF +Z/front), height, weak head index or None, lean)
 FRONT = -90
 SC = 1.3
+TONES = [(1.0, 1.0, 1.0), (1.1, 0.95, 0.85), (0.8, 0.8, 0.85), (0.9, 0.78, 0.7)]
 CONG = [
     ("rimebound_civ_f", 11, {"flat": (0.12, 0.13, 0.22)}, FRONT + 35, 1.0, None, 16, "reach_up"),             # navy coat
     ("rimebound_miner", 12, {}, 150, 1.35, None, 14, "embrace"),                                            # a miner
@@ -43,6 +44,7 @@ POSES = {
 
 people_objs = []
 people_centres = []
+tears = []
 heads = {}
 mouth_pts = []     # (position, outward normal)
 head_pts = []
@@ -52,7 +54,7 @@ for idx, (char, seed, cst, yaw, z, weak, lean, pose) in enumerate(CONG):
     tag = f"p{idx}"
     st = {"variant": idx, "frost": 0.55, "dirt": 0.5, "blood": 0.3}
     st.update(cst)
-    p = Person(char, tag, seed=seed, cloth_style=st, skin_style={"frost": 0.5, "blood": 0.35, "livid": 0.7})
+    p = Person(char, tag, seed=seed, cloth_style=st, skin_style={"frost": 0.5, "blood": 0.35, "livid": 0.4 + 0.1 * (idx % 4), "tone": TONES[idx % 4]})
     is_weak = weak is not None
     p.head_morph(stretch=0.55 if is_weak else 0.32, jaw=0.95 if is_weak else 0.75, mouth_cut=0.013 if is_weak else 0.011)
     p.pose([("spine_03", "X", 8), ("neck_01", "X", -3), ("head", "X", -6)] + POSES[pose])
@@ -91,6 +93,9 @@ for idx, (char, seed, cst, yaw, z, weak, lean, pose) in enumerate(CONG):
                 bmesh.ops.delete(bm, geom=[v for v in bm.verts if v[lay] >= 0.7], context='VERTS')
             bm.to_mesh(ob.data); bm.free()
     people_objs.extend(bres.values())
+    for sx in (-1, 1):
+        ep = Mx @ Vector((sx * p.eye_dx, p.eye_c.y - 0.005, p.eye_c.z - 0.012))
+        tears.append(ep)
     people_centres.append(Mx @ Vector((0, -0.02, 1.2)))
     hc = Mx @ hd_local
     mc = Mx @ mouth_local
@@ -236,6 +241,8 @@ for (mc, nrm) in mouth_pts:
     for j in range(9):
         pts.append(p0 + Vector((nrm.x * 0.03 * j + rng3.uniform(-0.02, 0.02), nrm.y * 0.03 * j + rng3.uniform(-0.02, 0.02), -0.11 * j)))
     add_tube(mb, pts, [0.03 - 0.0025 * j for j in range(9)], sides=6, mat_index=3, noise_amp=0.4)
+for tp in tears:   # frozen tears
+    add_crystal(mb, tp, Vector((0, 0.1, -1)), rng3.uniform(0.07, 0.16), 0.006, sides=4, tip=0.6, rng=rng3, mat_index=0)
 ice = mb.build(imats)
 shade_smooth(ice)
 ensure_col(ice)

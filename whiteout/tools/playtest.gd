@@ -48,6 +48,7 @@ var route_checks := true
 var routes_failed := 0
 var walking := true               # really walk legs with the player controller (walk=0 -> teleport only)
 var walked_m := 0.0
+var pre_interact := Callable()    # called right before the next interact() (e.g. to place an enemy)
 
 const FPS := 60.0
 
@@ -76,7 +77,7 @@ func _on_frame() -> void:
 	# autopilot: advance dialogue, close informational modals, god mode
 	if UI._dlg_active:
 		UI._dlg_advance = true
-	if UI.modal != null and is_instance_valid(UI.modal) and UI.modal.name in ["Note", "ItemGet"]:
+	if UI.modal != null and is_instance_valid(UI.modal) and not (UI.modal.name in ["Ending", "GameOver"]):
 		UI.close_modal()
 	if god and Game.hp > 0:
 		if Game.hp < min_hp:
@@ -368,6 +369,9 @@ func walk_to(target: Vector3, label: String) -> bool:
 		total += path[i].distance_to(path[i - 1])
 	if total < 1.0:
 		return true
+	var miny := 1e9
+	for pp in path:
+		miny = min(miny, pp.y)
 	var old_mask: int = p.collision_mask
 	p.collision_mask = 1          # enemies must not body-block the scripted walk
 	Input.action_press("sprint")
@@ -375,7 +379,7 @@ func walk_to(target: Vector3, label: String) -> bool:
 	var t := 0.0
 	var limit := total / 2.5 + 12.0
 	var ok := true
-	var mark := p.global_position
+	var mark: Vector3 = p.global_position
 	var mark_t := 0.0
 	var reason := ""
 	while idx < path.size():
@@ -401,14 +405,14 @@ func walk_to(target: Vector3, label: String) -> bool:
 			continue
 		p.cam_yaw = atan2(-d.x, -d.z)
 		Input.action_press("move_forward")
-		if p.global_position.y < min(path[idx].y, target.y) - 2.5:
+		if p.global_position.y < miny - 2.5:
 			ok = false
 			reason = "fell through the floor at %s" % p.global_position.snapped(Vector3(0.1, 0.1, 0.1))
 			break
 		if t - mark_t > 2.0:
 			if p.global_position.distance_to(mark) < 0.3:
-				ok = false
-				reason = "blocked at %s heading to %s" % [p.global_position.snapped(Vector3(0.1, 0.1, 0.1)), wp.snapped(Vector3(0.1, 0.1, 0.1))]
+				var why := "blocked at %s heading to %s" % [p.global_position.snapped(Vector3(0.1, 0.1, 0.1)), wp.snapped(Vector3(0.1, 0.1, 0.1))]
+				warn("walk to %s: %s (ledge/obstacle the navmesh does not know; teleporting on)" % [label, why])
 				break
 			mark = p.global_position
 			mark_t = t
@@ -477,7 +481,7 @@ func inv_ids() -> Array:
 
 # =================================================================== actions
 ## Walk up to an interactable (teleport to a walkable spot in reach), verify focus, press interact.
-func use(it: Node, label: String, expect_focus := true, want := Callable()) -> bool:
+func use(it: Node, label: String, expect_focus := true, want := Callable(), do_settle := true) -> bool:
 	if it == null or not is_instance_valid(it):
 		rec("interact: " + label, false, "interactable not found / freed")
 		return false
@@ -501,9 +505,13 @@ func use(it: Node, label: String, expect_focus := true, want := Callable()) -> b
 	if expect_focus and pl().focused_interact != it:
 		var f2 = pl().focused_interact
 		rec("focusable: " + label, false, "focus stayed on '%s'" % (str(f2.get("prompt")) if f2 else "<none>"))
+	if pre_interact.is_valid():
+		pre_interact.call()
+		pre_interact = Callable()
 	it.interact(pl())
 	await fr(2)
-	await settle(90.0, label)
+	if do_settle:
+		await settle(90.0, label)
 	return true
 
 func use_prompt(sub: String, label := "", near := Vector3.INF, want := Callable()) -> bool:
@@ -634,6 +642,52 @@ func check_world(id: String) -> void:
 	if not bad_nav.is_empty():
 		warn("enemies far from navmesh (will not path): " + ", ".join(bad_nav))
 
+## Every stair/ramp must be climbable with the real controller (both directions).
+func check_stairs() -> void:
+	var p = pl()
+	var n := 0
+	var home: Vector3 = p.global_position
+	var home_yaw: float = p.cam_yaw
+	for r in get_tree().get_nodes_in_group("stairs"):
+		var m: Dictionary = r.get_meta("stairs")
+		var fwd := Basis(Vector3.UP, m.yaw) * Vector3(0, 0, 1)
+		var lo: Vector3 = m.pos
+		var hi: Vector3 = lo + fwd * m.length + Vector3(0, m.rise, 0)
+		n += 1
+		for up in [true, false]:
+			var a: Vector3 = (lo - fwd * 0.8) if up else (hi + fwd * 0.8)
+			var b: Vector3 = hi if up else lo
+			# start on the floor level that belongs to that end (find it with a ray)
+			var from := a + Vector3(0, 1.2 if up else 1.2, 0)
+			var q := PhysicsRayQueryParameters3D.create(from, from + Vector3(0, -4, 0), 1)
+			var h: Dictionary = p.get_world_3d().direct_space_state.intersect_ray(q)
+			if h.is_empty():
+				continue
+			p.global_position = h.position + Vector3(0, 0.08, 0)
+			p.velocity = Vector3.ZERO
+			p.collision_mask = 1
+			await fr(3)
+			var d := b - a
+			d.y = 0
+			p.cam_yaw = atan2(-d.x, -d.z)
+			Input.action_press("move_forward")
+			var t := 0.0
+			var reached := false
+			while t < (d.length() / 2.0 + 3.0):
+				await get_tree().process_frame
+				t += 1.0 / FPS
+				if abs(p.global_position.y - b.y) < 0.5 and Vector2(p.global_position.x - b.x, p.global_position.z - b.z).length() < 1.2:
+					reached = true
+					break
+			Input.action_release("move_forward")
+			p.collision_mask = 5
+			rec("stairs at %s walkable %s" % [lo.snapped(Vector3(0.1, 0.1, 0.1)), "up" if up else "down"], reached, "player stuck at %s (target %s)" % [p.global_position.snapped(Vector3(0.1, 0.1, 0.1)), b.snapped(Vector3(0.1, 0.1, 0.1))])
+	p.global_position = home
+	p.velocity = Vector3.ZERO
+	p.cam_yaw = home_yaw
+	if n > 0:
+		info("%d stair(s) tested" % n)
+
 ## Everything dormant/idle wakes up; used by the soak test.
 func wake_all() -> void:
 	for e in enemies():
@@ -683,12 +737,60 @@ func run_level(id: String) -> void:
 	var spawn: String = {"l2_school": "from_road", "l3_church": "from_school"}.get(id, "start")
 	fresh_state(args.get("flags", "").split(",", false))
 	await load_level(id, spawn)
+	if args.has("probe"):
+		var pr: PackedStringArray = args.probe.split(",")
+		var o := Vector3(float(pr[0]), float(pr[1]), float(pr[2]))
+		var dirs := [Vector3.RIGHT, Vector3.LEFT, Vector3.FORWARD, Vector3.BACK]
+		for dv in dirs:
+			var q := PhysicsRayQueryParameters3D.create(o, o + dv * 1.5, 1)
+			var h: Dictionary = pl().get_world_3d().direct_space_state.intersect_ray(q)
+			var desc := "free"
+			if not h.is_empty():
+				var c: Node = h.collider
+				var chain := ""
+				var n: Node = c
+				while n != null and n != lvl():
+					chain = str(n.name) + "/" + chain
+					n = n.get_parent()
+				var size := ""
+				for ch in c.get_children():
+					if ch is CollisionShape3D and ch.shape is BoxShape3D:
+						size = str((ch.shape as BoxShape3D).size) + " at " + str(c.global_position)
+				desc = chain + " " + size + " hit " + str(h.position)
+			print("PROBE ", dv, " -> ", desc)
 	await check_world(id)
+	await check_stairs()
 	await prep_nav()
 	last_spot = snap(pl().global_position)
 	await play_level(id)
 	await sweep_triggers()
+	await reload_check(id, spawn)
 	await exit_level(id)
+	if id == "l6_heart" and not args.has("ending"):
+		# the other ending, from a fresh load with the Mother already dead
+		UI.close_modal()
+		args["ending"] = "thaw"
+		Game.flags.erase("ending")
+		fresh_state(["mother_dead", "found_june"])
+		await load_level("l6_heart", "start")
+		await check_world("l6_heart (thaw)")
+		await prep_nav()
+		last_spot = snap(pl().global_position)
+		await finish_l6()
+
+## "Load game" at the end of the level: flags/inventory persist, the level is rebuilt from them.
+## Everything that was solved must still be solved (exit open, no errors, nobody stuck).
+func reload_check(id: String, spawn: String) -> void:
+	await settle(30.0, "before reload")
+	var inv_before := inv_ids()
+	await load_level(id, spawn)
+	await settle(30.0, "after reload")
+	await fr(30)
+	rec("level reloads from saved state", lvl() != null and pl() != null and str(lvl().name).contains(id), "lvl=%s player=%s" % [lvl(), pl()])
+	rec("inventory survives reload", inv_ids() == inv_before, "%s != %s" % [inv_ids(), inv_before])
+	await prep_nav()
+	last_spot = Vector3.INF
+	walking = false     # (the exit may be on another floor/area than the reload spawn)
 
 func play_level(id: String) -> void:
 	match id:
@@ -925,12 +1027,199 @@ func kill_choir(boss: Node) -> void:
 			await fr(1)
 	rec("Choir dies after all five heads are destroyed (%d shots)" % shots, boss.state == "dead", "state=%s hp=%s" % [boss.state, boss.hp])
 
-# placeholders replaced below
+# =================================================================== L4 - MERIDIAN
+func toggle_sw(sub: String) -> void:
+	await use_prompt("Toggle " + sub, "toggle " + sub)
+
 func play_l4() -> void:
-	pass
+	await fire_trigger("l4_gate_greet")
+	await pick("l4_badge", "MERIDIAN badge")
+	expect_item("badge_meridian")
+	await open_door("l4_front", true, "main entrance (badge)")
+	expect_item("badge_meridian", "badge kept by the reader")
+	await fire_trigger("l4_lobby_greet")
+	await fire_trigger("l4_hallc_hint")
+	# electrical room: wrong sum first (26 kW), MERIDIAN must refuse; then exactly 40 kW
+	await open_door("l4_elec", true, "electrical room door")
+	await use_prompt("Read the load-shed console", "load-shed console")
+	await toggle_sw("PDU-9")
+	await use_prompt("Use intercom", "hall C intercom with 26 kW (must refuse)", Vector3(-3.4, 1.3, -35.0))
+	rec("MERIDIAN refuses the wrong sum", not Game.has_flag("l4_grant_hallc"))
+	await toggle_sw("PDU-7")
+	await use_prompt("Use intercom", "hall C intercom with 40 kW", Vector3(-3.4, 1.3, -35.0))
+	expect_flag("l4_grant_hallc")
+	await open_door("l4_hallc", true, "Hall C door")
+	# cooling plant: coolant key -> override cabinet -> breach
+	await open_door("l4_plantdoor", true, "cooling plant door")
+	await pick("l4_coolant_key", "cooling plant key")
+	await use_prompt("Chiller override cabinet", "chiller override cabinet")
+	expect_flag("l4_override")
+	await settle(60.0, "breach cutscene")
+	await open_door("l4_contain", true, "containment door")
+	# armory: launcher (triggers the Foreman's arrival)
+	await open_door("l4_armory", true, "armory (badge)")
+	await pick("l4_launcher", "flare launcher")
+	await wait(4.0)
+	await settle(60.0, "Foreman arrival")
+	# clear the corridor so Imogen survives
+	for u in ["l4_zK1", "l4_zK2"]:
+		var z := enemy_by_uid(u)
+		if z != null and z.state != "dead":
+			z.take_hit(9999.0, z.global_position + Vector3(0, 1.6, 0), Vector3(0, 0, 1), true)
+	await wait(1.0)
+	# NOC: exactly 54 kW (PDU-7 + CH-3)
+	await fire_trigger("l4_noc_glass")
+	await toggle_sw("PDU-9")
+	await toggle_sw("CH-3")
+	await use_prompt("Use intercom", "NOC intercom with 54 kW", Vector3(-3.2, 1.3, -65.0))
+	expect_flag("l4_grant_noc")
+	await open_door("l4_noc", true, "NOC door")
+	for it in interactables():
+		if str(it.get("prompt")).find("Hart") >= 0 and it.get("enabled"):
+			await use(it, "talk to Dr. Hart (" + str(it.get("prompt")) + ")", false)
+	expect_flag("met_imogen")
+	expect_item("pipeline_card", "from Imogen")
+	await wait(1.0)
+	expect_flag("imogen_alive")
+	# pipeline head: swipe the card
+	await use_prompt("Swipe override card", "pipeline card reader")
+	expect_flag("pipeline_open")
+
+# =================================================================== L5 - LOWER KETTLE MINE
 func play_l5() -> void:
-	pass
+	await fire_trigger("mn_hum1")
+	# pump station: lamp battery (siren + husk ambush wakes)
+	await fire_trigger("mn_pump_enter")
+	await pick("mn_battery", "cap-lamp battery")
+	# south drift: hoist brake lever
+	await pick("mn_lever", "hoist brake lever")
+	# hoist hall -> lamp room (safe room): tag 114, charger
+	await fire_trigger("mn_enter_hall")
+	await open_door("mn_lampdoor", true, "lamp room door")
+	await use_prompt("Brass tag 114", "Tom's brass tag")
+	await settle(90.0, "tag 114 hallucination")
+	expect_item("tom_tag", "Tom's tag")
+	await use_prompt("Cap-lamp charger", "charger + signal panel")
+	expect_flag("mine_power")
+	# hoist brake station: lever + power -> the Foreman fight
+	await use_prompt("Hoist brake station", "seat the brake lever")
+	expect_flag("hoist_ready")
+	await settle(60.0, "foreman encounter")
+	var fm := enemy_by_uid("mn_foreman")
+	rec("Foreman spawned for the hoist fight", fm != null, "no mn_foreman")
+	if fm != null:
+		# furnace must actually burn him
+		await use_prompt("Light the furnace", "light the furnace")
+		fm.global_position = Vector3(29.0, 0.05, -6.2)
+		var hp0: float = fm.hp
+		await wait(3.0)
+		rec("furnace damages the Foreman (%.0f -> %.0f hp)" % [hp0, fm.hp], fm.hp < hp0, "no fire damage near the furnace")
+		# lure onto the cage and drop it
+		pre_interact = func():
+			fm.global_position = Vector3(36.5, 0.05, 0.0)
+			fm.velocity = Vector3.ZERO
+		await use_prompt("Hoist brake station", "release the brake with the Foreman on the cage")
+		await wait(4.0)
+		await settle(60.0, "Foreman death")
+		if not Game.has_flag("foreman_dead"):
+			warn("brake drop did not kill the Foreman (state=%s hp=%s); burning him" % [fm.state if is_instance_valid(fm) else "freed", fm.hp if is_instance_valid(fm) else 0])
+			for k in 40:
+				if is_instance_valid(fm) and fm.state != "dead":
+					fm.burn(100.0, fm.global_position + Vector3(1, 0, 0))
+				await fr(2)
+			await settle(60.0, "Foreman death (burn)")
+	expect_flag("foreman_dead")
+	# cage down (the cage needs ~9 s to come back up after the brake drop)
+	await wait_until(func(): return not lvl()._cage_busy, 30.0)
+	await use_prompt("Ride the cage down", "ride the cage down")
+	await wait(4.0)
+	await settle(90.0, "cage ride + June radio")
+	rec("arrived on the lower level", pl().global_position.y < -20.0, "y=%.1f" % pl().global_position.y)
+	last_spot = snap(pl().global_position)
+	# powder magazine: dynamite
+	await open_door("mn_magdoor", true, "magazine door")
+	await pick("mn_dyn", "blasting charges")
+	expect_item("dynamite")
+	# cavern: the Hauler
+	await fire_trigger("mn_cavern_enter")
+	var h := enemy_by_uid("mn_hauler")
+	rec("Hauler boss exists and wakes", h != null and h.state != "dormant", "hauler=%s" % h)
+	if h != null:
+		pre_interact = func(): h.global_position = Vector3(104.0, -29.95, -2.0)
+		await use_prompt("Marked pillar", "plant charges on the marked pillar")
+		await wait(6.5)
+		rec("charges consumed", not Game.has_item("dynamite"), "dynamite still in inventory")
+		var shots := 0
+		while h.state != "dead" and shots < 80:
+			h.take_hit(120.0, h.model.heart_world(), Vector3(0, 0, 1), true)
+			shots += 1
+			await fr(2)
+		rec("Hauler dies from weak-point hits (%d magnum shots after the pillar)" % shots, h.state == "dead", "state=%s hp=%s" % [h.state, h.hp])
+	await settle(60.0, "Hauler death")
+	await wait(3.0)
+	await settle(60.0, "Hauler death dialogue")
+	expect_flag("hauler_dead")
+	# refuge: June
+	await fire_trigger("mn_ref_voice")
+	await open_door("mn_refugedoor", true, "refuge door")
+	await use_prompt("Talk to June", "talk to June", Vector3(112.3, -29.0, -31.2))
+	await settle(60.0, "reunion")
+	expect_flag("found_june")
+	await fire_trigger("mn_shaft_voice")
+
+# =================================================================== L6 - THE HEART
 func play_l6() -> void:
-	pass
+	for t in ["l6_t_intro", "l6_t_tom1", "l6_t_nook"]:
+		await fire_trigger(t)
+	await use_prompt("Use field radio", "field radio (save point)")
+	await use_prompt("Open supply crate", "supply crate")
+	# walk into the arena: the reveal
+	await fire_trigger("l6_t_reveal")
+	await settle(120.0, "reveal cutscene")
+	expect_flag("l6_revealed")
+	var boss := enemy_by_uid("l6_mother")
+	rec("Hollow Mother awake", boss != null and boss.state != "dormant", "boss=%s state=%s" % [boss, boss.state if boss else "-"])
+	if boss != null:
+		# steam valve (east) scorches the lattice
+		await use_prompt("Vent steam valve", "steam valve", Vector3(18.0, 1.0, -20.0))
+		await wait(2.0)
+		# phase 1: Ruth's glowing chest
+		var n := 0
+		while boss.phase == 1 and boss.state != "dead" and n < 200:
+			boss.take_hit(120.0, boss.model.heart_world(), Vector3(0, 0, 1), true)
+			n += 1
+			if verbose and n < 12:
+				info("mother p1 hit %d: hp=%.0f state=%s dormant=%s inv=%s" % [n, boss.hp, boss.state, boss.dormant, boss.invulnerable])
+			await fr(2)
+		rec("phase 1 ends after %d weak-point hits" % n, boss.phase == 2 or boss.state == "dead", "phase=%s hp=%s" % [boss.phase, boss.hp])
+		await wait(4.0)
+		n = 0
+		while boss.state != "dead" and n < 200:
+			boss.take_hit(120.0, boss.global_position + Vector3(0, 2.0, 0), Vector3(0, 0, 1), true)
+			n += 1
+			await fr(2)
+		rec("phase 2 dies after %d hits" % n, boss.state == "dead", "state=%s hp=%s" % [boss.state, boss.hp])
+	await wait(2.0)
+	await settle(120.0, "Mother death scene")
+	expect_flag("mother_dead")
+
+## The ending choice UI must appear and both buttons must reach Game.finish_game.
 func finish_l6() -> void:
-	pass
+	var ending: String = args.get("ending", "dark")
+	var st := find_it("Use pipeline control")
+	await use(st, "pipeline control station", true, Callable(), false)
+	var panel := await wait_until(func(): return lvl().get_node_or_null("EndingChoice") != null, 90.0)
+	rec("ending choice UI appears", panel, "EndingChoice layer never created")
+	if not panel:
+		return
+	await fr(3)
+	var layer: Node = lvl().get_node("EndingChoice")
+	var btns := _walk(layer, func(n): return n is Button)
+	rec("ending choice has two buttons (%d)" % btns.size(), btns.size() == 2)
+	var want := "CUT MERIDIAN" if ending == "dark" else "OPEN THE PIPELINE"
+	for b in btns:
+		if b.text.begins_with(want):
+			b.pressed.emit()
+	await fr(5)
+	rec("Game.finish_game reached (ending=%s)" % ending, str(Game.get_flag("ending", "")) == ending, "ending flag=%s" % str(Game.get_flag("ending", "")))
+	rec("ending screen shown", UI.modal != null and is_instance_valid(UI.modal) and UI.modal.name == "Ending", "modal=%s" % UI.modal)

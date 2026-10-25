@@ -5,6 +5,7 @@ signal dialogue_done
 signal modal_closed
 
 const Items = preload("res://core/items.gd")
+const BloodScreen = preload("res://ui/blood_screen.gd")
 
 const C_TEXT := Color(0.86, 0.87, 0.84)
 const C_DIM := Color(0.55, 0.57, 0.56)
@@ -24,6 +25,7 @@ var prompt_label: Label
 var toast_box: VBoxContainer
 var reticle: Control
 var dmg_flash: ColorRect
+var blood_screen: ColorRect       # ui/blood_screen.gd: blood splatter overlay
 var vignette: ColorRect
 var dlg_panel: PanelContainer
 var dlg_name: Label
@@ -134,6 +136,9 @@ void fragment(){
 	dmg_flash.color = Color(0.6, 0.0, 0.0, 0.0)
 	dmg_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hud.add_child(dmg_flash)
+
+	blood_screen = BloodScreen.new()
+	hud.add_child(blood_screen)
 
 	# bottom-right status block
 	var status := VBoxContainer.new()
@@ -269,6 +274,8 @@ func toast(text: String, dur := 3.0) -> void:
 
 func flash_damage() -> void:
 	dmg_flash.color.a = 0.45
+	if blood_screen != null:
+		blood_screen.hit(1.0)
 
 func fade_out(t := 0.6) -> void:
 	var tw := create_tween()

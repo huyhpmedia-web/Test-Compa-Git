@@ -1167,6 +1167,8 @@ func _music_tension(_p) -> void:
 
 # =================================================================== ON ENTER
 func on_enter() -> void:
+	for spent in ["school_key", "gym_key", "valve_handle", "hot_stick"]:   # L1/L2 leftovers free pack slots
+		Game.remove_item(spent, Game.count_item(spent))
 	Sfx.music("music_tension")
 	if not Game.has_flag("l3_title"):
 		Game.set_flag("l3_title")

@@ -43,34 +43,34 @@ var _built := false
 static func preset(name: String) -> Dictionary:
 	match name:
 		"june":
-			return {"id": "june", "display_name": "June",
-				"look": {"height": 1.6, "female": true, "bulk": 0.88, "skin": Color(0.9, 0.75, 0.68), "hair": Color(0.33, 0.2, 0.11), "hair_style": "ponytail",
+			return {"id": "june", "display_name": "June", "model": "res://actors/character_model.gd", 
+				"look": {"model": "june", "height": 1.6, "female": true, "bulk": 0.88, "skin": Color(0.9, 0.75, 0.68), "hair": Color(0.33, 0.2, 0.11), "hair_style": "ponytail",
 					"shirt": Color(0.7, 0.72, 0.75), "pants": Color(0.14, 0.16, 0.24), "coat": true, "coat_color": Color(0.14, 0.3, 0.38), "shoes": Color(0.12, 0.1, 0.1)},
-				"extras": ["knit_hat", "headphones"], "pose": "stand",
+				"extras": [], "pose": "stand",
 				"talk_lines": [["JUNE", "Dad. You actually came."], ["JUNE", "Don't look at me like that. I'm fine. I'm just cold."]]}
 		"ruth":
-			return {"id": "ruth", "display_name": "Ruth",
-				"look": {"height": 1.62, "female": true, "bulk": 0.95, "skin": Color(0.84, 0.74, 0.7), "hair": Color(0.65, 0.63, 0.65), "hair_style": "short",
+			return {"id": "ruth", "display_name": "Ruth", "model": "res://actors/character_model.gd", 
+				"look": {"model": "ruth", "height": 1.62, "female": true, "bulk": 0.95, "skin": Color(0.84, 0.74, 0.7), "hair": Color(0.65, 0.63, 0.65), "hair_style": "short",
 					"shirt": Color(0.42, 0.27, 0.35), "pants": Color(0.2, 0.2, 0.25), "coat": false},
-				"extras": ["glasses_chain"], "pose": "stand",
+				"extras": [], "pose": "stand",
 				"talk_lines": [["RUTH", "Elias. You're letting the cold in."], ["RUTH", "Tom's calling from downstairs. Can't you hear him?"]]}
 		"imogen":
-			return {"id": "imogen", "display_name": "Dr. Hart",
-				"look": {"height": 1.7, "female": true, "bulk": 0.95, "skin": Color(0.8, 0.64, 0.54), "hair": Color(0.1, 0.07, 0.06), "hair_style": "short",
+			return {"id": "imogen", "display_name": "Dr. Hart", "model": "res://actors/character_model.gd", 
+				"look": {"model": "imogen", "height": 1.7, "female": true, "bulk": 0.95, "skin": Color(0.8, 0.64, 0.54), "hair": Color(0.1, 0.07, 0.06), "hair_style": "short",
 					"shirt": Color(0.3, 0.32, 0.36), "pants": Color(0.15, 0.17, 0.2), "coat": true, "coat_color": Color(0.1, 0.19, 0.3)},
-				"extras": ["glasses", "northline_patch"], "pose": "stand",
+				"extras": [], "pose": "stand",
 				"talk_lines": [["IMOGEN", "Eight months. I reported it eight months ago."], ["IMOGEN", "I need a sample. Bring me one and I'll tell you everything."]]}
 		"caretaker":
-			return {"id": "caretaker", "display_name": "Caretaker",
-				"look": {"height": 1.75, "female": false, "bulk": 1.12, "skin": Color(0.72, 0.58, 0.5), "hair": Color(0.6, 0.6, 0.6), "hair_style": "buzz",
+			return {"id": "caretaker", "display_name": "Caretaker", "model": "res://actors/character_model.gd", 
+				"look": {"model": "caretaker", "height": 1.75, "female": false, "bulk": 1.12, "skin": Color(0.72, 0.58, 0.5), "hair": Color(0.6, 0.6, 0.6), "hair_style": "buzz",
 					"shirt": Color(0.34, 0.37, 0.4), "pants": Color(0.18, 0.22, 0.18), "coat": true, "coat_color": Color(0.22, 0.24, 0.2)},
-				"extras": ["keys"], "pose": "stand",
+				"extras": [], "pose": "stand",
 				"talk_lines": [["CARETAKER", "Boiler's been dead since Tuesday. I told them."], ["CARETAKER", "Something dragged Pete down the hall. Heavy. Slow."]]}
 		"miner_corpse":
-			return {"id": "miner_corpse", "display_name": "Frozen miner", "corpse": true, "prompt_verb": "Examine",
-				"look": {"height": 1.78, "female": false, "bulk": 1.2, "zombie": true, "skin": Color(0.6, 0.5, 0.45), "hair_style": "short", "bloody": 0.3,
+			return {"id": "miner_corpse", "display_name": "Frozen miner", "corpse": true, "prompt_verb": "Examine", "model": "res://actors/character_model.gd", 
+				"look": {"model": "rimebound_miner", "death_variant": 0, "height": 1.78, "female": false, "bulk": 1.2, "zombie": true, "skin": Color(0.6, 0.5, 0.45), "hair_style": "short", "bloody": 0.3,
 					"shirt": Color(0.34, 0.13, 0.1), "pants": Color(0.13, 0.17, 0.27), "gloves": true},
-				"extras": ["hardhat_dead", "rime"], "pose": "dead",
+				"extras": ["rime"], "pose": "dead",
 				"talk_lines": [["", "A miner. Frozen where he lay down to rest. A crystal grows from his open mouth."]]}
 	return {"id": name, "display_name": name.capitalize(), "look": {}, "extras": [], "pose": "stand", "talk_lines": []}
 
@@ -184,10 +184,38 @@ func _extra(name: String, s: float) -> void:
 				Kit.sphere(chest, 0.06 * s, Kit.mat("frost"), Vector3(randf_range(-0.14, 0.14), randf_range(-0.1, 0.2), 0.09) * s, Vector3(1.4, 0.7, 0.4))
 
 # ------------------------------------------------------------------ behaviour
+var _glance := 0.0
+
+func _post_character(m, delta: float) -> void:
+	if pose_name == "dead":
+		return
+	var tt := Time.get_ticks_msec() * 0.001
+	match pose_name:
+		"sit":
+			m.pose = "sit"
+		"cower":
+			m.pose = "sit"
+			m.add_bone_rotation("spine_02", Vector3(0.55, 0, 0))
+			m.add_bone_rotation("head", Vector3(0.4, sin(tt * 0.5) * 0.3, 0))
+			return
+		_:
+			m.pose = "normal"
+	var p = Game.player
+	var want := 0.0
+	if p != null and is_instance_valid(p):
+		var to: Vector3 = p.global_position - global_position
+		if to.length() < 6.0:
+			want = clampf(wrapf(atan2(to.x, to.z) - rotation.y, -PI, PI), -0.9, 0.9)
+	_glance = lerp_angle(_glance, want, clampf(delta * 4.0, 0.0, 1.0))
+	m.add_bone_rotation("head", Vector3(0, _glance, 0))
+
 func _post(delta: float) -> void:
 	if model == null or is_dead:
 		return
 	var m = model
+	if m.has_method("bone_attachment"):
+		_post_character(m, delta)
+		return
 	if m.get("hips") == null:
 		return
 	var tt := Time.get_ticks_msec() * 0.001

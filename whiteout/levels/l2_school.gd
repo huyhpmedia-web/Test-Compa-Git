@@ -80,6 +80,7 @@ func build() -> void:
 	_apply_power_visuals(true)
 
 func on_enter() -> void:
+	Game.remove_item("hot_stick", 1)   # spent in L1 (the switching is done); frees a pack slot
 	Sfx.music("music_tension", -13.0)
 	if not Game.has_flag("l2_intro"):
 		Game.set_flag("l2_intro")

@@ -65,6 +65,8 @@ func _process(delta: float) -> void:
 	if _snow != null and player != null:
 		_snow.global_position = player.global_position + Vector3(0, 9, 0)
 	for f in _flicker:
+		if not is_instance_valid(f[0]):
+			continue
 		var l: Light3D = f[0]
 		if is_instance_valid(l):
 			var n := sin(_t * 23.0 + f[2]) * sin(_t * 7.3 + f[2] * 2.0)
@@ -297,6 +299,8 @@ func stairs(pos: Vector3, width: float, length: float, rise: float, dir := "+z",
 	center += Basis(Vector3.UP, yaw) * Vector3(0, 0, length * 0.5)
 	ramp.position = center
 	ramp.rotation = Vector3(-ang, yaw, 0)
+	ramp.set_meta("stairs", {"pos": pos, "width": width, "length": length, "rise": rise, "yaw": yaw})  # for tools/playtest.gd
+	ramp.add_to_group("stairs")
 
 # =================================================================== lights
 func light(pos: Vector3, color := Color(1.0, 0.85, 0.65), energy := 2.0, rng := 8.0, shadows := true, flicker := false) -> OmniLight3D:
@@ -395,6 +399,8 @@ func pickup(uid: String, item: String, count: int, pos: Vector3) -> Node3D:
 	it.set_meta("item", item)
 	root.add_child(it)
 	it.action = func(_p):
+		if d.kind == "key":
+			make_room_for_key(item)
 		var left := Game.add_item(item, count)
 		if left == count:
 			UI.toast("Your inventory is full.")
@@ -413,6 +419,32 @@ func pickup(uid: String, item: String, count: int, pos: Vector3) -> Node3D:
 		root.queue_free()
 		on_pickup(item, uid)
 	return root
+
+## Key items must never be refused for lack of room (that would soft-lock the story): if the pack
+## is full, stash expendables in the shared supply crate (item box) until the key item fits.
+func make_room_for_key(item: String) -> bool:
+	if Game.can_add(item, 1):
+		return true
+	for id in ["gel", "adrenaline", "powder", "flare", "ammo_shell", "ammo_44", "ammo_grenade", "spray", "gel_mix", "ammo_9mm"]:
+		var slot = null
+		for sl in Game.inventory:
+			if sl.id == id:
+				slot = sl
+		if slot == null:
+			continue
+		Game.inventory.erase(slot)
+		var merged := false
+		for bx in Game.item_box:
+			if bx.id == id and Game.item_def(id).get("stack", 1) > 1:
+				bx.count += slot.count
+				merged = true
+		if not merged:
+			Game.item_box.append({"id": id, "count": slot.count})
+		Game.inventory_changed.emit()
+		UI.toast("Pack full: stashed %s in the supply crate." % Game.item_def(id).name, 3.0)
+		if Game.can_add(item, 1):
+			return true
+	return Game.can_add(item, 1)
 
 ## Override to react to pickups (e.g. scripted scares).
 func on_pickup(_item: String, _uid: String) -> void:
@@ -581,7 +613,7 @@ func item_box(pos: Vector3, yaw := 0.0) -> Node3D:
 	var root := Node3D.new()
 	root.position = pos
 	root.rotation.y = yaw
-	add_child(root)
+	geo.add_child(root)   # under geo: the solid crate is carved out of the navmesh
 	Props.box(root, Vector3(1.1, 0.6, 0.55), Vector3(0, 0.3, 0), Mats.get_mat("metal_painted", 0.8))
 	Props.box(root, Vector3(1.12, 0.06, 0.57), Vector3(0, 0.6, 0), Mats.color(Color(0.15, 0.2, 0.18), 0.5, 0.5), false)
 	Props.sign(root, Vector3(0, 0.35, 0.29), 0.0, "CO-OP SUPPLY", 28, Color(0.9, 0.8, 0.2), false)

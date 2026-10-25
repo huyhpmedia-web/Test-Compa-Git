@@ -11,6 +11,11 @@ func _ready() -> void:
 	var poses: PackedStringArray = []
 	var yaw_arg := 0.5
 	var cm_args := ""
+	var lineup_arg := ""
+	var lineup_rows := 2
+	var lineup_pose := "zombie"
+	var lineup_w := 2400
+	var lineup_h := 1200
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("out="): out = a.substr(4)
 		elif a.begins_with("model="): model = a.substr(6)
@@ -20,6 +25,11 @@ func _ready() -> void:
 		elif a.begins_with("poses="): poses = a.substr(6).split(",")
 		elif a.begins_with("yaw="): yaw_arg = float(a.substr(4))
 		elif a.begins_with("cm="): cm_args = a.substr(3)
+		elif a.begins_with("lineup="): lineup_arg = a.substr(7)
+		elif a.begins_with("rows="): lineup_rows = int(a.substr(5))
+		elif a.begins_with("lpose="): lineup_pose = a.substr(6)
+		elif a.begins_with("w="): lineup_w = int(a.substr(2))
+		elif a.begins_with("h="): lineup_h = int(a.substr(2))
 	var e := Environment.new()
 	e.background_mode = Environment.BG_COLOR
 	e.background_color = bg
@@ -32,6 +42,9 @@ func _ready() -> void:
 	var key := DirectionalLight3D.new(); key.rotation_degrees = Vector3(-35, 30, 0); key.light_energy = 1.7; key.shadow_enabled = true; add_child(key)
 	var fill := DirectionalLight3D.new(); fill.rotation_degrees = Vector3(-15, -60, 0); fill.light_energy = 0.55; fill.light_color = Color(0.8, 0.85, 1.0); add_child(fill)
 	var rim := DirectionalLight3D.new(); rim.rotation_degrees = Vector3(-20, 200, 0); rim.light_energy = 1.0; rim.light_color = Color(0.7, 0.8, 1.0); add_child(rim)
+	if lineup_arg != "":
+		await _lineup(lineup_arg.split("|"), out, lineup_rows, lineup_pose, lineup_w, lineup_h, t)
+		return
 	if cm_args != "":
 		await _cm_mode(cm_args, model, out, yaw_arg)
 		return
@@ -136,4 +149,55 @@ func _cm_mode(args: String, model: String, out: String, yaw: float) -> void:
 		await get_tree().process_frame
 	get_viewport().get_texture().get_image().save_png(out)
 	print("CHAR_VIEW_DONE ", out, " playing=", h.is_playing())
+	get_tree().quit()
+
+
+## Lineup render: godot ... -- lineup=a|b|c|d,... out=x.png [rows=2] [pose=zombie] [w=2400] [h=1200]
+func _lineup(models: PackedStringArray, out: String, rows: int, pose: String, w: int, h: int, anim_t: float) -> void:
+	var svp := SubViewport.new()
+	svp.size = Vector2i(w, h)
+	svp.own_world_3d = true
+	svp.msaa_3d = Viewport.MSAA_2X
+	svp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	add_child(svp)
+	var e := Environment.new()
+	e.background_mode = Environment.BG_COLOR
+	e.background_color = Color(0.07, 0.08, 0.1)
+	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	e.ambient_light_color = Color(0.45, 0.52, 0.65)
+	e.ambient_light_energy = 0.5
+	e.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	var we := WorldEnvironment.new(); we.environment = e; svp.add_child(we)
+	var key := DirectionalLight3D.new(); key.rotation_degrees = Vector3(-30, 25, 0); key.light_energy = 1.6; key.shadow_enabled = true; svp.add_child(key)
+	var rim := DirectionalLight3D.new(); rim.rotation_degrees = Vector3(-20, 200, 0); rim.light_energy = 0.8; rim.light_color = Color(0.6, 0.75, 1.0); svp.add_child(rim)
+	var CM = load("res://actors/character_model.gd")
+	var RL = load("res://actors/rime_look.gd")
+	var per_row := int(ceil(float(models.size()) / rows))
+	var nodes := []
+	for i in models.size():
+		var m: Node3D = CM.new()
+		m.setup({"model": models[i]})
+		svp.add_child(m)
+		m.pose = pose
+		if pose == "zombie":
+			m.move_speed = 0.0
+			RL.decorate(m, 1.0, 100 + i)
+		var r := i / per_row
+		var c := i % per_row
+		m.position = Vector3((c - (per_row - 1) * 0.5) * 1.5 + r * 0.4, 0, -r * 2.4)
+		m.rotation.y = 0.35 if (i % 2 == 0) else -0.3
+		nodes.append(m)
+	var f := MeshInstance3D.new(); var pm := PlaneMesh.new(); pm.size = Vector2(40, 40); f.mesh = pm
+	var fm := StandardMaterial3D.new(); fm.albedo_color = Color(0.1, 0.11, 0.13); fm.roughness = 0.95; f.material_override = fm
+	svp.add_child(f)
+	var cam := Camera3D.new(); svp.add_child(cam)
+	var span := per_row * 1.5
+	cam.position = Vector3(0, 1.35, span * 0.62 + 1.6)
+	cam.look_at(Vector3(0, 1.0 - rows * 0.1, -(rows - 1) * 0.8), Vector3.UP)
+	cam.fov = 42
+	cam.current = true
+	for i in 60:
+		await get_tree().process_frame
+	svp.get_texture().get_image().save_png(out)
+	print("CHAR_VIEW_DONE ", out)
 	get_tree().quit()

@@ -1,7 +1,7 @@
 extends CharacterBody3D
 ## Elias Kade — over-the-shoulder third-person survival-horror controller.
 
-const Humanoid = preload("res://actors/humanoid.gd")
+const CharacterModel = preload("res://actors/character_model.gd")
 const Mats = preload("res://core/mats.gd")
 const FX = preload("res://world/fx.gd")
 
@@ -48,10 +48,8 @@ func _ready() -> void:
 	col.position.y = 0.85
 	add_child(col)
 
-	model = Humanoid.new()
-	model.setup({"height": 1.82, "female": false, "skin": Color(0.74, 0.58, 0.47),
-		"shirt": Color(0.85, 0.35, 0.08), "pants": Color(0.12, 0.12, 0.13), "hair": Color(0.1, 0.08, 0.06),
-		"hair_style": "short", "shoes": Color(0.15, 0.11, 0.08), "coat": false, "long_sleeves": true, "gloves": true})
+	model = CharacterModel.new()
+	model.setup({"model": "elias"})
 	add_child(model)
 
 	yaw_pivot = Node3D.new()

@@ -38,15 +38,69 @@ SPECS.update({
               skin="old_caucasian_female", stubble=0.0, weather=0.6,
               details=[("head", "head-age", 0.5, "decr", "incr"), ("eyes", "l-eye-bag", 0.4, "decr", "incr"), ("eyes", "r-eye-bag", 0.4, "decr", "incr"),
                        ("mouth", "mouth-angles", -0.3, "down", "up"), ("neck", "neck-double", 0.3, "decr", "incr")]),
- "rimebound_civ_m": dict(name="rimebound_civ_m", file="rimebound_civ_m.glb", builder="build_rime", outfit="civ_m", gender=1.0, age=46, muscle=0.45, weight=0.55,
-              height_m=1.76, skin="middleage_caucasian_male", stubble=0.7, details=[("head", "head-age", 0.3, "decr", "incr")]),
- "rimebound_civ_f": dict(name="rimebound_civ_f", file="rimebound_civ_f.glb", builder="build_rime", outfit="civ_f", gender=0.0, age=40, muscle=0.4, weight=0.5,
-              height_m=1.66, skin="middleage_caucasian_female", details=[]),
- "rimebound_miner": dict(name="rimebound_miner", file="rimebound_miner.glb", builder="build_rime", outfit="miner", gender=1.0, age=52, muscle=0.6, weight=0.6,
-              height_m=1.78, skin="middleage_caucasian_male", stubble=0.9, details=[("head", "head-age", 0.4, "decr", "incr"), ("head", "head-square", 0.4)]),
- "rimebound_nurse": dict(name="rimebound_nurse", file="rimebound_nurse.glb", builder="build_rime", outfit="nurse", gender=0.0, age=38, muscle=0.35, weight=0.45,
-              height_m=1.66, skin="middleage_caucasian_female", details=[]),
 })
+
+def _z(name, outfit, gender, age, color, color2=None, seed=1, skin=None, hair=None, hair_tint=(0.3, 0.3, 0.32), height=1.76, weight=0.5, muscle=0.45,
+       pallor=(0.70, 0.80, 0.90), gore_cloth=None, gore_skin=None, **kw):
+    d = dict(name=name, file=name + ".glb", builder="zombies.build_zombie", outfit=outfit, gender=gender, age=age, muscle=muscle, weight=weight,
+             height_m=height, skin=skin or ("middleage_caucasian_male" if gender > 0.5 else "middleage_caucasian_female"), color=color,
+             color2=color2 or (0.12, 0.15, 0.22), seed=seed, hair=hair, hair_tint=hair_tint, pallor=pallor, details=[("head", "head-age", 0.3, "decr", "incr")])
+    if gore_cloth: d["gore_cloth"] = gore_cloth
+    if gore_skin: d["gore_skin"] = gore_skin
+    d.update(kw)
+    SPECS[name] = d
+
+_z("rimebound_parka_m", "parka", 1.0, 44, (0.10, 0.2, 0.17), (0.12, 0.12, 0.14), 11, hair="hair/short03", hair_tint=(0.4, 0.4, 0.42), height=1.80, weight=0.55,
+   gore_cloth=dict(mouth=0.9, soak=0.7, wounds=2, torn=1, splat=0.4, frost=0.5), gore_skin=dict(mouth=0.9, wounds=2, splat=0.3, frost=0.4))
+_z("rimebound_jacket_m", "jacket", 1.0, 56, (0.25, 0.23, 0.14), (0.2, 0.2, 0.22), 12, hair=None, height=1.74, weight=0.6, pants=(0.18, 0.18, 0.2),
+   gore_cloth=dict(mouth=0.6, soak=0.4, wounds=3, torn=2, splat=0.3, frost=0.4), gore_skin=dict(mouth=0.6, wounds=3, splat=0.2, frost=0.5),
+   boots=("shoes04", (0.1, 0.09, 0.08), 0.1))
+_z("rimebound_parka_f", "parka", 0.0, 37, (0.38, 0.1, 0.11), (0.2, 0.2, 0.24), 13, hair="hair/long01", hair_tint=(0.15, 0.13, 0.13), height=1.68, weight=0.45,
+   gore_cloth=dict(mouth=1.0, soak=0.8, wounds=1, torn=1, splat=0.5, frost=0.45), gore_skin=dict(mouth=1.0, wounds=1, splat=0.4, frost=0.4), pants=(0.12, 0.13, 0.2))
+_z("rimebound_flannel_m", "flannel", 1.0, 34, (0.52, 0.15, 0.12), (0.14, 0.16, 0.22), 14, hair="hair/short04", hair_tint=(0.18, 0.15, 0.13), height=1.78, weight=0.5,
+   gore_cloth=dict(mouth=0.8, soak=0.9, wounds=2, torn=2, splat=0.5, frost=0.35), gore_skin=dict(mouth=0.8, wounds=2, splat=0.4, frost=0.3), boots=("shoes04", (0.12, 0.1, 0.08), 0.1))
+_z("rimebound_tee_m", "tee_m", 1.0, 66, (0.62, 0.63, 0.64), (0.18, 0.2, 0.26), 15, hair=None, height=1.72, weight=0.4, pallor=(0.78, 0.84, 0.9),
+   gore_cloth=dict(mouth=0.7, soak=1.0, wounds=2, torn=2, splat=0.6, frost=0.3), gore_skin=dict(mouth=0.7, wounds=2, splat=0.5, frost=0.3), boots=("shoes06", (0.3, 0.3, 0.32), 0.1))
+_z("rimebound_tee_f", "tee_f", 0.0, 29, (0.28, 0.33, 0.42), (0.12, 0.14, 0.2), 16, hair="hair/bob01", hair_tint=(0.16, 0.12, 0.1), height=1.64, weight=0.42,
+   gore_cloth=dict(mouth=0.9, soak=0.8, wounds=2, torn=1, splat=0.5, frost=0.3), gore_skin=dict(mouth=0.9, wounds=2, splat=0.4, frost=0.3), boots=("shoes06", (0.25, 0.25, 0.28), 0.1))
+_z("rimebound_nurse", "nurse", 0.0, 41, (0.62, 0.7, 0.72), (0.55, 0.62, 0.64), 17, hair="hair/bob02", hair_tint=(0.3, 0.22, 0.17), height=1.66, weight=0.45,
+   gore_cloth=dict(mouth=1.0, soak=1.0, wounds=3, torn=2, splat=0.6, frost=0.3), gore_skin=dict(mouth=1.0, wounds=2, splat=0.4, frost=0.3), boots=("shoes05", (0.62, 0.64, 0.66), 0.1))
+_z("rimebound_miner", "miner", 1.0, 52, (0.13, 0.16, 0.22), (0.38, 0.1, 0.08), 18, hair="hair/short04", hair_tint=(0.2, 0.18, 0.16), height=1.78, weight=0.6, muscle=0.6,
+   gloves=(0.3, 0.27, 0.22), gore_cloth=dict(mouth=0.7, soak=0.5, wounds=3, torn=2, splat=0.4, frost=0.5), gore_skin=dict(mouth=0.7, wounds=3, splat=0.3, frost=0.5),
+   boots=("shoes02", (0.08, 0.07, 0.06), 0.2))
+_z("rimebound_cop", "cop", 1.0, 40, (0.07, 0.1, 0.2), (0.1, 0.1, 0.12), 19, hair="hair/short03", hair_tint=(0.15, 0.13, 0.12), height=1.82, weight=0.55, muscle=0.55, pants=(0.07, 0.09, 0.16),
+   gore_cloth=dict(mouth=0.8, soak=0.6, wounds=2, torn=2, splat=0.4, frost=0.5), gore_skin=dict(mouth=0.8, wounds=2, splat=0.3, frost=0.4))
+_z("rimebound_patient", "patient", 1.0, 58, (0.55, 0.68, 0.72), (0.5, 0.62, 0.68), 20, hair="hair/short03", hair_tint=(0.5, 0.5, 0.52), height=1.72, weight=0.5, pallor=(0.8, 0.86, 0.92),
+   gore_cloth=dict(mouth=0.9, soak=1.0, wounds=2, torn=2, splat=0.6, frost=0.2), gore_skin=dict(mouth=0.9, wounds=2, splat=0.5, frost=0.2), boots=None)
+
+SPECIAL_DETAILS_HUSK = [("torso", "torso-scale-horiz", 0.9, "decr", "incr"), ("torso", "torso-scale-depth", 0.6, "decr", "incr"), ("neck", "neck-scale-horiz", 0.9, "decr", "incr"),
+                        ("torso", "torso-vshape", 0.9, "decr", "incr"), ("head", "head-square", 0.6), ("armslegs", "l-upperarm-muscle", 1.0, "decr", "incr"), ("armslegs", "r-upperarm-muscle", 1.0, "decr", "incr"),
+                        ("armslegs", "l-upperarm-fat", 0.6, "decr", "incr"), ("armslegs", "r-upperarm-fat", 0.6, "decr", "incr"), ("armslegs", "l-upperleg-muscle", 0.8, "decr", "incr"), ("armslegs", "r-upperleg-muscle", 0.8, "decr", "incr")]
+_z("husk", "tee_m", 1.0, 40, (0.2, 0.2, 0.22), (0.14, 0.15, 0.2), 31, hair=None, height=2.0, weight=0.8, muscle=1.0, details=SPECIAL_DETAILS_HUSK,
+   gore_cloth=dict(mouth=0.7, soak=0.7, wounds=2, torn=3, splat=0.4, frost=0.7), gore_skin=dict(mouth=0.6, wounds=2, splat=0.3, frost=0.8), boots=("shoes02", (0.07, 0.06, 0.05), 0.2),
+   pallor=(0.65, 0.78, 0.92), body_dec=0.45)
+_z("siren", "dress", 0.0, 33, (0.34, 0.34, 0.38), (0.28, 0.28, 0.32), 32, hair="hair/long01", hair_tint=(0.07, 0.07, 0.08), height=1.9, weight=0.0, muscle=0.0,
+   open_mouth=True, pallor=(0.86, 0.9, 0.95), boots=None, height_slider=0.9,
+   details=[("chin", "chin-jaw-drop", 1.0, "decr", "incr"), ("mouth", "mouth-scale-vert", 1.0, "decr", "incr"), ("mouth", "mouth-lowerlip-height", 1.0, "decr", "incr"),
+            ("head", "head-age", 0.5, "decr", "incr"), ("eyes", "l-eye-bag", 1.0, "decr", "incr"), ("eyes", "r-eye-bag", 1.0, "decr", "incr"), ("cheek", "l-cheek-volume", -1.0, "decr", "incr"), ("cheek", "r-cheek-volume", -1.0, "decr", "incr")],
+   gore_cloth=dict(mouth=1.0, soak=1.0, wounds=1, torn=1, splat=0.2, frost=0.5), gore_skin=dict(mouth=1.0, wounds=1, splat=0.2, frost=0.6))
+_z("burster", "tee_m", 1.0, 48, (0.42, 0.44, 0.46), (0.16, 0.18, 0.24), 33, hair=None, height=1.75, weight=1.0, muscle=0.2,
+   details=[("stomach", "stomach-pregnant", 1.0, "decr", "incr"), ("torso", "torso-scale-horiz", 0.7, "decr", "incr"), ("torso", "torso-scale-depth", 0.9, "decr", "incr"),
+            ("hip", "hip-scale-horiz", 0.8, "decr", "incr"), ("neck", "neck-double", 1.0, "decr", "incr"), ("head", "head-fat", 1.0, "decr", "incr"), ("cheek", "l-cheek-volume", 1.0, "decr", "incr"),
+            ("cheek", "r-cheek-volume", 1.0, "decr", "incr"), ("armslegs", "l-upperarm-fat", 1.0, "decr", "incr"), ("armslegs", "r-upperarm-fat", 1.0, "decr", "incr"),
+            ("armslegs", "l-upperleg-fat", 1.0, "decr", "incr"), ("armslegs", "r-upperleg-fat", 1.0, "decr", "incr"), ("buttocks", "buttocks-volume", 1.0, "decr", "incr")], boots=("shoes06", (0.2, 0.2, 0.22), 0.1),
+   gore_cloth=dict(mouth=0.5, soak=0.4, wounds=2, torn=3, splat=0.4, frost=0.6), gore_skin=dict(mouth=0.5, wounds=1, splat=0.3, frost=0.7), pallor=(0.72, 0.82, 0.9), body_dec=0.5)
+_z("hanger", "flannel", 1.0, 36, (0.22, 0.24, 0.3), (0.14, 0.15, 0.2), 34, hair="hair/long01", hair_tint=(0.1, 0.1, 0.1), height=2.1, weight=0.0, muscle=0.1,
+   height_slider=1.0, boots=None, gore_cloth=dict(mouth=0.8, soak=0.8, wounds=2, torn=3, splat=0.5, frost=0.5), gore_skin=dict(mouth=0.8, wounds=2, splat=0.4, frost=0.5),
+   pallor=(0.74, 0.84, 0.92))
+_z("foreman", "jacket", 1.0, 58, (0.42, 0.18, 0.06), (0.2, 0.2, 0.22), 35, hair=None, height=1.95, weight=0.45, muscle=0.6, extras=["foreman_hat"], pants=(0.2, 0.2, 0.2),
+   gloves=(0.1, 0.09, 0.07), boots=("shoes02", (0.07, 0.06, 0.05), 0.22), gore_cloth=dict(mouth=0.6, soak=0.5, wounds=3, torn=2, splat=0.4, frost=0.7),
+   gore_skin=dict(mouth=0.6, wounds=3, splat=0.3, frost=0.8), pallor=(0.66, 0.74, 0.84))
+# clean NPC bodies
+_z("imogen", "jacket", 0.0, 45, (0.3, 0.32, 0.22), (0.2, 0.2, 0.22), 41, hair="hair/ponytail01", hair_tint=(0.35, 0.2, 0.12), height=1.7, weight=0.45, clean=True,
+   gore_cloth=dict(), gore_skin=dict(), pants=(0.15, 0.17, 0.22), pallor=(1, 1, 1), boots=("shoes02", (0.2, 0.14, 0.09), 0.2), skin="middleage_caucasian_female")
+_z("caretaker", "flannel", 1.0, 62, (0.35, 0.36, 0.38), (0.2, 0.2, 0.24), 42, hair="hair/short03", hair_tint=(0.65, 0.65, 0.68), height=1.74, weight=0.55, clean=True,
+   gore_cloth=dict(), gore_skin=dict(), pallor=(1, 1, 1), boots=("shoes04", (0.13, 0.1, 0.08), 0.1), skin="old_caucasian_male")
 
 ORANGE = np.array([0.93, 0.34, 0.035])
 BLACK = np.array([0.045, 0.047, 0.05])
@@ -344,8 +398,9 @@ def merge_meshes(parts):
 # ------------------------------------------------------------------ ELIAS
 def assemble(cb, spec):
     if spec.get("builder"):
-        import chars2
-        return getattr(chars2, spec["builder"])(cb, spec)
+        import importlib
+        mod, fn = spec["builder"].split(".") if "." in spec["builder"] else ("chars2", spec["builder"])
+        return getattr(importlib.import_module(mod), fn)(cb, spec)
     n = spec["name"]
     H = cb.H
     skin_png = paint_skin(cb, spec["skin"], spec["details"], spec.get("stubble", 1.0), spec.get("weather", 1.0), spec.get("skin_tint", (0.97, 0.90, 0.85)))

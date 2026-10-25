@@ -56,6 +56,8 @@ func build() -> void:
 		_hall_power_on(true)
 
 func on_enter() -> void:
+	for spent in ["badge_meridian", "coolant_key", "hot_stick", "school_key"]:
+		Game.remove_item(spent, Game.count_item(spent))
 	Sfx.music("music_tension")
 	Sfx.ambience("amb_mine")
 	if not Game.has_flag("mn_intro"):
@@ -211,7 +213,7 @@ func ore_cart(pos: Vector3, yaw := 0.0, full := true) -> void:
 	var r := Node3D.new()
 	r.position = pos
 	r.rotation.y = yaw
-	add_child(r)
+	geo.add_child(r)
 	var m := Mats.get_mat("metal_rust", 1.0)
 	Props.box(r, Vector3(1.5, 0.75, 0.95), Vector3(0, 0.62, 0), m, true)
 	Props.box(r, Vector3(1.6, 0.08, 1.05), Vector3(0, 1.0, 0), Mats.get_mat("metal", 1.0), false)
@@ -442,7 +444,7 @@ func _build_hoist_hall() -> void:
 	# brake lever station (needs hoist_lever + mine_power)
 	var st := Node3D.new()
 	st.position = Vector3(41.2, 0, -2.6)
-	add_child(st)
+	geo.add_child(st)
 	Props.box(st, Vector3(0.9, 1.1, 0.6), Vector3(0, 0.55, 0), Mats.get_mat("metal_painted", 1.0), true)
 	Props.box(st, Vector3(0.8, 0.12, 0.7), Vector3(0, 1.15, 0.05), Mats.get_mat("metal", 1.0), false, Vector3(-0.3, 0, 0))
 	Props.box(st, Vector3(0.12, 0.3, 0.12), Vector3(0, 1.3, 0.12), Mats.color(Color(0.1, 0.1, 0.1), 0.6), false)
@@ -979,14 +981,16 @@ func _build_haulage() -> void:
 	rime_run(Vector3(68.5, y + 0.1, 1.6), Vector3(83.5, y + 0.1, 1.6), Vector3(0, 0.6, -1), 10, 0.45, 2.0)
 	cable_run(Vector3(68.5, y + 3.2, 1.2), Vector3(83.5, y + 3.2, 1.2), 0.35, 12)
 	vent_duct(Vector3(68.5, y + 3.0, -1.2), Vector3(83.5, y + 3.0, -1.2), 0.5)
-	ore_cart(Vector3(74.5, y, 0.55), PI * 0.5)
-	ore_cart(Vector3(75.8, y, 0.55), PI * 0.5, false)
+	ore_cart(Vector3(70.7, y, 0.55), PI * 0.5)        # QA: moved west, off the magazine entrance (was x=74.5/75.8)
+	ore_cart(Vector3(71.9, y, 0.55), PI * 0.5, false)
 	body_in_rock(Vector3(70.5, y, -1.2), -0.2, Vector3(0, 0, -1))
 	body_in_rock(Vector3(81.0, y, 1.2), 3.0, Vector3(0, 0, 1))
 	pickup("mn_hal_44", "ammo_44", 3, Vector3(79.2, y + 0.02, -1.1))
 	pickup("mn_hal_9mm", "ammo_9mm", 6, Vector3(72.0, y + 0.02, 1.2))
 	# powder magazine: concrete room south of the tunnel
 	room(70, 4, 82, 12, 3.2, "concrete", "concrete", "concrete", {"n": [[6.0, 2.4, 2.4]]}, y)
+	# QA fix: the tunnel wall gap (z=1.8) and the magazine door (z=4) were separated by a 2.2 m void
+	tunnel(Vector2(76.0, 1.6), Vector2(76.0, 4.1), 2.4, 2.8, y, [], [])
 	door("mn_magdoor", Vector3(76.0, y, 4.0), 0.0, {"width": 2.2, "height": 2.4, "mat": "metal_rust", "prompt": "Open magazine door"})
 	Props.sign(geo, Vector3(76.0, y + 2.75, 3.8), 0.0, "POWDER MAGAZINE\nNO FLAME - NO ENTRY", 30, Color(0.95, 0.35, 0.2))
 	ceiling_lamp(Vector3(76.0, y + 3.2, 8.0), "bulb", true, true)
@@ -1084,7 +1088,7 @@ func _haul_truck(pos: Vector3, yaw: float) -> void:
 	var r := Node3D.new()
 	r.position = pos
 	r.rotation.y = yaw
-	add_child(r)
+	geo.add_child(r)
 	var body := Mats.get_mat("metal_rust", 2.0)
 	var yel := Mats.color(Color(0.55, 0.42, 0.08), 0.6, 0.4)
 	Props.box(r, Vector3(9.0, 1.2, 3.8), Vector3(0, 1.8, 0), yel, true)

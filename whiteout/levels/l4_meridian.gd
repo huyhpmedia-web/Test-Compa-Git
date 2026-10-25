@@ -160,7 +160,7 @@ func _rack(pos: Vector3, yaw: float, rng: RandomNumberGenerator, warm := 0.1) ->
 	var r := Node3D.new()
 	r.position = pos
 	r.rotation.y = yaw
-	add_child(r)
+	geo.add_child(r)   # QA: under geo so racks are carved out of the navmesh (enemies/NPC paths)
 	Props.box(r, Vector3(0.8, 2.3, 1.0), Vector3(0, 1.15, 0), _m_rack, true)
 	Props.box(r, Vector3(0.74, 2.1, 0.03), Vector3(0, 1.15, 0.505), _m_front, false)
 	var b := Basis(Vector3.UP, yaw)
@@ -654,7 +654,7 @@ func _request(stage: String) -> void:
 	var cur := _reduction()
 	if cur == need:
 		await say([["MERIDIAN", "Current reduction: %d kW. Request satisfied." % cur],
-			["MERIDIAN", "Uptime impact: 0.0003%. Acceptable. Releasing the lock on %s." % where]])
+			["MERIDIAN", "Uptime impact: 0.0003%%. Acceptable. Releasing the lock on %s." % where]])
 		Game.set_flag(flag)
 		Sfx.play("unlock")
 		if _panel_lbl.has(stage):
@@ -953,6 +953,7 @@ func _talk_imogen() -> void:
 			["IMOGEN", "Section 4.2. Priority load. The town was cheaper to turn off."]])
 		Game.set_flag("met_imogen")
 	if not Game.has_flag("l4_card_given"):
+		make_room_for_key("pipeline_card")
 		if not Game.can_add("pipeline_card"):
 			await say([["IMOGEN", "Your pockets are full. Drop something. I'm not carrying this for you."]])
 			lock_player(false)
@@ -1189,6 +1190,8 @@ func _foreman_arrives() -> void:
 
 # =================================================================== on_enter
 func on_enter() -> void:
+	for spent in ["church_key", "bell_rope", "school_key", "hot_stick"]:
+		Game.remove_item(spent, Game.count_item(spent))
 	Sfx.ambience("amb_datacenter")
 	Sfx.music("")
 	if not Game.has_flag("l4_intro"):

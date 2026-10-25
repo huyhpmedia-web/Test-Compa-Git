@@ -45,15 +45,16 @@ func _setup_collision() -> void:
 	col.position.y = 0.9
 	add_child(col)
 
+const CharacterModel = preload("res://actors/character_model.gd")
+
 func _make_model() -> Node3D:
-	var h := Humanoid.new()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = hash(uid) if uid != "" else randi()
-	h.setup({"zombie": true, "bloody": 0.3, "female": rng.randf() < 0.3, "skin": Color(0.7, 0.6, 0.58), "hair_style": "bald",
-		"height": 1.75, "bulk": 1.3, "shirt": Color(0.25, 0.27, 0.3), "pants": Color(0.18, 0.18, 0.22), "coat": rng.randf() < 0.4, "coat_color": Color(0.2, 0.22, 0.2)})
+	var h := CharacterModel.new()
+	h.setup({"model": "burster"})
 	h.pose = "zombie"
 	RimeLook.decorate(h, 0.7, rng.randi())
-	var s: float = h.cfg.height / 1.72
+	var s: float = clampf(h._s, 0.9, 1.3)
 	_sac_mat = StandardMaterial3D.new()
 	_sac_mat.albedo_color = Color(0.55, 0.85, 0.9, 0.55)
 	_sac_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
@@ -66,19 +67,22 @@ func _make_model() -> Node3D:
 	_sac_mat.emission_energy_multiplier = 0.9
 	_sac_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	_core_mat = Kit.glow_unique(Color(0.45, 0.95, 1.0), 2.5)
-	# [pivot, pos, radius]
+	# [bone, bone-local pos, radius]  (torso bones: y up / z forward / x left; limb bones run along +Y)
 	var defs := [
-		[h.spine, Vector3(0, 0.1, 0.12), 0.27], [h.spine, Vector3(0.12, 0.05, 0.05), 0.2], [h.spine, Vector3(-0.13, 0.12, 0.03), 0.19],
-		[h.chest, Vector3(-0.12, 0.08, 0.1), 0.14], [h.chest, Vector3(0.1, 0.18, 0.08), 0.12], [h.chest, Vector3(0.0, 0.1, -0.13), 0.2],
-		[h.chest, Vector3(0.13, 0.05, -0.1), 0.13], [h.arm_l, Vector3(0, -0.05, 0), 0.1], [h.arm_r, Vector3(0.02, -0.15, 0), 0.09],
-		[h.neck, Vector3(0.04, 0.03, 0.03), 0.07], [h.thigh_l, Vector3(0, -0.15, 0.04), 0.1], [h.thigh_r, Vector3(0, -0.22, 0.03), 0.08],
+		["spine_01", Vector3(0, 0.12, 0.2), 0.26], ["spine_01", Vector3(0.16, 0.1, 0.14), 0.18], ["spine_01", Vector3(-0.16, 0.14, 0.13), 0.17],
+		["spine_03", Vector3(-0.12, 0.08, 0.13), 0.13], ["spine_03", Vector3(0.1, 0.18, 0.12), 0.12], ["spine_03", Vector3(0.0, 0.1, -0.15), 0.2],
+		["spine_03", Vector3(0.13, 0.05, -0.12), 0.13], ["upperarm_l", Vector3(0.06, 0.15, 0.0), 0.1], ["upperarm_r", Vector3(-0.06, 0.12, 0.02), 0.09],
+		["neck_01", Vector3(0.04, 0.03, 0.04), 0.07], ["thigh_l", Vector3(0.0, 0.2, 0.08), 0.1], ["thigh_r", Vector3(0.0, 0.26, 0.07), 0.08],
 	]
 	var i := 0
 	for d in defs:
 		var r: float = d[2] * s
 		var holder := Node3D.new()
 		holder.position = d[1] * s
-		d[0].add_child(holder)
+		var ba: Node3D = h.bone_attachment(d[0])
+		if ba == null:
+			continue
+		ba.add_child(holder)
 		Kit.mi(holder, Kit.blob(r, 70 + i, 0.09, Vector3(1, 1, 0.9), 10, 14), _sac_mat, Vector3.ZERO)
 		Kit.sphere(holder, r * 0.55, _core_mat, Vector3.ZERO, Vector3(1, 1, 1))
 		# dark veins over the sac
@@ -87,15 +91,17 @@ func _make_model() -> Node3D:
 			Kit.crystal(holder, dir * r * 0.9, dir, r * 0.45, r * 0.07, Kit.mat("ice"), i + k)
 		_sacs.append({"node": holder, "base": holder.scale, "ph": rng.randf() * 6.28})
 		i += 1
-	for q in [[h.spine, Vector3(0, 0.1, 0.25)], [h.chest, Vector3(0, 0.1, -0.2)]]:
+	for q in [["spine_01", Vector3(0, 0.1, 0.35)], ["spine_03", Vector3(0, 0.1, -0.25)]]:
 		var l := OmniLight3D.new()
 		l.light_color = Color(0.4, 0.9, 1.0)
 		l.light_energy = 0.9
 		l.omni_range = 3.5
 		l.shadow_enabled = false
 		l.position = q[1] * s
-		q[0].add_child(l)
-		_sac_lights.append(l)
+		var ba2: Node3D = h.bone_attachment(q[0])
+		if ba2:
+			ba2.add_child(l)
+			_sac_lights.append(l)
 	Kit.post(h, _pulse)
 	return h
 

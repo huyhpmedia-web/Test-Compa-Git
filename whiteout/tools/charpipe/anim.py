@@ -423,14 +423,12 @@ def write_action(rig, name, frames_q, frames_loc, fps=FPS, loop=True):
             fc.keyframe_points.add(n)
             co = np.stack([times, arr[:, k]], axis=1).flatten()
             fc.keyframe_points.foreach_set("co", co)
-            for kp in fc.keyframe_points: kp.interpolation = 'LINEAR'
     path = 'pose.bones["pelvis"].location'
     arr = np.array(frames_loc)
     for k in range(3):
         fc = fc_new(path, k)
         fc.keyframe_points.add(n)
         fc.keyframe_points.foreach_set("co", np.stack([times, arr[:, k]], axis=1).flatten())
-        for kp in fc.keyframe_points: kp.interpolation = 'LINEAR'
     act.use_fake_user = True
     ob.animation_data.action = None
     # NLA track so the glTF exporter emits it by name

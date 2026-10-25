@@ -4,6 +4,7 @@ extends "res://actors/models/creature.gd"
 ## Owner-driven vars: move_speed, stun_k (0..1 crown lowers when stunned), slam_k, charge_k, lean.
 const Kit = preload("res://actors/kit.gd")
 const Humanoid = preload("res://actors/humanoid.gd")
+const EnemyGlb = preload("res://actors/models/enemy_glb.gd")
 
 var crown: Node3D
 var driver: Node3D
@@ -17,11 +18,50 @@ var heart_mat: StandardMaterial3D
 var heart_light: OmniLight3D
 var _phase := 0.0
 var _dead_t := 0.0
+var _glb: Node3D
+var _crawlers: Array = []   # glb: {root, base: Basis, ph}
 
 func _ready() -> void:
 	_build()
 
 func _build() -> void:
+	var g := EnemyGlb.load_scene("hauler.glb")
+	if g != null and EnemyGlb.find(g, "Mass") != null and EnemyGlb.find(g, "Crown") != null and EnemyGlb.find(g, "Driver") != null:
+		_build_glb(g)
+	else:
+		_build_procedural()
+
+## glTF build (tools/charpipe/bosses/build_hauler.py): Mass (static mound + Crawler0..N miners dragging it),
+## Crown (cab) holding Driver (its origin is the glowing, torn-open chest = the weak point).
+func _build_glb(g: Node3D) -> void:
+	_glb = g
+	add_child(g)
+	mass = EnemyGlb.find(g, "Mass") as Node3D
+	crown = EnemyGlb.find(g, "Crown") as Node3D
+	driver = EnemyGlb.find(g, "Driver") as Node3D
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 31337
+	for c in mass.get_children():
+		if String(c.name).begins_with("Crawler"):
+			arms.append({"sh": c, "el": null, "ph": rng.randf() * TAU, "base_y": 0.0, "l1": 1.0, "base_pos": (c as Node3D).position, "base_basis": (c as Node3D).transform.basis})
+	var hm := EnemyGlb.unique_mats(driver, "glow_heart")
+	heart_mat = hm[0] if hm.size() > 0 else null
+	heart_light = OmniLight3D.new()
+	heart_light.light_color = Color(1.0, 0.55, 0.3)
+	heart_light.light_energy = 2.0
+	heart_light.omni_range = 6.0
+	heart_light.shadow_enabled = false
+	heart_light.position = Vector3(0, 0.1, 0.4)
+	driver.add_child(heart_light)
+	var lamp := OmniLight3D.new()
+	lamp.light_color = Color(1.0, 0.7, 0.4)
+	lamp.light_energy = 1.4
+	lamp.omni_range = 7.0
+	lamp.shadow_enabled = false
+	lamp.position = Vector3(0.75, 1.0, 0.6)
+	crown.add_child(lamp)
+
+func _build_procedural() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 31337
 	var flesh := Kit.mat("flesh_dead")
@@ -120,6 +160,8 @@ func _build() -> void:
 	Kit.post(driver, _driver_pose)
 
 func heart_world() -> Vector3:
+	if _glb != null:
+		return driver.global_position
 	return driver.chest.global_position + driver.chest.global_transform.basis.z * 0.15 * 1.1 + Vector3(0, 0.05, 0)
 
 func _driver_pose(_d: float) -> void:
@@ -138,17 +180,22 @@ func _animate(delta: float) -> void:
 	var a: float = clamp(v / 4.0, 0.0, 1.0)
 	_phase += delta * (1.5 + v * 1.4)
 	flash = max(0.0, flash - delta * 4.0)
-	heart_mat.emission_energy_multiplier = 3.0 + sin(t * 4.0) * 1.0 + flash * 10.0 + stun_k * 3.0
+	if heart_mat:
+		heart_mat.emission_energy_multiplier = 3.0 + sin(t * 4.0) * 1.0 + flash * 10.0 + stun_k * 3.0
 	heart_light.light_energy = 2.0 + flash * 5.0 + stun_k * 2.0
 	if pose == "dead":
 		_dead_t = min(_dead_t + delta * 0.5, 1.0)
 		mass.position.y = -0.7 * _dead_t
 		mass.scale.y = 1.0 - 0.25 * _dead_t
 		crown.position.y = 3.35 - 1.3 * _dead_t
-		heart_mat.emission_energy_multiplier = 0.0
+		if heart_mat:
+			heart_mat.emission_energy_multiplier = 0.0
 		heart_light.light_energy = 0.0
 		for ar in arms:
-			ar.sh.rotation.x = lerp(ar.sh.rotation.x, 0.5, delta * 2.0)
+			if _glb != null:
+				ar.sh.transform.basis = ar.sh.transform.basis.slerp(ar.base_basis * Basis(Vector3.RIGHT, 0.5), delta * 2.0)
+			else:
+				ar.sh.rotation.x = lerp(ar.sh.rotation.x, 0.5, delta * 2.0)
 		return
 	# body: lumbering lurch, leans forward when charging, rears on slam
 	mass.position.y = abs(sin(_phase * 0.5)) * 0.12 * a - slam_k * 0.0
@@ -161,6 +208,12 @@ func _animate(delta: float) -> void:
 		var s := sin(_phase + ar.ph)
 		var c := cos(_phase + ar.ph)
 		var sh: Node3D = ar.sh
+		if _glb != null:
+			# crawlers: pull forward (pitch about their own shoulder), slam raises them, stun slumps them
+			var pitch: float = -0.05 + s * 0.32 * a - slam_k * 0.6 + stun_k * 0.25
+			sh.transform.basis = (ar.base_basis as Basis) * Basis(Vector3.RIGHT, pitch)
+			sh.position = (ar.base_pos as Vector3) + (ar.base_basis as Basis) * Vector3(0, max(0.0, c) * 0.12 * a, c * 0.16 * a)
+			continue
 		sh.rotation.x = -0.05 + s * 0.35 * a + slam_k * -0.9 + stun_k * 0.2
 		(ar.el as Node3D).rotation.x = max(0.0, c) * 0.5 * a - 0.2
 		sh.position.y = ar.base_pos.y + max(0.0, c) * 0.1 * a

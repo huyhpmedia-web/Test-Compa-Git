@@ -105,3 +105,9 @@ Codename-Recon/Gridlock; licence text "Creative Commons CC0" in each pack).
 * https://github.com/wesnoth/wesnoth (Scott Buckley music, CC BY-SA 4.0).
 
 Caveat: licence information is as recorded by those mirrors for the original uploads; Freesound IDs are given so each can be re-verified.
+
+## Gore / flesh effects (procedural, tools/gen_gore_audio.py)
+
+| Sound | Source | Licence |
+|---|---|---|
+| `gore_hit_[a-c]`, `gore_splat_[a-c]`, `gore_pop`, `gore_tear_[a-b]` | PROCEDURAL (numpy synthesis: filtered noise, bubble modulation, pitch-dropped thumps); no third-party material | CC0 (own work) |

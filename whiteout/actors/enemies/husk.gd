@@ -43,41 +43,45 @@ func _setup_collision() -> void:
 	col.position.y = 0.98
 	add_child(col)
 
+const CharacterModel = preload("res://actors/character_model.gd")
+
 func _make_model() -> Node3D:
-	var h := Humanoid.new()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = hash(uid) if uid != "" else randi()
-	h.setup({"zombie": true, "bloody": 0.5, "female": false, "skin": Color(0.7, 0.55, 0.5), "hair_style": "bald", "height": 1.98, "bulk": 1.38,
-		"shirt": Color(0.18, 0.18, 0.2), "pants": Color(0.14, 0.15, 0.2), "coat": rng.randf() < 0.5, "coat_color": Color(0.16, 0.13, 0.1), "gloves": rng.randf() < 0.5})
+	var h := CharacterModel.new()
+	h.setup({"model": "husk"})
 	h.pose = "zombie"
 	RimeLook.decorate(h, rime * 0.6, rng.randi())
-	var s: float = h.cfg.height / 1.72
-	var b: float = h.cfg.bulk
+	var s: float = h._s
 	var m := Kit.mat("ice_deep")
 	var list: Array = []
-	# --- armour plates: [parent, pos, dir, length, width, thickness]
-	for x in [-1.0, 1.0]:
-		list.append([h.arm_l if x < 0 else h.arm_r, Vector3(x * 0.05, 0.05, 0), Vector3(x, 0.9, -0.1), 0.34, 0.1, 0.045])
-		list.append([h.arm_l if x < 0 else h.arm_r, Vector3(x * 0.07, -0.08, 0), Vector3(x, 0.1, 0.0), 0.3, 0.075, 0.04])
-		list.append([h.fore_l if x < 0 else h.fore_r, Vector3(x * 0.04, -0.12, 0), Vector3(x * 0.5, -1.0, 0.3), 0.3, 0.06, 0.035])
-		list.append([h.fore_l if x < 0 else h.fore_r, Vector3(0, -0.1, -0.05), Vector3(x * 0.2, -0.8, -0.8), 0.22, 0.05, 0.03])
-		list.append([h.thigh_l if x < 0 else h.thigh_r, Vector3(0, -0.2, 0.08), Vector3(0, -1.0, 0.45), 0.3, 0.07, 0.04])
-		list.append([h.thigh_l if x < 0 else h.thigh_r, Vector3(x * 0.07, -0.18, 0.0), Vector3(x * 0.8, -0.7, 0), 0.26, 0.06, 0.035])
-		list.append([h.shin_l if x < 0 else h.shin_r, Vector3(0, -0.15, 0.06), Vector3(0, -1.0, 0.6), 0.28, 0.06, 0.035])
+	# --- armour plates: [bone, bone-local pos, dir, length, width, thickness]; limb bones run along +Y, torso bones are y-up / z-forward
+	for sd in ["l", "r"]:
+		var x := 1.0 if sd == "l" else -1.0
+		list.append(["upperarm_" + sd, Vector3(0.05, 0.08, 0.02), Vector3(0.9, 0.6, 0.0), 0.36, 0.13, 0.05])
+		list.append(["upperarm_" + sd, Vector3(0.0, 0.2, 0.06), Vector3(0.0, 0.5, 1.0), 0.3, 0.1, 0.045])
+		list.append(["lowerarm_" + sd, Vector3(0.0, 0.08, -0.05), Vector3(0.0, 0.4, -1.0), 0.3, 0.09, 0.04])
+		list.append(["lowerarm_" + sd, Vector3(0.04, 0.18, 0.03), Vector3(0.8, 0.5, 0.3), 0.24, 0.07, 0.035])
+		list.append(["thigh_" + sd, Vector3(0.0, 0.14, 0.08), Vector3(0.0, -0.4, 1.0), 0.32, 0.1, 0.05])
+		list.append(["thigh_" + sd, Vector3(0.08 * x, 0.22, 0.0), Vector3(x, -0.5, 0.0), 0.28, 0.09, 0.045])
+		list.append(["calf_" + sd, Vector3(0.0, 0.14, 0.07), Vector3(0.0, -0.4, 1.0), 0.28, 0.08, 0.04])
+		list.append(["clavicle_" + sd, Vector3(0.06 * x, 0.04, 0.0), Vector3(x * 0.6, 1.0, -0.2), 0.34, 0.12, 0.05])
 	for i in 4:
-		list.append([h.chest, Vector3((i - 1.5) * 0.085 * b, 0.1 + (i % 2) * 0.1, 0.1 * b), Vector3((i - 1.5) * 0.35, 0.8 + (i % 2) * 0.3, 1.0), 0.32, 0.085, 0.045])
-		list.append([h.chest, Vector3((i - 1.5) * 0.1 * b, 0.05 + (i % 2) * 0.12, -0.1 * b), Vector3((i - 1.5) * 0.35, 0.9, -1.0), 0.42 + (i % 2) * 0.2, 0.09, 0.05])
-	list.append([h.spine, Vector3(0.0, 0.05, -0.09), Vector3(0, 0.7, -1.0), 0.45, 0.1, 0.05])
-	list.append([h.spine, Vector3(0.08, 0.1, 0.1), Vector3(0.3, 0.3, 1.0), 0.28, 0.08, 0.04])
-	list.append([h.head, Vector3(0, 0.2, -0.03), Vector3(0, 1.0, -0.5), 0.26, 0.05, 0.05])
-	list.append([h.head, Vector3(-0.05, 0.19, 0.0), Vector3(-0.8, 1.0, -0.3), 0.2, 0.04, 0.04])
-	list.append([h.head, Vector3(0.05, 0.19, 0.0), Vector3(0.8, 1.0, -0.3), 0.2, 0.04, 0.04])
-	list.append([h.head, Vector3(0, 0.06, 0.1), Vector3(0, -0.2, 1.0), 0.14, 0.07, 0.04])
+		list.append(["spine_03", Vector3((i - 1.5) * 0.09, 0.08 + (i % 2) * 0.1, 0.11), Vector3((i - 1.5) * 0.35, 0.3 + (i % 2) * 0.2, 1.0), 0.3, 0.1, 0.05])
+		list.append(["spine_03", Vector3((i - 1.5) * 0.1, 0.05 + (i % 2) * 0.12, -0.12), Vector3((i - 1.5) * 0.35, 0.9, -1.0), 0.42 + (i % 2) * 0.2, 0.11, 0.055])
+	list.append(["spine_02", Vector3(0.0, 0.05, -0.12), Vector3(0, 0.7, -1.0), 0.45, 0.12, 0.055])
+	list.append(["spine_01", Vector3(0.08, 0.05, 0.12), Vector3(0.3, 0.3, 1.0), 0.28, 0.09, 0.045])
+	list.append(["head", Vector3(0, 0.15, -0.03), Vector3(0, 1.0, -0.5), 0.26, 0.06, 0.055])
+	list.append(["head", Vector3(-0.05, 0.14, 0.0), Vector3(-0.8, 1.0, -0.3), 0.2, 0.045, 0.045])
+	list.append(["head", Vector3(0.05, 0.14, 0.0), Vector3(0.8, 1.0, -0.3), 0.2, 0.045, 0.045])
 	for e in list:
-		var n := Kit.crystal(e[0], e[1] * s, e[2], e[3] * s, 1.0, m, rng.randi() % 8)
+		var ba: Node3D = h.bone_attachment(e[0])
+		if ba == null:
+			continue
+		var n := Kit.crystal(ba, e[1], e[2], e[3], 1.0, m, rng.randi() % 8)
 		# flatten into a plate: width x length x thickness
 		var bs: Basis = n.transform.basis.orthonormalized()
-		n.transform.basis = Basis(bs.x * e[4] * s, bs.y * e[3] * s, bs.z * e[5] * s * 2.0)
+		n.transform.basis = Basis(bs.x * e[4], bs.y * e[3], bs.z * e[5] * 2.0)
 		_plates.append(n)
 	# shedding order: shuffled, but chest/head plates tend to go last
 	for i in range(_plates.size() - 1, 0, -1):

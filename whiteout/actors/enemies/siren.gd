@@ -39,72 +39,51 @@ func _ready() -> void:
 func _sound(kind: String) -> String:
 	return "siren_" + kind
 
+const CharacterModel = preload("res://actors/character_model.gd")
+
 func _make_model() -> Node3D:
-	var h := Humanoid.new()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = hash(uid) if uid != "" else randi()
-	h.setup({"zombie": true, "bloody": 0.2, "female": true, "skin": Color(0.78, 0.7, 0.68), "hair": Color(0.08, 0.07, 0.08), "hair_style": "long",
-		"height": 1.92, "bulk": 0.62, "shirt": Color(0.3, 0.3, 0.34), "pants": Color(0.22, 0.22, 0.26), "coat": true, "coat_color": Color(0.38, 0.38, 0.42)})
-	h.pose = "normal"
-	var s: float = h.cfg.height / 1.72
+	var h := CharacterModel.new()
+	h.setup({"model": "siren"})
+	h.pose = "zombie"
+	var s: float = clampf(h._s, 0.9, 1.3)
 	RimeLook.decorate(h, rime, rng.randi(), {"mouth": false})
-	# ribs & spine knobs: emaciated look
-	var bone := Kit.mat("bone")
-	for i in 5:
-		Kit.box(h.chest, Vector3(0.17 - i * 0.012, 0.012, 0.012) * s, bone, Vector3(0, 0.2 - i * 0.045, 0.108) * s)
-	for i in 4:
-		Kit.sphere(h.spine, 0.014 * s, bone, Vector3(0, 0.04 + i * 0.07, -0.08) * s)
-	# unhinged jaw
-	_jaw = Node3D.new()
-	_jaw.position = Vector3(0, 0.065, 0.02) * s
-	h.head.add_child(_jaw)
-	var flesh := Kit.mat("skin_frost")
-	var jaw_m := Kit.blob(0.05 * s, 11, 0.1, Vector3(1.0, 1.9, 1.0), 8, 12)
-	Kit.mi(_jaw, jaw_m, flesh, Vector3(0, -0.07, 0.045) * s)
-	var teeth := Kit.mat("tooth")
-	for i in 7:
-		var a: float = lerp(-0.5, 0.5, float(i) / 6.0)
-		Kit.crystal(_jaw, Vector3(sin(a) * 0.045, -0.015, 0.05 + cos(a) * 0.035) * s, Vector3(0, 1, 0.1), 0.028 * s * rng.randf_range(0.7, 1.4), 0.006 * s, teeth, i)
-	# dark mouth cavity on the face + upper teeth
-	Kit.sphere(h.head, 0.045 * s, Kit.mat("mouth"), Vector3(0, 0.05, 0.065) * s, Vector3(0.95, 0.9, 0.55))
-	for i in 6:
-		var a: float = lerp(-0.5, 0.5, float(i) / 5.0)
-		Kit.crystal(h.head, Vector3(sin(a) * 0.04, 0.08, 0.08 + cos(a) * 0.02) * s, Vector3(0, -1, 0.1), 0.024 * s * rng.randf_range(0.7, 1.3), 0.006 * s, teeth, i + 3)
-	# throat: swollen goiter of resonating crystals
+	# throat: swollen goiter of resonating crystals (neck bone: y up, z forward)
+	var nk: Node3D = h.bone_attachment("neck_01")
 	var gm: StandardMaterial3D = Kit.mat("ice_glow").duplicate()
 	_throat_mats.append(gm)
-	Kit.sphere(h.neck, 0.062 * s, gm, Vector3(0, 0.045, 0.03) * s, Vector3(1.0, 1.5, 0.9))
+	Kit.sphere(nk, 0.058 * s, gm, Vector3(0, 0.05, 0.045) * s, Vector3(1.0, 1.5, 0.9))
 	for i in 9:
 		var ang := TAU * float(i) / 9.0
 		var d := Vector3(sin(ang), rng.randf_range(-0.3, 0.9), cos(ang) * 0.9 + 0.2)
-		Kit.crystal(h.neck, Vector3(0, 0.045, 0.03) * s + d.normalized() * 0.045 * s, d, rng.randf_range(0.08, 0.17) * s, 0.016 * s, gm, i)
+		Kit.crystal(nk, Vector3(0, 0.05, 0.045) * s + d.normalized() * 0.045 * s, d, rng.randf_range(0.08, 0.17) * s, 0.016 * s, gm, i)
+	# crystal "teeth" in the dropped jaw
+	var teeth := Kit.mat("tooth")
+	var hb: Node3D = h.bone_attachment("head")
+	for i in 7:
+		var a: float = lerp(-0.5, 0.5, float(i) / 6.0)
+		Kit.crystal(hb, Vector3(sin(a) * 0.035, -0.07, 0.085 + cos(a) * 0.02) * s, Vector3(0, 1, 0.1), 0.03 * s * rng.randf_range(0.7, 1.4), 0.006 * s, teeth, i)
 	_throat_light = OmniLight3D.new()
 	_throat_light.light_color = Color(0.45, 0.9, 1.0)
 	_throat_light.light_energy = 0.6
 	_throat_light.omni_range = 3.5
 	_throat_light.shadow_enabled = false
 	_throat_light.position = Vector3(0, 0.05, 0.12) * s
-	h.neck.add_child(_throat_light)
+	nk.add_child(_throat_light)
 	Kit.post(h, _pose_post)
 	return h
 
-## Runs after the humanoid's own animation: hunched, long dangling arms, head thrown back when humming.
+## Runs after the model's own animation: head thrown back (and the throat lit) when humming.
 func _pose_post(delta: float) -> void:
 	var m = model
 	if m == null or m.pose == "dead":
 		return
 	var k := _hum_k
 	var tt := Time.get_ticks_msec() * 0.001
-	m.spine.rotation.x = lerp(0.35, -0.12, k)
-	m.chest.rotation.x = lerp(0.1, -0.15, k)
-	m.neck.rotation.x = lerp(0.1, -0.5, k)
-	m.head.rotation = Vector3(lerp(0.15, -0.55, k) + sin(tt * 1.7) * 0.03, sin(tt * 0.9) * 0.15 * (1.0 - k), lerp(0.18, 0.0, k))
-	m.arm_l.rotation = Vector3(lerp(0.05, -0.35, k), 0, lerp(-0.12, -0.9, k))
-	m.arm_r.rotation = Vector3(lerp(-0.05, -0.35, k), 0, lerp(0.12, 0.9, k))
-	m.fore_l.rotation = Vector3(lerp(-0.35, -0.6, k), 0, 0)
-	m.fore_r.rotation = Vector3(lerp(-0.25, -0.6, k), 0, 0)
-	if _jaw:
-		_jaw.rotation = Vector3(lerp(1.0, 1.45, k) + sin(tt * 3.0) * 0.04 * k, 0, 0.22)
+	m.add_bone_rotation("spine_03", Vector3(lerpf(0.0, -0.3, k), 0, 0))
+	m.add_bone_rotation("neck_01", Vector3(lerpf(0.0, -0.45, k), 0, 0))
+	m.add_bone_rotation("head", Vector3(lerpf(0.0, -0.45, k) + sin(tt * 1.7) * 0.03, sin(tt * 0.9) * 0.15 * (1.0 - k), 0))
 	var e := 1.2 + k * 5.0 + sin(tt * 4.0) * 0.4
 	for gm in _throat_mats:
 		gm.emission_energy_multiplier = e

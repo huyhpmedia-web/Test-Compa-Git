@@ -2,6 +2,7 @@ extends RefCounted
 ## Visual effects helpers: weapon meshes, tracers, impacts, blood, explosions.
 
 const Mats = preload("res://core/mats.gd")
+const Gore = preload("res://world/gore.gd")
 
 static func _mi(mesh: Mesh, mat: Material, pos := Vector3.ZERO) -> MeshInstance3D:
 	var m := MeshInstance3D.new()
@@ -105,15 +106,10 @@ static func impact(parent: Node, pos: Vector3, normal: Vector3) -> void:
 	_particles(parent, pos + normal * 0.02, Color(0.45, 0.42, 0.38), 10, 1.5, 0.04, 0.6, 3.0)
 	decal(parent, pos, normal, Color(0.05, 0.05, 0.05, 0.9), 0.06)
 
+## Flesh hit at a bullet impact. Enemies running Enemy.take_hit already did the full gore hook
+## (Gore.on_enemy_hit); this covers anything else that was shot (bosses, props, NPCs).
 static func blood_burst(parent: Node, pos: Vector3, normal: Vector3) -> void:
-	_particles(parent, pos, Color(0.35, 0.02, 0.02), 16, 2.5, 0.05, 0.6)
-	# drip on the floor below
-	if parent != null and parent.is_inside_tree():
-		var space: PhysicsDirectSpaceState3D = parent.get_viewport().get_world_3d().direct_space_state
-		var q := PhysicsRayQueryParameters3D.create(pos, pos + Vector3(0, -3, 0), 1)
-		var hit := space.intersect_ray(q)
-		if hit:
-			decal(parent, hit.position, hit.normal, Color(0.22, 0.01, 0.01, 0.95), randf_range(0.25, 0.5))
+	Gore.fallback_hit(parent, pos, normal)
 
 static func decal(parent: Node, pos: Vector3, normal: Vector3, color: Color, size: float) -> void:
 	if parent == null:
@@ -153,6 +149,7 @@ static func explosion(parent: Node, pos: Vector3, radius: float, damage: float) 
 	tw.tween_callback(l.queue_free)
 	Sfx.play_at("explosion", pos, 4.0)
 	Sfx.alert_noise(pos, 40.0)
+	Gore.src_override = "explosion"
 	for e in parent.get_tree().get_nodes_in_group("enemy"):
 		if is_instance_valid(e) and e.has_method("take_hit"):
 			var d: float = e.global_position.distance_to(pos)
@@ -162,6 +159,7 @@ static func explosion(parent: Node, pos: Vector3, radius: float, damage: float) 
 					e.burn(dmg, pos)
 				else:
 					e.take_hit(dmg, e.global_position + Vector3(0, 1, 0), (e.global_position - pos).normalized(), false)
+	Gore.src_override = ""
 	for p in parent.get_tree().get_nodes_in_group("player"):
 		var d2: float = p.global_position.distance_to(pos)
 		if d2 < radius * 0.6:

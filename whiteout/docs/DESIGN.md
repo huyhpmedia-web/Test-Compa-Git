@@ -158,3 +158,20 @@ Conventions: metres, +Y up, ground y=0 unless multi-storey. Characters face +Z;
 - `tools/check.sh <level ids>` — loads every script (prints parse errors) and smoke-runs levels.
 - `tools/shot.sh <level> <out.png> [spawn= pos=x,y,z yaw= pitch= frames= flags=a,b]` — 1280×720
   Forward+ screenshot (software Vulkan; ~1–2 min).
+
+## Gore, fluids and horror dressing
+
+- `res://world/gore.gd` (static): decals `splatter / spray_decal / pool (spreads over grow_time) / trail /
+  handprint / wall_drips / footprint / smear / writing / body_outline`, fluids `puddle / drip_emitter / steam_vent /
+  frozen_blood / ichor_splatter`, gibs `gib / head_pop / lose_limb`. Pass `{"local": true}` in opts to give
+  positions in the parent's local space. Textures: `textures/gore/` (procedural, `tools/gen_gore.py`).
+- Enemy hooks live in `actors/enemy.gd` (`Gore.on_enemy_hit` in `take_hit`, `Gore.on_enemy_death` in `_die`);
+  `FX.blood_burst` covers anything else that is shot (bosses). Head pops use `model.set_bone_hidden("head")` when
+  the model has it, else the Humanoid `head` pivot. Fire/explosion kills char the model.
+- Gore props: `Props.body_bag / torso / severed_limb / gut_pile / meat_hook / hanging_body / blood_cot / bathtub /
+  wheelchair / frozen_corpse / frozen_pile / body_outline / blood_writing / car_gore / crystal_impale / glass_blood /
+  corpse_pose` (and `Props.blood_pool` is now a decal).
+- Per-level set dressing: `levels/dressing/<level id>_dress.gd` (hook in `level.gd`), helpers in
+  `levels/dressing/dress_util.gd` (budget: 150 decals per level). Gore test arena: `tools/shot.sh test_gore ...`
+  (flags `tg_magnum`, `tg_shotgun`, `tg_props`, `tg_cam_close` ...).
+- Screen blood: `ui/blood_screen.gd` (added to the HUD, driven by `UI.flash_damage()` and low health).

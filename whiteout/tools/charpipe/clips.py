@@ -118,6 +118,57 @@ def build_clips(rig, with_mocap=True):
           hand={"l": V(0.8, 0.85, 0.08) * sc, "r": V(-0.62, 0.95, 0.07) * sc})
     out["death"] = render(c)
 
+    # ---------------- hang (Hanger: model is flipped upside-down by the AI script; arms dangle toward the ceiling...floor)
+    c = Clip("hang", 3.0, True)
+    for t, a in ((0, 0), (1.5, 1), (3.0, 0)):
+        c.key(t, rot={"spine_02": (-6 + 3 * a, 0, 4 * a), "head": (30 + 8 * a, 0, 16 * a), "thigh_l": (6, 0, -4 + 2 * a), "thigh_r": (10, 0, 5 - 2 * a), "calf_l": (8, 0, 0), "calf_r": (12, 0, 0)},
+              hand={"l": V(0.2 + 0.04 * a, -0.05, 2.0 - 0.05 * a) * sc, "r": V(-0.22 - 0.03 * a, 0.0, 2.0 + 0.04 * a) * sc}, curl={"l": 35, "r": 30})
+    out["hang"] = render(c)
+
+    # ---------------- more deaths + get-up (zombies)
+    def death_fwd(scale):
+        c = Clip("death_fwd", 1.7 * scale, False)
+        k = lambda t: t * scale
+        z = {"thigh_l": (0, 0, 0), "thigh_r": (0, 0, 0), "calf_l": (0, 0, 0), "calf_r": (0, 0, 0), "spine_02": (0, 0, 0), "spine_03": (0, 0, 0), "head": (0, 0, 0)}
+        c.key(k(0), root=V(0, 0, 0), loc=V(0, 0, 0), rot=z)
+        c.key(k(0.4), root=V(2, 0, 0), loc=V(0, -0.02, -0.25), rot={"thigh_l": (-38, 0, 0), "thigh_r": (-30, 0, 0), "calf_l": (62, 0, 0), "calf_r": (50, 0, 0), "spine_02": (22, 0, 0), "spine_03": (14, 0, 0), "head": (18, 0, 0)},
+              hand={"l": V(0.3, -0.25, 1.0) * sc, "r": V(-0.3, -0.25, 1.0) * sc})
+        c.key(k(0.85), root=V(34, 0, 0), loc=V(0, -0.05, -0.1), rot={"thigh_l": (-18, 0, 4), "thigh_r": (-10, 0, -4), "calf_l": (28, 0, 0), "calf_r": (18, 0, 0), "spine_02": (14, 0, 0), "spine_03": (8, 0, 0), "head": (-10, 0, 0)},
+              hand={"l": V(0.32, -0.85, 1.1) * sc, "r": V(-0.32, -0.85, 1.1) * sc})
+        c.key(k(1.25), root=V(80, 0, 0), loc=V(0, 0, 0.1), rot={"thigh_l": (4, 0, 6), "thigh_r": (8, 0, -4), "calf_l": (10, 0, 0), "calf_r": (6, 0, 0), "spine_02": (0, 0, 0), "spine_03": (-4, 0, 0), "head": (-40, 0, 8)},
+              hand={"l": V(0.38, -1.75, 0.1) * sc, "r": V(-0.38, -1.7, 0.1) * sc})
+        c.key(k(1.7), root=V(86, 0, 0), loc=V(0, 0, 0.12), rot={"thigh_l": (4, 0, 8), "thigh_r": (10, 0, -6), "calf_l": (8, 0, 0), "calf_r": (4, 0, 0), "spine_02": (0, 0, 0), "spine_03": (-3, 0, 0), "head": (-30, 0, 18)},
+              hand={"l": V(0.5, -1.7, 0.08) * sc, "r": V(-0.45, -1.6, 0.08) * sc})
+        return c
+    out["death_fwd"] = render(death_fwd(1.0))
+    qs, locs = render(death_fwd(1.5))
+    out["getup"] = (qs[::-1], locs[::-1])
+
+    c = Clip("death_knees", 2.1, False)
+    c.key(0, root=V(0, 0, 0), loc=V(0, 0, 0), rot={"thigh_l": (0, 0, 0), "thigh_r": (0, 0, 0), "calf_l": (0, 0, 0), "calf_r": (0, 0, 0), "spine_02": (0, 0, 0), "head": (0, 0, 0)})
+    c.key(0.5, root=V(0, 0, 0), loc=V(0, 0.2, -0.43 * sc), rot={"thigh_l": (-10, 0, 3), "thigh_r": (-18, 0, -3), "calf_l": (130, 0, 0), "calf_r": (125, 0, 0), "spine_02": (10, 0, 0), "head": (10, 0, 0)},
+          hand={"l": V(0.28, -0.2, 0.9) * sc, "r": V(-0.28, -0.25, 0.9) * sc})
+    c.key(1.0, root=V(0, 0, 0), loc=V(0, 0.22, -0.46 * sc), rot={"thigh_l": (-8, 0, 3), "thigh_r": (-15, 0, -3), "calf_l": (140, 0, 0), "calf_r": (135, 0, 0), "spine_01": (10, 0, 0), "spine_02": (30, 0, 8), "spine_03": (15, 0, 6), "head": (30, 0, 14)},
+          hand={"l": V(0.25, -0.1, 0.62) * sc, "r": V(-0.25, -0.15, 0.62) * sc})
+    c.key(1.6, root=V(0, 0, 0), loc=V(0, 0.2, -0.48 * sc), rot={"thigh_l": (-8, 0, 3), "thigh_r": (-15, 0, -3), "calf_l": (140, 0, 0), "calf_r": (135, 0, 0), "spine_01": (24, 0, 0), "spine_02": (52, 0, 10), "spine_03": (30, 0, 8), "head": (40, 0, 20)},
+          hand={"l": V(0.35, -0.55, 0.15) * sc, "r": V(-0.3, -0.5, 0.12) * sc})
+    c.key(2.1, root=V(0, 0, 0), loc=V(0, 0.2, -0.5 * sc), rot={"thigh_l": (-8, 0, 3), "thigh_r": (-15, 0, -3), "calf_l": (142, 0, 0), "calf_r": (138, 0, 0), "spine_01": (30, 0, 0), "spine_02": (62, 0, 10), "spine_03": (36, 0, 8), "head": (44, 0, 22)},
+          hand={"l": V(0.38, -0.62, 0.1) * sc, "r": V(-0.33, -0.58, 0.1) * sc})
+    out["death_knees"] = render(c)
+
+    c = Clip("death_side", 1.9, False)
+    z0 = {"thigh_l": (0, 0, 0), "thigh_r": (0, 0, 0), "calf_l": (0, 0, 0), "calf_r": (0, 0, 0), "spine_02": (0, 0, 0), "head": (0, 0, 0)}
+    c.key(0, root=V(0, 0, 0), loc=V(0, 0, 0), rot=z0)
+    c.key(0.4, root=V(0, 0, 6), loc=V(0, 0, -0.1), rot={"thigh_l": (-20, 0, 0), "thigh_r": (-10, 0, 0), "calf_l": (30, 0, 0), "calf_r": (20, 0, 0), "spine_02": (6, 0, -12), "head": (0, 0, -20)},
+          hand={"l": V(0.5, -0.2, 1.2) * sc, "r": V(-0.3, -0.1, 1.0) * sc})
+    c.key(0.9, root=V(0, -35, 4), loc=V(0, 0, -0.15), rot={"thigh_l": (-30, 0, 0), "thigh_r": (-20, 0, 0), "calf_l": (45, 0, 0), "calf_r": (35, 0, 0), "spine_02": (6, 0, -8), "head": (0, 0, -25)},
+          hand={"l": V(0.8, -0.3, 1.3) * sc, "r": V(-0.5, -0.2, 1.0) * sc})
+    c.key(1.4, root=V(0, -84, 3), loc=V(0, 0, 0.12), rot={"thigh_l": (-30, 0, 0), "thigh_r": (-12, 0, 0), "calf_l": (50, 0, 0), "calf_r": (30, 0, 0), "spine_02": (10, 0, 0), "head": (0, 0, -25)},
+          hand={"l": V(0.9, -0.4, 0.15) * sc, "r": V(-0.3, -0.5, 0.3) * sc})
+    c.key(1.9, root=V(0, -88, 3), loc=V(0, 0, 0.13), rot={"thigh_l": (-34, 0, 0), "thigh_r": (-14, 0, 0), "calf_l": (54, 0, 0), "calf_r": (32, 0, 0), "spine_02": (10, 0, 0), "head": (0, 0, -28)},
+          hand={"l": V(0.95, -0.4, 0.12) * sc, "r": V(-0.3, -0.55, 0.28) * sc})
+    out["death_side"] = render(c)
+
     # ---------------- melee
     c = Clip("hatchet_swing", 1.1, False)
     idle_h = idle_hands(sc)
@@ -248,6 +299,6 @@ def add_all(rig, with_mocap=True, only=None):
     clips, meta = build_clips(rig, with_mocap)
     for name, (qs, locs) in clips.items():
         if only and name not in only: continue
-        loop = name in ("idle", "aim_idle", "walk", "run", "zombie_idle", "zombie_walk", "crawl", "sit")
+        loop = name in ("idle", "aim_idle", "walk", "run", "zombie_idle", "zombie_walk", "crawl", "sit", "hang")
         write_action(rig, name, qs, locs, loop=loop)
     return meta

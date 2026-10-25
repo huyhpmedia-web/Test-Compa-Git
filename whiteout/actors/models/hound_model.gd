@@ -2,6 +2,7 @@ extends "res://actors/models/creature.gd"
 ## Frozen sled dog / wolf, built from noise-displaced blobs and jointed limbs.
 ## Poses: normal | crouch | dead.  One-shots: attack (lunge), hurt, stagger, roar.
 const Kit = preload("res://actors/kit.gd")
+const EnemyGlb = preload("res://actors/models/enemy_glb.gd")
 
 var body: Node3D
 var neck: Node3D
@@ -13,11 +14,63 @@ var eye_mats: Array = []
 var _phase := 0.0
 var _dead_t := 0.0
 var _seed := 7
+var _skel: Skeleton3D          # glb build: bones driven here (see build_hound.py for the rig)
+var _bones := {}
+var _glb_root: Node3D
+
 
 func _ready() -> void:
 	_build()
 
 func _build() -> void:
+	var g := EnemyGlb.load_scene("hound.glb")
+	var sk: Skeleton3D = null
+	if g != null:
+		sk = g.find_child("*", true, false) as Skeleton3D if false else _find_skel(g)
+	if g != null and sk != null and sk.find_bone("fl_sh") >= 0:
+		_build_glb(g, sk)
+	else:
+		_build_procedural()
+
+func _find_skel(n: Node) -> Skeleton3D:
+	if n is Skeleton3D:
+		return n
+	for c in n.get_children():
+		var r := _find_skel(c)
+		if r:
+			return r
+	return null
+
+## glTF build (tools/charpipe/bosses/build_hound.py): skinned mesh + armature; the same gait maths as the procedural
+## model is applied to the bones (rotations expressed about model-space axes).
+func _build_glb(g: Node3D, sk: Skeleton3D) -> void:
+	_skel = sk
+	body = Node3D.new()
+	body.position = Vector3(0, 0.62, 0)
+	add_child(body)
+	g.position = Vector3(0, -0.62, 0)
+	body.add_child(g)
+	_glb_root = g
+	for i in sk.get_bone_count():
+		_bones[sk.get_bone_name(i)] = i
+	for sd in ["l", "r"]:
+		for fr in ["f", "h"]:
+			legs.append({"sh": _bones["%s%s_sh" % [fr, sd]], "kn": _bones["%s%s_kn" % [fr, sd]], "pw": _bones["%s%s_pw" % [fr, sd]],
+				"front": fr == "f", "side": -1.0 if sd == "l" else 1.0})
+	eye_mats = EnemyGlb.unique_mats(g, "glow")
+
+## Pose a bone by an euler rotation (YXZ, like a Node3D) expressed in MODEL space, relative to its parent's current pose.
+func _pose(bone: int, rx: float, ry := 0.0, rz := 0.0) -> void:
+	var par := _skel.get_bone_parent(bone)
+	var gp := Basis.IDENTITY
+	if par >= 0:
+		gp = _skel.get_bone_global_pose(par).basis
+	var rest := _skel.get_bone_rest(bone).basis
+	var r := Basis.from_euler(Vector3(rx, ry, rz), EULER_ORDER_YXZ)
+	var q := (gp.inverse() * r * gp * rest).orthonormalized().get_rotation_quaternion()
+	_skel.set_bone_pose_rotation(bone, q)
+
+func _build_procedural() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = _seed * 31
 	var fur := StandardMaterial3D.new()
@@ -130,6 +183,9 @@ func _build() -> void:
 func _animate(delta: float) -> void:
 	if body == null:
 		return
+	if _skel != null:
+		_animate_glb(delta)
+		return
 	var v := move_speed
 	var a: float = clamp(v / 5.0, 0.0, 1.0)
 	_phase += delta * (3.0 + v * 1.9)
@@ -188,3 +244,65 @@ func _animate(delta: float) -> void:
 		var sg: Node3D = tail[i]
 		sg.rotation.y = sin(t * 3.0 - i * 0.7 + _phase * 0.2) * (0.25 + 0.2 * idle)
 		sg.rotation.x = -0.35 + a * 0.45 + crouch * 0.5 if i == 0 else 0.15
+
+func _animate_glb(delta: float) -> void:
+	var v := move_speed
+	var a: float = clamp(v / 5.0, 0.0, 1.0)
+	_phase += delta * (3.0 + v * 1.9)
+	var gallop: float = clamp((v - 3.0) / 1.5, 0.0, 1.0)
+	var atk := one_k("attack")
+	var hurt := one_k("hurt") + one_k("stagger")
+	var roar := one_k("roar")
+	var nk: int = _bones["neck"]
+	var hd: int = _bones["head"]
+	var jw: int = _bones["jaw"]
+	if pose == "dead":
+		_dead_t = min(_dead_t + delta * 2.2, 1.0)
+		var k := ease(_dead_t, 0.4)
+		body.position.y = lerp(0.62, 0.2, k)
+		body.rotation = Vector3(0, 0, lerp(0.0, PI * 0.5, k))
+		_pose(nk, 0.3 * k, 0.5 * k, 0.0)
+		_pose(hd, 0.0)
+		_pose(jw, 0.5 * k)
+		for i in legs.size():
+			var l: Dictionary = legs[i]
+			_pose(l.sh, lerp(0.0, -0.9 + 0.5 * (i % 2), k))
+			_pose(l.kn, 0.7 * k)
+			_pose(l.pw, 0.0)
+		for em in eye_mats:
+			em.emission_energy_multiplier = 0.0
+		return
+	_dead_t = 0.0
+	body.rotation.z = 0.0
+	for em in eye_mats:
+		em.emission_energy_multiplier = 5.0 + sin(t * 9.0) * 1.2
+	var crouch := 1.0 if pose == "crouch" else 0.0
+	var offs := [0.0, lerp(PI, 0.35, gallop), lerp(PI, PI * 0.95, gallop), lerp(0.0, PI * 1.25, gallop)]
+	var bob: float = absf(sin(_phase)) * 0.06 * a
+	body.position.y = 0.62 + bob - crouch * 0.22 - atk * 0.02
+	body.rotation.x = sin(_phase * 1.0 + 0.6) * 0.1 * a * (0.5 + gallop) + crouch * 0.12 - atk * 0.25 + hurt * -0.2
+	body.rotation.y = sin(_phase * 0.5) * 0.04 * a
+	# legs: order in `legs` = l-front, l-hind, r-front, r-hind -> map onto the gait phases (fl, fr, hl, hr)
+	var order := [0, 2, 1, 3]
+	for n in 4:
+		var l: Dictionary = legs[order[n]]
+		var s := sin(_phase + offs[n])
+		var c := cos(_phase + offs[n])
+		var sw: float = s * (0.55 + 0.45 * gallop) * a
+		var lift: float = max(0.0, c) * (0.9 + 0.4 * gallop) * a
+		var rz: float = l.side * (0.04 + crouch * 0.18)
+		if l.front:
+			_pose(l.sh, sw - 0.05 + crouch * 0.55 - atk * 1.1, 0.0, rz)
+			_pose(l.kn, -lift * 0.9 - 0.12 - crouch * 0.9 - atk * 0.3)
+			_pose(l.pw, lift * 0.5 + crouch * 0.4)
+		else:
+			_pose(l.sh, sw - 0.4 - crouch * 0.5 + atk * 1.0, 0.0, rz)
+			_pose(l.kn, lift * 1.0 + 0.55 + crouch * 0.7 - atk * 0.7)
+			_pose(l.pw, -lift * 0.6 - 0.2)
+	var idle := 1.0 - a
+	_pose(nk, lerp(0.1, -0.45, a) + sin(t * 1.3) * 0.05 * idle - roar * 0.9 + atk * -0.35 + crouch * 0.4 + hurt * -0.3)
+	_pose(hd, lerp(0.05, 0.35, a) + sin(t * 2.1) * 0.04 * idle + roar * 0.5, sin(t * 0.8) * 0.3 * idle)
+	_pose(jw, 0.1 + atk * 0.9 + roar * 0.8 + a * 0.25 + (sin(_phase * 2.0) * 0.07 * a) + crouch * 0.35)
+	for i in 3:
+		var tb: int = _bones["tail%d" % (i + 1)]
+		_pose(tb, (-0.35 + a * 0.45 + crouch * 0.5) if i == 0 else 0.15, sin(t * 3.0 - i * 0.7 + _phase * 0.2) * (0.25 + 0.2 * idle))

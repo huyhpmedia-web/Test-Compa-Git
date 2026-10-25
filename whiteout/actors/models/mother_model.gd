@@ -6,6 +6,7 @@ extends "res://actors/models/creature.gd"
 const Kit = preload("res://actors/kit.gd")
 const Humanoid = preload("res://actors/humanoid.gd")
 const RimeLook = preload("res://actors/rime_look.gd")
+const EnemyGlb = preload("res://actors/models/enemy_glb.gd")
 
 var phase := 1
 var lattice: Node3D
@@ -22,6 +23,36 @@ var leg_k := 0.0           # 0..1 legs extended (phase 2 reveal)
 var _phase_t := 0.0
 var _dead_t := 0.0
 var _abdomen: Node3D
+var _glb_mode := false
+var _p1: Node3D
+var _p2: Node3D
+var _heart_n: Node3D
+var _heart_p1: Node3D
+var _heart_p2: Node3D
+var _ruth_p1: RuthProxy
+var _ruth_p2: RuthProxy
+var _glow_mats: Array = []     # heart / eyes / throat emissive materials of the active phase (glb)
+var _heart_mats: Array = []
+
+## Stand-in for the old Humanoid `ruth` API (play / is_playing) used by boss_mother.gd; the glb body is its child.
+class RuthProxy extends Node3D:
+	var head_mark: Node3D
+	var one := ""
+	var one_t := 0.0
+	var one_len := 1.0
+	func play(anim: String, length := -1.0) -> void:
+		one = anim
+		one_t = 0.0
+		one_len = length if length > 0.0 else float({"roar": 1.6, "attack": 0.8, "hurt": 0.3}.get(anim, 0.6))
+	func is_playing(anim := "") -> bool:
+		return one != "" and (anim == "" or anim == one)
+	func k() -> float:
+		return sin(clamp(one_t / one_len, 0.0, 1.0) * PI) if one != "" else 0.0
+	func step(delta: float) -> void:
+		if one != "":
+			one_t += delta
+			if one_t >= one_len:
+				one = ""
 const RUTH_Y := 1.5
 const L1 := 1.9
 const L2 := 2.4
@@ -30,6 +61,71 @@ func _ready() -> void:
 	_build()
 
 func _build() -> void:
+	var g1 := EnemyGlb.load_scene("mother_p1.glb")
+	var g2 := EnemyGlb.load_scene("mother_p2.glb")
+	if g1 != null and g2 != null and EnemyGlb.find(g1, "Ruth") != null and EnemyGlb.find(g1, "Heart") != null and EnemyGlb.find(g2, "Leg7") != null \
+			and EnemyGlb.find(g2, "Abdomen") != null and EnemyGlb.find(g2, "Leg7_tip") != null:
+		_build_glb(g1, g2)
+	else:
+		if g1:
+			g1.queue_free()
+		if g2:
+			g2.queue_free()
+		_build_procedural()
+
+func _make_proxy(g: Node3D) -> RuthProxy:
+	var rn := EnemyGlb.find(g, "Ruth") as Node3D
+	var px := RuthProxy.new()
+	px.position = rn.position
+	g.add_child(px)
+	rn.reparent(px, false)
+	rn.position = Vector3.ZERO
+	px.head_mark = EnemyGlb.find(rn, "HeadMark") as Node3D
+	return px
+
+## glTF build (tools/charpipe/bosses/build_mother.py): mother_p1.glb (lattice + Ruth + Heart) and mother_p2.glb
+## (Ruth + Heart + Abdomen + Leg0..7 with up/lo/knee/tip pieces posed by the IK in _animate).
+func _build_glb(g1: Node3D, g2: Node3D) -> void:
+	_glb_mode = true
+	lattice = g1
+	_p1 = g1
+	add_child(g1)
+	_ruth_p1 = _make_proxy(g1)
+	ruth = _ruth_p1
+	_heart_p1 = EnemyGlb.find(g1, "Heart") as Node3D
+	_heart_n = _heart_p1
+	legs_group = g2
+	_p2 = g2
+	g2.visible = false
+	add_child(g2)
+	_ruth_p2 = _make_proxy(g2)
+	_heart_p2 = EnemyGlb.find(g2, "Heart") as Node3D
+	_abdomen = EnemyGlb.find(g2, "Abdomen") as Node3D
+	for i in 8:
+		var a := TAU * float(i) / 8.0 + 0.2
+		var hip := Vector3(cos(a) * 0.45, 2.15, sin(a) * 0.45 - 0.1)
+		var leg := EnemyGlb.find(g2, "Leg%d" % i)
+		legs.append({"hip": hip, "rest": Vector3(cos(a) * 2.3, 0, sin(a) * 2.3 - 0.1), "up": leg.find_child("Leg%d_up" % i), "lo": leg.find_child("Leg%d_lo" % i),
+			"tip": leg.find_child("Leg%d_tip" % i), "knee": leg.find_child("Leg%d_knee" % i), "ph": PI * (i % 2), "a": a,
+			"foot": Vector3(cos(a) * 2.3, 0, sin(a) * 2.3 - 0.1)})
+	_set_glow_mats(1)
+	# real lights so the face and chest throw cyan light into the cavern
+	heart_light = OmniLight3D.new()
+	heart_light.light_color = Color(0.5, 0.95, 1.0)
+	heart_light.light_energy = 3.0
+	heart_light.omni_range = 9.0
+	heart_light.shadow_enabled = false
+	heart_light.position = Vector3(0, 0.1, 0.5)
+	_heart_p1.add_child(heart_light)
+
+func _set_glow_mats(ph: int) -> void:
+	var g := _p1 if ph == 1 else _p2
+	var hn := _heart_p1 if ph == 1 else _heart_p2
+	_heart_mats = EnemyGlb.unique_mats(hn, "glow_heart")
+	_glow_mats = EnemyGlb.unique_mats(ruth, "glow") + EnemyGlb.unique_mats(ruth, "throat")
+	heart_mat = _heart_mats[0] if _heart_mats.size() > 0 else null
+
+func _build_procedural() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 2026
 	var ice := Kit.mat("ice")
@@ -119,11 +215,22 @@ func set_phase(p: int) -> void:
 		lattice.visible = false
 		legs_group.visible = true
 		leg_k = 0.0
+		if _glb_mode:
+			ruth = _ruth_p2
+			_heart_n = _heart_p2
+			if heart_light.get_parent():
+				heart_light.get_parent().remove_child(heart_light)
+			_heart_p2.add_child(heart_light)
+			_set_glow_mats(2)
 
 func heart_world() -> Vector3:
+	if _glb_mode:
+		return _heart_n.global_position
 	return ruth.chest.global_position + ruth.chest.global_transform.basis.z * 0.12 + Vector3(0, 0.05, 0)
 
 func head_world() -> Vector3:
+	if _glb_mode:
+		return ruth.head_mark.global_position if ruth.head_mark else ruth.global_position + Vector3(0, 0.5, 0)
 	return ruth.head.global_position + Vector3(0, 0.1, 0)
 
 func _ruth_pose(_d: float) -> void:
@@ -155,6 +262,9 @@ func _seg(mi: MeshInstance3D, a: Vector3, b: Vector3, r: float) -> void:
 	mi.transform = Transform3D(Basis(bs.x * r, bs.y * d.length(), bs.z * r), a)
 
 func _animate(delta: float) -> void:
+	if _glb_mode:
+		_animate_glb(delta)
+		return
 	flash = max(0.0, flash - delta * 4.0)
 	var e := 3.5 + sin(t * 2.0) * 1.0 + flash * 10.0 + crack_k * 6.0
 	heart_mat.emission_energy_multiplier = e
@@ -189,6 +299,69 @@ func _animate(delta: float) -> void:
 			foot.y = max(0.0, cos(ph)) * 0.8 * a + sin(t * 1.3 + lg.a * 3.0) * 0.03
 			foot.y += (1.0 - leg_k) * 3.0
 			if lunge_k > 0.2 and (lg.a < 3.2):   # front legs rear up for the lunge
+				foot.y += 1.0 * lunge_k
+				foot.z += 0.8 * lunge_k
+		else:
+			foot = lg.foot
+		var d := foot - hip
+		var dist := d.length()
+		var dn := d / maxf(dist, 0.01)
+		var along := (L1 * L1 - L2 * L2 + dist * dist) / (2.0 * maxf(dist, 0.1))
+		var hgt := sqrt(maxf(L1 * L1 - along * along, 0.04))
+		var upv := (Vector3.UP - dn * dn.dot(Vector3.UP))
+		if upv.length() < 0.05:
+			upv = Vector3(cos(lg.a), 0.3, sin(lg.a))
+		var knee := hip + dn * along + upv.normalized() * hgt
+		_seg(lg.up, hip, knee, 0.11)
+		_seg(lg.lo, knee, foot, 0.075)
+		(lg.knee as Node3D).position = knee
+		_seg(lg.tip, foot + Vector3(0, 0.25, 0), foot + Vector3(0, -0.15, 0), 0.07)
+
+## glb animation: glow pulses, Ruth's sway / lunge / roar (node transforms) and the phase-2 spider IK.
+func _animate_glb(delta: float) -> void:
+	flash = max(0.0, flash - delta * 4.0)
+	ruth.step(delta)
+	var e := 3.5 + sin(t * 2.0) * 1.0 + flash * 10.0 + crack_k * 6.0
+	for m in _heart_mats:
+		m.emission_energy_multiplier = 0.0 if pose == "dead" else e
+	var ee := 0.0 if pose == "dead" else 5.0 + sin(t * 3.0) * 1.5 + flash * 3.0
+	for m in _glow_mats:
+		m.emission_energy_multiplier = ee
+	heart_light.light_energy = 0.0 if pose == "dead" else 2.5 + flash * 6.0 + sin(t * 2.0)
+	var roar: float = ruth.k() if ruth.one == "roar" else 0.0
+	var atk: float = ruth.k() if ruth.one == "attack" else 0.0
+	if pose == "dead":
+		_dead_t = min(_dead_t + delta * 0.6, 1.0)
+		if phase == 2:
+			ruth.position.y = RUTH_Y - 1.2 * _dead_t
+			for lg in legs:
+				lg.foot = (lg.foot as Vector3).lerp(Vector3((lg.rest as Vector3).x * 0.5, 0, (lg.rest as Vector3).z * 0.5), delta * 2.0)
+		else:
+			ruth.rotation.x = lerp(ruth.rotation.x, 0.5, delta)
+	if phase == 1:
+		lattice.position = Vector3(randf_range(-1, 1), randf_range(-1, 1), 0) * 0.04 * crack_k
+		if pose != "dead":
+			ruth.rotation = Vector3(sin(t * 0.6) * 0.03 - roar * 0.3, sin(t * 0.3) * 0.05, sin(t * 0.4) * 0.03)
+		return
+	leg_k = move_toward(leg_k, 1.0, delta * 0.8)
+	var a: float = clamp(move_speed / 4.5, 0.0, 1.0)
+	_phase_t += delta * (2.0 + move_speed * 1.7)
+	var crouch := lunge_k
+	if pose != "dead":
+		ruth.position.y = RUTH_Y - crouch * 0.7
+		ruth.rotation = Vector3(0.12 * crouch + atk * 0.5 - roar * 0.35 + sin(t * 1.4) * 0.03, sin(t * 0.9) * 0.08, sin(t * 0.7) * 0.03)
+	_abdomen.position.y = 2.0 - crouch * 0.7
+	for lg in legs:
+		var hip: Vector3 = lg.hip
+		hip.y -= crouch * 0.7
+		var rest: Vector3 = lg.rest
+		var ph: float = _phase_t + lg.ph
+		var foot := rest * (1.0 - 0.15 * crouch)
+		if pose != "dead":
+			foot.z += sin(ph) * 0.9 * a
+			foot.y = max(0.0, cos(ph)) * 0.8 * a + sin(t * 1.3 + lg.a * 3.0) * 0.03
+			foot.y += (1.0 - leg_k) * 3.0
+			if lunge_k > 0.2 and (lg.a < 3.2):
 				foot.y += 1.0 * lunge_k
 				foot.z += 0.8 * lunge_k
 		else:

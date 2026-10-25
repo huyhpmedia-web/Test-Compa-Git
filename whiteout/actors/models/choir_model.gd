@@ -1,8 +1,10 @@
 extends "res://actors/models/creature.gd"
 ## THE CHOIR: a 5 m pillar of a dozen fused congregants. Five glowing singing heads are weak points.
 const Kit = preload("res://actors/kit.gd")
+const EnemyGlb = preload("res://actors/models/enemy_glb.gd")
 
-const WEAK := [2, 4, 6, 8, 10]
+const WEAK := [0, 1, 2, 3, 4]   # glb: Head0..Head4 (the procedural fallback uses its own indices, see _build_procedural)
+const WEAK_PROC := [2, 4, 6, 8, 10]
 var heads: Array = []        # {node, mats, light, alive, k, mouth}
 var arm_l: Node3D
 var arm_r: Node3D
@@ -17,6 +19,44 @@ func _ready() -> void:
 	_build()
 
 func _build() -> void:
+	var g := EnemyGlb.load_scene("choir.glb")
+	if g != null and EnemyGlb.find(g, "Head0") != null and EnemyGlb.find(g, "ArmL") != null:
+		_build_glb(g)
+	else:
+		_build_procedural()
+
+## glTF build (tools/charpipe/bosses/build_choir.py): Head0..Head4 are the weak points (throat + eyes use emissive
+## materials animated here), ArmL/ArmR are the sweep pivots (geometry hangs along -Y), everything else is static.
+func _build_glb(g: Node3D) -> void:
+	column = g
+	add_child(g)
+	for i in 5:
+		var hn := EnemyGlb.find(g, "Head%d" % i) as Node3D
+		var mats: Array = EnemyGlb.unique_mats(hn, "throat") + EnemyGlb.unique_mats(hn, "glow")
+		var l := OmniLight3D.new()
+		l.light_color = Color(0.45, 0.9, 1.0)
+		l.light_energy = 1.6
+		l.omni_range = 5.0
+		l.shadow_enabled = false
+		l.position = Vector3(0, 0.0, 0.55)
+		hn.add_child(l)
+		heads.append({"node": hn, "mats": mats, "light": l, "alive": true, "k": 0.0, "weak": true, "mouth": null})
+	arm_l = EnemyGlb.find(g, "ArmL") as Node3D
+	arm_r = EnemyGlb.find(g, "ArmR") as Node3D
+	var dark := StandardMaterial3D.new()
+	dark.albedo_color = Color(0.01, 0.01, 0.02)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 778
+	for i in 10:
+		var y3 := 0.8 + i * 0.4
+		var a4 := PI * 0.5 + rng.randf_range(-1.2, 1.2)
+		var c := Kit.box(column, Vector3(0.05, rng.randf_range(0.5, 1.1), 0.03), dark, Vector3(cos(a4) * 0.8, y3, sin(a4) * 0.8))
+		c.look_at_from_position(c.position, Vector3(0, y3, 0), Vector3.UP)
+		c.rotate_object_local(Vector3.FORWARD, rng.randf_range(-0.5, 0.5))
+		c.visible = false
+		cracks.append(c)
+
+func _build_procedural() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 777
 	column = Node3D.new()
@@ -50,7 +90,7 @@ func _build() -> void:
 		hd.scale = Vector3.ONE * 1.35
 		column.add_child(hd)
 		hd.transform.basis = Basis.looking_at(-out, Vector3.UP).rotated(out.cross(Vector3.UP).normalized(), 0.0)
-		var weak: bool = i in WEAK
+		var weak: bool = i in WEAK_PROC
 		var skin := Kit.mat("skin_frost") if weak else Kit.mat("flesh_dead")
 		Kit.mi(hd, Kit.blob(0.2, 60 + i, 0.06, Vector3(0.88, 1.15, 1.0), 10, 14), skin)
 		var mouth_m: Material = Kit.mat("mouth")
@@ -140,7 +180,8 @@ func kill_head(i: int) -> void:
 	if h.light:
 		h.light.light_energy = 0.0
 	h.node.rotation.x += 0.7
-	h.mouth.scale.y *= 1.6
+	if h.mouth:
+		h.mouth.scale.y *= 1.6
 	var dead := 0
 	for q in heads:
 		if q.weak and not q.alive:
@@ -164,7 +205,8 @@ func _animate(delta: float) -> void:
 				m.emission_energy_multiplier = e
 			if h.light:
 				h.light.light_energy = 1.0 + sing * 1.0 + h.k * 4.0 + pulse * 3.0
-			h.mouth.scale.y = (1.5 if h.weak else 1.2) * (0.85 + sing * 0.45)
+			if h.mouth:
+				h.mouth.scale.y = (1.5 if h.weak else 1.2) * (0.85 + sing * 0.45)
 			h.node.rotation.z = sin(t * 0.8 + float(heads.find(h))) * 0.06
 	# sag as heads die (pillar cracks and sinks)
 	var target_sag := 1.0 - float(heads.filter(func(q): return q.weak and q.alive).size()) / WEAK.size()

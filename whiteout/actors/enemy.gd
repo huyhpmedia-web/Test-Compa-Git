@@ -7,6 +7,7 @@ extends CharacterBody3D
 
 const Humanoid = preload("res://actors/humanoid.gd")
 const FX = preload("res://world/fx.gd")
+const Gore = preload("res://world/gore.gd")
 
 signal died(enemy)
 
@@ -46,6 +47,7 @@ var _last_heard := Vector3.ZERO
 var _revived := false
 var _sep := Vector3.ZERO
 var _sep_t := 0.0
+var _hit_src := ""          # "fire" while burn() applies damage (read by Gore)
 
 func _ready() -> void:
 	add_to_group("enemy")
@@ -132,7 +134,9 @@ func fear(pos: Vector3, dur: float = 4.0) -> void:
 	_fear_from = pos
 
 func burn(dmg: float, pos: Vector3) -> void:
+	_hit_src = "fire"
 	take_hit(dmg * fire_weakness, global_position + Vector3(0, 1, 0), (global_position - pos).normalized(), false)
+	_hit_src = ""
 	fear(pos, 3.0)
 
 ## Effective sight range: the Rimebound sense light and heat. A player with the
@@ -205,12 +209,13 @@ func hear(pos: Vector3) -> void:
 		state = "chase"
 		awake = true
 
-func take_hit(dmg: float, _pos: Vector3, dir: Vector3, headshot: bool) -> void:
+func take_hit(dmg: float, pos: Vector3, dir: Vector3, headshot: bool) -> void:
 	if state == "dead" or state == "dormant" and dormant:
 		return
 	awake = true
 	if not invulnerable:
 		hp -= dmg
+	Gore.on_enemy_hit(self, dmg, pos, dir, headshot, _hit_src)
 	_stagger_acc += dmg
 	velocity += Vector3(dir.x, 0, dir.z).normalized() * min(dmg * 0.04, 2.5)
 	Sfx.play_at(_sound("hit"), global_position, -4.0, randf_range(0.9, 1.1))
@@ -232,7 +237,7 @@ func _sound(kind: String) -> String:
 	return "zombie_" + kind
 
 func _die(headshot: bool) -> void:
-	if can_revive and not _revived and not headshot and randf() < 0.45:
+	if can_revive and not _revived and not headshot and _hit_src != "fire" and Gore.src_override == "" and randf() < 0.45:
 		# fakes death, gets back up later
 		_revived = true
 		_set_state("down")
@@ -245,6 +250,7 @@ func _die(headshot: bool) -> void:
 	if model:
 		model.pose = "dead"
 	Sfx.play_at(_sound("death"), global_position)
+	Gore.on_enemy_death(self, headshot, _hit_src)
 	collision_layer = 0
 	collision_mask = 1
 	if persistent_death and uid != "":

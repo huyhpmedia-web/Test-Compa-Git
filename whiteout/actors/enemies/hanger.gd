@@ -52,20 +52,21 @@ func _ready() -> void:
 func _sound(kind: String) -> String:
 	return "hanger_" + kind
 
+const CharacterModel = preload("res://actors/character_model.gd")
+
 func _make_model() -> Node3D:
-	var h := Humanoid.new()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = hash(uid) if uid != "" else randi()
-	var skins := [Color(0.75, 0.62, 0.55), Color(0.55, 0.42, 0.35), Color(0.82, 0.7, 0.62)]
-	h.setup({"zombie": true, "bloody": 0.6, "female": rng.randf() < 0.5, "skin": skins[rng.randi() % 3], "hair": Color(0.1, 0.09, 0.09),
-		"hair_style": "long", "height": 1.75, "bulk": 0.85, "shirt": Color(0.2, 0.2, 0.24), "pants": Color(0.16, 0.17, 0.2),
-		"coat": rng.randf() < 0.4, "coat_color": Color(0.18, 0.16, 0.14)})
+	var h := CharacterModel.new()
+	h.setup({"model": "hanger"})
 	h.pose = "zombie"
 	RimeLook.decorate(h, rime, rng.randi())
-	var s: float = h.cfg.height / 1.72
-	# crystalline filaments bursting from the ankles
-	for f in [h.foot_l, h.foot_r]:
-		Kit.cluster(f, Vector3(0, 0.0, 0), Vector3(0, -1, -0.2), 4, 0.35 * s, 0.03 * s, Kit.mat("ice"), rng, 0.35)
+	var s: float = clampf(h._s, 0.9, 1.4)
+	# crystalline filaments bursting from the ankles (calf bone runs along +Y toward the foot)
+	for bn in ["calf_l", "calf_r"]:
+		var ba: Node3D = h.bone_attachment(bn)
+		if ba:
+			Kit.cluster(ba, Vector3(0, 0.4, 0) * s, Vector3(0, 1, 0), 4, 0.35 * s, 0.03 * s, Kit.mat("ice"), rng, 0.35)
 	Kit.post(h, _pose_post)
 	return h
 
@@ -103,18 +104,12 @@ func _pose_post(_delta: float) -> void:
 		return
 	var tt := Time.get_ticks_msec() * 0.001
 	if _hanging:
-		# limp arms dangling toward the floor, head lolling, occasional spasm
-		var tw := _twitch
-		model.arm_l.rotation = Vector3(PI - 0.15 + sin(tt * 1.3) * 0.08 + tw * 0.5, 0.0, -0.25 + tw * 0.3)
-		model.arm_r.rotation = Vector3(PI - 0.1 + sin(tt * 1.1 + 1.0) * 0.08 - tw * 0.4, 0.0, 0.25 - tw * 0.3)
-		model.fore_l.rotation = Vector3(0.4 + tw * 0.6, 0, 0)
-		model.fore_r.rotation = Vector3(0.3, 0, 0)
-		model.head.rotation = Vector3(0.3 + sin(tt * 0.8) * 0.12, sin(tt * 0.6) * 0.3, 0.2 + tw * 0.4)
-		model.spine.rotation.x = 0.1 + sin(tt * 0.9) * 0.05
-		model.thigh_l.rotation = Vector3(0.1, 0, -0.1)
-		model.thigh_r.rotation = Vector3(0.2, 0, 0.1)
-		model.shin_l.rotation.x = 0.1
-		model.shin_r.rotation.x = 0.1
+		# limp arms dangling toward the floor (the model is upside-down; the "hang" pose has them raised), head lolling
+		model.pose = "hang"
+		model.add_bone_rotation("head", Vector3(sin(tt * 0.8) * 0.12, sin(tt * 0.6) * 0.3, _twitch * 0.4))
+		model.add_bone_rotation("spine_02", Vector3(sin(tt * 0.9) * 0.05, 0, _twitch * 0.2))
+	elif model.pose == "hang":
+		model.pose = "zombie"
 
 func is_headshot(pos: Vector3) -> bool:
 	if _hanging:

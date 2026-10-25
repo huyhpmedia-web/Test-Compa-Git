@@ -13,7 +13,7 @@ MODE=${1:-all}
 shift
 run() { # run <level|chain> [args...]
   timeout ${PLAYTEST_TIMEOUT:-900} "$GODOT" --headless --fixed-fps 60 --path "$DIR" res://tools/playtest.tscn -- level=$1 "${@:2}" 2>&1 \
-    | grep -v -E "ALSA|alsa|audio|^\s+at: (init_output|initialize|set_use_vsync)|V-Sync|leaked|still in use at exit|ObjectDB|cleanup \(core|clear \(core|_free_rids"
+    | grep --line-buffered -v -E "ALSA|alsa|audio|^\s+at: (init_output|initialize|set_use_vsync)|V-Sync|leaked|still in use at exit|ObjectDB|cleanup \(core|clear \(core|_free_rids"
   return ${PIPESTATUS[0]}
 }
 rc=0

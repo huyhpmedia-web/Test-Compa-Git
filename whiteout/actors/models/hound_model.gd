@@ -17,13 +17,19 @@ var _seed := 7
 var _skel: Skeleton3D          # glb build: bones driven here (see build_hound.py for the rig)
 var _bones := {}
 var _glb_root: Node3D
+var _neck_k := 1.0            # HD model: calmer neck/head swings (the real neck is short and thick)
 
 
 func _ready() -> void:
 	_build()
 
 func _build() -> void:
-	var g := EnemyGlb.load_scene("hound.glb")
+	var g := EnemyGlb.load_scene("hound_hd.glb")   # Tripo H3.1 HD model (tools/charpipe/bosses/hd_hound.py), same bone names
+	if g != null and _find_skel(g) == null:
+		g.queue_free()
+		g = null
+	if g == null:
+		g = EnemyGlb.load_scene("hound.glb")
 	var sk: Skeleton3D = null
 	if g != null:
 		sk = g.find_child("*", true, false) as Skeleton3D if false else _find_skel(g)
@@ -45,6 +51,7 @@ func _find_skel(n: Node) -> Skeleton3D:
 ## model is applied to the bones (rotations expressed about model-space axes).
 func _build_glb(g: Node3D, sk: Skeleton3D) -> void:
 	_skel = sk
+	_neck_k = 0.65 if sk.find_bone("tail3") >= 0 and g.find_child("glow_eye_L", true, false) != null else 1.0
 	body = Node3D.new()
 	body.position = Vector3(0, 0.62, 0)
 	add_child(body)
@@ -300,7 +307,7 @@ func _animate_glb(delta: float) -> void:
 			_pose(l.kn, lift * 1.0 + 0.55 + crouch * 0.7 - atk * 0.7)
 			_pose(l.pw, -lift * 0.6 - 0.2)
 	var idle := 1.0 - a
-	_pose(nk, lerp(0.1, -0.45, a) + sin(t * 1.3) * 0.05 * idle - roar * 0.9 + atk * -0.35 + crouch * 0.4 + hurt * -0.3)
+	_pose(nk, (lerp(0.1, -0.45, a) + sin(t * 1.3) * 0.05 * idle - roar * 0.9 + atk * -0.35 + crouch * 0.4 + hurt * -0.3) * _neck_k)
 	_pose(hd, lerp(0.05, 0.35, a) + sin(t * 2.1) * 0.04 * idle + roar * 0.5, sin(t * 0.8) * 0.3 * idle)
 	_pose(jw, 0.1 + atk * 0.9 + roar * 0.8 + a * 0.25 + (sin(_phase * 2.0) * 0.07 * a) + crouch * 0.35)
 	for i in 3:

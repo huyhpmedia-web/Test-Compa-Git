@@ -39,7 +39,6 @@ def main():
     print("tips", len(cl))
     dist, grp = geodesic(v, F, [c["idx"] for c in cl])
     body = r < BODY_R
-    body &= v[:, 2] > 0.9
     body |= (v[:, 2] > 1.9) & (r < 0.72)               # jacket / head / shoulders never belong to a leg
     BODY = 7
     lab = np.where(body, BODY, grp)
@@ -54,6 +53,14 @@ def main():
     for i, p in enumerate(me.polygons):
         ls = [int(lab[x]) for x in p.vertices]
         plab[i] = max(set(ls), key=ls.count)
+    # stray floating bits that ended up in a leg label go back to the body
+    wid, _ = weld(v)
+    for li in range(len(cl)):
+        comp, sizes = poly_components(o, wid, plab == li)
+        big = max(sizes, key=sizes.get)
+        stray = (plab == li) & (comp != big)
+        print("leg", li, "stray polys ->", int(stray.sum()), (np.round(pc[stray].mean(0), 2) if stray.any() else ""), (np.round(pc[stray].min(0), 2) if stray.any() else ""), (np.round(pc[stray].max(0), 2) if stray.any() else ""))
+        plab[stray] = BODY
     # --- knee / hip per leg
     legs = []
     for li in range(len(cl)):
@@ -110,6 +117,9 @@ def main():
         h = x[3]["hip"]
         return math.atan2(h[1], h[0])
     legobjs.sort(key=ang)
+    for li, up, lo, L in legobjs:   # temp names first (Blender would append .001 on a clash)
+        up.name = "tmp_up_%d" % li
+        lo.name = "tmp_lo_%d" % li
     for idx, (li, up, lo, L) in enumerate(legobjs):
         up.name = "Leg%d" % idx
         lo.name = "Leg%d_lo" % idx

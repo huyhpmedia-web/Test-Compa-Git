@@ -416,3 +416,29 @@ def front_y(v, x, z, rad=0.1):
     """y of the front-most (smallest y) vertex within `rad` of (x, z) in the front projection."""
     m = ((v[:, 0] - x) ** 2 + (v[:, 2] - z) ** 2) < rad * rad
     return float(np.percentile(v[m, 1], 12)) if m.any() else float(v[:, 1].mean())
+
+
+def poly_components(obj, wid, pmask):
+    """connected components (over welded vertices) of the polygons selected by pmask -> (comp id per polygon (-1 if unselected), sizes)."""
+    me = obj.data
+    parent = {}
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+    idx = np.where(pmask)[0]
+    for pi in idx:
+        vs = [int(wid[x]) for x in me.polygons[pi].vertices]
+        for x in vs:
+            parent.setdefault(x, x)
+        for x in vs[1:]:
+            a, b = find(vs[0]), find(x)
+            if a != b:
+                parent[a] = b
+    comp = np.full(len(me.polygons), -1, dtype=np.int64)
+    for pi in idx:
+        comp[pi] = find(int(wid[me.polygons[pi].vertices[0]]))
+    ids, cnt = np.unique(comp[idx], return_counts=True)
+    return comp, dict(zip(ids.tolist(), cnt.tolist()))

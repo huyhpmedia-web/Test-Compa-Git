@@ -85,6 +85,11 @@ static func _fix(m: BaseMaterial3D) -> void:
 		m.rim_tint = 0.5
 		m.subsurf_scatter_enabled = true
 		m.subsurf_scatter_strength = 0.15
+		if n.ends_with("_hd"):   # Tripo HD textures: the roughness map is already tuned (wet blood / glossy ice), add a faint wet coat
+			m.subsurf_scatter_strength = 0.05
+			m.clearcoat_enabled = true
+			m.clearcoat = 0.3
+			m.clearcoat_roughness = 0.3
 	elif n.begins_with("frost"):
 		m.rim_enabled = true
 		m.rim = 0.4

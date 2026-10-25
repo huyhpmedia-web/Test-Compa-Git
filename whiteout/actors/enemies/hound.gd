@@ -43,7 +43,7 @@ func _setup_collision() -> void:
 	cap.height = 1.35
 	col.shape = cap
 	col.rotation.x = PI * 0.5
-	col.position = Vector3(0, 0.5, 0)
+	col.position = Vector3(0, 0.5, -0.05)   # HD model: torso centre sits ~5 cm behind the foot centre
 	add_child(col)
 
 func _make_model() -> Node3D:

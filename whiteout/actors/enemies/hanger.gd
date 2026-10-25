@@ -68,7 +68,7 @@ func _make_model() -> Node3D:
 	for bn in ["calf_l", "calf_r"]:
 		var ba: Node3D = h.bone_attachment(bn)
 		if ba:
-			Kit.cluster(ba, Vector3(0, 0.4, 0) * s, Vector3(0, 1, 0), 4, 0.35 * s, 0.03 * s, Kit.mat("ice"), rng, 0.35)
+			Kit.cluster(ba, Vector3(0, 0.4, 0) * s, Vector3(0, 1, 0), 6, 0.6 * s, 0.014 * s, RimeLook.glacial("ice"), rng, 0.18)
 	Kit.post(h, _pose_post)
 	return h
 

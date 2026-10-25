@@ -88,7 +88,7 @@ func _make_model() -> Node3D:
 		# dark veins over the sac
 		for k in 3:
 			var dir := Vector3(rng.randf_range(-1, 1), rng.randf_range(-1, 1), rng.randf_range(0.2, 1)).normalized()
-			Kit.crystal(holder, dir * r * 0.9, dir, r * 0.45, r * 0.07, Kit.mat("ice"), i + k)
+			Kit.crystal(holder, dir * r * 0.9, dir, r * 0.4, r * 0.05, RimeLook.glacial("ice"), i + k)
 		_sacs.append({"node": holder, "base": holder.scale, "ph": rng.randf() * 6.28})
 		i += 1
 	for q in [["spine_01", Vector3(0, 0.1, 0.35)], ["spine_03", Vector3(0, 0.1, -0.25)]]:

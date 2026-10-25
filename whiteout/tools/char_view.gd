@@ -165,7 +165,9 @@ func _cm_mode(args: String, model: String, out: String, yaw: float) -> void:
 ## Lineup render: godot ... -- lineup=a|b|c|d,... out=x.png [rows=2] [lpose=zombie] [w=2400] [h=1200]
 ##   [campos=x,y,z look=x,y,z fov=40 spacing=1.5 lit=dark|studio yaw=0.35]
 ## lit=dark: dim blue ambient + cold moon key + a flashlight-like SpotLight3D from the camera (as in-game).
-const SPECIAL_RIME := {"husk": 0.6, "siren": 1.0, "burster": 0.7, "hanger": 1.0, "foreman": 1.7}
+const SPECIAL_SCRIPT := {"husk": "res://actors/enemies/husk.gd", "siren": "res://actors/enemies/siren.gd", "burster": "res://actors/enemies/burster.gd",
+	"hanger": "res://actors/enemies/hanger.gd", "foreman": "res://actors/enemies/foreman.gd"}
+var _keep := []
 func _v3(s: String, d: Vector3) -> Vector3:
 	var p := s.split(",")
 	return Vector3(float(p[0]), float(p[1]), float(p[2])) if p.size() == 3 else d
@@ -183,14 +185,14 @@ func _lineup(models: PackedStringArray, out: String, rows: int, pose: String, w:
 	e.background_color = Color(0.015, 0.02, 0.03) if dark else Color(0.07, 0.08, 0.1)
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	e.ambient_light_color = Color(0.25, 0.32, 0.45) if dark else Color(0.45, 0.52, 0.65)
-	e.ambient_light_energy = 0.28 if dark else 0.5
+	e.ambient_light_energy = 0.2 if dark else 0.5
 	e.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	e.ssao_enabled = false
 	e.glow_enabled = true
 	e.glow_intensity = 0.5
 	e.glow_hdr_threshold = 1.0
 	var we := WorldEnvironment.new(); we.environment = e; svp.add_child(we)
-	var key := DirectionalLight3D.new(); key.rotation_degrees = Vector3(-35, 25, 0); key.light_energy = 0.35 if dark else 1.6; key.light_color = Color(0.6, 0.72, 1.0) if dark else Color.WHITE; key.shadow_enabled = true; svp.add_child(key)
+	var key := DirectionalLight3D.new(); key.rotation_degrees = Vector3(-35, 25, 0); key.light_energy = 0.25 if dark else 1.6; key.light_color = Color(0.6, 0.72, 1.0) if dark else Color.WHITE; key.shadow_enabled = true; svp.add_child(key)
 	var rim := DirectionalLight3D.new(); rim.rotation_degrees = Vector3(-20, 200, 0); rim.light_energy = 0.5 if dark else 0.8; rim.light_color = Color(0.5, 0.7, 1.0); svp.add_child(rim)
 	var CM = load("res://actors/character_model.gd")
 	var RL = load("res://actors/rime_look.gd")
@@ -198,15 +200,22 @@ func _lineup(models: PackedStringArray, out: String, rows: int, pose: String, w:
 	var sp: float = o.get("spacing", 1.5)
 	var yaw0: float = o.get("yaw", 0.35)
 	for i in models.size():
-		var m: Node3D = CM.new()
-		m.setup({"model": models[i]})
-		svp.add_child(m)
-		m.pose = pose
-		if pose == "zombie":
+		var m: Node3D
+		if SPECIAL_SCRIPT.has(models[i]) and pose == "zombie" and o.get("real", true):
+			# the real enemy script builds the model (stretch, crystals, sacs, lamp ...) exactly as in game
+			var en = load(SPECIAL_SCRIPT[models[i]]).new()
+			_keep.append(en)
+			m = en._make_model()
+			svp.add_child(m)
 			m.move_speed = 0.0
-			var iv: float = SPECIAL_RIME.get(models[i], 1.0)
-			var opts := {"mouth": false} if models[i] == "siren" else {}
-			RL.decorate(m, iv, 100 + i, opts)
+		else:
+			m = CM.new()
+			m.setup({"model": models[i]})
+			svp.add_child(m)
+			m.pose = pose
+			if pose == "zombie":
+				m.move_speed = 0.0
+				RL.decorate(m, 1.0, 100 + i, {})
 		var r := i / per_row
 		var c := i % per_row
 		m.position = Vector3((c - (per_row - 1) * 0.5) * sp + r * 0.4, 0, -r * 2.4)
@@ -226,7 +235,7 @@ func _lineup(models: PackedStringArray, out: String, rows: int, pose: String, w:
 		svp.add_child(sl)
 		sl.position = cam.position + Vector3(0.35, -0.15, 0)
 		sl.look_at_from_position(sl.position, lk + Vector3(0, 0.1, 0), Vector3.UP)
-		sl.light_energy = 14.0
+		sl.light_energy = 4.5
 		sl.spot_range = 14.0
 		sl.spot_angle = 30.0
 		sl.spot_attenuation = 0.6

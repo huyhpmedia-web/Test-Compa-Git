@@ -230,12 +230,14 @@ func _fixed(src: StandardMaterial3D) -> StandardMaterial3D:
 		sm.cull_mode = BaseMaterial3D.CULL_DISABLED
 		sm.roughness = 0.1
 	elif n.contains("_ice"):
+		# glacial ice plates baked into the glb: translucent, glassy, very faintly lit from within
 		sm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		sm.albedo_color = Color(0.55, 0.8, 0.95, 0.72)
+		sm.albedo_color = Color(0.62, 0.8, 0.88, 0.42)
 		sm.emission_enabled = true
-		sm.emission = Color(0.3, 0.6, 0.85)
-		sm.emission_energy_multiplier = 0.35
-		sm.roughness = 0.08
+		sm.emission = Color(0.3, 0.6, 0.78)
+		sm.emission_energy_multiplier = 0.08
+		sm.roughness = 0.05
+		sm.metallic_specular = 0.85
 		sm.cull_mode = BaseMaterial3D.CULL_DISABLED
 	elif n.contains("_lamp"):
 		sm.emission_enabled = true

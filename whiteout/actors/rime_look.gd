@@ -28,79 +28,115 @@ static func decorate(model: Node, intensity := 1.0, seed := 0, opts := {}) -> Ar
 # ------------------------------------------------------------------ CharacterModel (glTF MakeHuman rig)
 ## Bone frames of the rig: head/spine bones are y-up / z-forward / x-left; limb bones run along +Y.
 ## Skin pallor, frostbite and gore are baked into the textures; this adds the ice growth on bones.
-static var _thin: StandardMaterial3D
+## Shared materials (v2): translucent glacial ice, slightly dirty (triplanar noise), faint inner glow; hoarfrost crust.
+static var _mats := {}
+static var _dirt: NoiseTexture2D
+
+static func _dirt_tex() -> NoiseTexture2D:
+	if _dirt == null:
+		var n := FastNoiseLite.new()
+		n.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
+		n.frequency = 0.05
+		n.fractal_octaves = 3
+		_dirt = NoiseTexture2D.new()
+		_dirt.noise = n
+		_dirt.width = 128
+		_dirt.height = 128
+		_dirt.seamless = true
+	return _dirt
+
+## kind: "ice" (clear-ish glacial ice), "deep" (thicker blue plates), "glow" (eye-socket / throat ice), "frost" (opaque hoarfrost)
+static func glacial(kind := "ice") -> StandardMaterial3D:
+	if _mats.has(kind):
+		return _mats[kind]
+	var m := StandardMaterial3D.new()
+	m.resource_name = "rime_" + kind
+	if kind == "frost":
+		m.albedo_color = Color(0.78, 0.86, 0.92)
+		m.roughness = 0.62
+		m.emission_enabled = true
+		m.emission = Color(0.12, 0.25, 0.35)
+		m.emission_energy_multiplier = 0.1
+	else:
+		var a := 0.4
+		var c := Color(0.66, 0.82, 0.88)
+		var em := 0.08
+		match kind:
+			"deep":
+				a = 0.5; c = Color(0.5, 0.7, 0.82); em = 0.06
+			"glow":
+				a = 0.5; c = Color(0.6, 0.86, 0.95); em = 0.55
+		m.albedo_color = Color(c.r, c.g, c.b, a)
+		m.albedo_texture = _dirt_tex()
+		m.uv1_triplanar = true
+		m.uv1_scale = Vector3(7, 7, 7)
+		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		m.roughness = 0.05
+		m.metallic_specular = 0.85
+		m.rim_enabled = true
+		m.rim = 0.35
+		m.rim_tint = 0.6
+		m.emission_enabled = true
+		m.emission = Color(0.3, 0.6, 0.78)
+		m.emission_energy_multiplier = em
+		m.cull_mode = BaseMaterial3D.CULL_DISABLED
+	_mats[kind] = m
+	return m
+
 static func _thin_ice(kind: String) -> StandardMaterial3D:
-	if _thin == null:
-		_thin = StandardMaterial3D.new()
-		_thin.albedo_color = Color(0.62, 0.8, 0.95, 0.32)
-		_thin.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		_thin.roughness = 0.05
-		_thin.metallic_specular = 0.9
-		_thin.rim_enabled = true
-		_thin.rim = 0.6
-		_thin.rim_tint = 0.8
-		_thin.emission_enabled = true
-		_thin.emission = Color(0.25, 0.5, 0.75)
-		_thin.emission_energy_multiplier = 0.25
-		_thin.cull_mode = BaseMaterial3D.CULL_DISABLED
-	return _thin
+	return glacial("glow" if kind == "ice_glow" else "ice")
 
 static func _bc(model: Node, bone: String, pos: Vector3, dir: Vector3, len: float, r: float, rng: RandomNumberGenerator, kind := "ice", added: Array = []) -> void:
 	var ba: Node = model.bone_attachment(bone)
 	if ba == null:
 		return
-	var m: Material = Kit.mat("ice_glow") if kind == "ice_glow" else _thin_ice(kind)
-	var n := Kit.crystal(ba, pos, dir, len, r, m, rng.randi() % 8)
+	var n := Kit.crystal(ba, pos, dir, len, r, _thin_ice(kind), rng.randi() % 8)
 	added.append(n)
 
 static func _ring(rng: RandomNumberGenerator, up := 0.35) -> Vector3:
 	var a := rng.randf() * TAU
 	return Vector3(cos(a), up * rng.randf_range(-0.5, 1.5), sin(a)).normalized()
 
+## v2: FEW, SMALL, translucent crystals - from the mouth, eye sockets, shoulders and along the spine; no crown / halo.
 static func _character(model: Node, iv: float, rng: RandomNumberGenerator, opts: Dictionary, added: Array) -> void:
 	var s: float = float(model.get("_s")) if model.get("_s") != null else 1.0
 	s = clampf(s, 0.8, 1.4)
-	# head: crystals from the mouth, eyes, crown
+	var k: float = clampf(iv, 0.3, 1.7)
+	# mouth: a couple of short spikes pushing out between the lips
 	if opts.get("mouth", true):
-		for i in 1 + int(1.6 * iv):
+		for i in 1 + int(rng.randf() < 0.55 * k):
 			var x := rng.randf_range(-1.0, 1.0)
-			_bc(model, "head", Vector3(x * 0.022, -0.026, 0.115) * s, Vector3(x * 0.6, rng.randf_range(-0.5, 0.3), 1.0), rng.randf_range(0.04, 0.09) * iv * s, rng.randf_range(0.008, 0.014) * s, rng, "ice", added)
+			_bc(model, "head", Vector3(x * 0.02, -0.026, 0.115) * s, Vector3(x * 0.5, rng.randf_range(-0.5, 0.2), 1.0), rng.randf_range(0.025, 0.06) * k * s, rng.randf_range(0.004, 0.008) * s, rng, "ice", added)
+	# eye sockets: tiny glassy spikes
 	if opts.get("eyes", true):
 		for x in [-1.0, 1.0]:
-			if rng.randf() < 0.45 + 0.3 * iv:
-				_bc(model, "head", Vector3(x * 0.032, 0.046, 0.108) * s, Vector3(x * rng.randf_range(0.1, 0.7), rng.randf_range(-0.2, 0.4), 1.0), rng.randf_range(0.04, 0.1) * iv * s, rng.randf_range(0.006, 0.012) * s, rng, "ice_glow", added)
-	for i in (1 if rng.randf() < 0.6 else 0):
-		var x := rng.randf_range(-1.0, 1.0)
-		_bc(model, "head", Vector3(x * 0.05, 0.14, rng.randf_range(-0.06, 0.03)) * s, Vector3(x * 0.7, 1.0, rng.randf_range(-0.7, 0.1)), rng.randf_range(0.05, 0.12) * iv * s, rng.randf_range(0.01, 0.018) * s, rng, "ice", added)
-	# frost crust on the cheek / brow
+			if rng.randf() < 0.3 + 0.25 * k:
+				_bc(model, "head", Vector3(x * 0.032, 0.046, 0.108) * s, Vector3(x * rng.randf_range(0.1, 0.6), rng.randf_range(-0.2, 0.4), 1.0), rng.randf_range(0.02, 0.05) * k * s, rng.randf_range(0.004, 0.007) * s, rng, "ice_glow", added)
+	# hoarfrost lumps on the brow / cheekbone (opaque, tiny)
 	var hb: Node = model.bone_attachment("head")
 	if hb:
 		for x in [-1.0, 1.0]:
-			if rng.randf() < 0.3:
-				added.append(Kit.sphere(hb, 0.016 * s, Kit.mat("frost"), Vector3(x * 0.075, 0.035, 0.085) * s, Vector3(1.0, 0.8, 0.5)))
-	# back / spine growths
-	for i in int(2 + 2.5 * iv):
-		var x := rng.randf_range(-1.0, 1.0)
-		_bc(model, "spine_03", Vector3(x * 0.09, rng.randf_range(-0.04, 0.2), -0.11) * s, Vector3(x * 0.45, rng.randf_range(0.4, 1.0), -1.0), rng.randf_range(0.1, 0.22) * iv * s, rng.randf_range(0.014, 0.024) * s, rng, "ice", added)
-	for i in int(1 + 1 * iv):
-		var x := rng.randf_range(-1.0, 1.0)
-		_bc(model, "spine_03", Vector3(x * 0.1, rng.randf_range(0.0, 0.16), 0.1) * s, Vector3(x * 0.4, 0.2, 1.0), rng.randf_range(0.06, 0.15) * iv * s, rng.randf_range(0.013, 0.022) * s, rng, "ice", added)
-	for i in int(1 + iv):
-		_bc(model, "spine_01", Vector3(rng.randf_range(-0.04, 0.04), rng.randf_range(0.0, 0.1), -0.1) * s, Vector3(0, 0.6, -1.0), rng.randf_range(0.1, 0.2) * iv * s, 0.024 * s, rng, "ice", added)
-	# shoulders & limbs: radiate away from the bone axis (+Y)
+			if rng.randf() < 0.5:
+				added.append(Kit.sphere(hb, 0.011 * s, glacial("frost"), Vector3(x * 0.07, 0.07, 0.085) * s, Vector3(1.0, 0.6, 0.5)))
+	# along the spine: small shards in a loose row (back of the bone frame is -z)
+	for bone in ["spine_01", "spine_02", "spine_03"]:
+		if rng.randf() < 0.45 + 0.25 * k:
+			var x := rng.randf_range(-0.6, 0.6)
+			_bc(model, bone, Vector3(x * 0.05, rng.randf_range(0.02, 0.14), -0.1) * s, Vector3(x * 0.5, rng.randf_range(0.3, 0.9), -1.0), rng.randf_range(0.05, 0.12) * k * s, rng.randf_range(0.008, 0.015) * s, rng, "ice", added)
+	# shoulders: one small cluster each (radiates away from the bone axis +Y)
 	for side in ["l", "r"]:
-		for i in 1 + int(1.2 * iv):
-			_bc(model, "upperarm_" + side, Vector3(0, rng.randf_range(0.04, 0.24), 0) * s + _ring(rng) * 0.04 * s, _ring(rng, 0.5), rng.randf_range(0.1, 0.24) * iv * s, rng.randf_range(0.015, 0.028) * s, rng, "ice", added)
-		for i in int(0.8 * iv):
-			_bc(model, "lowerarm_" + side, Vector3(0, rng.randf_range(0.05, 0.22), 0) * s + _ring(rng) * 0.03 * s, _ring(rng, 0.6), rng.randf_range(0.07, 0.16) * iv * s, rng.randf_range(0.01, 0.019) * s, rng, "ice", added)
-		if rng.randf() < 0.5 * iv:
-			_bc(model, "hand_" + side, Vector3(0, 0.1, 0) * s, Vector3(0, 1, 0.2), rng.randf_range(0.03, 0.06) * s, 0.006 * s, rng, "ice", added)
-		if rng.randf() < 0.45 * iv:
-			_bc(model, "thigh_" + side, Vector3(0, rng.randf_range(0.1, 0.35), 0) * s + _ring(rng) * 0.06 * s, _ring(rng, 0.5), rng.randf_range(0.08, 0.16) * iv * s, rng.randf_range(0.012, 0.022) * s, rng, "ice", added)
+		if rng.randf() < 0.55 + 0.2 * k:
+			for i in 1 + int(rng.randf() < 0.5 * k):
+				_bc(model, "upperarm_" + side, Vector3(0, rng.randf_range(0.04, 0.12), 0) * s + _ring(rng) * 0.04 * s, _ring(rng, 0.7), rng.randf_range(0.05, 0.13) * k * s, rng.randf_range(0.01, 0.018) * s, rng, "ice", added)
+		if rng.randf() < 0.18 * k:
+			_bc(model, "lowerarm_" + side, Vector3(0, rng.randf_range(0.08, 0.2), 0) * s + _ring(rng) * 0.03 * s, _ring(rng, 0.6), rng.randf_range(0.04, 0.08) * k * s, rng.randf_range(0.006, 0.011) * s, rng, "ice", added)
+		var sb: Node = model.bone_attachment("clavicle_" + side)
+		if sb and rng.randf() < 0.6:
+			added.append(Kit.sphere(sb, 0.03 * s, glacial("frost"), Vector3(0, 0.07, 0.02) * s, Vector3(1.6, 0.5, 1.0)))
 
 # ------------------------------------------------------------------ pivot-based humanoid
 static func _cr(parent: Node, pos: Vector3, dir: Vector3, len: float, r: float, s: float, rng: RandomNumberGenerator, kind := "ice") -> void:
-	Kit.crystal(parent, pos * s, dir, len * s, r * s, Kit.mat(kind), rng.randi() % 8)
+	Kit.crystal(parent, pos * s, dir, len * s, r * s, _thin_ice(kind), rng.randi() % 8)
 
 static func _pivots(model: Node, iv: float, rng: RandomNumberGenerator, opts: Dictionary, added: Array) -> void:
 	var s := 1.0

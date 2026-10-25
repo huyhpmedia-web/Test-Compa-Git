@@ -51,7 +51,7 @@ func _make_model() -> Node3D:
 	RimeLook.decorate(h, rime, rng.randi(), {"mouth": false})
 	# throat: swollen goiter of resonating crystals (neck bone: y up, z forward)
 	var nk: Node3D = h.bone_attachment("neck_01")
-	var gm: StandardMaterial3D = Kit.mat("ice_glow").duplicate()
+	var gm: StandardMaterial3D = RimeLook.glacial("glow").duplicate()
 	_throat_mats.append(gm)
 	Kit.sphere(nk, 0.058 * s, gm, Vector3(0, 0.05, 0.045) * s, Vector3(1.0, 1.5, 0.9))
 	for i in 9:

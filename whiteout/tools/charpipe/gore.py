@@ -55,13 +55,19 @@ def fields(p, nrm, seed, anchors, cfg):
     if mo is not None and amt > 0:
         mo = np.array(mo)
         dz = mo[2] - p[:, 2]
-        L = 0.25 + 0.5 * amt
-        wid = (0.03 + 0.03 * amt) * (1 - 0.5 * pt.smoothstep(0.0, L, dz)) * (0.8 + 0.5 * fbm(p, 80, seed))
-        cx = mo[0] + (fbm(p * np.array([0, 1, 1]) + 3, 25, seed + 5) - 0.5) * 0.04
-        ribbon = pt.smoothstep(wid, wid * 0.35, np.abs(p[:, 0] - cx)) * pt.smoothstep(-0.015, 0.0, dz) * pt.smoothstep(L, L * 0.55, dz) * fwd
-        # clotted edges + runs
-        ribbon = ribbon * (0.75 + 0.5 * fbm(p, 140, seed + 9))
-        around = pt.smoothstep(0.05, 0.012, np.hypot(p[:, 0] - mo[0], (p[:, 2] - (mo[2] - 0.012)) * 1.2)) * fwd * amt * 0.85   # around the lips/chin
+        L = 0.07 + 0.2 * amt
+        wid = (0.018 + 0.022 * amt) * (1 - 0.6 * pt.smoothstep(0.0, L, dz)) * (0.7 + 0.6 * fbm(p, 80, seed))
+        cx = mo[0] + (fbm(p * np.array([0, 1, 1]) + 3, 25, seed + 5) - 0.5) * 0.05
+        ribbon = pt.smoothstep(wid, wid * 0.3, np.abs(p[:, 0] - cx)) * pt.smoothstep(-0.015, 0.0, dz) * pt.smoothstep(L, L * 0.4, dz) * fwd
+        # broken into clotted runs and drips rather than a painted band
+        brk = pt.smoothstep(0.35, 0.6, fbm(p * np.array([3.0, 3.0, 0.6]), 60, seed + 9))
+        ribbon = ribbon * (0.35 + 0.65 * brk)
+        for k in range(2):
+            ox = (k - 0.5) * 0.045 + (fbm(p, 16, seed + 11 + k) - 0.5) * 0.03
+            ln = L * (1.5 + 0.9 * k) * (0.6 + 0.4 * amt)
+            strk = pt.smoothstep(0.007, 0.0015, np.abs(p[:, 0] - mo[0] - ox)) * pt.smoothstep(-0.01, 0.0, dz) * pt.smoothstep(ln, ln * 0.6, dz) * fwd
+            ribbon = np.maximum(ribbon, strk * 0.85)
+        around = pt.smoothstep(0.045, 0.01, np.hypot(p[:, 0] - mo[0], (p[:, 2] - (mo[2] - 0.012)) * 1.2)) * fwd * amt * pt.smoothstep(0.2, 0.55, fbm(p, 100, seed + 13)) * 1.3   # around the lips/chin
         blood = np.maximum(blood, np.clip(ribbon * (0.6 + 0.6 * amt) + around, 0, 1))
     # --- bite wounds / torn flesh
     pts = list(anchors.get("pts", []))

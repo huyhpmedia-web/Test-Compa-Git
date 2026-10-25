@@ -88,7 +88,7 @@ _z("burster", "tee_m", 1.0, 48, (0.42, 0.44, 0.46), (0.16, 0.18, 0.24), 33, hair
    details=[("stomach", "stomach-pregnant", 1.0, "decr", "incr"), ("torso", "torso-scale-horiz", 0.7, "decr", "incr"), ("torso", "torso-scale-depth", 0.9, "decr", "incr"),
             ("hip", "hip-scale-horiz", 0.8, "decr", "incr"), ("neck", "neck-double", 1.0, "decr", "incr"), ("head", "head-fat", 1.0, "decr", "incr"), ("cheek", "l-cheek-volume", 1.0, "decr", "incr"),
             ("cheek", "r-cheek-volume", 1.0, "decr", "incr"), ("armslegs", "l-upperarm-fat", 1.0, "decr", "incr"), ("armslegs", "r-upperarm-fat", 1.0, "decr", "incr"),
-            ("armslegs", "l-upperleg-fat", 1.0, "decr", "incr"), ("armslegs", "r-upperleg-fat", 1.0, "decr", "incr"), ("buttocks", "buttocks-volume", 1.0, "decr", "incr")], boots=("shoes06", (0.2, 0.2, 0.22), 0.1), holes_fn="burster", veins=1.8,
+            ("armslegs", "l-upperleg-fat", 1.0, "decr", "incr"), ("armslegs", "r-upperleg-fat", 1.0, "decr", "incr"), ("buttocks", "buttocks-volume", 1.0, "decr", "incr")], boots=("shoes06", (0.2, 0.2, 0.22), 0.1), holes_fn="burster", veins=1.8, bare_above=0.9,
    gore_cloth=dict(mouth=0.5, soak=0.20, wounds=2, torn=3, splat=0.20, frost=0.6), gore_skin=dict(mouth=0.5, wounds=1, splat=0.15, frost=0.7), pallor=(0.72, 0.82, 0.9), body_dec=0.5)
 LONG_LIMBS = [("armslegs", f"{s_}-{seg}-scale-vert", 1.0, "decr", "incr") for s_ in "lr" for seg in ("lowerarm", "upperarm", "lowerleg", "upperleg")] + \
              [("armslegs", f"{s_}-{seg}-scale-horiz", -0.8, "decr", "incr") for s_ in "lr" for seg in ("lowerarm", "upperarm", "lowerleg", "upperleg")] + \

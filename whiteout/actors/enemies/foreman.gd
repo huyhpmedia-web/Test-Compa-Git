@@ -88,25 +88,25 @@ func _make_model() -> Node3D:
 	# stretch the limbs: arms 1.55x, thighs 1.4x (the model is lifted so the feet stay on the floor)
 	h.stretch(STRETCH)
 	h.position.y = 0.36
-	RimeLook.decorate(h, 1.7, 99)
-	var ice := Kit.mat("ice")
-	var glow := Kit.mat("ice_glow")
+	RimeLook.decorate(h, 1.1, 99)
+	var ice := RimeLook.glacial("ice")
+	var glow := RimeLook.glacial("glow")
 	# crystal joints at the (stretched) elbows / knees / shoulders and bursting from his back and chest
 	for sd in [["l", 1.0], ["r", -1.0]]:
 		var ef: Node3D = h.bone_attachment("lowerarm_" + sd[0])
 		var sh: Node3D = h.bone_attachment("upperarm_" + sd[0])
 		var kn: Node3D = h.bone_attachment("calf_" + sd[0])
 		if ef:
-			Kit.cluster(ef, Vector3.ZERO, Vector3(sd[1], 0.3, -0.5), 6, 0.3 * s, 0.035 * s, ice, rng, 0.8)
+			Kit.cluster(ef, Vector3.ZERO, Vector3(sd[1], 0.3, -0.5), 4, 0.22 * s, 0.026 * s, ice, rng, 0.8)
 			Kit.sphere(ef, 0.055 * s, glow, Vector3.ZERO)
 		if sh:
-			Kit.cluster(sh, Vector3(0, 0.05, 0), Vector3(sd[1], 1, -0.2), 7, 0.4 * s, 0.045 * s, ice, rng, 0.7)
+			Kit.cluster(sh, Vector3(0, 0.05, 0), Vector3(sd[1], 1, -0.2), 4, 0.3 * s, 0.032 * s, ice, rng, 0.7)
 		if kn:
-			Kit.cluster(kn, Vector3.ZERO, Vector3(0, 0.2, 1.0), 5, 0.3 * s, 0.035 * s, ice, rng, 0.8)
+			Kit.cluster(kn, Vector3.ZERO, Vector3(0, 0.2, 1.0), 3, 0.22 * s, 0.026 * s, ice, rng, 0.8)
 			Kit.sphere(kn, 0.05 * s, glow, Vector3.ZERO)
 	var ca: Node3D = h.bone_attachment("spine_03")
-	Kit.cluster(ca, Vector3(0, 0.1, -0.1) * s, Vector3(0, 0.8, -1), 9, 0.7 * s, 0.05 * s, ice, rng, 0.7)
-	Kit.cluster(ca, Vector3(0, 0.1, 0.1) * s, Vector3(0, 0.3, 1), 3, 0.3 * s, 0.04 * s, glow, rng, 0.6)
+	Kit.cluster(ca, Vector3(0, 0.1, -0.1) * s, Vector3(0, 0.8, -1), 6, 0.45 * s, 0.035 * s, ice, rng, 0.7)
+	Kit.cluster(ca, Vector3(0, 0.1, 0.1) * s, Vector3(0, 0.3, 1), 2, 0.2 * s, 0.03 * s, glow, rng, 0.6)
 	# the headlamp that never went out (the hard hat is part of the body mesh)
 	var mount := Node3D.new()
 	mount.position = Vector3(0, 0.145, 0.125) * s

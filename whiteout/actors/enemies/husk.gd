@@ -51,9 +51,11 @@ func _make_model() -> Node3D:
 	var h := CharacterModel.new()
 	h.setup({"model": "husk"})
 	h.pose = "zombie"
-	RimeLook.decorate(h, rime * 0.6, rng.randi())
+	# bulky: thick arms / legs / torso (bone scale propagates to the children)
+	h.stretch({"spine_02": Vector3(1.1, 1.0, 1.12), "upperarm": Vector3(1.28, 1.0, 1.28), "thigh": Vector3(1.15, 1.0, 1.15), "neck": Vector3(1.3, 1.0, 1.3)})
+	RimeLook.decorate(h, rime * 0.5, rng.randi())
 	var s: float = h._s
-	var m := Kit.mat("ice_deep")
+	var m := RimeLook.glacial("deep")
 	var list: Array = []
 	# --- armour plates: [bone, bone-local pos, dir, length, width, thickness]; limb bones run along +Y, torso bones are y-up / z-forward
 	for sd in ["l", "r"]:
@@ -81,7 +83,7 @@ func _make_model() -> Node3D:
 		var n := Kit.crystal(ba, e[1], e[2], e[3], 1.0, m, rng.randi() % 8)
 		# flatten into a plate: width x length x thickness
 		var bs: Basis = n.transform.basis.orthonormalized()
-		n.transform.basis = Basis(bs.x * e[4] * 1.5, bs.y * e[3] * 1.4, bs.z * e[5] * 2.4)
+		n.transform.basis = Basis(bs.x * e[4] * 1.7, bs.y * e[3] * 1.5, bs.z * e[5] * 3.2)
 		_plates.append(n)
 	# shedding order: shuffled, but chest/head plates tend to go last
 	for i in range(_plates.size() - 1, 0, -1):

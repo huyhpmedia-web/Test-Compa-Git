@@ -153,6 +153,8 @@ def zombie_skin(cb, spec, size=1024):
     col = col * (1 - black[:, None]) + np.array([0.055, 0.05, 0.07])[None] * black[:, None]
     arm = np.clip(r["wa"][:, 0], 0, 1) * 0.18
     col = col * (1 - arm[:, None]) + np.array([0.26, 0.27, 0.40])[None] * arm[:, None]
+    feet = pt.smoothstep(0.14, 0.05, z) * (0.6 + 0.5 * gore.fbm(p, 80, seed + 14))
+    col = col * (1 - np.clip(feet, 0, 0.9)[:, None]) + np.array([0.12, 0.10, 0.17])[None] * np.clip(feet, 0, 0.9)[:, None]
     # --- frost sheen / hoarfrost speckle on cheeks, brow, shoulders
     up = pt.smoothstep(0.3, 0.9, nn[:, 2])
     spark = pt.smoothstep(0.55, 0.9, gore.n3(p, 480, seed + 50))
@@ -379,7 +381,10 @@ def build_zombie(cb, spec):
     if glove:
         dv |= c2.glove_hands(cb, glove, dec=0.3)
     bpos = cb.conv(H.v[:mh.N_BODY])
-    dv |= set(np.where(bpos[:, 2] < (0.26 if boots and boots[2] > 0.15 else 0.14))[0].tolist())
+    if boots:
+        dv |= set(np.where(bpos[:, 2] < (0.26 if boots[2] > 0.15 else 0.14))[0].tolist())
+    else:
+        dv |= set(np.where(bpos[:, 2] < 0.012)[0].tolist())      # bare feet stay (frostbitten, see zombie_skin)
     skin_mat = make_pbr(n + "_skin", sk_d, sk_n, sk_mr, rough=0.6, spec=0.35)
     body = cb.build_body(sorted(dv))
     body.data.materials.append(skin_mat)

@@ -122,12 +122,12 @@ static func _character(model: Node, iv: float, rng: RandomNumberGenerator, opts:
 	for bone in ["spine_01", "spine_02", "spine_03"]:
 		if rng.randf() < 0.45 + 0.25 * k:
 			var x := rng.randf_range(-0.6, 0.6)
-			_bc(model, bone, Vector3(x * 0.05, rng.randf_range(0.02, 0.14), -0.1) * s, Vector3(x * 0.5, rng.randf_range(0.3, 0.9), -1.0), rng.randf_range(0.05, 0.12) * k * s, rng.randf_range(0.008, 0.015) * s, rng, "ice", added)
+			_bc(model, bone, Vector3(x * 0.05, rng.randf_range(0.02, 0.14), -0.1) * s, Vector3(x * 0.5, rng.randf_range(0.3, 0.9), -1.0), rng.randf_range(0.07, 0.16) * k * s, rng.randf_range(0.01, 0.018) * s, rng, "ice", added)
 	# shoulders: one small cluster each (radiates away from the bone axis +Y)
 	for side in ["l", "r"]:
 		if rng.randf() < 0.55 + 0.2 * k:
 			for i in 1 + int(rng.randf() < 0.5 * k):
-				_bc(model, "upperarm_" + side, Vector3(0, rng.randf_range(0.04, 0.12), 0) * s + _ring(rng) * 0.04 * s, _ring(rng, 0.7), rng.randf_range(0.05, 0.13) * k * s, rng.randf_range(0.01, 0.018) * s, rng, "ice", added)
+				_bc(model, "upperarm_" + side, Vector3(0, rng.randf_range(0.04, 0.12), 0) * s + _ring(rng) * 0.04 * s, _ring(rng, 0.7), rng.randf_range(0.07, 0.17) * k * s, rng.randf_range(0.012, 0.02) * s, rng, "ice", added)
 		if rng.randf() < 0.18 * k:
 			_bc(model, "lowerarm_" + side, Vector3(0, rng.randf_range(0.08, 0.2), 0) * s + _ring(rng) * 0.03 * s, _ring(rng, 0.6), rng.randf_range(0.04, 0.08) * k * s, rng.randf_range(0.006, 0.011) * s, rng, "ice", added)
 		var sb: Node = model.bone_attachment("clavicle_" + side)

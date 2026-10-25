@@ -64,7 +64,7 @@ _z("rimebound_tee_m", "tee_m", 1.0, 66, (0.62, 0.63, 0.64), (0.18, 0.2, 0.26), 1
 _z("rimebound_tee_f", "tee_f", 0.0, 29, (0.28, 0.33, 0.42), (0.12, 0.14, 0.2), 16, hair="hair/bob01", hair_tint=(0.16, 0.12, 0.1), height=1.64, weight=0.42,
    gore_cloth=dict(mouth=0.9, soak=0.40, wounds=2, torn=1, splat=0.25, frost=0.7), gore_skin=dict(mouth=0.9, wounds=2, splat=0.20, frost=0.7), boots=("shoes06", (0.25, 0.25, 0.28), 0.1))
 _z("rimebound_nurse", "nurse", 0.0, 41, (0.62, 0.7, 0.72), (0.55, 0.62, 0.64), 17, hair="hair/bob02", hair_tint=(0.3, 0.22, 0.17), height=1.66, weight=0.45,
-   gore_cloth=dict(mouth=1.0, soak=0.50, wounds=3, torn=2, splat=0.30, frost=0.7), gore_skin=dict(mouth=1.0, wounds=2, splat=0.20, frost=0.7), boots=("shoes05", (0.62, 0.64, 0.66), 0.1))
+   gore_cloth=dict(mouth=1.0, soak=0.50, wounds=3, torn=2, splat=0.30, frost=0.7), gore_skin=dict(mouth=1.0, wounds=2, splat=0.20, frost=0.7), boots=("shoes05", (0.34, 0.36, 0.4), 0.1))
 _z("rimebound_miner", "miner", 1.0, 52, (0.13, 0.16, 0.22), (0.38, 0.1, 0.08), 18, hair="hair/short04", hair_tint=(0.2, 0.18, 0.16), height=1.78, weight=0.6, muscle=0.6,
    gloves=(0.3, 0.27, 0.22), gore_cloth=dict(mouth=0.7, soak=0.25, wounds=3, torn=2, splat=0.20, frost=0.5), gore_skin=dict(mouth=0.7, wounds=3, splat=0.15, frost=0.5),
    boots=("shoes02", (0.08, 0.07, 0.06), 0.2))
@@ -608,3 +608,7 @@ def assemble(cb, spec):
     hm = make_pbr(n + "_hair", hair_png(cb, "hair", A("hair/short02/short02_diffuse.png"), 1024, tint=spec.get("hair_tint", (0.2, 0.17, 0.15))), rough=0.7, alpha=True)
     hp = messy(cb.conv(Ph.fit(H.v, H.base_v)), Ph.faces, 0.007)
     cb.add_mesh("hair", hp, [f[0] for f in Ph.faces], [f[1] for f in Ph.faces], Ph.uv, W=Ph.skin_weights(cb.Wfull), mat=hm)
+
+# poly budget (<= ~13k tris incl. lashes)
+for _n, _d in (("rimebound_tee_f", 0.3), ("rimebound_cop", 0.34), ("rimebound_parka_f", 0.34), ("rimebound_miner", 0.36)):
+    SPECS[_n]["body_dec"] = _d

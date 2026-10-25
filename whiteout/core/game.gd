@@ -100,6 +100,9 @@ func goto_level(id: String, spawn: String = "start") -> void:
 func _load_level() -> void:
 	get_tree().paused = false
 	if current_level != null and is_instance_valid(current_level):
+		# detach first so the new level can take the same node name (dressing hooks use it)
+		if current_level.get_parent():
+			current_level.get_parent().remove_child(current_level)
 		current_level.queue_free()
 		current_level = null
 	player = null

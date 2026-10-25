@@ -46,6 +46,8 @@ func _ready() -> void:
 					Game.player.global_position = Vector3(float(p[0]), float(p[1]), float(p[2]))
 				Game.player.model.visible = false
 			cam.make_current()
+		if args.has("track") and i >= 12:
+			_track(cam, args)
 		if i == 8 and int(args.get("wake", "0")) == 1:
 			for e in get_tree().get_nodes_in_group("enemy"):
 				if e.has_method("wake"):
@@ -61,3 +63,14 @@ func _ready() -> void:
 		print("SHOT_SAVED ", args.out)
 	print("SMOKE_OK ", Game.level_id)
 	get_tree().quit()
+
+func _track(cam: Camera3D, args: Dictionary) -> void:
+	for e in get_tree().get_nodes_in_group("enemy"):
+		if String(e.get_script().resource_path).contains(args.track):
+			var d := float(args.get("dist", "3.0"))
+			var ang := float(args.get("ang", "0.8"))
+			var fwd: Vector3 = e.global_transform.basis.z
+			var off := (fwd * cos(ang) + fwd.cross(Vector3.UP) * sin(ang)) * d + Vector3(0, float(args.get("h", "0.9")), 0)
+			cam.global_position = e.global_position + off
+			cam.look_at(e.global_position + Vector3(0, float(args.get("ly", "0.5")), 0))
+			return

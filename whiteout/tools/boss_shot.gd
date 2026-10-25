@@ -50,6 +50,12 @@ func _ready() -> void:
 			for e in get_tree().get_nodes_in_group("enemy"):
 				if e.has_method("wake"):
 					e.wake()
+	if args.has("dbg"):
+		for e in get_tree().get_nodes_in_group("enemy"):
+			print("ENEMY ", e.name, " ", e.global_position, " state=", e.get("state"), " vis=", e.visible)
+			if e.get("model") != null and e.get("phase") != null:
+				var m = e.model
+				print("  MOTHER model phase=", m.phase, " p1vis=", m._p1.visible if m._p1 else "-", " p2vis=", m._p2.visible if m._p2 else "-", " hd=", m._hd, " pos=", m.global_position, " p2pos=", m._p2.global_position if m._p2 else "-", " mvis=", m.visible, " inTree=", m.is_visible_in_tree(), " legpos=", m.legs[0].up.global_position, " legvis=", m.legs[0].up.is_visible_in_tree(), " ruthpos=", m.ruth.global_position)
 	if args.has("out"):
 		get_viewport().get_texture().get_image().save_png(args.out)
 		print("SHOT_SAVED ", args.out)

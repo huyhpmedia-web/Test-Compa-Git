@@ -204,11 +204,11 @@ mb = MeshBuilder("Ice")
 imats = [M["ice"], M["ice_deep"], M["ice_glow"], M["ice_blood"]]
 rng3 = random.Random(5)
 for (mc, nrm) in mouth_pts:           # crystals bursting from mouths
-    for _ in range(3):
+    for _ in range(2):
         d = nrm + Vector((rng3.uniform(-0.6, 0.6), rng3.uniform(-0.6, 0.6), rng3.uniform(0.0, 0.8)))
         add_crystal(mb, mc + nrm * 0.04, d, rng3.uniform(0.18, 0.5), rng3.uniform(0.01, 0.022), rng=rng3, mat_index=rng3.choice([0, 0, 2]))
 for (hc, nrm) in head_pts:            # growing out of skulls
-    for _ in range(4):
+    for _ in range(2):
         d = Vector((rng3.uniform(-0.5, 0.5), rng3.uniform(-0.5, 0.5), 1.0))
         add_crystal(mb, hc + Vector((0, 0, 0.1)), d, rng3.uniform(0.2, 0.7), rng3.uniform(0.014, 0.03), rng=rng3, mat_index=rng3.choice([0, 1]))
 col_spots = []
@@ -217,14 +217,14 @@ for k in range(120):                  # growth from the fused core
     ang = rng3.uniform(0, math.tau)
     rr = (0.62 - 0.14 * zz / 4.0) * rng3.uniform(0.7, 1.0)
     col_spots.append((Vector((math.cos(ang) * rr, math.sin(ang) * rr, zz)), Vector((math.cos(ang), math.sin(ang), 0.3))))
-scatter_crystals(mb, rng3, col_spots, 55, length=(0.2, 0.7), radius=(0.02, 0.06), up_bias=0.35, spread=0.45, mat_index=0)
-scatter_crystals(mb, rng3, col_spots, 12, length=(0.5, 1.1), radius=(0.05, 0.09), up_bias=0.3, spread=0.4, mat_index=1)
+scatter_crystals(mb, rng3, col_spots, 30, length=(0.2, 0.7), radius=(0.02, 0.06), up_bias=0.35, spread=0.45, mat_index=0)
+scatter_crystals(mb, rng3, col_spots, 8, length=(0.5, 1.1), radius=(0.05, 0.09), up_bias=0.3, spread=0.4, mat_index=1)
 for k in range(14):                   # crown of crystal above the top head
     ang = rng3.uniform(0, math.tau)
     rr = rng3.uniform(0.0, 0.3)
     d = Vector((math.cos(ang) * 0.3, math.sin(ang) * 0.3, 1.0))
     add_crystal(mb, Vector((math.cos(ang) * rr, math.sin(ang) * rr, 4.55)), d, rng3.uniform(0.5, 1.3), rng3.uniform(0.05, 0.11), rng=rng3, mat_index=2 if k % 4 == 0 else 1)
-for k in range(18):                   # base shards radiating outward
+for k in range(11):                   # base shards radiating outward
     ang = k * (math.tau / 18) + rng3.uniform(-0.1, 0.1)
     d = Vector((math.cos(ang), math.sin(ang), rng3.uniform(0.6, 1.2)))
     add_crystal(mb, Vector((math.cos(ang) * 1.0, math.sin(ang) * 1.0, 0.05)), d, rng3.uniform(0.6, 1.5), rng3.uniform(0.06, 0.13), rng=rng3, mat_index=rng3.choice([0, 1]))

@@ -236,8 +236,8 @@ for _ in range(120):
     th = rng.uniform(0, math.tau)
     ph = rng.uniform(0.1, 1.9)
     spots.append((surface_point(th, ph) * 1.0, surface_normal(th, ph)))
-scatter_crystals(mb, rng, spots, 70, length=(0.3, 1.1), radius=(0.03, 0.09), up_bias=0.4, spread=0.5, mat_index=0)
-scatter_crystals(mb, rng, spots, 22, length=(0.7, 1.7), radius=(0.07, 0.14), up_bias=0.5, spread=0.4, mat_index=1)
+scatter_crystals(mb, rng, spots, 40, length=(0.3, 1.1), radius=(0.03, 0.09), up_bias=0.4, spread=0.5, mat_index=0)
+scatter_crystals(mb, rng, spots, 13, length=(0.7, 1.7), radius=(0.07, 0.14), up_bias=0.5, spread=0.4, mat_index=1)
 scatter_crystals(mb, rng, spots[:30], 8, length=(0.3, 0.7), radius=(0.04, 0.08), up_bias=0.5, spread=0.4, mat_index=2)
 # crown spikes around the cab
 for k in range(10):
@@ -245,7 +245,7 @@ for k in range(10):
     add_crystal(mb, CROWN + Vector((math.cos(ang) * 0.9, math.sin(ang) * 0.7, -0.6)), Vector((math.cos(ang) * 0.4, math.sin(ang) * 0.4, 1)), rng.uniform(0.7, 1.4), 0.06, rng=rng, mat_index=1)
 # frozen blood icicles / drips hanging from the mound and crawlers
 drip = [surface_point(rng.uniform(0, math.tau), rng.uniform(0.9, 1.6)) for _ in range(30)]
-icicles(mb, rng, drip, 26, length=(0.25, 0.9), mat_index=3)
+icicles(mb, rng, drip, 16, length=(0.25, 0.9), mat_index=3)
 ice = mb.build(imats)
 shade_smooth(ice); ensure_col(ice)
 

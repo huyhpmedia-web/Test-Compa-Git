@@ -97,7 +97,7 @@ def build_p1():
     ib = MeshBuilder("Ice")
     imats = [M["ice"], M["ice_deep"], M["ice_glow"], M["ice_blood"]]
     cores = []
-    for i in range(60):
+    for i in range(38):
         d = Vector((rng.uniform(-1.0, 1.0), rng.uniform(0.12, 1.0), rng.uniform(-0.55, 1.0))).normalized()
         start = hub + Vector((rng.uniform(-1, 1), rng.uniform(-0.5, 0.5), rng.uniform(-0.6, 0.8)))
         L = rng.uniform(2.5, 8.5)
@@ -106,7 +106,7 @@ def build_p1():
         add_crystal(ib, start, d, L, R, sides=6, tip=0.18, jitter=0.2, rng=rng, mat_index=mi, taper=0.8)
         if i % 2 == 0:   # inner glowing core: reads as light trapped inside the crystal
             add_crystal(ib, start + d * 0.1, d, L * 0.8, R * 0.38, sides=5, tip=0.2, jitter=0.1, rng=rng, mat_index=2, taper=0.7)
-    for i in range(24):  # floor spikes behind
+    for i in range(15):  # floor spikes behind
         x = rng.uniform(-10, 10)
         y = rng.uniform(1.5, 7)
         d = Vector((rng.uniform(-0.3, 0.3) - x * 0.03, rng.uniform(-0.4, 0.2), 1.0))

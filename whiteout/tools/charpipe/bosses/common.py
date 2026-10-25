@@ -7,12 +7,12 @@ import texgen
 def std_mats():
     """the common material set (names are matched by actors/models/enemy_glb.gd)."""
     d = {}
-    d["ice"] = make_mat("ice", color=(0.72, 0.9, 1.0, 1), rough=0.05, spec=1.0, alpha=0.55, emission=(0.3, 0.75, 0.95, 1), emit=0.4)
-    d["ice_deep"] = make_mat("ice_deep", color=(0.35, 0.62, 0.9, 1), rough=0.05, spec=1.0, alpha=0.7, emission=(0.2, 0.5, 0.9, 1), emit=0.3)
-    d["ice_glow"] = make_mat("ice_glow", color=(0.6, 0.95, 1.0, 1), rough=0.05, spec=1.0, alpha=0.75, emission=(0.35, 0.9, 1.0, 1), emit=2.0)
-    d["ice_blood"] = make_mat("ice_blood", color=(0.38, 0.02, 0.03, 1), rough=0.04, spec=1.0, alpha=0.9, emission=(0.4, 0.02, 0.02, 1), emit=0.08)
-    d["ice_glaze"] = make_mat("ice_glaze", color=(0.8, 0.92, 1.0, 1), rough=0.05, spec=1.0, alpha=0.28, emission=(0.3, 0.7, 0.9, 1), emit=0.12)
-    d["blood"] = make_mat("blood", color=(0.22, 0.01, 0.015, 1), rough=0.1, spec=0.9, coat=1.0, coat_rough=0.04)
+    d["ice"] = make_mat("ice", color=(0.55, 0.68, 0.78, 1), rough=0.05, spec=1.0, alpha=0.36, emission=(0.2, 0.5, 0.65, 1), emit=0.05)
+    d["ice_deep"] = make_mat("ice_deep", color=(0.22, 0.33, 0.45, 1), rough=0.05, spec=1.0, alpha=0.55, emission=(0.1, 0.3, 0.5, 1), emit=0.05)
+    d["ice_glow"] = make_mat("ice_glow", color=(0.4, 0.65, 0.75, 1), rough=0.05, spec=1.0, alpha=0.5, emission=(0.3, 0.8, 1.0, 1), emit=0.7)
+    d["ice_blood"] = make_mat("ice_blood", color=(0.2, 0.015, 0.02, 1), rough=0.06, spec=1.0, alpha=0.92, emission=(0.1, 0.0, 0.0, 1), emit=0.0)
+    d["ice_glaze"] = make_mat("ice_glaze", color=(0.7, 0.82, 0.9, 1), rough=0.05, spec=1.0, alpha=0.16, emission=(0.2, 0.5, 0.7, 1), emit=0.03)
+    d["blood"] = make_mat("blood", color=(0.23, 0.02, 0.02, 1), rough=0.12, spec=0.9, coat=1.0, coat_rough=0.04)
     d["frost"] = make_mat("frost", color=(0.86, 0.92, 0.98, 1), rough=0.55, spec=0.5)
     d["throat_glow"] = make_mat("throat_glow", color=(0.2, 0.5, 0.6, 1), rough=0.4, emission=(0.5, 0.95, 1.0, 1), emit=4.0)
     d["mouth_dark"] = make_mat("mouth_dark", color=(0.02, 0.0, 0.01, 1), rough=0.9)
@@ -56,7 +56,7 @@ def vcol_grime(axis=(0, 0), r0=0.35, r1=0.95, dark=0.7, seed=0, blue=0.1):
 
 def vcol_flesh(seed=0, bloody=0.5):
     """mottled colours for sculpted flesh: blue-grey / pink / blood red with frost on upward faces."""
-    cols = [(0.78, 0.8, 0.9), (0.85, 0.62, 0.64), (0.5, 0.14, 0.16), (0.5, 0.5, 0.65)]
+    cols = [(0.7, 0.58, 0.6), (0.75, 0.42, 0.44), (0.32, 0.05, 0.06), (0.42, 0.4, 0.5)]
     def fn(co, n, i):
         a = 0.5 + 0.5 * noise.noise(co * 1.7 + Vector((seed, 1.0, 0)))
         b = 0.5 + 0.5 * noise.noise(co * 4.1 + Vector((0, seed, 2.0)))

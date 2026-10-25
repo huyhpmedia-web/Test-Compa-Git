@@ -63,12 +63,12 @@ static func _fix(m: BaseMaterial3D) -> void:
 		m.rim_tint = 0.5
 		if n.begins_with("ice_blood"):
 			m.emission_enabled = true
-			m.emission = Color(0.5, 0.05, 0.05)
-			m.emission_energy_multiplier = 0.25
+			m.emission = Color(0.1, 0.0, 0.0)
+			m.emission_energy_multiplier = 0.05
 		else:
 			m.emission_enabled = true
 			m.emission = Color(0.3, 0.75, 0.95)
-			m.emission_energy_multiplier = 0.5 if not n.begins_with("ice_glow") else 2.2
+			m.emission_energy_multiplier = 0.06 if not n.begins_with("ice_glow") else 0.8
 		m.refraction_enabled = false
 	elif n.begins_with("glow") or n.begins_with("throat"):
 		m.emission_enabled = true

@@ -37,7 +37,13 @@ def orient(obj, scale, rotz_deg=-90.0, center="bbox", base=0.0):
     obj.data.transform(M)
     v = verts(obj)
     mn, mx = v.min(0), v.max(0)
-    cx, cy = ((mn[0] + mx[0]) / 2, (mn[1] + mx[1]) / 2) if center == "bbox" else center
+    if center == "base":   # centre of the lowest 6% of the model (the footprint)
+        lo = v[v[:, 2] < mn[2] + 0.06 * (mx[2] - mn[2])]
+        cx, cy = (lo[:, 0].min() + lo[:, 0].max()) / 2, (lo[:, 1].min() + lo[:, 1].max()) / 2
+    elif center == "bbox":
+        cx, cy = (mn[0] + mx[0]) / 2, (mn[1] + mx[1]) / 2
+    else:
+        cx, cy = center
     obj.data.transform(Matrix.Translation((-cx, -cy, -mn[2] + base)))
     obj.data.update()
     return obj
@@ -111,7 +117,7 @@ PALETTE = [(230, 60, 60), (60, 200, 80), (70, 120, 240), (240, 200, 40), (200, 7
            (150, 150, 150), (120, 220, 120), (240, 130, 160), (110, 80, 200), (200, 200, 120)]
 
 
-def preview(obj_or_pts, name, view="front", labels=None, cols=None, marks=None, px=900, grid=0.5, box=None, splat=2):
+def preview(obj_or_pts, name, view="front", labels=None, cols=None, marks=None, px=900, grid=0.5, box=None, splat=4):
     """Render a point-splat preview of the vertex cloud: textured (or label-coloured if `labels`).
     view: front (from -Y), back, side (from +X), top. marks: [(label, (x,y,z)), ...] drawn as crosses."""
     if isinstance(obj_or_pts, np.ndarray):
@@ -264,3 +270,149 @@ def export(path, objs, fmt="JPEG", quality=88):
                               export_jpeg_quality=quality, export_yup=True, export_apply=False, export_materials="EXPORT",
                               export_cameras=False, export_lights=False)
     print("EXPORTED", path, round(os.path.getsize(path) / 1e6, 2), "MB", tri_count(sel), "polys")
+
+
+# ----------------------------------------------------------------------------- welded graph / geodesics
+def weld(v, tol=2e-5):
+    """vertex -> welded id (UV-seam duplicates share an id). Returns (ids, n_unique)."""
+    q = np.round(v / tol).astype(np.int64)
+    _, inv = np.unique(q, axis=0, return_inverse=True)
+    return inv.reshape(-1), int(inv.max()) + 1
+
+
+def geodesic(v, F, sources, wid=None):
+    """multi-source Dijkstra over the welded triangle graph. sources: list of lists of vertex indices (one list per source
+    group). Returns (dist per vertex, group id per vertex)."""
+    import heapq
+    if wid is None:
+        wid, _ = weld(v)
+    n = int(wid.max()) + 1
+    pos = np.zeros((n, 3), dtype=np.float64)
+    pos[wid] = v
+    adj = [[] for _ in range(n)]
+    seen = set()
+    for t in F:
+        a, b, c = int(wid[t[0]]), int(wid[t[1]]), int(wid[t[2]])
+        for p, q in ((a, b), (b, c), (c, a)):
+            if p == q:
+                continue
+            k = (p, q) if p < q else (q, p)
+            if k in seen:
+                continue
+            seen.add(k)
+            d = float(np.linalg.norm(pos[p] - pos[q]))
+            adj[p].append((q, d))
+            adj[q].append((p, d))
+    dist = np.full(n, np.inf)
+    grp = np.full(n, -1, dtype=np.int32)
+    h = []
+    for gi, vs in enumerate(sources):
+        for vi in vs:
+            w = int(wid[vi])
+            if dist[w] > 0:
+                dist[w] = 0.0
+                grp[w] = gi
+                heapq.heappush(h, (0.0, w))
+    while h:
+        d, u = heapq.heappop(h)
+        if d > dist[u]:
+            continue
+        for q, w in adj[u]:
+            nd = d + w
+            if nd < dist[q]:
+                dist[q] = nd
+                grp[q] = grp[u]
+                heapq.heappush(h, (nd, q))
+    return dist[wid], grp[wid]
+
+
+# ----------------------------------------------------------------------------- PBR tuning (wet blood / glossy ice)
+def _img(obj, prefix):
+    for m in obj.data.materials:
+        for n in m.node_tree.nodes:
+            if n.type == "TEX_IMAGE" and n.image and n.image.name.startswith(prefix):
+                return n.image
+    return None
+
+
+def _blur(mask, r):
+    im = Image.fromarray((np.clip(mask, 0, 1) * 255).astype(np.uint8)).filter(__import__("PIL.ImageFilter", fromlist=["x"]).GaussianBlur(r))
+    return np.asarray(im, dtype=np.float32) / 255.0
+
+
+def tune_pbr(obj, blood=0.16, ice=0.5, rename="flesh_hd", metal_cap=0.15):
+    """Edit the roughness (ORM green) from the albedo: dark-red regions (blood) become wet/glossy, bright bluish regions
+    (ice / frost) get glossier too; metallic is capped. Also renames the material so enemy_glb.gd treats it as flesh."""
+    col, orm = _img(obj, "Color"), _img(obj, "ORM")
+    if col is None or orm is None:
+        return
+    w, h = col.size
+    c = np.empty(w * h * 4, dtype=np.float32)
+    col.pixels.foreach_get(c)
+    c = c.reshape(h, w, 4)[:, :, :3]
+    o = np.empty(orm.size[0] * orm.size[1] * 4, dtype=np.float32)
+    orm.pixels.foreach_get(o)
+    o = o.reshape(orm.size[1], orm.size[0], 4)
+    if (orm.size[0], orm.size[1]) != (w, h):
+        return
+    r, g, b = c[:, :, 0], c[:, :, 1], c[:, :, 2]
+    lum = 0.3 * r + 0.55 * g + 0.15 * b
+    bl = ((r > g * 1.7) & (r > b * 1.4) & (lum < 0.22)).astype(np.float32)
+    bl = _blur(bl, 3)
+    ic = ((b > r * 1.04) & (lum > 0.28)).astype(np.float32)
+    ic = _blur(ic, 4)
+    rough = o[:, :, 1]
+    rough = rough * (1 - bl) + np.minimum(rough, blood) * bl
+    rough = rough * (1 - ic * 0.6) + rough * ic * 0.6 * ice
+    o[:, :, 1] = np.clip(rough, 0.04, 1.0)
+    o[:, :, 2] = np.minimum(o[:, :, 2], metal_cap)
+    orm.pixels.foreach_set(o.reshape(-1))
+    orm.update()
+    print("tune_pbr: blood %.1f%% ice %.1f%%" % (bl.mean() * 100, ic.mean() * 100))
+    if rename:
+        for m in obj.data.materials:
+            m.name = rename
+
+
+def glow_material(name, color=(0.45, 0.9, 1.0), strength=4.0, alpha=1.0):
+    m = bpy.data.materials.new(name)
+    m.use_nodes = True
+    nt = m.node_tree
+    bs = nt.nodes["Principled BSDF"]
+    bs.inputs["Base Color"].default_value = (color[0] * 0.3, color[1] * 0.3, color[2] * 0.3, 1)
+    bs.inputs["Emission Color"].default_value = (color[0], color[1], color[2], 1)
+    bs.inputs["Emission Strength"].default_value = strength
+    bs.inputs["Alpha"].default_value = alpha
+    bs.inputs["Roughness"].default_value = 0.4
+    return m
+
+
+def blob(name, loc, scale, mat, parent=None, seg=16, rings=10):
+    """small UV-sphere ellipsoid (overlay glows, markers)."""
+    me = bpy.data.meshes.new(name)
+    bm = bmesh.new()
+    bmesh.ops.create_uvsphere(bm, u_segments=seg, v_segments=rings, radius=1.0)
+    bm.to_mesh(me)
+    bm.free()
+    me.polygons.foreach_set("use_smooth", [True] * len(me.polygons))
+    me.materials.append(mat)
+    o = bpy.data.objects.new(name, me)
+    bpy.context.scene.collection.objects.link(o)
+    o.scale = Vector(scale)
+    o.location = Vector(loc)
+    if parent is not None:
+        parent_keep(o, parent)
+        o.matrix_parent_inverse = parent.matrix_world.inverted()
+    return o
+
+
+def sphere_mask(v, c, r):
+    """ellipsoid test: c centre, r (rx, ry, rz)."""
+    d = (v - np.array(c)) / np.array(r)
+    return (d * d).sum(1) <= 1.0
+
+
+def front_y(v, x, z, rad=0.1):
+    """y of the front-most (smallest y) vertex within `rad` of (x, z) in the front projection."""
+    m = ((v[:, 0] - x) ** 2 + (v[:, 2] - z) ** 2) < rad * rad
+    return float(np.percentile(v[m, 1], 12)) if m.any() else float(v[:, 1].mean())

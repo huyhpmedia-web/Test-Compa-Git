@@ -4,6 +4,7 @@ extends Node3D
 ##   model=choir|hauler|mother1|mother2|hound  uses the game's model class instead of the raw glb
 ##   set=prop:value,prop:value  (numbers) sets properties on the model; call=method:arg  calls a method
 ##   file=/abs/path.glb  loads any glb; scl=2 pos=x,y,z scale / place the instance
+##   ortho=5.5  orthographic camera (view height in m)
 ##   yaws=0,90,180,270  turntable: one png per yaw (out_0.png ...)
 ##   anim=name[@t]  plays an animation of the raw glb, bg=r,g,b  floor=0|1  fx=hum|none (extra ambient)
 func _ready() -> void:
@@ -103,6 +104,9 @@ func _ready() -> void:
 	var lp := String(a.get("look", "0,2,0")).split(",")
 	cam.position = Vector3(float(cp[0]), float(cp[1]), float(cp[2]))
 	cam.fov = float(a.get("fov", 40))
+	if a.has("ortho"):   # ortho=<view height in metres>
+		cam.projection = Camera3D.PROJECTION_ORTHOGONAL
+		cam.size = float(a.ortho)
 	cam.current = true
 	cam.look_at(Vector3(float(lp[0]), float(lp[1]), float(lp[2])))
 	if int(a.get("spot", 1)) == 1:   # flashlight held by the viewer

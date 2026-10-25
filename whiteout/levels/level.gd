@@ -40,6 +40,12 @@ func _ready() -> void:
 	geo.navigation_mesh = nm
 	add_child(geo)
 	build()
+	# Optional per-level set dressing (gore, fluids, bodies) kept in its own file so it can be
+	# authored separately from the level logic: res://levels/dressing/<id>_dress.gd with
+	# `static func dress(level: Node3D) -> void`.
+	var dress_path := "res://levels/dressing/%s_dress.gd" % name
+	if ResourceLoader.exists(dress_path):
+		load(dress_path).dress(self)
 	_bake_nav()
 	_spawn_player()
 	on_enter()

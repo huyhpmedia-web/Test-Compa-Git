@@ -59,7 +59,7 @@ def cloth_painter(color, contrast, gcfg, seed, label, rough=0.9, tint2=None):
         zc = cb.conv(cb.H.joint("joint-spine-1"))[2]
         cand = (pos[:, 2] > zc - 0.45) & (pos[:, 2] < zc + 0.12) & mask
         eye_z = cb.conv(cb.H.joint("joint-l-eye"))[2]
-        anchors = dict(mouth=(0.0, 0.0, eye_z - 0.066), pts=pick_points(pos, cand, 60, seed))
+        anchors = dict(mouth=(0.0, 0.0, eye_z - 0.066), pts=pick_points(pos, cand, 60, seed), hem_z=float(pos[mask][:, 2].min()))
         f = gore.fields(p, nn, seed, anchors, gcfg)
         rg = np.full(len(p), rough)
         col, rg = gore.shade(col, rg, f, p, seed)
@@ -92,18 +92,19 @@ def zombie_skin(cb, spec, size=1024):
     ax = np.abs(x)
     fwd = pt.smoothstep(-0.03, -0.1, y)
     # --- frostbite pallor + mottling
-    pal = np.array(spec.get("pallor", (0.70, 0.80, 0.90)))
+    pal = np.array(spec.get("pallor", (0.66, 0.77, 0.88)))
     col = col * pal[None]
     m1 = gore.fbm(p, 28, seed)
-    bruise = pt.smoothstep(0.52, 0.72, m1)[:, None] * np.array([0.62, 0.52, 0.72])[None]
-    col = col * (1 - 0.55 * pt.smoothstep(0.52, 0.72, m1)[:, None]) + col * bruise * 0.55
+    bruise = pt.smoothstep(0.45, 0.68, m1)[:, None] * np.array([0.5, 0.5, 0.75])[None]
+    col = col * (1 - 0.75 * pt.smoothstep(0.45, 0.68, m1)[:, None]) + col * bruise * 0.9
     m2 = gore.fbm(p, 55, seed + 4)
     ice = pt.smoothstep(0.62, 0.8, m2)
     col = col * (1 - 0.45 * ice[:, None]) + np.array([0.86, 0.92, 0.97])[None] * 0.45 * ice[:, None]
     # nose/ears/cheeks go bluish-black (frostbite)
     nose = np.exp(-(((x) / 0.02) ** 2 + ((z - (eye_z - 0.04)) / 0.024) ** 2)) * fwd
     cheek = np.exp(-(((ax - 0.06) / 0.03) ** 2 + ((z - (eye_z - 0.05)) / 0.03) ** 2)) * fwd
-    fb = np.clip(nose * 0.8 + cheek * 0.5, 0, 0.85) * spec.get("frostbite", 1.0)
+    ear = np.exp(-(((ax - 0.088) / 0.014) ** 2 + ((z - (eye_z - 0.03)) / 0.03) ** 2))
+    fb = np.clip(nose * 1.1 + cheek * 0.7 + ear * 0.9, 0, 0.92) * spec.get("frostbite", 1.0)
     col = col * (1 - fb[:, None]) + np.array([0.20, 0.17, 0.26])[None] * fb[:, None]
     # dark eye sockets
     eyes = np.exp(-(((ax - 0.035) / 0.03) ** 2 + ((z - (eye_z - 0.004)) / 0.016) ** 2)) * fwd
@@ -111,6 +112,8 @@ def zombie_skin(cb, spec, size=1024):
     # black lips
     lips = np.exp(-(((ax) / 0.034) ** 2 + ((z - (mouth_z - 0.002)) / 0.012) ** 2)) * fwd
     col = col * (1 - 0.9 * lips[:, None]) + np.array([0.07, 0.04, 0.06])[None] * 0.9 * lips[:, None]
+    crack = pt.smoothstep(0.62, 0.7, gore.n3(p * np.array([220.0, 20.0, 12.0]) / 20.0, 1.0, seed + 12)) * lips
+    col = col * (1 - 0.8 * crack[:, None]) + np.array([0.25, 0.03, 0.03])[None] * 0.8 * crack[:, None]
     # blackened hands / fingers
     fing = np.clip(r["wf"][:, 0] * 1.4, 0, 1)
     hand = np.clip(r["wh"][:, 0] * 0.8, 0, 1)
@@ -134,7 +137,7 @@ def zombie_skin(cb, spec, size=1024):
 
 
 def zombie_face(cb, spec, hair, hair_tint, brow="eyebrows/eyebrow001/eyebrow001"):
-    spec.setdefault("iris", (0.72, 0.84, 0.95))
+    spec.setdefault("iris", (0.92, 0.95, 1.0))
     c2.face_parts(cb, spec, hair=hair, hair_tint=hair_tint, brow=brow, brow_tint=(0.4, 0.4, 0.42), lashes=False, eye_tint=(0.7, 0.85, 1.0),
                   decim_hair=0.35, subdiv=False)
 

@@ -34,7 +34,7 @@ if not os.path.exists(fur_tex):
     texgen.save(np.clip(base, 0, 1), fur_tex)
 fur = make_mat("fur", tex=fur_tex, rough=0.9, spec=0.25)
 fur_cards = make_mat("fur_tuft", color=(0.7, 0.72, 0.78, 1), rough=0.95, spec=0.2)
-raw = make_mat("blood_flesh", color=(0.2, 0.015, 0.02, 1), rough=0.12, spec=0.9, coat=1.0, coat_rough=0.04)
+raw = make_mat("blood_flesh", color=(0.09, 0.008, 0.01, 1), rough=0.12, spec=0.9, coat=1.0, coat_rough=0.04)
 bone_m = M["bone"]
 gum = make_mat("blood_gum", color=(0.18, 0.02, 0.03, 1), rough=0.2, spec=0.7, coat=0.8)
 eye_m = make_mat("glow_eye", color=(0.8, 0.85, 0.9, 1), rough=0.2, emission=(0.7, 0.85, 0.95, 1), emit=2.5)

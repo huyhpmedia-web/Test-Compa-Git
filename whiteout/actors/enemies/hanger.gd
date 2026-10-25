@@ -60,6 +60,8 @@ func _make_model() -> Node3D:
 	var h := CharacterModel.new()
 	h.setup({"model": "hanger"})
 	h.pose = "zombie"
+	h.stretch({"upperarm": Vector3(1, 1.7, 1), "thigh": Vector3(1, 1.4, 1)})   # much longer limbs
+	h.position.y = 0.34
 	RimeLook.decorate(h, rime, rng.randi())
 	var s: float = clampf(h._s, 0.9, 1.4)
 	# crystalline filaments bursting from the ankles (calf bone runs along +Y toward the foot)
@@ -282,7 +284,7 @@ func _on_death() -> void:
 		_hanging = false
 	if model:
 		model.rotation.z = 0.0
-		model.position.y = 0.0
+		model.position.y = 0.34
 	if _rig and is_instance_valid(_rig):
 		var r := _rig
 		_rig = null

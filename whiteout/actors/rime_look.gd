@@ -28,11 +28,29 @@ static func decorate(model: Node, intensity := 1.0, seed := 0, opts := {}) -> Ar
 # ------------------------------------------------------------------ CharacterModel (glTF MakeHuman rig)
 ## Bone frames of the rig: head/spine bones are y-up / z-forward / x-left; limb bones run along +Y.
 ## Skin pallor, frostbite and gore are baked into the textures; this adds the ice growth on bones.
+static var _thin: StandardMaterial3D
+static func _thin_ice(kind: String) -> StandardMaterial3D:
+	if _thin == null:
+		_thin = StandardMaterial3D.new()
+		_thin.albedo_color = Color(0.62, 0.8, 0.95, 0.32)
+		_thin.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		_thin.roughness = 0.05
+		_thin.metallic_specular = 0.9
+		_thin.rim_enabled = true
+		_thin.rim = 0.6
+		_thin.rim_tint = 0.8
+		_thin.emission_enabled = true
+		_thin.emission = Color(0.25, 0.5, 0.75)
+		_thin.emission_energy_multiplier = 0.25
+		_thin.cull_mode = BaseMaterial3D.CULL_DISABLED
+	return _thin
+
 static func _bc(model: Node, bone: String, pos: Vector3, dir: Vector3, len: float, r: float, rng: RandomNumberGenerator, kind := "ice", added: Array = []) -> void:
 	var ba: Node = model.bone_attachment(bone)
 	if ba == null:
 		return
-	var n := Kit.crystal(ba, pos, dir, len, r, Kit.mat(kind), rng.randi() % 8)
+	var m: Material = Kit.mat("ice_glow") if kind == "ice_glow" else _thin_ice(kind)
+	var n := Kit.crystal(ba, pos, dir, len, r, m, rng.randi() % 8)
 	added.append(n)
 
 static func _ring(rng: RandomNumberGenerator, up := 0.35) -> Vector3:
@@ -44,14 +62,14 @@ static func _character(model: Node, iv: float, rng: RandomNumberGenerator, opts:
 	s = clampf(s, 0.8, 1.4)
 	# head: crystals from the mouth, eyes, crown
 	if opts.get("mouth", true):
-		for i in 2 + int(3 * iv):
+		for i in 1 + int(1.6 * iv):
 			var x := rng.randf_range(-1.0, 1.0)
-			_bc(model, "head", Vector3(x * 0.022, -0.026, 0.115) * s, Vector3(x * 0.6, rng.randf_range(-0.5, 0.3), 1.0), rng.randf_range(0.06, 0.15) * iv * s, rng.randf_range(0.01, 0.018) * s, rng, "ice", added)
+			_bc(model, "head", Vector3(x * 0.022, -0.026, 0.115) * s, Vector3(x * 0.6, rng.randf_range(-0.5, 0.3), 1.0), rng.randf_range(0.04, 0.09) * iv * s, rng.randf_range(0.008, 0.014) * s, rng, "ice", added)
 	if opts.get("eyes", true):
 		for x in [-1.0, 1.0]:
 			if rng.randf() < 0.45 + 0.3 * iv:
 				_bc(model, "head", Vector3(x * 0.032, 0.046, 0.108) * s, Vector3(x * rng.randf_range(0.1, 0.7), rng.randf_range(-0.2, 0.4), 1.0), rng.randf_range(0.04, 0.1) * iv * s, rng.randf_range(0.006, 0.012) * s, rng, "ice_glow", added)
-	for i in 2 + int(3 * iv):
+	for i in (1 if rng.randf() < 0.6 else 0):
 		var x := rng.randf_range(-1.0, 1.0)
 		_bc(model, "head", Vector3(x * 0.05, 0.14, rng.randf_range(-0.06, 0.03)) * s, Vector3(x * 0.7, 1.0, rng.randf_range(-0.7, 0.1)), rng.randf_range(0.05, 0.12) * iv * s, rng.randf_range(0.01, 0.018) * s, rng, "ice", added)
 	# frost crust on the cheek / brow
@@ -61,19 +79,19 @@ static func _character(model: Node, iv: float, rng: RandomNumberGenerator, opts:
 			if rng.randf() < 0.3:
 				added.append(Kit.sphere(hb, 0.016 * s, Kit.mat("frost"), Vector3(x * 0.075, 0.035, 0.085) * s, Vector3(1.0, 0.8, 0.5)))
 	# back / spine growths
-	for i in int(3 + 4 * iv):
+	for i in int(2 + 2.5 * iv):
 		var x := rng.randf_range(-1.0, 1.0)
-		_bc(model, "spine_03", Vector3(x * 0.09, rng.randf_range(-0.04, 0.2), -0.11) * s, Vector3(x * 0.45, rng.randf_range(0.4, 1.0), -1.0), rng.randf_range(0.14, 0.32) * iv * s, rng.randf_range(0.02, 0.034) * s, rng, "ice", added)
-	for i in int(1 + 2 * iv):
+		_bc(model, "spine_03", Vector3(x * 0.09, rng.randf_range(-0.04, 0.2), -0.11) * s, Vector3(x * 0.45, rng.randf_range(0.4, 1.0), -1.0), rng.randf_range(0.1, 0.22) * iv * s, rng.randf_range(0.014, 0.024) * s, rng, "ice", added)
+	for i in int(1 + 1 * iv):
 		var x := rng.randf_range(-1.0, 1.0)
 		_bc(model, "spine_03", Vector3(x * 0.1, rng.randf_range(0.0, 0.16), 0.1) * s, Vector3(x * 0.4, 0.2, 1.0), rng.randf_range(0.06, 0.15) * iv * s, rng.randf_range(0.013, 0.022) * s, rng, "ice", added)
 	for i in int(1 + iv):
 		_bc(model, "spine_01", Vector3(rng.randf_range(-0.04, 0.04), rng.randf_range(0.0, 0.1), -0.1) * s, Vector3(0, 0.6, -1.0), rng.randf_range(0.1, 0.2) * iv * s, 0.024 * s, rng, "ice", added)
 	# shoulders & limbs: radiate away from the bone axis (+Y)
 	for side in ["l", "r"]:
-		for i in 1 + int(2 * iv):
+		for i in 1 + int(1.2 * iv):
 			_bc(model, "upperarm_" + side, Vector3(0, rng.randf_range(0.04, 0.24), 0) * s + _ring(rng) * 0.04 * s, _ring(rng, 0.5), rng.randf_range(0.1, 0.24) * iv * s, rng.randf_range(0.015, 0.028) * s, rng, "ice", added)
-		for i in 1 + int(1.5 * iv):
+		for i in int(0.8 * iv):
 			_bc(model, "lowerarm_" + side, Vector3(0, rng.randf_range(0.05, 0.22), 0) * s + _ring(rng) * 0.03 * s, _ring(rng, 0.6), rng.randf_range(0.07, 0.16) * iv * s, rng.randf_range(0.01, 0.019) * s, rng, "ice", added)
 		if rng.randf() < 0.5 * iv:
 			_bc(model, "hand_" + side, Vector3(0, 0.1, 0) * s, Vector3(0, 1, 0.2), rng.randf_range(0.03, 0.06) * s, 0.006 * s, rng, "ice", added)

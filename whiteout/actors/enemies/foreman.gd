@@ -87,7 +87,7 @@ func _make_model() -> Node3D:
 	var s: float = h._s
 	# stretch the limbs: arms 1.55x, thighs 1.4x (the model is lifted so the feet stay on the floor)
 	h.stretch(STRETCH)
-	h.position.y = 0.46
+	h.position.y = 0.36
 	RimeLook.decorate(h, 1.7, 99)
 	var ice := Kit.mat("ice")
 	var glow := Kit.mat("ice_glow")

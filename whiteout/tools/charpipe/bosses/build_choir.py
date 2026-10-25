@@ -122,7 +122,7 @@ def build_arm_bundle(side, name):
     sfx = "_l" if side > 0 else "_r"
     chars = ["ruth", "rimebound_miner", "rimebound_civ_m", "elias"] if side > 0 else ["rimebound_nurse", "june", "rimebound_civ_f", "rimebound_civ_m"]
     flats = [(0.45, 0.42, 0.5), (0.2, 0.22, 0.3), (0.16, 0.16, 0.17), (0.1, 0.12, 0.15)] if side > 0 else [(0.62, 0.62, 0.68), (0.55, 0.52, 0.48), (0.42, 0.05, 0.07), (0.45, 0.06, 0.08)]
-    piv = Vector((-0.5 * side, 0.1, 2.9))
+    piv = Vector((-0.8 * side, 0.1, 2.9))
     for k, ch in enumerate(chars):
         st = {"variant": 40 + k + (0 if side > 0 else 5), "frost": 0.6, "dirt": 0.5, "blood": 0.4, "flat": flats[k]}
         q = Person(ch, f"{name}{k}", seed=60 + k + (0 if side > 0 else 7), cloth_style=st, skin_style={"frost": 0.55, "blood": 0.5})
@@ -141,16 +141,11 @@ def build_arm_bundle(side, name):
     return parts
 
 arm_objs = []
-for side, nm in ((1, "ArmR"), (-1, "ArmL")):
+for side, nm in ((1, "ArmL"), (-1, "ArmR")):
     parts = build_arm_bundle(side, nm + "_")
     sb = MeshBuilder(nm + "_lump")
-    piv = Vector((-0.5 * side, 0.1, 2.9))
+    piv = Vector((-0.8 * side, 0.1, 2.9))
     add_blob(sb, piv + Vector((0.0, 0, 0.04)), (0.26, 0.24, 0.26), seg=12, rings=8, noise_amp=0.35, seed=side, color=(0.9, 0.9, 1.0, 1))
-    # sinew bands tying the arms together
-    for j in range(4):
-        zz = piv.z - 0.4 - j * 0.4
-        pts = [piv + Vector((math.cos(a_) * 0.11 * side, math.sin(a_) * 0.11, zz - piv.z)) for a_ in [x * 0.8 for x in range(9)]]
-        add_tube(sb, pts, 0.02, sides=5, color=(0.9, 0.7, 0.72, 1), cap=False)
     parts.append(sb.build([flesh]))
     ao = join(parts, nm)
     origin_to(ao, piv)

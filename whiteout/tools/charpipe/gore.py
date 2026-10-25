@@ -95,8 +95,14 @@ def fields(p, nrm, seed, anchors, cfg):
     if soak > 0 and mo is not None:
         dz = mo[2] - p[:, 2]
         broad = pt.smoothstep(0.55, 0.05, np.abs(p[:, 0] - mo[0])) * pt.smoothstep(0.0, 0.1, dz) * pt.smoothstep(0.7, 0.3, dz) * fwd
-        broad = broad * pt.smoothstep(0.35, 0.65, fbm(p, 24, seed + 80)) * soak
-        blood = np.maximum(blood, np.clip(broad, 0, 0.8))
+        broad = broad * pt.smoothstep(0.5, 0.75, fbm(p, 24, seed + 80)) * soak * 0.6
+        blood = np.maximum(blood, np.clip(broad, 0, 0.6))
+    hem = cfg.get('hem', 0.0)
+    if hem > 0:
+        lowz = anchors.get('hem_z')
+        if lowz is not None:
+            m = pt.smoothstep(lowz + 0.14, lowz, p[:, 2]) * pt.smoothstep(0.4, 0.7, fbm(p, 40, seed + 85)) * hem
+            blood = np.maximum(blood, np.clip(m, 0, 0.75))
     # --- frost rime on up-facing surfaces / edges
     fr = cfg.get("frost", 0.0)
     if fr > 0:
@@ -106,8 +112,8 @@ def fields(p, nrm, seed, anchors, cfg):
     return dict(blood=blood, flesh=flesh, frost=frost, h=h, dark=dark)
 
 
-BLOOD_FRESH = np.array([0.30, 0.012, 0.01])
-BLOOD_DRY = np.array([0.12, 0.01, 0.009])
+BLOOD_FRESH = np.array([0.29, 0.024, 0.024])
+BLOOD_DRY = np.array([0.17, 0.045, 0.035])
 FLESH = np.array([0.52, 0.09, 0.075])
 FLESH_DARK = np.array([0.20, 0.02, 0.02])
 FAT = np.array([0.78, 0.55, 0.42])
@@ -118,15 +124,16 @@ def shade(col, rough, f, p, seed):
     """apply fields to base colour/roughness arrays. returns col, rough"""
     b = f["blood"]; fl = f["flesh"]
     thick = np.clip(b * (0.6 + 0.8 * fbm(p, 70, seed + 100)), 0, 1)
-    bc = BLOOD_DRY[None] + (BLOOD_FRESH - BLOOD_DRY)[None] * fbm(p, 30, seed + 101)[:, None]
-    col = col * (1 - thick[:, None]) + bc * thick[:, None]
+    fresh = pt.smoothstep(0.45, 0.85, thick) * (0.6 + 0.4 * fbm(p, 30, seed + 101))
+    bc = BLOOD_DRY[None] + (BLOOD_FRESH - BLOOD_DRY)[None] * fresh[:, None]
+    col = col * (1 - 0.92 * thick[:, None]) + bc * 0.92 * thick[:, None]
     fc = FLESH_DARK[None] + (FLESH - FLESH_DARK)[None] * pt.smoothstep(0.1, 0.9, fl * (0.7 + 0.5 * fbm(p, 90, seed + 102)))[:, None]
     fat = (fbm(p, 220, seed + 103) > 0.7)[:, None] * FAT[None] * 0.5
     fc = fc * (1 - fat * 0.5) + fat * 0.5
     col = col * (1 - fl[:, None]) + fc * fl[:, None]
     fr = f["frost"]
     col = col * (1 - fr[:, None] * 0.7) + FROST[None] * fr[:, None] * 0.7
-    rough = rough * (1 - thick) + 0.14 * thick
+    rough = rough * (1 - thick) + (0.6 - 0.46 * fresh) * thick
     rough = rough * (1 - fl) + 0.2 * fl
     rough = rough * (1 - fr * 0.6) + 0.5 * fr * 0.6
     return col, rough

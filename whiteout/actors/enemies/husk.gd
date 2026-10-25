@@ -81,7 +81,7 @@ func _make_model() -> Node3D:
 		var n := Kit.crystal(ba, e[1], e[2], e[3], 1.0, m, rng.randi() % 8)
 		# flatten into a plate: width x length x thickness
 		var bs: Basis = n.transform.basis.orthonormalized()
-		n.transform.basis = Basis(bs.x * e[4], bs.y * e[3], bs.z * e[5] * 2.0)
+		n.transform.basis = Basis(bs.x * e[4] * 1.5, bs.y * e[3] * 1.4, bs.z * e[5] * 2.4)
 		_plates.append(n)
 	# shedding order: shuffled, but chest/head plates tend to go last
 	for i in range(_plates.size() - 1, 0, -1):

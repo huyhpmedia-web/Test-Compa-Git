@@ -15,7 +15,7 @@ SC = 2.6           # Ruth is larger than life
 
 def mats():
     M = std_mats()
-    M["wet"] = make_mat("blood_flesh", color=(0.22, 0.02, 0.025, 1), rough=0.12, spec=0.9, coat=1.0, coat_rough=0.04, sss=0.2)
+    M["wet"] = make_mat("blood_flesh", color=(0.1, 0.008, 0.01, 1), rough=0.12, spec=0.9, coat=1.0, coat_rough=0.04, sss=0.2)
     M["root"] = make_mat("root", color=(0.05, 0.05, 0.08, 1), rough=0.35, metal=0.3, emission=(0.1, 0.35, 0.5, 1), emit=0.5)
     M["heart_glow"] = make_mat("glow_heart", color=(0.3, 0.7, 0.8, 1), rough=0.3, emission=(0.5, 0.95, 1.0, 1), emit=5.0)
     M["flesh"] = flesh_mat("flesh_mortar", 5)

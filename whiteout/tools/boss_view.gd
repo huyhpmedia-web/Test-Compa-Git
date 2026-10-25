@@ -16,7 +16,7 @@ func _ready() -> void:
 	e.background_color = Color(float(bg[0]), float(bg[1]), float(bg[2]))
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	e.ambient_light_color = Color(0.45, 0.55, 0.75)
-	e.ambient_light_energy = float(a.get("amb", 0.5))
+	e.ambient_light_energy = float(a.get("amb", 0.18))
 	e.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	e.ssao_enabled = int(a.get("ssao", 0)) == 1
 	e.glow_enabled = int(a.get("glow", 0)) == 1
@@ -27,18 +27,18 @@ func _ready() -> void:
 	add_child(we)
 	var key := DirectionalLight3D.new()
 	key.rotation_degrees = Vector3(-30, float(a.get("keyyaw", 35)), 0)
-	key.light_energy = float(a.get("key", 1.5))
+	key.light_energy = float(a.get("key", 0.4))
 	key.light_color = Color(0.75, 0.85, 1.0)
 	key.shadow_enabled = true
 	add_child(key)
 	var rim := DirectionalLight3D.new()
 	rim.rotation_degrees = Vector3(-15, 200, 0)
-	rim.light_energy = 1.0
+	rim.light_energy = 0.5
 	rim.light_color = Color(0.7, 0.8, 1.0)
 	add_child(rim)
 	var fill := OmniLight3D.new()
 	fill.position = Vector3(0, 1.5, 4)
-	fill.light_energy = float(a.get("fill", 0.5))
+	fill.light_energy = float(a.get("fill", 0.15))
 	fill.omni_range = 14
 	fill.light_color = Color(0.7, 0.85, 1.0)
 	add_child(fill)
@@ -96,6 +96,15 @@ func _ready() -> void:
 	cam.fov = float(a.get("fov", 40))
 	cam.current = true
 	cam.look_at(Vector3(float(lp[0]), float(lp[1]), float(lp[2])))
+	if int(a.get("spot", 1)) == 1:   # flashlight held by the viewer
+		var sp := SpotLight3D.new()
+		sp.light_energy = float(a.get("spotE", 3.0))
+		sp.spot_range = 40.0
+		sp.spot_angle = 22.0
+		sp.spot_attenuation = 0.6
+		sp.light_color = Color(1.0, 0.95, 0.85)
+		sp.shadow_enabled = true
+		cam.add_child(sp)
 	var frames := int(a.get("frames", 8))
 	for i in frames:
 		await get_tree().process_frame

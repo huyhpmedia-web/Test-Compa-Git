@@ -3,6 +3,8 @@ extends Node3D
 ## godot --path . res://tools/boss_view.tscn -- glb=choir out=/tmp/x.png [cam=x,y,z look=x,y,z fov=40 yaw=0 frames=30]
 ##   model=choir|hauler|mother1|mother2|hound  uses the game's model class instead of the raw glb
 ##   set=prop:value,prop:value  (numbers) sets properties on the model; call=method:arg  calls a method
+##   file=/abs/path.glb  loads any glb; scl=2 pos=x,y,z scale / place the instance
+##   yaws=0,90,180,270  turntable: one png per yaw (out_0.png ...)
 ##   anim=name[@t]  plays an animation of the raw glb, bg=r,g,b  floor=0|1  fx=hum|none (extra ambient)
 func _ready() -> void:
 	var a := {}
@@ -55,6 +57,8 @@ func _ready() -> void:
 		var gl := GLTFDocument.new()
 		var st := GLTFState.new()
 		var gpath := ProjectSettings.globalize_path("res://assets/enemies/%s.glb" % a.get("glb", "_test"))
+		if a.has("file"):
+			gpath = String(a.file)
 		var err := gl.append_from_file(gpath, st)
 		if err != OK:
 			push_error("cannot load " + gpath)
@@ -78,6 +82,11 @@ func _ready() -> void:
 		elif q[1] == "false": v = false
 		elif q[1] == "str": v = q[2]
 		inst.set(q[0], v)
+	if a.has("scl"):
+		inst.scale = Vector3.ONE * float(a.scl)
+	if a.has("pos"):
+		var pq := String(a.pos).split(",")
+		inst.position = Vector3(float(pq[0]), float(pq[1]), float(pq[2]))
 	if int(a.get("floor", 1)) == 1:
 		var f := MeshInstance3D.new()
 		var pm := PlaneMesh.new()
@@ -114,6 +123,17 @@ func _ready() -> void:
 				inst.call(cq[0], cq[1])
 			else:
 				inst.call(cq[0])
+	if a.has("yaws"):   # turntable: renders one image per yaw (degrees) -> out with _<i> suffix
+		var ys := String(a.yaws).split(",")
+		var base_y := inst.rotation.y
+		for yi in ys.size():
+			inst.rotation.y = base_y + deg_to_rad(float(ys[yi]))
+			for k in 4:
+				await get_tree().process_frame
+			get_viewport().get_texture().get_image().save_png(out.replace(".png", "_%d.png" % yi))
+		print("BOSS_VIEW_DONE ", out)
+		get_tree().quit()
+		return
 	get_viewport().get_texture().get_image().save_png(out)
 	print("BOSS_VIEW_DONE ", out)
 	get_tree().quit()

@@ -11,18 +11,20 @@ Branch: `claude/tender-clarke-ld6xjw`. Work is autosaved (commit + push) every ~
 - Enemy roster + bosses + NPCs (procedural models): `actors/enemies/`, `actors/models/`, `actors/npc.gd`.
 - MakeHuman/Blender character pipeline: `tools/charpipe/` → `assets/characters/*.glb`, wrapper `actors/character_model.gd`.
 
-## In progress
-1. Swap all humans/zombies to MakeHuman models with frostbite + baked gore (character pipeline).
-2. Gore & fluids system (`world/gore.gd`, `world/fx.gd`, `levels/dressing/<id>_dress.gd`).
-3. Bosses + hound rebuilt in Blender (`tools/charpipe/bosses/`, `assets/enemies/`).
-4. Automated playtests and bug fixes (`tools/playtest.*`).
+## In progress (as of Oct 25, 16:50 UTC)
+1. Integrating Higgsfield/Tripo boss models (concepts: docs/boss_concepts.png, picks 2/3/6/7/10).
+   Raw GLBs live outside git in the scratchpad `tripo_raw/` (not in history; history was purged of them).
+   Target: assets/enemies/{choir,hauler,mother_p1,mother_p2,hound}_hd.glb (<= 8 MB each) wired into actors/models/*.
+   If interrupted: resume that agent, or re-download from Higgsfield job ids:
+   choir 5f44f178-ade0-4013-bb4b-d6fc82207d49, hauler c5bddf16-d589-4940-8f82-e7b9252e4c9d,
+   mother_p1 83ba5d35-bfc2-42c1-8eed-941e5d60be82, mother_p2 6136d145-af79-4e84-a443-786b8d540b7f,
+   hound 5e6b380b-845c-419e-95ff-432bc7c468d0 (Higgsfield credits already spent: 92.4).
+
+## Done since last update
+- All humans/zombies are MakeHuman glbs (actors/character_model.gd), frostbite + baked gore, 21 animations.
+- Gore & fluids system (world/gore.gd, levels/dressing/*_dress.gd), screen blood, head pops, limb loss.
+- QA harness: tools/playtest.sh [level|all|chain|soak] — full chain l1 -> ending passes.
 
 ## Next
-- Integrate & verify all of the above in every level; screenshots per level.
-- Full chain playtest l1 → l6 → endings; balance ammo/health.
-- Export a playable build (Linux/Windows/Web) and a project zip for the Godot web editor.
-
-## Tools
-- `tools/check.sh <level ids>` — parse all scripts + smoke-run levels.
-- `tools/shot.sh <level> <out.png> [pos= yaw= pitch= frames= flags=]` — screenshot (Forward+, software Vulkan).
-- Godot 4.5.1 binary is downloaded to the session scratchpad (re-download from GitHub releases if missing).
+- Verify boss fights in real arenas with the HD models; screenshots per level.
+- Full chain playtest + balance; export playable builds (Linux/Windows/Web) and a project zip.

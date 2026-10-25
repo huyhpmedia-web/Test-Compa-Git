@@ -174,7 +174,7 @@ func _lineup(models: PackedStringArray, out: String, rows: int, pose: String, w:
 	var svp := SubViewport.new()
 	svp.size = Vector2i(w, h)
 	svp.own_world_3d = true
-	svp.msaa_3d = Viewport.MSAA_4X
+	svp.msaa_3d = Viewport.MSAA_2X
 	svp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	add_child(svp)
 	var dark: bool = o.get("lit", "dark") == "dark"
@@ -185,7 +185,7 @@ func _lineup(models: PackedStringArray, out: String, rows: int, pose: String, w:
 	e.ambient_light_color = Color(0.25, 0.32, 0.45) if dark else Color(0.45, 0.52, 0.65)
 	e.ambient_light_energy = 0.28 if dark else 0.5
 	e.tonemap_mode = Environment.TONE_MAPPER_FILMIC
-	e.ssao_enabled = true
+	e.ssao_enabled = false
 	e.glow_enabled = true
 	e.glow_intensity = 0.5
 	e.glow_hdr_threshold = 1.0

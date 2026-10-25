@@ -11,11 +11,11 @@ from specs import (A, jtex, make_pbr, solid_mat, paint_skin, recolor_texture, no
 
 # ----------------------------------------------------------------- shared pieces
 def face_parts(cb, spec, hair=None, hair_tint=None, brow="eyebrows/eyebrow002/eyebrow002", brow_tint=(0.4, 0.35, 0.33),
-               lashes=True, eye_tint=(0.8, 0.85, 0.95), decim_hair=1.0, subdiv=True):
+               lashes=True, eye_tint=(0.8, 0.85, 0.95), decim_hair=1.0, subdiv=True, eye_fn=None, lash_tint=(0.5, 0.45, 0.45), frost_hair=0.0, frost_brow=0.0):
     n = cb.name; H = cb.H
     from specs import eye_image
-    emat_png = eye_image(n + "_eye.jpg", spec.get("iris", (0.5, 0.33, 0.2)))
-    emat = make_pbr(n + "_eyes", emat_png, rough=0.12, spec=0.8)
+    emat_png = (eye_fn or eye_image)(n + "_eye.jpg", spec.get("iris", (0.5, 0.33, 0.2)))
+    emat = make_pbr(n + "_eyes", emat_png, rough=0.12 if eye_fn is None else 0.28, spec=0.8)
     P_e = mh.Proxy(A("eyes/low-poly/low-poly.mhclo"))
     ob = cb.add_mesh("eyes", cb.conv(P_e.fit(H.v, H.base_v)), [f[0] for f in P_e.faces], [f[1] for f in P_e.faces], P_e.uv, bone="head", mat=emat)
     if subdiv:
@@ -25,16 +25,17 @@ def face_parts(cb, spec, hair=None, hair_tint=None, brow="eyebrows/eyebrow002/ey
         bpy.ops.object.modifier_apply(modifier="sub")
     items = [("brows", brow, brow_tint)]
     if lashes:
-        items.append(("lashes", "eyelashes/eyelashes01/eyelashes01", (0.5, 0.45, 0.45)))
+        items.append(("lashes", "eyelashes/eyelashes01/eyelashes01", lash_tint))
     for nm, d, tint in items:
+        fr_ = frost_brow if nm in ("brows", "lashes") else 0.0
         Pp = mh.Proxy(A(d + ".mhclo"))
         png = [f for f in os.listdir(os.path.dirname(A(d))) if f.endswith(".png")][0]
-        m = make_pbr(n + "_" + nm, hair_png(cb, nm, os.path.join(os.path.dirname(A(d)), png), 512, tint=tint), rough=0.8, alpha=True)
+        m = make_pbr(n + "_" + nm, hair_png(cb, nm, os.path.join(os.path.dirname(A(d)), png), 512, tint=tint, frost=fr_), rough=0.8, alpha=True)
         cb.add_mesh(nm, cb.conv(Pp.fit(H.v, H.base_v)), [f[0] for f in Pp.faces], [f[1] for f in Pp.faces], Pp.uv, bone="head", mat=m)
     if hair:
         Ph = mh.Proxy(A(hair, os.path.basename(hair) + ".mhclo"))
         png = [f for f in os.listdir(A(hair)) if f.endswith(".png")][0]
-        hm = make_pbr(n + "_hair", hair_png(cb, "hair", os.path.join(A(hair), png), 1024, tint=hair_tint), rough=0.7, alpha=True)
+        hm = make_pbr(n + "_hair", hair_png(cb, "hair", os.path.join(A(hair), png), 1024, tint=hair_tint, frost=frost_hair), rough=0.7, alpha=True)
         ho = cb.add_mesh("hair", cb.conv(Ph.fit(H.v, H.base_v)), [f[0] for f in Ph.faces], [f[1] for f in Ph.faces], Ph.uv,
                          W=Ph.skin_weights(cb.Wfull), mat=hm)
         if decim_hair < 1.0:

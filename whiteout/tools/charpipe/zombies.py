@@ -51,6 +51,8 @@ def cloth_painter(color, contrast, gcfg, seed, label, rough=0.9, tint2=None):
         lum = (o * np.array([0.3, 0.59, 0.11])).sum(1)
         lum = (1 - contrast) + contrast * np.clip(lum / max(np.median(lum), 1e-3), 0.3, 2.0)
         col = np.array(color)[None] * lum[:, None]
+        gr = col.mean(1, keepdims=True)
+        col = (gr * 0.32 + col * 0.68) * 0.86                                  # drab, grimy fabric (not saturated)
         # dirt / wear
         d = gore.fbm(p, 110, seed + 3)
         col = col * (0.86 + 0.2 * d[:, None])
@@ -59,7 +61,8 @@ def cloth_painter(color, contrast, gcfg, seed, label, rough=0.9, tint2=None):
         zc = cb.conv(cb.H.joint("joint-spine-1"))[2]
         cand = (pos[:, 2] > zc - 0.45) & (pos[:, 2] < zc + 0.12) & mask
         eye_z = cb.conv(cb.H.joint("joint-l-eye"))[2]
-        anchors = dict(mouth=(0.0, 0.0, eye_z - 0.066), pts=pick_points(pos, cand, 60, seed), hem_z=float(pos[mask][:, 2].min()))
+        wr = [tuple(bone_pts(cb, b_, 0.0)[0]) for b_ in ("hand_l", "hand_r")]
+        anchors = dict(mouth=(0.0, 0.0, eye_z - 0.066), pts=pick_points(pos, cand, 60, seed), hem_z=float(pos[mask][:, 2].min()), wrists=wr)
         f = gore.fields(p, nn, seed, anchors, gcfg)
         rg = np.full(len(p), rough)
         col, rg = gore.shade(col, rg, f, p, seed)
@@ -69,7 +72,16 @@ def cloth_painter(color, contrast, gcfg, seed, label, rough=0.9, tint2=None):
     return paint
 
 
+def vein_net(p, seed, f=38.0, w=0.028):
+    """thin winding lines = iso-contour of smooth noise (reads as a vein / capillary network)."""
+    a = np.abs(gore.fbm(p, f, seed) - 0.5)
+    b = np.abs(gore.fbm(p, f * 1.9, seed + 7) - 0.5)
+    return np.maximum(pt.smoothstep(w, 0.0, a), 0.55 * pt.smoothstep(w * 0.8, 0.0, b))
+
+
 def zombie_skin(cb, spec, size=1024):
+    """frostbitten corpse skin: grey-blue, mottled, veined; black nose / ear tips / fingertips; cracked purple lips;
+    gore concentrated at mouth / neck / bites / hands."""
     H = cb.H
     sk_dir = A("skins", spec["skin"])
     base = pt.load_rgb(os.path.join(sk_dir, [f for f in os.listdir(sk_dir) if f.endswith(".png")][0]), size)
@@ -80,66 +92,118 @@ def zombie_skin(cb, spec, size=1024):
     Wf = cb.W[:, [names.index(b) for b in hand_names]].sum(1)[:, None]
     Wh = cb.W[:, [names.index(b) for b in ("hand_l", "hand_r")]].sum(1)[:, None]
     Wa = cb.W[:, [names.index(b) for b in ("lowerarm_l", "lowerarm_r")]].sum(1)[:, None]
+    Wn = cb.W[:, [names.index(b) for b in ("neck_01",)]].sum(1)[:, None]
     tris = pt.tri_list(H.body_faces)
-    r = pt.rasterize(tris, H.uv, {"pos": pos, "nrm": nrm, "wf": Wf, "wh": Wh, "wa": Wa}, size)
+    r = pt.rasterize(tris, H.uv, {"pos": pos, "nrm": nrm, "wf": Wf, "wh": Wh, "wa": Wa, "wn": Wn}, size)
     p = r["pos"]; nn = r["nrm"] / np.maximum(np.linalg.norm(r["nrm"], axis=1, keepdims=True), 1e-6)
     seed = spec.get("seed", 1)
     px, py = r["x"], r["y"]
-    col = base[py, px].copy()
+    orig = base[py, px].copy()
     eye_z = cb.conv(H.joint("joint-l-eye"))[2]
     mouth_z = eye_z - 0.066
     x, y, z = p[:, 0], p[:, 1], p[:, 2]
     ax = np.abs(x)
     fwd = pt.smoothstep(-0.03, -0.1, y)
-    # --- frostbite pallor + mottling
-    pal = np.array(spec.get("pallor", (0.66, 0.77, 0.88)))
-    col = col * pal[None]
-    m1 = gore.fbm(p, 28, seed)
-    bruise = pt.smoothstep(0.45, 0.68, m1)[:, None] * np.array([0.5, 0.5, 0.75])[None]
-    col = col * (1 - 0.75 * pt.smoothstep(0.45, 0.68, m1)[:, None]) + col * bruise * 0.9
+    zbody = z / max(spec.get("height_m", 1.8), 1e-3)
+    ext = np.clip(r["wf"][:, 0] + r["wh"][:, 0] + r["wa"][:, 0] * 0.8, 0, 1)       # extremities
+    # --- grey-blue corpse base keeping the pore detail of the source skin
+    pal = np.array(spec.get("pallor", (0.70, 0.80, 0.90)))
+    lum = (orig * np.array([0.3, 0.59, 0.11])).sum(1, keepdims=True)
+    lum = np.clip(lum / max(float(np.median(lum)), 1e-3), 0.35, 1.5)
+    cool = np.array([0.50, 0.56, 0.61]) * (pal / np.array([0.70, 0.80, 0.90]))[None]
+    col = 0.88 * cool * (0.5 + 0.5 * lum) + 0.12 * orig * pal[None]
+    # livor mottling (purple, low contrast) + greenish decay patches + frost-pale patches
+    m1 = gore.fbm(p, 20, seed)
+    liv = pt.smoothstep(0.52, 0.74, m1) * (0.45 + 0.4 * ext + 0.25 * (1 - zbody))
+    col = col * (1 - 0.42 * liv[:, None]) + np.array([0.30, 0.25, 0.40])[None] * 0.42 * liv[:, None]
+    m3 = gore.fbm(p, 14, seed + 31)
+    dec = pt.smoothstep(0.58, 0.76, m3) * 0.28
+    col = col * (1 - dec[:, None]) + np.array([0.46, 0.50, 0.38])[None] * dec[:, None]
     m2 = gore.fbm(p, 55, seed + 4)
-    ice = pt.smoothstep(0.62, 0.8, m2)
-    col = col * (1 - 0.45 * ice[:, None]) + np.array([0.86, 0.92, 0.97])[None] * 0.45 * ice[:, None]
-    # nose/ears/cheeks go bluish-black (frostbite)
-    nose = np.exp(-(((x) / 0.02) ** 2 + ((z - (eye_z - 0.04)) / 0.024) ** 2)) * fwd
-    cheek = np.exp(-(((ax - 0.06) / 0.03) ** 2 + ((z - (eye_z - 0.05)) / 0.03) ** 2)) * fwd
+    ice = pt.smoothstep(0.64, 0.82, m2)
+    # --- veins: strongest on forearms, hands, neck, temples
+    vm = np.clip(0.28 + 0.9 * ext + 0.8 * r["wn"][:, 0], 0, 1)
+    temple = np.exp(-(((ax - 0.07) / 0.03) ** 2 + ((z - (eye_z + 0.01)) / 0.035) ** 2)) * fwd
+    vein = vein_net(p, seed + 20, 38.0, 0.03) * np.clip(vm + temple * 0.8, 0, 1)
+    fine = vein_net(p, seed + 40, 95.0, 0.04) * 0.5 * (0.3 + 0.7 * vm)
+    vv = np.clip(np.maximum(vein, fine * (1 - ext * 0.3)), 0, 1) * spec.get("veins", 1.0)
+    col = col * (1 - 0.62 * vv[:, None]) + np.array([0.20, 0.24, 0.42])[None] * 0.62 * vv[:, None]
+    # --- frostbite: nose / ears / cheeks go bluish-black
+    nose = np.exp(-(((x) / 0.016) ** 2 + ((z - (eye_z - 0.043)) / 0.02) ** 2)) * fwd
+    cheek = np.exp(-(((ax - 0.062) / 0.028) ** 2 + ((z - (eye_z - 0.05)) / 0.028) ** 2)) * fwd
     ear = np.exp(-(((ax - 0.088) / 0.014) ** 2 + ((z - (eye_z - 0.03)) / 0.03) ** 2))
-    fb = np.clip(nose * 1.1 + cheek * 0.7 + ear * 0.9, 0, 0.92) * spec.get("frostbite", 1.0)
-    col = col * (1 - fb[:, None]) + np.array([0.20, 0.17, 0.26])[None] * fb[:, None]
-    # dark eye sockets
-    eyes = np.exp(-(((ax - 0.035) / 0.03) ** 2 + ((z - (eye_z - 0.004)) / 0.016) ** 2)) * fwd
-    col = col * (1 - 0.65 * eyes[:, None]) + np.array([0.10, 0.08, 0.14])[None] * 0.65 * eyes[:, None]
-    # black lips
-    lips = np.exp(-(((ax) / 0.034) ** 2 + ((z - (mouth_z - 0.002)) / 0.012) ** 2)) * fwd
-    col = col * (1 - 0.9 * lips[:, None]) + np.array([0.07, 0.04, 0.06])[None] * 0.9 * lips[:, None]
-    crack = pt.smoothstep(0.62, 0.7, gore.n3(p * np.array([220.0, 20.0, 12.0]) / 20.0, 1.0, seed + 12)) * lips
-    col = col * (1 - 0.8 * crack[:, None]) + np.array([0.25, 0.03, 0.03])[None] * 0.8 * crack[:, None]
-    # blackened hands / fingers
-    fing = np.clip(r["wf"][:, 0] * 1.4, 0, 1)
+    fbk = spec.get("frostbite", 1.0)
+    col = col * (1 - np.clip(cheek * 0.5 * fbk, 0, 0.6)[:, None]) + np.array([0.33, 0.26, 0.40])[None] * np.clip(cheek * 0.5 * fbk, 0, 0.6)[:, None]
+    nb = np.clip(nose * 1.2 * (0.7 + 0.5 * gore.fbm(p, 120, seed + 9)), 0, 0.95) * fbk
+    eb = np.clip(ear * 1.0 * (0.6 + 0.6 * gore.fbm(p, 120, seed + 10)), 0, 0.92) * fbk
+    fb = np.maximum(nb, eb)
+    col = col * (1 - fb[:, None]) + np.array([0.075, 0.06, 0.095])[None] * fb[:, None]
+    # dark sunken eye sockets, purple-blue
+    eyes = np.exp(-(((ax - 0.035) / 0.03) ** 2 + ((z - (eye_z - 0.004)) / 0.017) ** 2)) * fwd
+    col = col * (1 - 0.7 * eyes[:, None]) + np.array([0.12, 0.09, 0.17])[None] * 0.7 * eyes[:, None]
+    # --- cracked purple lips
+    lips = np.exp(-(((ax) / 0.034) ** 2 + ((z - (mouth_z - 0.002)) / 0.011) ** 2)) * fwd
+    col = col * (1 - 0.85 * lips[:, None]) + np.array([0.27, 0.13, 0.21])[None] * 0.85 * lips[:, None]
+    crack = pt.smoothstep(0.6, 0.7, gore.n3(p * np.array([220.0, 20.0, 12.0]) / 20.0, 1.0, seed + 12)) * lips
+    col = col * (1 - 0.85 * crack[:, None]) + np.array([0.10, 0.015, 0.02])[None] * 0.85 * crack[:, None]
+    # --- blackened fingers (tips worst) and darkened hands
+    fing = np.clip(r["wf"][:, 0] * 1.5, 0, 1)
     hand = np.clip(r["wh"][:, 0] * 0.8, 0, 1)
-    black = np.clip(fing * (0.55 + 0.6 * gore.fbm(p, 90, seed + 8)) + hand * 0.25, 0, 0.95) * spec.get("frostbite", 1.0)
-    col = col * (1 - black[:, None]) + np.array([0.06, 0.05, 0.07])[None] * black[:, None]
-    arm = np.clip(r["wa"][:, 0], 0, 1) * 0.25
-    col = col * (1 - arm[:, None]) + np.array([0.3, 0.3, 0.42])[None] * arm[:, None]
+    black = np.clip(fing * (0.6 + 0.7 * gore.fbm(p, 90, seed + 8)) + hand * 0.12, 0, 0.96) * spec.get("frostbite", 1.0)
+    col = col * (1 - black[:, None]) + np.array([0.055, 0.05, 0.07])[None] * black[:, None]
+    arm = np.clip(r["wa"][:, 0], 0, 1) * 0.18
+    col = col * (1 - arm[:, None]) + np.array([0.26, 0.27, 0.40])[None] * arm[:, None]
+    # --- frost sheen / hoarfrost speckle on cheeks, brow, shoulders
+    up = pt.smoothstep(0.3, 0.9, nn[:, 2])
+    spark = pt.smoothstep(0.55, 0.9, gore.n3(p, 480, seed + 50))
+    fr_a = np.clip(ice * 0.4 + up * 0.25 * pt.smoothstep(0.1, 0.0, zbody - 0.82) * 0 + (cheek + temple) * 0.2, 0, 1) * (0.5 + 0.8 * spark)
+    col = col * (1 - fr_a[:, None] * 0.55) + np.array([0.86, 0.92, 0.97])[None] * fr_a[:, None] * 0.55
+    # --- emaciation / ribcage (Siren)
+    hh = np.zeros(len(p))
+    if spec.get("ribs"):
+        zs1 = cb.conv(H.joint("joint-spine-1"))[2]; zs4 = cb.conv(H.joint("joint-spine-4"))[2]
+        sp_ = (zs4 - zs1 - 0.02) / 8.0
+        zr = z + 0.035 * (np.clip(ax / 0.16, 0, 1.4) ** 2)           # ribs sweep downward to the sides
+        ph = (zr - (zs1 + 0.02)) / sp_
+        ridge = np.exp(-(((ph - np.floor(ph)) - 0.5) / 0.2) ** 2)
+        inr = (ph > 0) & (ph < 8)
+        rm = inr * pt.smoothstep(0.24, 0.17, ax) * pt.smoothstep(-0.01, -0.07, y) * 1.0 + inr * pt.smoothstep(0.24, 0.18, ax) * 0.5 * (y > -0.01) * 0.0
+        rm = rm * (1 - pt.smoothstep(0.012, 0.02, ax) * 0) * pt.smoothstep(0.012, 0.03, ax)      # gap = sternum
+        stern = np.exp(-((ax / 0.011) ** 2)) * pt.smoothstep(zs4 + 0.01, zs4 - 0.03, z) * pt.smoothstep(zs1 + 0.0, zs1 + 0.06, z) * fwd
+        clav = np.exp(-(((z - (zs4 + 0.075)) / 0.008) ** 2)) * pt.smoothstep(0.02, 0.05, ax) * pt.smoothstep(0.17, 0.12, ax) * fwd
+        hh = ridge * rm * 1.6 + stern * 1.1 + clav * 1.2
+        shade_ = (1 - 0.5 * (1 - ridge) * rm) * (1 + 0.1 * ridge * rm)
+        col = col * shade_[:, None]
+        # hollow belly under the ribs + thin limbs shading
+        belly = np.exp(-(((ax) / 0.12) ** 2 + ((z - (zs1 - 0.06)) / 0.08) ** 2)) * fwd
+        col = col * (1 - 0.18 * belly[:, None])
     # --- gore
-    vm = (cb.W[:, [names.index(b) for b in ("neck_01", "lowerarm_l", "lowerarm_r", "upperarm_l", "upperarm_r")]].sum(1) > 0.6) & (pos[:, 2] < eye_z - 0.06)
-    pts = pick_points(pos, vm, 60, seed)                                      # neck / arms
+    vmk = (cb.W[:, [names.index(b) for b in ("neck_01", "lowerarm_l", "lowerarm_r", "upperarm_l", "upperarm_r")]].sum(1) > 0.6) & (pos[:, 2] < eye_z - 0.06)
+    pts = pick_points(pos, vmk, 60, seed)                                      # neck / arms
     anchors = dict(mouth=(0.0, 0.0, mouth_z), pts=pts)
-    f = gore.fields(p, nn, seed, anchors, spec.get("gore_skin", dict(mouth=0.8, wounds=2, splat=0.3, frost=0.4)))
-    rg = np.full(len(p), 0.58) - 0.12 * ice
+    gcfg = spec.get("gore_skin", dict(mouth=0.8, wounds=2, splat=0.3, frost=0.4))
+    f = gore.fields(p, nn, seed, anchors, gcfg)
+    hb = np.clip(r["wh"][:, 0] * 1.0 + r["wa"][:, 0] * 0.8, 0, 1) * pt.smoothstep(0.3, 0.62, gore.fbm(p, 45, seed + 30)) * gcfg.get("hands", 0.0)
+    nk = np.clip(r["wn"][:, 0], 0, 1) * pt.smoothstep(0.35, 0.65, gore.fbm(p, 40, seed + 33)) * gcfg.get("neck", 0.0) * fwd
+    tear = (pt.smoothstep(0.006, 0.0, np.abs(ax - 0.04 - 0.02 * pt.smoothstep(0.0, 0.06, eye_z - z))) * pt.smoothstep(0.0, 0.006, eye_z - z) * pt.smoothstep(0.075, 0.03, eye_z - z) * fwd
+            * pt.smoothstep(0.3, 0.6, gore.fbm(p, 90, seed + 35))) * gcfg.get("tears", 0.0)
+    f["blood"] = np.clip(np.maximum(f["blood"], np.maximum(np.maximum(hb, nk * 0.9), tear * 0.9)), 0, 1)
+    f["h"] = f["h"] + hh
+    rg = np.full(len(p), 0.62) - 0.2 * ice - 0.1 * vv
     col, rg = gore.shade(col, rg, f, p, seed)
     # unhinged jaw: dark open-mouth cavity
     if spec.get("open_mouth"):
         cav = np.exp(-(((ax) / 0.04) ** 2 + ((z - (mouth_z - 0.03)) / 0.05) ** 2)) * fwd
-        col = col * (1 - cav[:, None]) + np.array([0.06, 0.01, 0.015])[None] * cav[:, None]
+        col = col * (1 - cav[:, None]) + np.array([0.05, 0.008, 0.012])[None] * cav[:, None]
         rg = rg * (1 - cav) + 0.2 * cav
     return maps_to_files(cb, "skin", size, r, col, rg, f["h"], None, 0.0, nstrength=3.0)
 
 
 def zombie_face(cb, spec, hair, hair_tint, brow="eyebrows/eyebrow001/eyebrow001"):
+    from specs import milky_eye_image
     spec.setdefault("iris", (0.92, 0.95, 1.0))
-    c2.face_parts(cb, spec, hair=hair, hair_tint=hair_tint, brow=brow, brow_tint=(0.4, 0.4, 0.42), lashes=False, eye_tint=(0.7, 0.85, 1.0),
-                  decim_hair=0.35, subdiv=False)
+    c2.face_parts(cb, spec, hair=hair, hair_tint=hair_tint, brow=brow, brow_tint=(0.55, 0.57, 0.6), lashes=True, eye_tint=(0.7, 0.85, 1.0),
+                  decim_hair=0.35, subdiv=False, eye_fn=milky_eye_image, lash_tint=(0.82, 0.88, 0.94), frost_hair=spec.get("hair_frost", 0.75), frost_brow=0.9)
 
 
 def load_nrm_img(P, size=1024):
@@ -148,6 +212,10 @@ def load_nrm_img(P, size=1024):
 
 
 # ----------------------------------------------------------------------------- outfits
+def spec_seed(cb):
+    return cb.spec.get('seed', 1) + 3
+
+
 def suit_pieces_g(cb, rel, orig_png, pieces, size=1024):
     """like chars2.suit_pieces but painters may return (diffuse, mr, normal) and receive the proxy normal map."""
     n = cb.name; H = cb.H
@@ -189,6 +257,10 @@ def suit_pieces_g(cb, rel, orig_png, pieces, size=1024):
                 ppos[low, 1] = (ppos[low, 1] - ym) * fac + ym
         if pc.get("cut_below") is not None:
             mask = mask & (pos[:, 2] > pc["cut_below"])
+        for (hc, hr) in pc.get("holes", []):
+            dd = np.linalg.norm(pos - np.array(hc)[None], axis=1)
+            ragged = hr * (0.75 + 0.5 * gore.fbm(pos, 30, spec_seed(cb)))
+            mask = mask & (dd > ragged)
         res = pc["painter"](cb, P, pos, comp, ids, orig, size)
         if isinstance(res, tuple):
             d, mr, nr = res
@@ -212,6 +284,27 @@ SUIT = {
     "felegant": ("clothes/female_elegantsuit01/female_elegantsuit01.mhclo", "clothes/female_elegantsuit01/female_elegantsuit01_diffuse.png"),
     "work": ("clothes/male_worksuit01/male_worksuit01.mhclo", "clothes/male_worksuit01/male_worksuit01_diffuse.png"),
 }
+
+
+def _sac_plan():
+    return SAC_PLAN
+
+
+BURSTER_LOCAL = [("spine_01", (0, 0.12, 0.2), 0.26), ("spine_01", (0.16, 0.1, 0.14), 0.18), ("spine_01", (-0.16, 0.14, 0.13), 0.17),
+                 ("spine_03", (-0.12, 0.08, 0.13), 0.13), ("spine_03", (0.1, 0.18, 0.12), 0.12), ("spine_03", (0.0, 0.1, -0.15), 0.2)]   # same as actors/enemies/burster.gd
+
+
+def burster_holes(cb):
+    """torn-open tee: holes where the spore sacs push through (belly, flanks, chest, back). bone-local (x left, y up, z fwd) -> blender (x, -z, y)."""
+    out = []
+    k = cb.spec.get("height_m", 1.75) / 1.75
+    for bone, (lx, ly, lz), r in BURSTER_LOCAL:
+        o, _ = bone_pts(cb, bone, 0.0)
+        out.append((tuple(o + np.array([lx, -lz, ly]) * k), r * k * 0.95))
+    return {"tee": out, "jeans": []}
+
+
+HOLES = {"burster": burster_holes}
 
 
 def build_zombie(cb, spec):
@@ -269,7 +362,18 @@ def build_zombie(cb, spec):
                   dict(match=lambda zmin, zmax, n_: zmax > 1.2 and zmin > 0.5 and n_ > 500, label="shirt", painter=P_(col2, 0.6, "shirt"), dec=0.55)]
     else:
         raise ValueError(o)
-    dv |= suit_pieces_g(cb, s_rel, A(s_png), pieces)
+    if spec.get("skip_pieces"):
+        pieces = [pc for pc in pieces if pc["label"] not in spec["skip_pieces"]]
+    if spec.get("holes_fn"):
+        hs = HOLES[spec["holes_fn"]](cb)
+        for pc in pieces:
+            if pc["label"] in hs:
+                pc["holes"] = hs[pc["label"]]
+    keep_dv = suit_pieces_g(cb, s_rel, A(s_png), pieces)
+    if spec.get("bare_above") is not None:
+        bp_ = cb.conv(H.v[:mh.N_BODY])
+        keep_dv = {i for i in keep_dv if i >= mh.N_BODY or bp_[i, 2] < spec["bare_above"]}       # skin stays above this height
+    dv |= keep_dv
     if boots:
         dv |= c2.make_boots(cb, boots[0], boots[1], top=boots[2], widen=(1.1, 1.08, 1.12 if boots[2] > 0.15 else 1.0), dec=0.4)
     if glove:
@@ -367,23 +471,35 @@ def sphere_mesh(c, r, seg=10, rings=6, squash=(1, 1, 1)):
     return np.array(V), F
 
 
+SAC_PLAN = [("spine_01", (0.0, -0.20, 0.02), 0.21), ("spine_01", (0.16, -0.14, 0.04), 0.14), ("spine_01", (-0.17, -0.12, 0.0), 0.15),
+            ("spine_02", (0.0, -0.17, 0.02), 0.12), ("spine_03", (-0.1, -0.13, 0.02), 0.095), ("spine_03", (0.0, 0.14, 0.05), 0.15),
+            ("spine_02", (0.1, 0.12, -0.02), 0.11), ("upperarm_l", (0.04, 0.0, 0.0), 0.075), ("upperarm_r", (-0.04, 0.0, 0.02), 0.07),
+            ("neck_01", (0.05, -0.04, 0.0), 0.05), ("thigh_l", (0.05, -0.06, 0.0), 0.08), ("thigh_r", (-0.03, 0.07, 0.0), 0.07)]
+
+
+def lumpy_sphere(c, r, seed, seg=12, rings=8, squash=(1, 1, 1), lump=0.14):
+    V, F = sphere_mesh(c, r, seg, rings, squash)
+    c = np.array(c)
+    d = V - c
+    n = gore.fbm(V * 18.0, 1.0, seed)
+    V = c + d * (1.0 + lump * (n[:, None] - 0.5) * 2)
+    return V, F
+
+
 def extra_sacs(cb, spec):
     """glowing frost-spore sacs bulging from the Burster's torso / limbs (named *sac* / *sac_core* for the AI to pulse)."""
-    rng = np.random.RandomState(spec.get("seed", 1) + 7)
     sac_m = ice_mat(cb, "sac", (0.45, 0.9, 0.95), 1.4)
     core_m = ice_mat(cb, "sac_core", (0.7, 1.0, 1.0), 4.0)
     core_m.node_tree.nodes["Principled BSDF"].inputs["Alpha"].default_value = 1.0
-    plan = [("spine_01", (0.0, -0.17, 0.0), 0.2), ("spine_01", (0.15, -0.12, 0.02), 0.15), ("spine_01", (-0.16, -0.1, 0.0), 0.15),
-            ("spine_02", (0.0, 0.14, 0.02), 0.17), ("spine_03", (-0.1, -0.12, 0.03), 0.11), ("spine_03", (0.12, 0.12, 0.05), 0.1),
-            ("upperarm_l", (0.04, 0.0, 0.0), 0.09), ("upperarm_r", (-0.04, 0.0, 0.02), 0.08), ("neck_01", (0.04, -0.03, 0.0), 0.06),
-            ("thigh_l", (0.04, -0.05, 0.0), 0.09), ("thigh_r", (-0.02, 0.05, 0.0), 0.08)]
-    for i, (bone, off, r) in enumerate(plan):
+    k = spec.get("height_m", 1.75) / 1.75
+    for i, (bone, off, r) in enumerate(SAC_PLAN):
         p, axis = bone_pts(cb, bone, 0.5)
         c = p + np.array(off)
-        V, F = sphere_mesh(c, r * (spec.get("height_m", 1.75) / 1.75))
+        V, F = lumpy_sphere(c, r * k * 1.1, 70 + i, 12, 8, (1, 1, 0.85))
         cb.add_mesh(f"sac_{i}", V, F, bone=bone, mat=sac_m)
-        V2, F2 = sphere_mesh(c, r * 0.45)
-        cb.add_mesh(f"saccore_{i}", V2, F2, bone=bone, mat=core_m)
+        if i < 8:
+            V2, F2 = sphere_mesh(c, r * k * 0.5, 8, 5)
+            cb.add_mesh(f"saccore_{i}", V2, F2, bone=bone, mat=core_m)
 
 
 def extra_foreman_hat(cb, spec):

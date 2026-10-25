@@ -80,7 +80,7 @@ _z("husk", "tee_m", 1.0, 40, (0.2, 0.2, 0.22), (0.14, 0.15, 0.2), 31, hair=None,
    gore_cloth=dict(mouth=0.7, soak=0.35, wounds=2, torn=3, splat=0.20, frost=0.7), gore_skin=dict(mouth=0.6, wounds=2, splat=0.15, frost=0.8), boots=("shoes02", (0.07, 0.06, 0.05), 0.2),
    pallor=(0.65, 0.78, 0.92), body_dec=0.45)
 _z("siren", "dress", 0.0, 33, (0.34, 0.34, 0.38), (0.28, 0.28, 0.32), 32, hair="hair/long01", hair_tint=(0.07, 0.07, 0.08), height=1.9, weight=0.0, muscle=0.0,
-   open_mouth=True, pallor=(0.86, 0.9, 0.95), boots=None, height_slider=0.9,
+   open_mouth=True, pallor=(0.86, 0.9, 0.95), boots=None, height_slider=0.9, skip_pieces=['gown'], bare_above=1.0, ribs=True, veins=1.4, hair_frost=0.5,
    details=[("chin", "chin-jaw-drop", 1.0, "decr", "incr"), ("mouth", "mouth-scale-vert", 1.0, "decr", "incr"), ("mouth", "mouth-lowerlip-height", 1.0, "decr", "incr"),
             ("head", "head-age", 0.5, "decr", "incr"), ("eyes", "l-eye-bag", 1.0, "decr", "incr"), ("eyes", "r-eye-bag", 1.0, "decr", "incr"), ("cheek", "l-cheek-volume", -1.0, "decr", "incr"), ("cheek", "r-cheek-volume", -1.0, "decr", "incr")],
    gore_cloth=dict(mouth=1.0, soak=0.50, wounds=1, torn=1, splat=0.10, frost=0.5), gore_skin=dict(mouth=1.0, wounds=1, splat=0.10, frost=0.6))
@@ -88,9 +88,12 @@ _z("burster", "tee_m", 1.0, 48, (0.42, 0.44, 0.46), (0.16, 0.18, 0.24), 33, hair
    details=[("stomach", "stomach-pregnant", 1.0, "decr", "incr"), ("torso", "torso-scale-horiz", 0.7, "decr", "incr"), ("torso", "torso-scale-depth", 0.9, "decr", "incr"),
             ("hip", "hip-scale-horiz", 0.8, "decr", "incr"), ("neck", "neck-double", 1.0, "decr", "incr"), ("head", "head-fat", 1.0, "decr", "incr"), ("cheek", "l-cheek-volume", 1.0, "decr", "incr"),
             ("cheek", "r-cheek-volume", 1.0, "decr", "incr"), ("armslegs", "l-upperarm-fat", 1.0, "decr", "incr"), ("armslegs", "r-upperarm-fat", 1.0, "decr", "incr"),
-            ("armslegs", "l-upperleg-fat", 1.0, "decr", "incr"), ("armslegs", "r-upperleg-fat", 1.0, "decr", "incr"), ("buttocks", "buttocks-volume", 1.0, "decr", "incr")], boots=("shoes06", (0.2, 0.2, 0.22), 0.1),
+            ("armslegs", "l-upperleg-fat", 1.0, "decr", "incr"), ("armslegs", "r-upperleg-fat", 1.0, "decr", "incr"), ("buttocks", "buttocks-volume", 1.0, "decr", "incr")], boots=("shoes06", (0.2, 0.2, 0.22), 0.1), holes_fn="burster", veins=1.8,
    gore_cloth=dict(mouth=0.5, soak=0.20, wounds=2, torn=3, splat=0.20, frost=0.6), gore_skin=dict(mouth=0.5, wounds=1, splat=0.15, frost=0.7), pallor=(0.72, 0.82, 0.9), body_dec=0.5)
-_z("hanger", "flannel", 1.0, 36, (0.22, 0.24, 0.3), (0.14, 0.15, 0.2), 34, hair="hair/long01", hair_tint=(0.1, 0.1, 0.1), height=2.1, weight=0.0, muscle=0.1,
+LONG_LIMBS = [("armslegs", f"{s_}-{seg}-scale-vert", 1.0, "decr", "incr") for s_ in "lr" for seg in ("lowerarm", "upperarm", "lowerleg", "upperleg")] + \
+             [("armslegs", f"{s_}-{seg}-scale-horiz", -0.8, "decr", "incr") for s_ in "lr" for seg in ("lowerarm", "upperarm", "lowerleg", "upperleg")] + \
+             [("armslegs", f"{s_}-hand-fingers-length", 1.0, "decr", "incr") for s_ in "lr"] + [("torso", "torso-scale-horiz", -0.7, "decr", "incr"), ("torso", "torso-scale-vert", 0.5, "decr", "incr"), ("neck", "neck-scale-vert", 0.8, "decr", "incr")]
+_z("hanger", "flannel", 1.0, 36, (0.22, 0.24, 0.3), (0.14, 0.15, 0.2), 34, hair="hair/long01", hair_tint=(0.1, 0.1, 0.1), height=2.1, weight=0.0, muscle=0.1, details=LONG_LIMBS + [("head", "head-age", 0.4, "decr", "incr")], extras=["filaments"],
    height_slider=1.0, boots=None, gore_cloth=dict(mouth=0.8, soak=0.40, wounds=2, torn=3, splat=0.25, frost=0.5), gore_skin=dict(mouth=0.8, wounds=2, splat=0.20, frost=0.5),
    pallor=(0.74, 0.84, 0.92))
 _z("foreman", "jacket", 1.0, 58, (0.42, 0.18, 0.06), (0.2, 0.2, 0.22), 35, hair=None, height=1.95, weight=0.45, muscle=0.6, extras=["foreman_hat"], pants=(0.2, 0.2, 0.2),
@@ -101,6 +104,26 @@ _z("imogen", "jacket", 0.0, 45, (0.3, 0.32, 0.22), (0.2, 0.2, 0.22), 41, hair="h
    gore_cloth=dict(), gore_skin=dict(), pants=(0.15, 0.17, 0.22), pallor=(1, 1, 1), boots=("shoes02", (0.2, 0.14, 0.09), 0.2), skin="middleage_caucasian_female")
 _z("caretaker", "flannel", 1.0, 62, (0.35, 0.36, 0.38), (0.2, 0.2, 0.24), 42, hair="hair/short03", hair_tint=(0.65, 0.65, 0.68), height=1.74, weight=0.55, clean=True,
    gore_cloth=dict(), gore_skin=dict(), pallor=(1, 1, 1), boots=("shoes04", (0.13, 0.1, 0.08), 0.1), skin="old_caucasian_male")
+
+# ---- blood budget per variant (v2 look): several are mostly frost-pale for contrast, a few are soaked.
+# keys: mouth/neck/tears (face), wounds (bites), hands (cuffs / forearms), soak (wet dark fabric), hem (lower shirt), splat (specks), frost
+def _gore(name, cloth, skin):
+    SPECS[name]["gore_cloth"] = cloth; SPECS[name]["gore_skin"] = skin
+_gore("rimebound_parka_m", dict(mouth=0.25, soak=0.05, wounds=0, torn=0, splat=0.0, frost=1.0, hem=0.0, hands=0.0), dict(mouth=0.25, neck=0.2, wounds=0, splat=0.0, frost=0.9))
+_gore("rimebound_jacket_m", dict(mouth=0.5, soak=0.35, wounds=2, torn=0, splat=0.04, frost=0.5, hem=0.2, hands=0.4), dict(mouth=0.5, neck=0.5, wounds=2, splat=0.04, frost=0.5, hands=0.4))
+_gore("rimebound_parka_f", dict(mouth=0.9, soak=0.45, wounds=1, torn=0, splat=0.05, frost=0.7, hem=0.1, hands=0.3), dict(mouth=1.0, neck=0.6, wounds=1, splat=0.05, frost=0.5, hands=0.3, tears=0.9))
+_gore("rimebound_flannel_m", dict(mouth=1.0, soak=0.85, wounds=3, torn=0, splat=0.08, frost=0.4, hem=0.45, hands=0.8), dict(mouth=1.0, neck=0.9, wounds=3, splat=0.08, frost=0.6, hands=0.8))
+_gore("rimebound_tee_m", dict(mouth=0.3, soak=0.12, wounds=1, torn=0, splat=0.0, frost=0.9, hem=0.0, hands=0.1), dict(mouth=0.3, neck=0.2, wounds=1, splat=0.0, frost=0.8, hands=0.1))
+_gore("rimebound_tee_f", dict(mouth=0.6, soak=0.4, wounds=1, torn=0, splat=0.04, frost=0.8, hem=0.15, hands=0.5), dict(mouth=0.6, neck=0.5, wounds=1, splat=0.04, frost=0.7, hands=0.5))
+_gore("rimebound_nurse", dict(mouth=1.0, soak=0.8, wounds=2, torn=0, splat=0.08, frost=0.6, hem=0.4, hands=0.9), dict(mouth=1.0, neck=0.8, wounds=2, splat=0.08, frost=0.6, hands=0.9, tears=0.7))
+_gore("rimebound_miner", dict(mouth=0.6, soak=0.3, wounds=2, torn=0, splat=0.05, frost=0.6, hem=0.15, hands=0.6), dict(mouth=0.6, neck=0.5, wounds=2, splat=0.05, frost=0.6, hands=0.6))
+_gore("rimebound_cop", dict(mouth=0.35, soak=0.15, wounds=1, torn=0, splat=0.0, frost=0.8, hem=0.0, hands=0.2), dict(mouth=0.35, neck=0.3, wounds=1, splat=0.0, frost=0.7, hands=0.2, tears=0.5))
+_gore("rimebound_patient", dict(mouth=0.2, soak=0.08, wounds=0, torn=0, splat=0.0, frost=0.9, hem=0.0, hands=0.1), dict(mouth=0.2, neck=0.1, wounds=0, splat=0.0, frost=0.8, hands=0.1, tears=0.7))
+_gore("husk", dict(mouth=0.6, soak=0.3, wounds=2, torn=0, splat=0.05, frost=0.9, hem=0.15, hands=0.5), dict(mouth=0.6, neck=0.4, wounds=2, splat=0.05, frost=0.9, hands=0.5))
+_gore("siren", dict(mouth=1.0, soak=0.7, wounds=0, torn=0, splat=0.0, frost=0.5, hem=0.5, hands=0.6), dict(mouth=1.0, neck=1.0, wounds=0, splat=0.0, frost=0.5, hands=0.6, tears=1.0))
+_gore("burster", dict(mouth=0.3, soak=0.3, wounds=0, torn=0, splat=0.0, frost=0.7, hem=0.1, hands=0.1), dict(mouth=0.3, neck=0.2, wounds=0, splat=0.0, frost=0.8, hands=0.1))
+_gore("hanger", dict(mouth=0.7, soak=0.4, wounds=1, torn=0, splat=0.05, frost=0.6, hem=0.2, hands=0.5), dict(mouth=0.7, neck=0.5, wounds=1, splat=0.05, frost=0.6, hands=0.5))
+_gore("foreman", dict(mouth=0.5, soak=0.3, wounds=2, torn=0, splat=0.04, frost=0.9, hem=0.15, hands=0.5), dict(mouth=0.5, neck=0.4, wounds=2, splat=0.04, frost=0.9, hands=0.5))
 
 ORANGE = np.array([0.93, 0.34, 0.035])
 BLACK = np.array([0.045, 0.047, 0.05])
@@ -317,13 +340,23 @@ def normals_jpg(cb, label, src, size):
     return jtex(f"{cb.name}_{label}_normal.jpg", im, 92)
 
 
-def hair_png(cb, label, src, size=1024, tint=None):
+def hair_png(cb, label, src, size=1024, tint=None, frost=0.0):
+    """hair / brow / lash strand atlas, tinted; frost>0 dusts it with hoarfrost (clumpy white-blue crystals)."""
     from PIL import Image
     im = Image.open(src).convert("RGBA").resize((size, size), Image.LANCZOS)
-    if tint is not None:
+    if tint is not None or frost > 0:
         a = np.asarray(im, dtype=np.float32) / 255.0
-        a[..., :3] = np.clip(a[..., :3] * np.array(tint)[None, None, :], 0, 1)
-        im = Image.fromarray((a * 255 + 0.5).astype(np.uint8))
+        if tint is not None:
+            a[..., :3] = np.clip(a[..., :3] * np.array(tint)[None, None, :], 0, 1)
+        if frost > 0:
+            import zlib
+            rng = np.random.RandomState(zlib.crc32((cb.name + label).encode()) % 9999)
+            lo = np.asarray(Image.fromarray((rng.rand(size // 24 + 2, size // 24 + 2) * 255).astype(np.uint8)).resize((size, size), Image.BICUBIC), dtype=np.float32) / 255.0
+            hi = rng.rand(size, size).astype(np.float32)
+            m = np.clip((lo - 0.38) * 2.2, 0, 1) * (0.55 + 0.6 * hi) * frost
+            m = np.clip(m + 0.18 * frost * (hi > 0.86), 0, 1)[..., None] * 0.85
+            a[..., :3] = a[..., :3] * (1 - m) + np.array([0.82, 0.9, 0.96])[None, None, :] * m
+        im = Image.fromarray((np.clip(a, 0, 1) * 255 + 0.5).astype(np.uint8))
     p = ensure(os.path.join(TEX, f"{cb.name}_{label}.png")); im.save(p); return p
 
 
@@ -337,6 +370,22 @@ def eye_image(name, iris=(0.55, 0.36, 0.22), strength=1.0, size=512):
     iris_col = lum * 2.0 * np.array(iris)[None, None, :]
     out = eim * (1 - mask) + iris_col * mask
     out = out * 0.92
+    return jtex(name, np.clip(out, 0, 1), 92)
+
+
+def milky_eye_image(name, iris=None, size=512):
+    """clouded dead eyes: pale blue-grey iris under a milky cataract veil, faint bloodshot sclera, dim pupil."""
+    from PIL import Image
+    eim = np.asarray(Image.open(os.path.join(mh.MH_DATA, "eyes/materials/brown_eye.png")).convert("RGB").resize((size, size)), dtype=np.float32) / 255.0
+    lum = (eim * np.array([0.3, 0.59, 0.11])).sum(2, keepdims=True)
+    sat = (eim.max(2, keepdims=True) - eim.min(2, keepdims=True))
+    mask = np.clip(sat * 3.5, 0, 1)
+    pupil = np.clip((0.16 - lum) * 8, 0, 1) * (1 - mask * 0.0)
+    iris_col = (0.45 + 0.8 * lum) * np.array([0.62, 0.74, 0.80])[None, None, :]
+    out = eim * (1 - mask) + iris_col * mask
+    scl = np.array([0.78, 0.82, 0.82])[None, None, :]
+    out = out * 0.35 + (scl * (0.6 + 0.4 * lum)) * 0.65 * (1 - mask) + out * mask * 0.65 + (0.9 * np.array([0.80, 0.86, 0.88])[None, None, :]) * 0.35 * mask
+    out = out * (1 - 0.7 * pupil) + np.array([0.22, 0.25, 0.28])[None, None, :] * 0.7 * pupil
     return jtex(name, np.clip(out, 0, 1), 92)
 
 

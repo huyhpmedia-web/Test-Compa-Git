@@ -159,7 +159,8 @@ def suit_pieces_g(cb, rel, orig_png, pieces, size=1024):
     stats = []
     for c in range(comp.max() + 1):
         m = comp == c
-        stats.append((float(pos[m][:, 2].min()), float(pos[m][:, 2].max()), int(m.sum())))
+        hk = cb.spec["height_m"] / 1.8
+        stats.append((float(pos[m][:, 2].min()) / hk, float(pos[m][:, 2].max()) / hk, int(m.sum())))
     Wd = P.skin_weights(cb.Wfull)
     nrm = pt.vertex_normals(pos, [f[0] for f in P.faces])
     for pc in pieces:

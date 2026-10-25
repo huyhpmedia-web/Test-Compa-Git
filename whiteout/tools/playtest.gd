@@ -833,7 +833,7 @@ func run_chain() -> void:
 		if id != "l6_heart":
 			await settle(30.0, "exit " + id)
 	scope = "chain"
-	rec("game finished: ending=%s" % str(Game.get_flag("ending", "")), Game.has_flag("ending"), "Game.finish_game never reached")
+	rec("game finished: ending=%s" % str(Game.get_flag("ending", "")), str(Game.get_flag("ending", "")) != "", "Game.finish_game never reached")
 
 func _story_flags() -> String:
 	var out := []

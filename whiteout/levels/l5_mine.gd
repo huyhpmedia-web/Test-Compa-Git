@@ -721,6 +721,7 @@ func _take_tag(_p) -> void:
 	if Game.has_flag("got:mn_tag"):
 		UI.toast("Tag 109 - R. VOSS. Someone else who never came up.")
 		return
+	make_room_for_key("tom_tag")
 	if not Game.can_add("tom_tag", 1):
 		UI.toast("Your inventory is full.")
 		return

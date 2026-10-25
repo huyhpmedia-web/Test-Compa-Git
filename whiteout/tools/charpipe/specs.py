@@ -78,7 +78,7 @@ SPECIAL_DETAILS_HUSK = [("torso", "torso-scale-horiz", 0.9, "decr", "incr"), ("t
                         ("armslegs", "l-upperarm-fat", 0.6, "decr", "incr"), ("armslegs", "r-upperarm-fat", 0.6, "decr", "incr"), ("armslegs", "l-upperleg-muscle", 0.8, "decr", "incr"), ("armslegs", "r-upperleg-muscle", 0.8, "decr", "incr")]
 _z("husk", "tee_m", 1.0, 40, (0.2, 0.2, 0.22), (0.14, 0.15, 0.2), 31, hair=None, height=2.0, weight=0.8, muscle=1.0, details=SPECIAL_DETAILS_HUSK,
    gore_cloth=dict(mouth=0.7, soak=0.35, wounds=2, torn=3, splat=0.20, frost=0.7), gore_skin=dict(mouth=0.6, wounds=2, splat=0.15, frost=0.8), boots=("shoes02", (0.07, 0.06, 0.05), 0.2),
-   pallor=(0.65, 0.78, 0.92), body_dec=0.42)
+   pallor=(0.65, 0.78, 0.92), body_dec=0.37)
 _z("siren", "dress", 0.0, 33, (0.34, 0.34, 0.38), (0.28, 0.28, 0.32), 32, hair="hair/long01", hair_tint=(0.07, 0.07, 0.08), height=1.9, weight=0.0, muscle=0.0,
    open_mouth=True, pallor=(0.86, 0.9, 0.95), boots=None, height_slider=0.9, skip_pieces=['gown'], bare_above=1.0, ribs=True, veins=1.4, hair_frost=0.5,
    details=[("chin", "chin-jaw-drop", 1.0, "decr", "incr"), ("mouth", "mouth-scale-vert", 1.0, "decr", "incr"), ("mouth", "mouth-lowerlip-height", 1.0, "decr", "incr"),

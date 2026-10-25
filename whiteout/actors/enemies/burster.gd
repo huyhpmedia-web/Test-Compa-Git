@@ -76,7 +76,7 @@ func _make_model() -> Node3D:
 	]
 	var i := 0
 	for d in defs:
-		var r: float = d[2] * s * 0.9
+		var r: float = d[2] * s * 0.72
 		var holder := Node3D.new()
 		holder.position = d[1] * s
 		var ba: Node3D = h.bone_attachment(d[0])

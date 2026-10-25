@@ -65,17 +65,10 @@ func _make_model() -> Node3D:
 		list.append(["lowerarm_" + sd, Vector3(0.0, 0.08, -0.05), Vector3(0.0, 0.4, -1.0), 0.3, 0.09, 0.04])
 		list.append(["lowerarm_" + sd, Vector3(0.04, 0.18, 0.03), Vector3(0.8, 0.5, 0.3), 0.24, 0.07, 0.035])
 		list.append(["thigh_" + sd, Vector3(0.0, 0.14, 0.08), Vector3(0.0, -0.4, 1.0), 0.32, 0.1, 0.05])
-		list.append(["thigh_" + sd, Vector3(0.08 * x, 0.22, 0.0), Vector3(x, -0.5, 0.0), 0.28, 0.09, 0.045])
-		list.append(["calf_" + sd, Vector3(0.0, 0.14, 0.07), Vector3(0.0, -0.4, 1.0), 0.28, 0.08, 0.04])
 		list.append(["clavicle_" + sd, Vector3(0.06 * x, 0.04, 0.0), Vector3(x * 0.6, 1.0, -0.2), 0.34, 0.12, 0.05])
 	for i in 4:
-		list.append(["spine_03", Vector3((i - 1.5) * 0.09, 0.08 + (i % 2) * 0.1, 0.11), Vector3((i - 1.5) * 0.35, 0.3 + (i % 2) * 0.2, 1.0), 0.3, 0.1, 0.05])
 		list.append(["spine_03", Vector3((i - 1.5) * 0.1, 0.05 + (i % 2) * 0.12, -0.12), Vector3((i - 1.5) * 0.35, 0.9, -1.0), 0.42 + (i % 2) * 0.2, 0.11, 0.055])
 	list.append(["spine_02", Vector3(0.0, 0.05, -0.12), Vector3(0, 0.7, -1.0), 0.45, 0.12, 0.055])
-	list.append(["spine_01", Vector3(0.08, 0.05, 0.12), Vector3(0.3, 0.3, 1.0), 0.28, 0.09, 0.045])
-	list.append(["head", Vector3(0, 0.15, -0.03), Vector3(0, 1.0, -0.5), 0.26, 0.06, 0.055])
-	list.append(["head", Vector3(-0.05, 0.14, 0.0), Vector3(-0.8, 1.0, -0.3), 0.2, 0.045, 0.045])
-	list.append(["head", Vector3(0.05, 0.14, 0.0), Vector3(0.8, 1.0, -0.3), 0.2, 0.045, 0.045])
 	for e in list:
 		var ba: Node3D = h.bone_attachment(e[0])
 		if ba == null:
@@ -83,7 +76,7 @@ func _make_model() -> Node3D:
 		var n := Kit.crystal(ba, e[1], e[2], e[3], 1.0, m, rng.randi() % 8)
 		# flatten into a plate: width x length x thickness
 		var bs: Basis = n.transform.basis.orthonormalized()
-		n.transform.basis = Basis(bs.x * e[4] * 1.7, bs.y * e[3] * 1.5, bs.z * e[5] * 3.2)
+		n.transform.basis = Basis(bs.x * e[4] * 1.25, bs.y * e[3] * 1.0, bs.z * e[5] * 2.6)
 		_plates.append(n)
 	# shedding order: shuffled, but chest/head plates tend to go last
 	for i in range(_plates.size() - 1, 0, -1):

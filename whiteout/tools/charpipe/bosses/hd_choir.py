@@ -41,6 +41,10 @@ def main():
     for i, (hx, hz) in enumerate(HEADS):
         fy = front_y(v, hx, hz, 0.12)
         c = np.array([hx, fy + 0.11, hz])
+        for _ in range(3):   # pull the centre onto the head's mass
+            mm = sphere_mask(v, c, (0.2, 0.3, 0.24))
+            if mm.sum() > 50:
+                c[0], c[2] = v[mm][:, 0].mean(), v[mm][:, 2].mean()
         m = sphere_mask(pc, c, (0.21, 0.26, 0.25)) & ~taken
         parts["Head%d" % i] = (m, c)
         heads.append((c, fy))

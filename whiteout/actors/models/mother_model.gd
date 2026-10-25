@@ -31,6 +31,9 @@ var _heart_p1: Node3D
 var _heart_p2: Node3D
 var _ruth_p1: RuthProxy
 var _ruth_p2: RuthProxy
+var _hd_mats1: Array = []
+var _hd_mats2: Array = []
+var _hd_eyes: Array = []
 var _glow_mats: Array = []     # heart / eyes / throat emissive materials of the active phase (glb)
 var _heart_mats: Array = []
 
@@ -60,7 +63,19 @@ const L2 := 2.4
 func _ready() -> void:
 	_build()
 
+var _hd := false
+
 func _build() -> void:
+	var h1 := EnemyGlb.load_scene("mother_p1_hd.glb")
+	var h2 := EnemyGlb.load_scene("mother_p2_hd.glb")
+	if h1 != null and h2 != null and EnemyGlb.find(h1, "Lattice") != null and EnemyGlb.find(h1, "Heart") != null and EnemyGlb.find(h2, "Leg7") != null \
+			and EnemyGlb.find(h2, "Body") != null and EnemyGlb.find(h2, "Leg7_tip") != null:
+		_build_hd(h1, h2)
+		return
+	if h1:
+		h1.queue_free()
+	if h2:
+		h2.queue_free()
 	var g1 := EnemyGlb.load_scene("mother_p1.glb")
 	var g2 := EnemyGlb.load_scene("mother_p2.glb")
 	if g1 != null and g2 != null and EnemyGlb.find(g1, "Ruth") != null and EnemyGlb.find(g1, "Heart") != null and EnemyGlb.find(g2, "Leg7") != null \
@@ -118,7 +133,80 @@ func _build_glb(g1: Node3D, g2: Node3D) -> void:
 	heart_light.position = Vector3(0, 0.1, 0.5)
 	_heart_p1.add_child(heart_light)
 
+## HD build (tools/charpipe/bosses/hd_mother1.py / hd_mother2.py, Tripo H3.1).
+## p1: Lattice (Ruth fused in) + Heart / HeadMark markers (Heart_glow halo).  p2: Body (Ruth + abdomen; Heart / HeadMark / Abdomen markers) +
+## Leg0..7 (upper piece, origin at the hip) + Leg<i>_lo (lower piece, origin at the knee) + Leg<i>_tip; posed by a 2-bone IK in _animate_hd.
+func _make_hd_proxy(g: Node3D, mesh_name: String) -> RuthProxy:
+	var px := RuthProxy.new()
+	g.add_child(px)
+	var m := EnemyGlb.find(g, mesh_name) as Node3D
+	m.reparent(px, true)
+	px.head_mark = EnemyGlb.find(m, "HeadMark") as Node3D
+	return px
+
+func _halo_mat(halo: MeshInstance3D, col: Color) -> StandardMaterial3D:
+	var hm := halo.mesh.surface_get_material(0).duplicate() as StandardMaterial3D
+	hm.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	hm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	hm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	hm.cull_mode = BaseMaterial3D.CULL_DISABLED
+	hm.albedo_color = col
+	hm.emission_enabled = false
+	halo.material_override = hm
+	halo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	return hm
+
+func _build_hd(g1: Node3D, g2: Node3D) -> void:
+	_glb_mode = true
+	_hd = true
+	lattice = g1
+	_p1 = g1
+	add_child(g1)
+	_ruth_p1 = _make_hd_proxy(g1, "Lattice")
+	ruth = _ruth_p1
+	_heart_p1 = EnemyGlb.find(g1, "Heart") as Node3D
+	_heart_n = _heart_p1
+	legs_group = g2
+	_p2 = g2
+	g2.visible = false
+	add_child(g2)
+	_ruth_p2 = _make_hd_proxy(g2, "Body")
+	_heart_p2 = EnemyGlb.find(g2, "Heart") as Node3D
+	_abdomen = EnemyGlb.find(g2, "Abdomen") as Node3D
+	_hd_mats1 = [_halo_mat(EnemyGlb.find(g1, "Heart_glow") as MeshInstance3D, Color(0.45, 0.95, 1.0, 0.6))]
+	_hd_mats2 = [_halo_mat(EnemyGlb.find(g2, "Heart_glow") as MeshInstance3D, Color(0.45, 0.95, 1.0, 0.45))]
+	for nm in ["glow_eye_-1", "glow_eye_1"]:
+		var eye := EnemyGlb.find(g2, nm) as MeshInstance3D
+		if eye:
+			_hd_eyes.append(_halo_mat(eye, Color(0.6, 1.0, 1.0, 0.9)))
+	for i in 8:
+		var up := EnemyGlb.find(g2, "Leg%d" % i) as Node3D
+		var lo := EnemyGlb.find(g2, "Leg%d_lo" % i) as Node3D
+		var tip := EnemyGlb.find(g2, "Leg%d_tip" % i) as Node3D
+		var hip: Vector3 = up.position
+		var knee: Vector3 = lo.position
+		var foot: Vector3 = g2.to_local(tip.global_position)
+		var dir_hf := (foot - hip).normalized()
+		var pole := (knee - hip) - dir_hf * (knee - hip).dot(dir_hf)
+		var a := fposmod(atan2(hip.z, hip.x), TAU)
+		legs.append({"hip": hip, "rest": foot, "up": up, "lo": lo, "l1": hip.distance_to(knee), "l2": knee.distance_to(foot),
+			"rd1": (knee - hip).normalized(), "rd2": (foot - knee).normalized(), "pole": pole.normalized(),
+			"ph": PI * (i % 2), "a": a, "foot": foot})
+	_set_glow_mats(1)
+	heart_light = OmniLight3D.new()
+	heart_light.light_color = Color(0.5, 0.95, 1.0)
+	heart_light.light_energy = 3.0
+	heart_light.omni_range = 9.0
+	heart_light.shadow_enabled = false
+	heart_light.position = Vector3(0, 0.1, 0.6)
+	_heart_p1.add_child(heart_light)
+
 func _set_glow_mats(ph: int) -> void:
+	if _hd:
+		_heart_mats = _hd_mats1 if ph == 1 else _hd_mats2
+		_glow_mats = [] if ph == 1 else _hd_eyes
+		heart_mat = null
+		return
 	var g := _p1 if ph == 1 else _p2
 	var hn := _heart_p1 if ph == 1 else _heart_p2
 	_heart_mats = EnemyGlb.unique_mats(hn, "glow_heart")
@@ -318,7 +406,72 @@ func _animate(delta: float) -> void:
 		_seg(lg.tip, foot + Vector3(0, 0.25, 0), foot + Vector3(0, -0.15, 0), 0.07)
 
 ## glb animation: glow pulses, Ruth's sway / lunge / roar (node transforms) and the phase-2 spider IK.
+func _animate_hd(delta: float) -> void:
+	flash = max(0.0, flash - delta * 4.0)
+	ruth.step(delta)
+	var dead := pose == "dead"
+	var e := 0.0 if dead else 3.5 + sin(t * 2.0) * 1.0 + flash * 10.0 + crack_k * 6.0
+	for m in _heart_mats:
+		(m as StandardMaterial3D).albedo_color.a = clampf(e / 9.0, 0.0, 1.0) * (0.9 if phase == 1 else 0.7)
+	for m in _glow_mats:
+		(m as StandardMaterial3D).albedo_color.a = 0.0 if dead else clampf(0.7 + sin(t * 3.0) * 0.2 + flash * 0.3, 0.0, 1.0)
+	heart_light.light_energy = 0.0 if dead else 2.5 + flash * 6.0 + sin(t * 2.0)
+	var roar: float = ruth.k() if ruth.one == "roar" else 0.0
+	var atk: float = ruth.k() if ruth.one == "attack" else 0.0
+	if dead:
+		_dead_t = min(_dead_t + delta * 0.6, 1.0)
+	if phase == 1:
+		lattice.position = Vector3(randf_range(-1, 1), randf_range(-1, 1), 0) * 0.04 * crack_k
+		if not dead:
+			ruth.rotation = Vector3(sin(t * 0.6) * 0.01 - roar * 0.06, sin(t * 0.3) * 0.015, sin(t * 0.4) * 0.01)
+			ruth.scale = Vector3.ONE * (1.0 + roar * 0.02 + sin(t * 1.1) * 0.004)
+		else:
+			ruth.rotation.x = lerpf(ruth.rotation.x, 0.12, delta)
+		return
+	leg_k = move_toward(leg_k, 1.0, delta * 0.8)
+	var a: float = clamp(move_speed / 4.5, 0.0, 1.0)
+	_phase_t += delta * (2.0 + move_speed * 1.7)
+	var crouch := lunge_k
+	var drop := 0.7 * crouch + (1.2 * _dead_t if dead else 0.0)
+	ruth.position.y = -drop + sin(t * 1.4) * 0.015
+	if not dead:
+		ruth.rotation = Vector3(0.12 * crouch + atk * 0.35 - roar * 0.2 + sin(t * 1.4) * 0.01, sin(t * 0.9) * 0.05, sin(t * 0.7) * 0.015)
+	for lg in legs:
+		var hip: Vector3 = lg.hip
+		hip.y -= 0.7 * crouch + (1.2 * _dead_t if dead else 0.0) * 0.8
+		var rest: Vector3 = lg.rest
+		var ph: float = _phase_t + lg.ph
+		var foot := Vector3(rest.x * (1.0 - 0.15 * crouch), rest.y, rest.z * (1.0 - 0.15 * crouch))
+		if not dead:
+			foot.z += sin(ph) * 0.8 * a
+			foot.y += max(0.0, cos(ph)) * 0.7 * a + sin(t * 1.3 + lg.a * 3.0) * 0.02
+			foot.y += (1.0 - leg_k) * 3.0
+			if lunge_k > 0.2 and (lg.a < PI):   # front legs rear up for the lunge
+				foot.y += 0.9 * lunge_k
+				foot.z += 0.7 * lunge_k
+		else:
+			foot = (lg.foot as Vector3).lerp(Vector3(rest.x * 0.6, rest.y, rest.z * 0.6), minf(1.0, _dead_t * 2.0))
+			lg.foot = foot
+		var l1: float = lg.l1
+		var l2: float = lg.l2
+		var d := foot - hip
+		var dist := minf(d.length(), l1 + l2 - 0.02)
+		var dn := d.normalized()
+		var along := (l1 * l1 - l2 * l2 + dist * dist) / (2.0 * maxf(dist, 0.1))
+		var hgt := sqrt(maxf(l1 * l1 - along * along, 0.0025))
+		var pole: Vector3 = lg.pole
+		var pv := pole - dn * pole.dot(dn)
+		if pv.length() < 0.05:
+			pv = Vector3.UP
+		var knee := hip + dn * along + pv.normalized() * hgt
+		var foot_p := hip + dn * dist
+		(lg.up as Node3D).transform = Transform3D(Basis(Quaternion(lg.rd1, (knee - hip).normalized())), hip)
+		(lg.lo as Node3D).transform = Transform3D(Basis(Quaternion(lg.rd2, (foot_p - knee).normalized())), knee)
+
 func _animate_glb(delta: float) -> void:
+	if _hd:
+		_animate_hd(delta)
+		return
 	flash = max(0.0, flash - delta * 4.0)
 	ruth.step(delta)
 	var e := 3.5 + sin(t * 2.0) * 1.0 + flash * 10.0 + crack_k * 6.0

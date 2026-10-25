@@ -24,12 +24,94 @@ var _crawlers: Array = []   # glb: {root, base: Basis, ph}
 func _ready() -> void:
 	_build()
 
+var _hd := false
+var _mesh: MeshInstance3D
+var _step_a := -1
+var _step_b := -1
+var _hd_halo: MeshInstance3D
+var _hd_base_y := 0.0
+
 func _build() -> void:
+	var hd := EnemyGlb.load_scene("hauler_hd.glb")
+	if hd != null and EnemyGlb.find(hd, "Mass") != null and EnemyGlb.find(hd, "Driver") != null:
+		_build_hd(hd)
+		return
 	var g := EnemyGlb.load_scene("hauler.glb")
 	if g != null and EnemyGlb.find(g, "Mass") != null and EnemyGlb.find(g, "Crown") != null and EnemyGlb.find(g, "Driver") != null:
 		_build_glb(g)
 	else:
 		_build_procedural()
+
+## HD build (tools/charpipe/bosses/hd_hauler.py, Tripo H3.1): one textured mesh 'Mass' with crawl shape keys StepA / StepB, a 'Driver'
+## marker on the exposed chest (weak point) with an additive Driver_glow halo. Stun sinks + slumps the whole body (the driver comes down).
+func _build_hd(g: Node3D) -> void:
+	_hd = true
+	_glb = g
+	add_child(g)
+	mass = EnemyGlb.find(g, "Mass") as Node3D
+	_mesh = mass as MeshInstance3D
+	crown = mass
+	driver = EnemyGlb.find(g, "Driver") as Node3D
+	for i in _mesh.mesh.get_blend_shape_count():
+		match String(_mesh.mesh.get_blend_shape_name(i)):
+			"StepA":
+				_step_a = i
+			"StepB":
+				_step_b = i
+	var halo := EnemyGlb.find(driver, "Driver_glow") as MeshInstance3D
+	var hm := halo.mesh.surface_get_material(0).duplicate() as StandardMaterial3D
+	hm.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	hm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	hm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	hm.cull_mode = BaseMaterial3D.CULL_DISABLED
+	hm.albedo_color = Color(1.0, 0.5, 0.2, 0.5)
+	hm.emission_enabled = false
+	halo.material_override = hm
+	halo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_hd_halo = halo
+	heart_mat = hm
+	heart_light = OmniLight3D.new()
+	heart_light.light_color = Color(1.0, 0.55, 0.3)
+	heart_light.light_energy = 2.0
+	heart_light.omni_range = 6.0
+	heart_light.shadow_enabled = false
+	heart_light.position = Vector3(0, 0.05, 0.5)
+	driver.add_child(heart_light)
+	var lamp := OmniLight3D.new()
+	lamp.light_color = Color(1.0, 0.7, 0.4)
+	lamp.light_energy = 1.2
+	lamp.omni_range = 7.0
+	lamp.shadow_enabled = false
+	lamp.position = Vector3(0.0, 3.0, 0.8)
+	g.add_child(lamp)
+
+func _animate_hd(delta: float) -> void:
+	var v := move_speed
+	var a: float = clamp(v / 4.0, 0.0, 1.0)
+	_phase += delta * (1.5 + v * 1.4)
+	flash = max(0.0, flash - delta * 4.0)
+	var e := 0.55 + sin(t * 4.0) * 0.12 + flash * 0.9 + stun_k * 0.25
+	if pose == "dead":
+		_dead_t = min(_dead_t + delta * 0.5, 1.0)
+		e = 0.0
+		heart_light.light_energy = 0.0
+		_hd_halo.visible = false
+		mass.position.y = -0.5 * _dead_t
+		mass.rotation.x = 0.1 * _dead_t
+		_mesh.set_blend_shape_value(_step_a, lerpf(_mesh.get_blend_shape_value(_step_a), 0.0, delta * 2.0))
+		_mesh.set_blend_shape_value(_step_b, lerpf(_mesh.get_blend_shape_value(_step_b), 0.0, delta * 2.0))
+		return
+	(heart_mat as StandardMaterial3D).albedo_color.a = clampf(e, 0.0, 1.0)
+	heart_light.light_energy = 2.0 + flash * 5.0 + stun_k * 2.0
+	# crawl: two alternating shape keys driven by the gait phase (amplitude with speed), plus lurch / lean / slam rear / stun slump
+	var sa: float = a * (0.5 + 0.5 * sin(_phase)) + (1.0 - a) * 0.08 * (0.5 + 0.5 * sin(t * 0.9))
+	var sb: float = a * (0.5 - 0.5 * sin(_phase)) + (1.0 - a) * 0.08 * (0.5 - 0.5 * sin(t * 0.9))
+	var slump := 1.0 - stun_k * 0.8
+	_mesh.set_blend_shape_value(_step_a, sa * slump)
+	_mesh.set_blend_shape_value(_step_b, sb * slump)
+	mass.position.y = abs(sin(_phase * 0.5)) * 0.1 * a - stun_k * 0.55 + slam_k * 0.12
+	mass.rotation.x = charge_k * 0.16 - slam_k * 0.1 + sin(_phase * 0.5) * 0.02 * a + stun_k * 0.12
+	mass.rotation.z = sin(_phase * 0.5) * 0.03 * a
 
 ## glTF build (tools/charpipe/bosses/build_hauler.py): Mass (static mound + Crawler0..N miners dragging it),
 ## Crown (cab) holding Driver (its origin is the glowing, torn-open chest = the weak point).
@@ -160,6 +242,8 @@ func _build_procedural() -> void:
 	Kit.post(driver, _driver_pose)
 
 func heart_world() -> Vector3:
+	if _hd:
+		return driver.global_position + Vector3(0, 0.0, 0)
 	if _glb != null:
 		return driver.global_position
 	return driver.chest.global_position + driver.chest.global_transform.basis.z * 0.15 * 1.1 + Vector3(0, 0.05, 0)
@@ -176,6 +260,9 @@ func _driver_pose(_d: float) -> void:
 	driver.fore_r.rotation = Vector3(-0.3, 0, 0)
 
 func _animate(delta: float) -> void:
+	if _hd:
+		_animate_hd(delta)
+		return
 	var v := move_speed
 	var a: float = clamp(v / 4.0, 0.0, 1.0)
 	_phase += delta * (1.5 + v * 1.4)

@@ -18,12 +18,57 @@ var column: Node3D
 func _ready() -> void:
 	_build()
 
+var _hd := false
+var _halos: Array = []        # hd: {mesh, mat} per head
+var _skins: Array = []        # hd: duplicated flesh material per head (tinted dark when the head dies)
+
 func _build() -> void:
+	var hd := EnemyGlb.load_scene("choir_hd.glb")
+	if hd != null and EnemyGlb.find(hd, "Head4") != null and EnemyGlb.find(hd, "Pillar") != null:
+		_build_hd(hd)
+		return
 	var g := EnemyGlb.load_scene("choir.glb")
 	if g != null and EnemyGlb.find(g, "Head0") != null and EnemyGlb.find(g, "ArmL") != null:
 		_build_glb(g)
 	else:
 		_build_procedural()
+
+## HD build (tools/charpipe/bosses/hd_choir.py, Tripo H3.1): Pillar (static, textured PBR), Head0..Head4 (weak points, pivot at the head
+## centre, each with a Head<i>_glow halo child that is additive-blended and pulses), ArmL/ArmR (sweep pieces).
+func _build_hd(g: Node3D) -> void:
+	_hd = true
+	column = g
+	add_child(g)
+	for i in 5:
+		var hn := EnemyGlb.find(g, "Head%d" % i) as MeshInstance3D
+		var halo := EnemyGlb.find(hn, "Head%d_glow" % i) as MeshInstance3D
+		var hm := (halo.mesh.surface_get_material(0).duplicate() as StandardMaterial3D)
+		hm.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+		hm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		hm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		hm.cull_mode = BaseMaterial3D.CULL_DISABLED
+		hm.albedo_color = Color(0.35, 0.85, 1.0, 0.55)
+		hm.emission_enabled = false
+		halo.material_override = hm
+		halo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		# per-head copy of the flesh material: tinted + faintly emissive while the head sings
+		var sk := hn.mesh.surface_get_material(0).duplicate() as StandardMaterial3D
+		sk.emission_enabled = true
+		sk.emission = Color(0.35, 0.8, 1.0)
+		sk.emission_energy_multiplier = 0.1
+		hn.set_surface_override_material(0, sk)
+		var l := OmniLight3D.new()
+		l.light_color = Color(0.45, 0.9, 1.0)
+		l.light_energy = 1.0
+		l.omni_range = 4.0
+		l.shadow_enabled = false
+		l.position = Vector3(0, 0.0, 0.55)
+		hn.add_child(l)
+		_halos.append(halo)
+		_skins.append(sk)
+		heads.append({"node": hn, "mats": [hm], "light": l, "alive": true, "k": 0.0, "weak": true, "mouth": null, "skin": sk, "halo": halo})
+	arm_l = EnemyGlb.find(g, "ArmL") as Node3D
+	arm_r = EnemyGlb.find(g, "ArmR") as Node3D
 
 ## glTF build (tools/charpipe/bosses/build_choir.py): Head0..Head4 are the weak points (throat + eyes use emissive
 ## materials animated here), ArmL/ArmR are the sweep pivots (geometry hangs along -Y), everything else is static.
@@ -35,8 +80,8 @@ func _build_glb(g: Node3D) -> void:
 		var mats: Array = EnemyGlb.unique_mats(hn, "throat") + EnemyGlb.unique_mats(hn, "glow")
 		var l := OmniLight3D.new()
 		l.light_color = Color(0.45, 0.9, 1.0)
-		l.light_energy = 1.6
-		l.omni_range = 5.0
+		l.light_energy = 1.0
+		l.omni_range = 4.0
 		l.shadow_enabled = false
 		l.position = Vector3(0, 0.0, 0.55)
 		hn.add_child(l)
@@ -179,7 +224,13 @@ func kill_head(i: int) -> void:
 		m.albedo_color = Color(0.05, 0.08, 0.1)
 	if h.light:
 		h.light.light_energy = 0.0
-	h.node.rotation.x += 0.7
+	if _hd:
+		h.halo.visible = false
+		h.skin.emission_energy_multiplier = 0.0
+		h.skin.albedo_color = Color(0.32, 0.34, 0.4)
+		h.node.rotation.x += 0.3
+	else:
+		h.node.rotation.x += 0.7
 	if h.mouth:
 		h.mouth.scale.y *= 1.6
 	var dead := 0
@@ -202,7 +253,12 @@ func _animate(delta: float) -> void:
 			var sing := 0.5 + 0.5 * sin(t * 2.3 + float(heads.find(h)) * 1.1)
 			var e: float = 2.2 + sing * 2.0 + h.k * 9.0 + pulse * 6.0
 			for m in h.mats:
-				m.emission_energy_multiplier = e
+				if _hd:
+					m.albedo_color.a = clampf(0.25 + sing * 0.25 + h.k * 0.5 + pulse * 0.3, 0.0, 1.0)
+				else:
+					m.emission_energy_multiplier = e
+			if _hd:
+				h.skin.emission_energy_multiplier = 0.05 + sing * 0.12 + h.k * 1.2 + pulse * 0.4
 			if h.light:
 				h.light.light_energy = 1.0 + sing * 1.0 + h.k * 4.0 + pulse * 3.0
 			if h.mouth:
@@ -217,5 +273,12 @@ func _animate(delta: float) -> void:
 	# arms
 	var droop := 0.25
 	var raise := arm_raise
+	if _hd:
+		# the pillar twists / leans into the sweep, the two reaching arms swing with it
+		column.rotation.y = arm_yaw * 0.22
+		column.rotation.x += raise * 0.06
+		arm_l.rotation = Vector3(-raise * 0.55 + sin(t * 0.7) * 0.03, arm_yaw * 0.45, 0.0)
+		arm_r.rotation = Vector3(-raise * 0.4 + sin(t * 0.7 + 1.0) * 0.03, arm_yaw * 0.5, 0.0)
+		return
 	arm_l.rotation = Vector3(-raise * 1.4 + sin(t * 0.7) * 0.02, arm_yaw, -droop * (1.0 - raise) - 0.0)
 	arm_r.rotation = Vector3(-raise * 1.4 + sin(t * 0.7 + 1.0) * 0.02, arm_yaw, droop * (1.0 - raise))

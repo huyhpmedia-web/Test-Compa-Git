@@ -235,6 +235,7 @@ def set_origin(obj, point):
 
 
 def parent_keep(child, parent):
+    bpy.context.view_layer.update()
     child.parent = parent
     child.matrix_parent_inverse = parent.matrix_world.inverted()
 
@@ -402,7 +403,6 @@ def blob(name, loc, scale, mat, parent=None, seg=16, rings=10):
     o.location = Vector(loc)
     if parent is not None:
         parent_keep(o, parent)
-        o.matrix_parent_inverse = parent.matrix_world.inverted()
     return o
 
 

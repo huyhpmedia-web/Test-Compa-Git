@@ -29,6 +29,25 @@ SPECS = {
                         ("torso", "torso-vshape", 0.4, "decr", "incr")]),
 }
 
+SPECS.update({
+ "june": dict(name="june", file="june.glb", builder="build_june", gender=0.0, age=15, muscle=0.35, weight=0.42, height_m=1.60,
+              skin="young_caucasian_female", stubble=0.0, weather=0.4,
+              details=[("head", "head-age", -0.3, "decr", "incr"), ("eyes", "l-eye-scale", 0.3, "decr", "incr"), ("eyes", "r-eye-scale", 0.3, "decr", "incr"),
+                       ("nose", "nose-scale-vert", -0.2, "decr", "incr"), ("mouth", "mouth-lowerlip-volume", 0.2, "decr", "incr")]),
+ "ruth": dict(name="ruth", file="ruth.glb", builder="build_ruth", gender=0.0, age=68, muscle=0.3, weight=0.58, height_m=1.62,
+              skin="old_caucasian_female", stubble=0.0, weather=0.6,
+              details=[("head", "head-age", 0.5, "decr", "incr"), ("eyes", "l-eye-bag", 0.4, "decr", "incr"), ("eyes", "r-eye-bag", 0.4, "decr", "incr"),
+                       ("mouth", "mouth-angles", -0.3, "down", "up"), ("neck", "neck-double", 0.3, "decr", "incr")]),
+ "rimebound_civ_m": dict(name="rimebound_civ_m", file="rimebound_civ_m.glb", builder="build_rime", outfit="civ_m", gender=1.0, age=46, muscle=0.45, weight=0.55,
+              height_m=1.76, skin="middleage_caucasian_male", stubble=0.7, details=[("head", "head-age", 0.3, "decr", "incr")]),
+ "rimebound_civ_f": dict(name="rimebound_civ_f", file="rimebound_civ_f.glb", builder="build_rime", outfit="civ_f", gender=0.0, age=40, muscle=0.4, weight=0.5,
+              height_m=1.66, skin="middleage_caucasian_female", details=[]),
+ "rimebound_miner": dict(name="rimebound_miner", file="rimebound_miner.glb", builder="build_rime", outfit="miner", gender=1.0, age=52, muscle=0.6, weight=0.6,
+              height_m=1.78, skin="middleage_caucasian_male", stubble=0.9, details=[("head", "head-age", 0.4, "decr", "incr"), ("head", "head-square", 0.4)]),
+ "rimebound_nurse": dict(name="rimebound_nurse", file="rimebound_nurse.glb", builder="build_rime", outfit="nurse", gender=0.0, age=38, muscle=0.35, weight=0.45,
+              height_m=1.66, skin="middleage_caucasian_female", details=[]),
+})
+
 ORANGE = np.array([0.93, 0.34, 0.035])
 BLACK = np.array([0.045, 0.047, 0.05])
 SILVER = np.array([0.62, 0.64, 0.67])
@@ -254,6 +273,26 @@ def hair_png(cb, label, src, size=1024, tint=None):
     p = ensure(os.path.join(TEX, f"{cb.name}_{label}.png")); im.save(p); return p
 
 
+def eye_image(name, iris=(0.55, 0.36, 0.22), strength=1.0, size=512):
+    """MakeHuman eye atlas with the (reddish) iris re-coloured; sclera kept."""
+    from PIL import Image
+    eim = np.asarray(Image.open(os.path.join(mh.MH_DATA, "eyes/materials/brown_eye.png")).convert("RGB").resize((size, size)), dtype=np.float32) / 255.0
+    lum = (eim * np.array([0.3, 0.59, 0.11])).sum(2, keepdims=True)
+    sat = (eim.max(2, keepdims=True) - eim.min(2, keepdims=True))
+    mask = np.clip(sat * 3.5, 0, 1) * strength
+    iris_col = lum * 2.0 * np.array(iris)[None, None, :]
+    out = eim * (1 - mask) + iris_col * mask
+    out = out * 0.92
+    return jtex(name, np.clip(out, 0, 1), 92)
+
+
+def messy(pos, faces, amp=0.008, seed=1):
+    n = pt.vertex_normals(pos, [f[0] for f in faces])
+    p = pos * 40.0 + seed
+    noise = (np.sin(p[:, 0] * 1.7 + np.cos(p[:, 1] * 2.3)) + np.sin(p[:, 1] * 1.3 + p[:, 2] * 2.1) + np.cos(p[:, 2] * 1.9 + p[:, 0] * 0.7)) / 3.0
+    return pos + n * (noise * amp)[:, None]
+
+
 def inflate(pos, faces, amount):
     n = pt.vertex_normals(pos, [f[0] for f in faces])
     return pos + n * amount
@@ -304,6 +343,9 @@ def merge_meshes(parts):
 
 # ------------------------------------------------------------------ ELIAS
 def assemble(cb, spec):
+    if spec.get("builder"):
+        import chars2
+        return getattr(chars2, spec["builder"])(cb, spec)
     n = spec["name"]
     H = cb.H
     skin_png = paint_skin(cb, spec["skin"], spec["details"], spec.get("stubble", 1.0), spec.get("weather", 1.0), spec.get("skin_tint", (0.97, 0.90, 0.85)))
@@ -338,7 +380,6 @@ def assemble(cb, spec):
     S_z = cb.conv(H.joint("joint-spine-4"))[2]
     puff = 0.012 + 0.006 * np.sin(2 * math.pi * pos[:, 2] / 0.082)
     npos[jm] = pos[jm] + nrm[jm] * puff[jm][:, None]
-    # trousers: cut off below boot-top, keep the rest
     boot_top = 0.24
     for ids, label, mat, ppos in ((jacket_ids, "jacket", jmat, npos), (liner_ids, "liner", lmat, pos), (set(trousers), "trousers", tmat, pos)):
         mask = np.isin(comp, list(ids))
@@ -353,8 +394,6 @@ def assemble(cb, spec):
     SH = A("clothes/shoes02/shoes02.mhclo")
     Ps = mh.Proxy(SH)
     spos = cb.conv(Ps.fit(H.v, H.base_v))
-    # enlarge foot slightly about the ankle line for a chunkier boot
-    ctr = np.array([0.0, spos[:, 1].mean(), 0.0])
     for side in (1, -1):
         m = (spos[:, 0] * side) > 0
         c = np.array([spos[m][:, 0].mean(), spos[m][:, 1].mean(), 0.0])
@@ -362,22 +401,18 @@ def assemble(cb, spec):
     sn = pt.vertex_normals(spos, [f[0] for f in Ps.faces])
     spos = spos + sn * 0.006
     so = pt.load_rgb(A("clothes/shoes02/shoes02_diffuse.png"), 1024)
-    sc_ = np.ones(len(spos), dtype=np.int64)
     sd = recolor_texture(cb, "boots", Ps, spos, np.zeros(len(spos), dtype=np.int64), {0}, (0.075, 0.062, 0.05), 1024, so, contrast=0.55)
     bmat = make_pbr(n + "_boots", sd, rough=0.7)
     bo = cb.add_mesh("boots", spos, [f[0] for f in Ps.faces], [f[1] for f in Ps.faces], Ps.uv, W=Ps.skin_weights(cb.Wfull), mat=bmat)
     cb.decimate(bo, 0.6)
     del_verts |= set(Ps.delete_verts)
-    # shaft: body leg surface from ankle up to the top of the boot
     bpos = cb.conv(H.v[:mh.N_BODY])
     shaft_mask = (bpos[:, 2] > 0.045) & (bpos[:, 2] < 0.26) & (np.abs(bpos[:, 0]) > 0.05)
     sp, sfv, sft, used = body_surface_patch(cb, shaft_mask, 0.016)
     cb.add_mesh("boot_shaft", sp, sfv, None, None, W=cb.W[used], mat=solid_mat(n + "_bootshaft", (0.11, 0.095, 0.08), 0.65))
-    # a thicker cuff ring at the top of the shaft
     ring_mask = (bpos[:, 2] > 0.19) & (bpos[:, 2] < 0.28) & (np.abs(bpos[:, 0]) > 0.05)
     rp, rfv, rft, rused = body_surface_patch(cb, ring_mask, 0.026)
     cb.add_mesh("boot_cuff", rp, rfv, None, None, W=cb.W[rused], mat=solid_mat(n + "_bootcuff", (0.13, 0.12, 0.11), 0.8))
-    # delete body below boot top (covered by boots), under trousers & jacket
     below = set(np.where(bpos[:, 2] < 0.28)[0].tolist())
     del_verts |= below
 
@@ -386,7 +421,6 @@ def assemble(cb, spec):
     hi = [cb.bones.index(b) for b in hand_names]
     hw = cb.W[:, hi].sum(1)
     gmask = hw > 0.3
-    # include a short wrist cuff
     lw = cb.W[:, [cb.bones.index("lowerarm_l"), cb.bones.index("lowerarm_r")]].sum(1)
     wristL = cb.conv(H.joint("joint-l-hand")); wristR = wristL * np.array([-1, 1, 1])
     near = (np.minimum(np.linalg.norm(bpos - wristL, axis=1), np.linalg.norm(bpos - wristR, axis=1)) < 0.075) & (lw > 0.3)
@@ -404,7 +438,6 @@ def assemble(cb, spec):
     cxy = np.array([0.0, float(zsel[:, 1].mean())])
     ang, rad = ring_outline(zsel + 0, cxy, 48)
     rad = rad + 0.012
-    parts = []
     nb = len(ang)
     ringv = []
     for zz in (belt_z - 0.028, belt_z + 0.028):
@@ -415,7 +448,6 @@ def assemble(cb, spec):
     for i in range(nb):
         j = (i + 1) % nb
         rf.append([i, j, nb + j, nb + i])
-    # thickness: outer shell + slightly smaller inner
     belt_outer = ringv
     belt_inner = ringv.copy(); belt_inner[:, :2] = cxy + (belt_inner[:, :2] - cxy) * 0.985
     bv, bf = merge_meshes([(belt_outer, rf), (belt_inner, [f[::-1] for f in rf])])
@@ -426,20 +458,22 @@ def assemble(cb, spec):
         r_ = rad[k] + extra
         return np.array([cxy[0] + math.cos(a) * r_, cxy[1] + math.sin(a) * r_]), a
     pouch_parts = []
-    # blender: forward is -y => angle -90deg front. left side +x => angle 0.
     for a_deg, size, zc in ((-20, (0.05, 0.11, 0.14), belt_z - 0.07), (200, (0.05, 0.11, 0.14), belt_z - 0.07),
                             (-100, (0.12, 0.05, 0.1), belt_z - 0.02), (90, (0.16, 0.06, 0.12), belt_z - 0.01),
                             (160, (0.04, 0.05, 0.28), belt_z - 0.14)):
         xy, a = at_angle(a_deg, size[1] / 2 + 0.005)
         pouch_parts.append(box_mesh([xy[0], xy[1], zc], size, rot_z=a + math.pi / 2))
-    # carabiner/hammer handle
     hv, hf = box_mesh([at_angle(165, 0.03)[0][0], at_angle(165, 0.03)[0][1], belt_z - 0.20], (0.03, 0.03, 0.34), rot_z=0.0)
     pouch_parts.append((hv, hf))
-    belt_mat = solid_mat(n + "_belt", (0.28, 0.22, 0.17), 0.75)
+    belt_mat = solid_mat(n + "_belt", (0.12, 0.1, 0.09), 0.6)
     pv, pf = merge_meshes(belt_parts)
     cb.add_mesh("belt", pv, pf, bone="pelvis", mat=belt_mat, smooth=False)
     pv, pf = merge_meshes(pouch_parts)
-    cb.add_mesh("pouches", pv, pf, bone="pelvis", mat=solid_mat(n + "_pouch", (0.25, 0.22, 0.18), 0.8), smooth=False)
+    po = cb.add_mesh("pouches", pv, pf, bone="pelvis", mat=solid_mat(n + "_pouch", (0.33, 0.2, 0.12), 0.55), smooth=True)
+    bev = po.modifiers.new("bev", 'BEVEL'); bev.width = 0.012; bev.segments = 2; bev.limit_method = 'NONE'
+    bpy.context.view_layer.objects.active = po
+    bpy.ops.object.modifier_move_to_index(modifier="bev", index=0)
+    bpy.ops.object.modifier_apply(modifier="bev")
 
     # ---------- body (head, neck + whatever is not covered)
     body = cb.build_body(sorted(del_verts))
@@ -447,11 +481,8 @@ def assemble(cb, spec):
     cb.decimate(body, 0.8)
 
     # ---------- eyes / brows / lashes / hair
-    eye_png = os.path.join(mh.MH_DATA, "eyes/materials/brown_eye.png")
-    from PIL import Image
-    eim = np.asarray(Image.open(eye_png).convert("RGB").resize((512, 512)), dtype=np.float32) / 255.0
-    eim = np.clip(eim * np.array(spec.get("eye_tint", (0.72, 0.8, 0.9)))[None, None, :] * 0.9, 0, 1)
-    emat = make_pbr(n + "_eyes", jtex(n + "_eye.jpg", eim, 92), rough=0.12, spec=0.8)
+    eye_jpg = eye_image(n + "_eye.jpg", spec.get("iris", (0.50, 0.33, 0.2)))
+    emat = make_pbr(n + "_eyes", eye_jpg, rough=0.12, spec=0.8)
     P_e = mh.Proxy(A("eyes/low-poly/low-poly.mhclo"))
     epos = cb.conv(P_e.fit(H.v, H.base_v))
     ob = cb.add_mesh("eyes", epos, [f[0] for f in P_e.faces], [f[1] for f in P_e.faces], P_e.uv, bone="head", mat=emat)
@@ -468,6 +499,6 @@ def assemble(cb, spec):
         pp = cb.conv(Pp.fit(H.v, H.base_v))
         cb.add_mesh(nm, pp, [f[0] for f in Pp.faces], [f[1] for f in Pp.faces], Pp.uv, bone="head", mat=m)
     Ph = mh.Proxy(A("hair/short02/short02.mhclo"))
-    hm = make_pbr(n + "_hair", hair_png(cb, "hair", A("hair/short02/short02_diffuse.png"), 1024, tint=spec.get("hair_tint", (0.34, 0.3, 0.28))), rough=0.7, alpha=True, color=(0.10, 0.085, 0.075, 1))
-    hp = cb.conv(Ph.fit(H.v, H.base_v))
+    hm = make_pbr(n + "_hair", hair_png(cb, "hair", A("hair/short02/short02_diffuse.png"), 1024, tint=spec.get("hair_tint", (0.2, 0.17, 0.15))), rough=0.7, alpha=True)
+    hp = messy(cb.conv(Ph.fit(H.v, H.base_v)), Ph.faces, 0.007)
     cb.add_mesh("hair", hp, [f[0] for f in Ph.faces], [f[1] for f in Ph.faces], Ph.uv, W=Ph.skin_weights(cb.Wfull), mat=hm)

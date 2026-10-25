@@ -21,6 +21,25 @@ var pose := "normal"
 var aim_pitch := 0.0          # radians, positive looks up
 var held: Node3D              # weapon slot in the right hand
 
+# humanoid.gd-compatible pivots (BoneAttachment3D nodes; bone-local axes: +Y runs along the bone)
+var hips: Node3D
+var spine: Node3D
+var chest: Node3D
+var neck: Node3D
+var head: Node3D
+var arm_l: Node3D
+var arm_r: Node3D
+var fore_l: Node3D
+var fore_r: Node3D
+var hand_l: Node3D
+var hand_r: Node3D
+var thigh_l: Node3D
+var thigh_r: Node3D
+var shin_l: Node3D
+var shin_r: Node3D
+var foot_l: Node3D
+var foot_r: Node3D
+
 var skeleton: Skeleton3D
 var player: AnimationPlayer
 var tree: AnimationTree
@@ -47,6 +66,7 @@ var _ready_ok := false
 var _lens := {}
 var _pitch_bones := {}
 var _height := 1.8
+var _model_name := ""
 
 func setup(c: Dictionary) -> void:
 	for k in c:
@@ -81,6 +101,7 @@ func _build() -> void:
 	for c in get_children():
 		c.queue_free()
 	var model_name := _pick_model()
+	_model_name = model_name
 	var path := MODEL_DIR + model_name + ".glb"
 	if not ResourceLoader.exists(path):
 		push_warning("CharacterModel: missing " + path)
@@ -98,6 +119,7 @@ func _build() -> void:
 		model_root.scale = Vector3.ONE * s
 	_fix_materials()
 	_setup_held()
+	_make_pivots()
 	_setup_animation()
 	_collect_pitch_bones()
 
@@ -122,9 +144,10 @@ func _load_meta() -> void:
 	if FileAccess.file_exists(p):
 		var d = JSON.parse_string(FileAccess.get_file_as_string(p))
 		if d is Dictionary:
-			walk_speed = float(d.get("walk", {}).get("speed", walk_speed))
-			run_speed = float(d.get("run", {}).get("speed", run_speed))
-			zombie_speed = float(d.get("zombie_walk", {}).get("speed", zombie_speed))
+			var m: Dictionary = d.get(_model_name, d.get("elias", {}))
+			walk_speed = float(m.get("walk", {}).get("speed", walk_speed))
+			run_speed = float(m.get("run", {}).get("speed", run_speed))
+			zombie_speed = float(m.get("zombie_walk", {}).get("speed", zombie_speed))
 
 # ------------------------------------------------------------------ materials
 func _fix_materials() -> void:
@@ -168,6 +191,39 @@ func _setup_held() -> void:
 	# rig hand space -> humanoid hand space (-Y down the fingers, +Z sights up):
 	# the bone's +Y runs down the fingers, so flip about X; thumb-up palm-inward aim pose.
 	held.transform = Transform3D(Basis(Vector3.RIGHT, PI) * Basis(Vector3.UP, 0.0), Vector3(0, 0.07, 0))
+
+## Attachment point following a bone (use for frost growths, hard-hat lamps, etc.).
+func bone_attachment(bone_name: String) -> BoneAttachment3D:
+	if skeleton == null or skeleton.find_bone(bone_name) < 0:
+		return null
+	var nm := "BA_" + bone_name
+	var ex := skeleton.get_node_or_null(nm)
+	if ex:
+		return ex as BoneAttachment3D
+	var ba := BoneAttachment3D.new()
+	ba.name = nm
+	ba.bone_name = bone_name
+	skeleton.add_child(ba)
+	return ba
+
+func _make_pivots() -> void:
+	hips = bone_attachment("pelvis")
+	spine = bone_attachment("spine_01")
+	chest = bone_attachment("spine_03")
+	neck = bone_attachment("neck_01")
+	head = bone_attachment("head")
+	arm_l = bone_attachment("upperarm_l")
+	arm_r = bone_attachment("upperarm_r")
+	fore_l = bone_attachment("lowerarm_l")
+	fore_r = bone_attachment("lowerarm_r")
+	hand_l = bone_attachment("hand_l")
+	hand_r = bone_attachment("hand_r")
+	thigh_l = bone_attachment("thigh_l")
+	thigh_r = bone_attachment("thigh_r")
+	shin_l = bone_attachment("calf_l")
+	shin_r = bone_attachment("calf_r")
+	foot_l = bone_attachment("foot_l")
+	foot_r = bone_attachment("foot_r")
 
 func hold(node: Node3D) -> void:
 	if held == null:

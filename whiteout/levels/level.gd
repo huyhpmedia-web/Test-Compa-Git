@@ -385,6 +385,8 @@ func pickup(uid: String, item: String, count: int, pos: Vector3) -> Node3D:
 	var it := Interactable.new()
 	it.prompt = "Pick up " + d.name
 	it.radius = 1.5
+	it.set_meta("uid", uid)       # lets tools/playtest.gd find pickups by uid
+	it.set_meta("item", item)
 	root.add_child(it)
 	it.action = func(_p):
 		var left := Game.add_item(item, count)
@@ -488,6 +490,8 @@ func door(uid: String, pos: Vector3, yaw: float, opts := {}) -> Node3D:
 	it.prompt = opts.get("prompt", "Open door")
 	it.radius = 1.8
 	it.position = Vector3(0, 1.0, 0)
+	it.set_meta("door_uid", uid)  # lets tools/playtest.gd find doors by uid
+	root.add_to_group("door")
 	root.add_child(it)
 	it.action = func(_p):
 		if opts.has("one_way_msg") and not Game.has_flag("unlocked:" + uid):
@@ -533,6 +537,7 @@ func note(uid: String, pos: Vector3, title: String, body: String, yaw := 0.0) ->
 	var it := Interactable.new()
 	it.prompt = "Read: " + title
 	it.radius = 1.5
+	it.set_meta("uid", uid)
 	root.add_child(it)
 	it.action = func(_p):
 		var files: Array = Game.get_flag("files", [])

@@ -222,7 +222,12 @@ def build(name, anims=True, out_dir=OUT_DIR):
         meta = clips_mod.add_all(rig, with_mocap=True, only=only.split(",") if only else None)
         mp = os.path.join(out_dir, "anim_meta.json")
         os.makedirs(out_dir, exist_ok=True)
-        json.dump(meta, open(mp, "w"), indent=1)
+        allm = {}
+        if os.path.exists(mp):
+            try: allm = json.load(open(mp))
+            except Exception: allm = {}
+        allm[name] = meta
+        json.dump(allm, open(mp, "w"), indent=1)
     export_glb(cb, os.path.join(out_dir, spec["file"]), anims)
     tris = 0
     for ob in bpy.data.objects:

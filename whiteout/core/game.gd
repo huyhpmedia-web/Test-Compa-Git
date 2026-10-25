@@ -133,7 +133,10 @@ func set_flag(key: String, value = true) -> void:
 	flag_changed.emit(key, value)
 
 func has_flag(key: String) -> bool:
-	return flags.has(key) and flags[key] != false
+	if not flags.has(key):
+		return false
+	var v = flags[key]
+	return not (v is bool and v == false)
 
 func get_flag(key: String, default = null):
 	return flags.get(key, default)

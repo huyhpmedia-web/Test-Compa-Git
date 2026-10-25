@@ -78,7 +78,7 @@ def build_p1():
         h, t = arm_pts[nm]
         crystal_chain_along(ab, rng, Mx @ h, Mx @ t, 7, 0.018, mat_index=0, up=0.4)
     # crystals bursting from shoulders and out of the hair
-    hc = Mx @ (Vector(p.bone_head("head")) + Vector((0, 0.05, 0.12)))
+    hc = Mx @ (head_posed + Vector((0, 0.05, 0.02)))
     for k in range(9):
         d = Vector((rng.uniform(-0.8, 0.8), rng.uniform(0.2, 0.8), 1.0))
         add_crystal(ab, hc, d, rng.uniform(0.2, 0.7), rng.uniform(0.014, 0.03), rng=rng, mat_index=rng.choice([0, 1]))

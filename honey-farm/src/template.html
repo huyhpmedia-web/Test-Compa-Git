@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Honey Farm Tycoon</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#9fdcff;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#fff;touch-action:none;user-select:none;-webkit-user-select:none}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+.pill{background:rgba(40,25,0,.55);backdrop-filter:blur(4px);border-radius:999px;padding:6px 14px;font-weight:800;box-shadow:0 2px 0 rgba(0,0,0,.25)}
+#hud{position:fixed;left:0;right:0;top:0;padding:max(10px,env(safe-area-inset-top)) 12px 0;display:flex;gap:10px;align-items:center;pointer-events:none}
+#moneyBox{font-size:24px;color:#aaffb5;white-space:nowrap}
+#moneyBox.bump{animation:bump .3s}
+@keyframes bump{50%{transform:scale(1.25)}}
+#goal{flex:1;min-width:0}
+#bar{height:14px;background:rgba(0,0,0,.4);border-radius:8px;overflow:hidden;margin-top:3px}
+#fill{height:100%;width:0;background:linear-gradient(90deg,#ffb21a,#ffe066);transition:width .3s}
+#goalLbl{font-size:12px;display:flex;justify-content:space-between;text-shadow:0 1px 2px #000}
+#carry{font-size:16px;white-space:nowrap}
+#hint{position:fixed;left:50%;bottom:max(22px,env(safe-area-inset-bottom));transform:translateX(-50%);font-size:17px;font-weight:800;text-align:center;max-width:90vw;transition:opacity .3s;pointer-events:none;text-shadow:0 2px 3px rgba(0,0,0,.6)}
+#toast{position:fixed;left:50%;top:72px;transform:translateX(-50%);opacity:0;transition:opacity .3s;font-weight:900;font-size:20px;text-shadow:0 2px 4px #000;pointer-events:none;text-align:center;width:90vw}
+#joy{display:none;position:fixed;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.18);border:3px solid rgba(255,255,255,.5);pointer-events:none}
+#knob{position:absolute;left:35px;top:35px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.75)}
+.card{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(30,18,0,.55);text-align:center;padding:20px;box-sizing:border-box}
+.card h1{margin:0;font-size:clamp(30px,8vw,52px);color:#ffd23f;text-shadow:0 4px 0 #8a4b00}
+.card p{margin:0;font-size:clamp(15px,4vw,20px);max-width:480px;line-height:1.4}
+button{font:inherit;font-weight:900;font-size:22px;color:#4a2a00;background:linear-gradient(#ffe066,#ffb21a);border:0;border-radius:16px;padding:14px 38px;box-shadow:0 5px 0 #b8710a;cursor:pointer}
+button:active{transform:translateY(3px);box-shadow:0 2px 0 #b8710a}
+#win{display:none}
+.flow{font-size:34px;letter-spacing:4px}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud">
+  <div id="moneyBox" class="pill">💰 <span id="money">$0</span></div>
+  <div id="goal" class="pill"><div id="goalLbl"><span>🍯 Honey empire</span><span id="goalTxt"></span></div><div id="bar"><div id="fill"></div></div></div>
+  <div id="carry" class="pill">🎒 <span id="carryTxt">0/6</span></div>
+</div>
+<div id="toast"></div>
+<div id="hint"></div>
+<div id="joy"><div id="knob"></div></div>
+<div id="intro" class="card">
+  <h1>🍯 Honey Farm</h1>
+  <div class="flow">🐝➜🍯➜📦➜🧑➜💵</div>
+  <p>Collect jars from hives, pack them into crates, serve customers before they lose patience, then spend the cash on new hives &amp; a conveyor belt!</p>
+  <p><b>Drag</b> anywhere (or WASD) to walk.</p>
+  <button id="play">PLAY</button>
+</div>
+<div id="win" class="card">
+  <h1>🏆 Honey Empire!</h1>
+  <p id="winStats"></p>
+  <button id="cont">Keep playing</button>
+  <button id="again" style="font-size:16px;padding:10px 24px">Restart</button>
+</div>
+<script>/*THREE*/</script>
+<script>/*GAME*/</script>
+</body>
+</html>

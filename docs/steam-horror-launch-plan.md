@@ -137,4 +137,6 @@ Hôm nay: 31/10/2026. Giáng Sinh còn khoảng 8 tuần. Lịch lùi từ ngày
 | ~5/12 | Nộp bản build để Valve duyệt |
 | 15/12 | Ra mắt |
 
+**Quan trọng:** Valve thường yêu cầu chờ khoảng **30 ngày kể từ khi trả phí app** mới được phát hành (kiểm tra lại trên Steamworks). Nếu đúng vậy, muốn ra mắt 15/12 thì phải trả phí app muộn nhất khoảng 15/11, nên phải xong xác minh Steamworks trước đó.
+
 Steam Winter Sale thường bắt đầu khoảng 18-19/12 và kéo dài tới đầu tháng 1 (kiểm tra ngày chính thức). Ra mắt trong thời gian này dễ bị chìm giữa hàng nghìn game giảm giá.

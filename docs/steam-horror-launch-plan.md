@@ -114,4 +114,27 @@ Trước đó, dùng công cụ có sẵn (Postiz, Buffer) để biết mình th
 1. Đăng ký Steamworks (bắt đầu xác minh).
 2. Chốt tên game, mô tả một dòng, 3 tag.
 3. Tạo tài khoản TikTok, YouTube, Facebook Page, Discord cùng tên.
-4. Quay 5 đoạn gameplay đáng sợ nhất (10-30 giây) làm nguyên liệu cho trailer và clip.
+4. Quay 5 đoạn gameplay (10-30 giây) làm nguyên liệu cho trailer và clip. **Không quay cảnh đáng sợ nhất hay twist cuối.** Xem mục "Chống lộ nội dung" bên dưới.
+
+## Chống lộ nội dung (spoiler)
+
+- Quay và đăng **đoạn dẫn vào** (căng thẳng, âm thanh, bóng tối), cắt **trước khi** quái vật lộ rõ mặt hoặc cú hù lớn nhất xảy ra.
+- Giữ lại 1-2 cảnh mạnh nhất, các twist về cốt truyện và đoạn kết cho người mua game.
+- Cho thấy **luật chơi và cảm giác** (trốn, chạy, giải đố, tài nguyên ít), không cho thấy hết nhân vật phản diện. Bóng, tiếng động, bóng lưng hấp dẫn hơn cảnh lộ rõ.
+- Mỗi clip chỉ một ý, và mỗi clip dùng một khoảnh khắc khác nhau.
+- Quy tắc nhanh: nếu người xem đã thấy cú giật mình trong clip thì họ thấy không cần mua nữa.
+
+## Mốc thời gian nếu muốn ra mắt trước Giáng Sinh 2026
+
+Hôm nay: 31/10/2026. Giáng Sinh còn khoảng 8 tuần. Lịch lùi từ ngày ra mắt (ví dụ 15/12), mọi mốc đều phải kiểm tra lại với Steamworks:
+
+| Hạn chót | Việc |
+|---|---|
+| Ngay tuần này | Đăng ký Steamworks, nộp giấy tờ xác minh |
+| ~10-15/11 | Xác minh xong, tạo app, dựng trang Steam |
+| ~24/11 | Nộp trang cửa hàng để Valve duyệt (vài ngày) |
+| ~1/12 | Trang "Coming Soon" công khai (bắt buộc >= 2 tuần trước ngày bán) |
+| ~5/12 | Nộp bản build để Valve duyệt |
+| 15/12 | Ra mắt |
+
+Steam Winter Sale thường bắt đầu khoảng 18-19/12 và kéo dài tới đầu tháng 1 (kiểm tra ngày chính thức). Ra mắt trong thời gian này dễ bị chìm giữa hàng nghìn game giảm giá.

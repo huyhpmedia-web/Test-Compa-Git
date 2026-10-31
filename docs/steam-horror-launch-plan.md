@@ -140,3 +140,19 @@ Hôm nay: 31/10/2026. Giáng Sinh còn khoảng 8 tuần. Lịch lùi từ ngày
 **Quan trọng:** Valve thường yêu cầu chờ khoảng **30 ngày kể từ khi trả phí app** mới được phát hành (kiểm tra lại trên Steamworks). Nếu đúng vậy, muốn ra mắt 15/12 thì phải trả phí app muộn nhất khoảng 15/11, nên phải xong xác minh Steamworks trước đó.
 
 Steam Winter Sale thường bắt đầu khoảng 18-19/12 và kéo dài tới đầu tháng 1 (kiểm tra ngày chính thức). Ra mắt trong thời gian này dễ bị chìm giữa hàng nghìn game giảm giá.
+
+## Quyết định thời điểm ra mắt (cập nhật)
+
+Game chủ yếu là kinh dị hành lang ma quái (kiểu P.T.), chỉ mượn một phần nhỏ chủ đề đêm Giáng Sinh. Vì vậy **Giáng Sinh không phải thời điểm ra mắt tối ưu**:
+- Sức mua theo mùa không áp dụng mạnh cho game kinh dị thuần.
+- Tháng 12 cạnh tranh gắt và có Winter Sale.
+- Thời điểm mạnh của game kinh dị là quanh Halloween (tháng 10) và các đợt Steam Next Fest (kiểm tra lịch).
+
+Kế hoạch đề xuất:
+1. Tháng 11: xong Steamworks, dựng trang Steam, đăng trang Coming Soon sớm trong tháng 12 để hút lượng người lướt Steam dịp Winter Sale vào wishlist.
+2. Dịp Giáng Sinh: dùng cảnh đêm Giáng Sinh làm clip và trailer ngắn theo mùa (một điểm móc, không phải toàn bộ game).
+3. Tháng 1: làm demo.
+4. Tháng 2/2027 (kiểm tra ngày): Steam Next Fest để kéo wishlist.
+5. Ra mắt sau Next Fest nếu đủ wishlist (khoảng mùa xuân 2027), nếu chưa đủ thì dời, hoặc nhắm tháng 10/2027 trước Halloween.
+
+Lưu ý tên gọi: không dùng tên "P.T.", "Silent Hill" trong tag, tên, mô tả hay trailer (Steam cấm gây hiểu nhầm, và có rủi ro nhãn hiệu). Dùng các tag như Psychological Horror, First-Person, Atmospheric, Walking Simulator nếu đúng với game.

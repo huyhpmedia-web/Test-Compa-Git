@@ -153,6 +153,7 @@ Kế hoạch đề xuất:
 2. Dịp Giáng Sinh: dùng cảnh đêm Giáng Sinh làm clip và trailer ngắn theo mùa (một điểm móc, không phải toàn bộ game).
 3. Tháng 1: làm demo.
 4. Tháng 2/2027 (kiểm tra ngày): Steam Next Fest để kéo wishlist.
-5. Ra mắt sau Next Fest nếu đủ wishlist (khoảng mùa xuân 2027), nếu chưa đủ thì dời, hoặc nhắm tháng 10/2027 trước Halloween.
+5. Ra mắt ngay sau Next Fest (khoảng tháng 3/2027), **không chờ đủ chỉ tiêu wishlist**. Mục tiêu của dự án này là lấy kinh nghiệm, nên số liệu thật quan trọng hơn con số hoàn hảo. Không chờ tới Halloween 2027.
+   - Phương án nhanh hơn nếu bỏ Next Fest: ra mắt khoảng giữa/cuối tháng 1/2027, sau khi Winter Sale kết thúc, với khoảng 6-7 tuần gom wishlist.
 
 Lưu ý tên gọi: không dùng tên "P.T.", "Silent Hill" trong tag, tên, mô tả hay trailer (Steam cấm gây hiểu nhầm, và có rủi ro nhãn hiệu). Dùng các tag như Psychological Horror, First-Person, Atmospheric, Walking Simulator nếu đúng với game.

@@ -1,0 +1,117 @@
+# Kế hoạch ra mắt game kinh dị trên Steam (người làm lần đầu)
+
+Mục tiêu: **gom wishlist trên Steam, ra mắt, và học được thật nhiều kinh nghiệm.**
+Nguyên tắc: làm gì cũng đo được, ghi lại, rút bài học. Không có thất bại, chỉ có dữ liệu.
+
+> Lưu ý: các con số và quy định Steam dưới đây là kiến thức tham khảo, có thể đã đổi.
+> Luôn kiểm tra lại trên tài liệu chính thức của Steamworks (partner.steamgames.com/doc) trước khi làm.
+
+---
+
+## Giai đoạn 0 - Tạo nền móng (tuần 1)
+
+- [ ] Đăng ký tài khoản **Steamworks** (cá nhân hoặc công ty). Cần xác minh danh tính, thuế, ngân hàng. Bước này có thể mất vài ngày đến vài tuần, **làm ngay hôm nay**.
+- [ ] Trả phí đăng ký app (khoảng 100 USD cho mỗi game, kiểm tra lại số tiền hiện tại).
+- [ ] Chốt **tên game** (dễ nhớ, dễ gõ, chưa trùng, có thể mua tên miền và tên kênh giống nhau).
+- [ ] Chốt **câu mô tả một dòng**, ví dụ: "Bạn là [ai] bị kẹt ở [đâu], và [điều gì đáng sợ] đang theo dõi bạn."
+- [ ] Chốt **3 tag chính** theo thể loại thật của game (ví dụ: Horror, Psychological Horror, Survival Horror, First-Person, Indie). Xem game kinh dị cùng loại đang thành công dùng tag nào.
+- [ ] Tạo tài khoản: TikTok, YouTube, Facebook Page, Discord server, tất cả cùng tên game. Đăng bài đầu **bằng tay**.
+- [ ] Lập một file theo dõi (bảng tính) để ghi số liệu hàng tuần. Xem mẫu ở cuối tài liệu.
+
+## Giai đoạn 1 - Trang Steam "Coming Soon" (tuần 2-4)
+
+Mục tiêu: trang công khai **càng sớm càng tốt**. Bắt buộc công khai ít nhất 2 tuần trước khi bán, nhưng nên là vài tháng.
+
+**Cần có:**
+- [ ] Ảnh capsule/header đúng kích thước Steamworks yêu cầu (xem hướng dẫn đồ họa trong Steamworks). Đây là thứ người ta thấy đầu tiên, nên dành thời gian cho nó. Ảnh phải đọc được ở kích thước rất nhỏ, có tên game rõ.
+- [ ] **Trailer 30-60 giây.** Hook trong 5-10 giây đầu bằng cảnh gameplay đáng sợ, không mở bằng logo công ty. Cho thấy rõ game chơi thế nào. Kết bằng tên game và nút wishlist.
+- [ ] 5-10 ảnh chụp màn hình đẹp, thể hiện không khí, bố cục khác nhau.
+- [ ] Mô tả ngắn và dài: câu đầu hút, nêu 3-5 điểm đặc trưng, tránh viết dài dòng.
+- [ ] Khai báo **Content Survey** (mức độ bạo lực, máu me) và mục **AI disclosure** nếu có dùng AI tạo nội dung. Khai báo đúng, nếu sai có thể bị gỡ.
+- [ ] Gửi review trang cửa hàng, chờ Valve duyệt (vài ngày).
+
+**Tránh:** ảnh/trailer lấy từ nơi khác, từ khóa gây hiểu nhầm, tag không đúng thể loại (làm sai người xem, tỷ lệ wishlist thấp).
+
+## Giai đoạn 2 - Kênh đưa người về Steam (liên tục từ tuần 3)
+
+Nội dung dọc 9:16, đăng cùng một file lên TikTok, YouTube Shorts, Facebook Reels (không watermark nền tảng khác).
+
+**Ý tưởng clip cho game kinh dị (dễ làm, hợp người mới):**
+1. **Jump scare / khoảnh khắc căng thẳng** 10-20 giây, mở bằng cảnh yên tĩnh rồi giật mình.
+2. "Bạn có dám đi qua căn phòng này không?" (đặt câu hỏi, kích thích bình luận).
+3. **Behind the scenes:** cách làm một con quái, cách thiết kế ánh sáng/âm thanh.
+4. Devlog ngắn: "Tuần này tôi sửa lỗi này..." (người xem thích xem quá trình).
+5. Phản ứng của người chơi thật khi chơi thử (xin phép trước khi đăng).
+6. So sánh trước và sau: bản đầu và bản hiện tại.
+
+**Quy tắc:**
+- Mỗi clip có lời gọi hành động rõ: "Wishlist trên Steam, link ở bio".
+- Link Steam gắn **UTM** theo từng kênh (xem mục UTM bên dưới).
+- Ban đầu 3-4 bài/tuần cho mỗi kênh, ổn định tốt hơn dồn dập.
+- Trả lời **mọi bình luận** bằng tay trong 24 giờ đầu.
+- Chỉ đăng lên kênh của chính bạn. Cộng đồng bên ngoài (Reddit, diễn đàn, group) chỉ tham gia bằng tay, có đóng góp, đúng quy định của từng nơi.
+
+**Discord:** mời người quan tâm vào, thông báo bản demo, mở kênh nhận phản hồi lỗi. Đây là nơi giữ người chơi thật.
+
+## Giai đoạn 3 - Demo và Steam Next Fest
+
+- [ ] Làm **demo** 15-30 phút, kết thúc bằng một cảnh "để lại câu hỏi" và nút wishlist. Demo là thứ tăng wishlist nhiều nhất với game kinh dị.
+- [ ] Tham gia **Steam Next Fest** (thường tháng 2, 6, 10; kiểm tra lịch và hạn đăng ký trên Steamworks). Hôm nay là 31/10/2026, kỳ gần nhất cho bạn nhiều khả năng là đầu năm 2027, nhưng cần xác nhận.
+- [ ] Dùng **Steam Playtest** (miễn phí) để lấy phản hồi sớm nếu demo chưa sẵn sàng.
+- [ ] Trong thời gian Next Fest: có mặt trong Discord, trả lời bình luận, đăng clip mỗi ngày.
+
+## Giai đoạn 4 - Streamer và YouTuber kinh dị
+
+Game kinh dị rất hợp với người làm nội dung. Họ thích phản ứng giật mình.
+
+- [ ] Lập danh sách 50-100 streamer/YouTuber kinh dị **nhỏ và vừa** (vài trăm đến vài chục nghìn người theo dõi) chơi game cùng kiểu.
+- [ ] Gửi mail ngắn, cá nhân hóa (không gửi hàng loạt): lời chào, 1 câu về game, link demo hoặc key Steam, không đòi hỏi gì. Có thể dùng Keymailer hoặc Woovit để quản lý key.
+- [ ] Cảm ơn và chia sẻ lại video của họ trên kênh của bạn.
+- [ ] Làm một **press kit** đơn giản: logo, ảnh, trailer, mô tả, link Steam.
+
+## Giai đoạn 5 - Ra mắt
+
+- [ ] Chọn ngày ra mắt **sau khi đã có đủ wishlist** và đã qua Next Fest. Tham khảo: nhiều người nhắm khoảng vài nghìn đến 10.000 wishlist, con số thực tế phụ thuộc thể loại.
+- [ ] Đặt giá hợp lý và giảm giá ra mắt (thường 10-20%).
+- [ ] Gửi thông báo ra mắt cho toàn bộ wishlist (Steam tự gửi email thông báo).
+- [ ] Trong 48 giờ đầu: kêu gọi mọi người đánh giá, trả lời bình luận Steam và Discord, đăng clip ra mắt.
+- [ ] Sau ra mắt: vá lỗi nhanh, ghi lại bài học.
+
+---
+
+## UTM: đo kênh nào ra wishlist
+
+Link Steam gắn UTM, ví dụ (đổi `APPID` và `slug` theo game của bạn):
+
+```
+https://store.steampowered.com/app/APPID/?utm_source=tiktok&utm_medium=social&utm_campaign=jumpscare01
+```
+
+- `utm_source`: kênh (`tiktok`, `youtube`, `facebook`, `discord`, `streamer-ten`)
+- `utm_medium`: loại (`social`, `creator`, `community`)
+- `utm_campaign`: tên bài/clip (`jumpscare01`, `devlog03`)
+
+Xem số liệu trong Steamworks (báo cáo traffic/UTM, kiểm tra tên báo cáo hiện tại).
+
+## Số liệu cần ghi mỗi tuần (bảng tính)
+
+| Tuần | Wishlist cuối tuần | Wishlist mới | Lượt xem trang Steam | Clip đăng | Clip tốt nhất | Bài học |
+|---|---|---|---|---|---|---|
+
+Mỗi tuần dành 30 phút xem lại: clip nào ra nhiều wishlist, giờ nào, kênh nào. Làm nhiều hơn những gì hiệu quả.
+
+## Giai đoạn công cụ (làm sau khi trang Steam đã có)
+
+Khi đã có trang Steam và vài chục clip, mới viết tool riêng cho phần:
+- Lập lịch đăng clip lên các kênh của bạn qua API chính thức.
+- Sinh UTM tự động theo từng bài.
+- Gộp số liệu từ các nền tảng và Steamworks vào một bảng.
+
+Trước đó, dùng công cụ có sẵn (Postiz, Buffer) để biết mình thật sự cần gì.
+
+## Việc làm ngay hôm nay (theo thứ tự)
+
+1. Đăng ký Steamworks (bắt đầu xác minh).
+2. Chốt tên game, mô tả một dòng, 3 tag.
+3. Tạo tài khoản TikTok, YouTube, Facebook Page, Discord cùng tên.
+4. Quay 5 đoạn gameplay đáng sợ nhất (10-30 giây) làm nguyên liệu cho trailer và clip.

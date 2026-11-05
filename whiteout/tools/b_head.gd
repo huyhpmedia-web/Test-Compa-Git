@@ -4,6 +4,7 @@ extends Node3D
 func _ready() -> void:
 	var out := "/tmp/head.png"; var model := "elias"; var zombie := false; var pw := 640; var ph := 400
 	var views := ["front", "side", "back", "top"]
+	var nohair := false
 	var distm := 0.85
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("out="): out = a.substr(4)
@@ -13,6 +14,7 @@ func _ready() -> void:
 		elif a.begins_with("h="): ph = int(a.substr(2))
 		elif a.begins_with("dist="): distm = float(a.substr(5))
 		elif a.begins_with("views="): views = a.substr(6).split(",")
+		elif a.begins_with("nohair="): nohair = a.substr(7) == "1"
 	var CM = load("res://actors/character_model.gd")
 	var RL = load("res://actors/rime_look.gd")
 	var svp := SubViewport.new(); svp.size = Vector2i(pw, ph); svp.own_world_3d = true; svp.msaa_3d = Viewport.MSAA_4X
@@ -26,6 +28,9 @@ func _ready() -> void:
 	var m: Node3D = CM.new(); m.setup({"model": model, "zombie": zombie}); svp.add_child(m)
 	m.pose = "zombie" if zombie else "normal"
 	if zombie and RL.has_method("decorate"): RL.decorate(m, 1.0, 100, {})
+	if nohair:
+		for mi in m.find_children("*", "MeshInstance3D", true, false):
+			if String(mi.name).to_lower().contains("hair"): mi.visible = false
 	var cam := Camera3D.new(); svp.add_child(cam); cam.fov = 28; cam.current = true
 	var sl := SpotLight3D.new(); svp.add_child(sl)
 	sl.light_energy = 1.4; sl.spot_range = 8.0; sl.spot_angle = 35.0; sl.light_color = Color(1.0, 0.95, 0.85); sl.shadow_enabled = true

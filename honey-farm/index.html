@@ -35,9 +35,9 @@
     border-radius:10px;padding:7px 10px 5px;cursor:pointer;box-shadow:0 2px 0 var(--honey-deep);min-width:112px;text-align:left}
   #tools button.on{background:var(--honey);}
   #tools button:focus-visible{outline:3px solid #fff;outline-offset:2px}
-  #hint{position:absolute;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);
-    background:var(--panel);color:var(--cream);padding:6px 18px 4px;border-radius:14px;font-weight:700;font-size:17px;
-    white-space:nowrap;max-width:calc(100vw - 32px);overflow:hidden;text-overflow:ellipsis;transition:opacity .3s}
+  #tools #bGear{min-width:0;width:40px;height:40px;padding:0;text-align:center;font-size:20px;border-radius:50%}
+  #tools .panel{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+  #tools .panel[hidden]{display:none}
   #joy{position:absolute;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;
     background:rgba(255,255,255,.18);border:3px solid rgba(255,255,255,.55);display:none}
   #joy i{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;
@@ -47,10 +47,12 @@
   #tut .hand{font-size:52px;display:inline-block;animation:swipe 1.6s ease-in-out infinite}
   @keyframes swipe{0%,100%{transform:translateX(-46px) rotate(-8deg)}50%{transform:translateX(46px) rotate(8deg)}}
   .lbl{position:absolute;left:0;top:0;will-change:transform;white-space:nowrap}
-  .pad{background:var(--cream);border:2px solid var(--honey-deep);border-radius:12px;padding:2px 10px 0;text-align:center;
-    font-weight:800;font-size:14px;line-height:1.15;box-shadow:0 3px 0 rgba(0,0,0,.18)}
-  .pad b{display:block;font-size:12px;color:var(--honey-deep)}
-  .pad.ok{border-color:var(--good)} .pad.ok b{color:var(--leaf)}
+  .pad{display:flex;flex-direction:column;align-items:center;gap:0;font-weight:800;line-height:1}
+  .pad .ic{width:52px;height:52px;border-radius:50%;background:var(--cream);border:3px solid var(--honey-deep);display:grid;place-items:center;
+    font-size:30px;box-shadow:0 4px 0 rgba(0,0,0,.25)}
+  .pad .pr{margin-top:-8px;background:var(--honey-deep);color:#fff;border-radius:999px;padding:3px 10px 1px;font-size:17px;
+    box-shadow:0 3px 0 rgba(0,0,0,.25);font-variant-numeric:tabular-nums}
+  .pad.ok .ic{border-color:var(--good)} .pad.ok .pr{background:var(--good)}
   .bubble{background:#fff;border-radius:12px;padding:2px 8px 4px;font-weight:800;font-size:14px;text-align:center;
     box-shadow:0 2px 0 rgba(0,0,0,.2)}
   .bubble i{display:block;height:5px;width:46px;border-radius:3px;background:#e7dccb;overflow:hidden;margin-top:1px}
@@ -78,18 +80,20 @@
       <div class="pill small" id="stackPill"><span class="coin" id="stackIcon">·</span><span id="stack">0/6</span></div>
     </div>
     <div id="tools">
-      <button id="bLayout" type="button">▦ Bố cục</button>
-      <button id="bView" type="button">◎ Toàn cảnh</button>
-      <button id="bMode" type="button">👥 Hàng dài</button>
-      <button id="bCash" type="button">+ $100 (test)</button>
+      <button id="bGear" type="button" aria-label="Công cụ xem bố cục">⚙</button>
+      <div class="panel" id="toolPanel" hidden>
+        <button id="bLayout" type="button">▦ Bố cục</button>
+        <button id="bView" type="button">◎ Toàn cảnh</button>
+        <button id="bMode" type="button">👥 Hàng dài</button>
+        <button id="bCash" type="button">+ $100 (test)</button>
+      </div>
     </div>
   </div>
   <div id="labels"></div>
-  <div id="tut"><div class="hand">👆</div><div>Kéo để di chuyển</div></div>
-  <div id="hint">Đến tổ ong lấy hũ mật</div>
+  <div id="tut"><div class="hand">👆</div></div>
   <div id="joy"><i></i></div>
   <div id="end"><div class="card">
-    <h2>Trang trại hoàn chỉnh!</h2>
+    <h2>🍯 Hoàn thành!</h2>
     <p id="endStats"></p>
     <button class="go" id="bKeep" type="button">Chơi tiếp</button>
     <button class="alt" id="bRestart" type="button">Chơi lại</button>
@@ -118,10 +122,11 @@ const CONFIG = {
   },
   player: { speed: 5.4, capacity: 6, start: [-3, 4] },
   resource: { slots: [[-10.5, -2.6], [-10.5, 2.6], [-14, -2.6], [-14, 2.6]], startActive: 2, interval: 2.1, trayMax: 6 },
-  processor: { pos: [0, 0], time: 0.85, outMax: 12, input: [-0.9, 2.15], output: [2.5, 0] },
+  processor: { pos: [0, 0], time: 0.85, outMax: 12, input: [-0.9, 2.25], output: [2.85, 0] },
   conveyor: { x0: -8.8, x1: -1.35, z: 0, speed: 1.6, max: 12 },
   counter: { x: 8, halfLen: 2.2, serve: [6.5, 0], serveZone: { minX: 5.4, maxX: 7.4, minZ: -2.6, maxZ: 2.6 }, cash: [5.7, -4.2] },
-  customers: { mode: 'queue', maxQueue: 7, maxCrowd: 9, patience: 40, demand: [1, 3], spawnEvery: [2.2, 4.2], price: 12, spawnX: 19.5 },
+  customers: { mode: 'queue', maxQueue: 15, maxCrowd: 18, patience: 45, demand: [1, 3], spawnEvery: [0.9, 1.8], price: 12, spawnX: 19.5, startCount: 8 },
+  items: { scale: 1.6 },
   unlocks: [
     { id: 'hive3',    name: 'Tổ ong #3',    icon: '🐝', price: 30,  pos: [-14, -2.6] },
     { id: 'conveyor', name: 'Băng chuyền',  icon: '⚙️', price: 60,  pos: [-5, 1.5] },
@@ -147,12 +152,13 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.prepend(renderer.domElement);
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xa9def6);
-scene.fog = new THREE.Fog(0xa9def6, 55, 130);
+scene.background = new THREE.Color(0x6cc8f2);
+scene.fog = new THREE.Fog(0x6cc8f2, 60, 140);
 const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 300);
 
-scene.add(new THREE.HemisphereLight(0xeaf7ff, 0x6f9446, 0.9));
-const sun = new THREE.DirectionalLight(0xfff0cf, 0.95);
+// low fill + strong key light = darker shadows, punchier toon bands
+scene.add(new THREE.HemisphereLight(0xdff2ff, 0x4f7a2e, 0.5));
+const sun = new THREE.DirectionalLight(0xfff2d6, 1.35);
 sun.position.set(14, 28, 14);
 sun.castShadow = true;
 sun.shadow.mapSize.set(2048, 2048);
@@ -161,10 +167,12 @@ sun.shadow.bias = -0.0008;
 scene.add(sun);
 
 const setSRGB = t => { if ('colorSpace' in t) t.colorSpace = THREE.SRGBColorSpace; else t.encoding = THREE.sRGBEncoding; return t; };
+const TOON = new THREE.DataTexture(new Uint8Array([110, 110, 110, 255, 190, 190, 190, 255, 255, 255, 255, 255]), 3, 1);
+TOON.minFilter = TOON.magFilter = THREE.NearestFilter; TOON.needsUpdate = true;
 const matCache = {};
 const mat = (c, extra) => {
   const k = c + (extra ? JSON.stringify(extra) : '');
-  return matCache[k] || (matCache[k] = new THREE.MeshLambertMaterial(Object.assign({ color: c }, extra || {})));
+  return matCache[k] || (matCache[k] = new THREE.MeshToonMaterial(Object.assign({ color: c, gradientMap: TOON }, extra || {})));
 };
 function mk(geo, m, parent, x = 0, y = 0, z = 0, cast = true) {
   const o = new THREE.Mesh(geo, typeof m === 'number' ? mat(m) : m);
@@ -202,22 +210,28 @@ const G = {
   crate: BOX(0.44, 0.28, 0.36), slat: BOX(0.46, 0.04, 0.38), label: new THREE.PlaneGeometry(0.22, 0.14),
   bill: BOX(0.34, 0.035, 0.18),
 };
-const jarMat = new THREE.MeshLambertMaterial({ color: 0xf2a007, emissive: 0x6b3a00, emissiveIntensity: 0.35 });
+const jarMat = new THREE.MeshToonMaterial({ color: 0xff9d00, emissive: 0x8a4200, emissiveIntensity: 0.45, gradientMap: TOON });
 const labelTex = canvasTex(64, 40, (g, w, h) => { g.fillStyle = '#ffd34a'; g.fillRect(0, 0, w, h); g.fillStyle = '#7a4500';
   g.beginPath(); for (let i = 0; i < 6; i++) { const a = i * PI / 3; g.lineTo(32 + Math.cos(a) * 13, 20 + Math.sin(a) * 13); } g.fill(); });
+const IS = CONFIG.items.scale;   // item scale lives on an inner group so re-parenting never distorts it
+const wrapItem = (kind, build) => { const g = new THREE.Group(), s = new THREE.Group(); s.scale.setScalar(IS); g.add(s); build(s); g.userData.kind = kind; return g; };
 function makeJar() {
-  const g = new THREE.Group();
-  mk(G.jarBody, jarMat, g, 0, 0.11, 0); mk(G.jarBand, 0xfff3d6, g, 0, 0.12, 0, false); mk(G.jarLid, 0xd84a3a, g, 0, 0.25, 0, false);
-  g.userData.kind = 'jar'; return g;
+  return wrapItem('jar', g => {
+    mk(G.jarBody, jarMat, g, 0, 0.11, 0); mk(G.jarBand, 0xfff3d6, g, 0, 0.12, 0, false); mk(G.jarLid, 0xe23b2e, g, 0, 0.25, 0, false);
+    mk(SPH(0.03, 6, 4), 0xffffff, g, -0.06, 0.17, 0.11, false);
+  });
 }
 function makeCrate() {
-  const g = new THREE.Group();
-  mk(G.crate, 0xc98b4b, g, 0, 0.14, 0); mk(G.slat, 0x9a6431, g, 0, 0.08, 0, false); mk(G.slat, 0x9a6431, g, 0, 0.22, 0, false);
-  const l = mk(G.label, new THREE.MeshBasicMaterial({ map: labelTex }), g, 0, 0.15, 0.183, false); l.receiveShadow = false;
-  g.userData.kind = 'crate'; return g;
+  return wrapItem('crate', g => {
+    mk(G.crate, 0xd98a3a, g, 0, 0.14, 0); mk(G.slat, 0x8f5424, g, 0, 0.08, 0, false); mk(G.slat, 0x8f5424, g, 0, 0.22, 0, false);
+    const l = mk(G.label, new THREE.MeshBasicMaterial({ map: labelTex }), g, 0, 0.15, 0.183, false); l.receiveShadow = false;
+  });
 }
-function makeBill(v = 0) { const g = new THREE.Group(); mk(G.bill, 0x56b949, g, 0, 0.02, 0); mk(BOX(0.1, 0.037, 0.1), 0x2f7d2c, g, 0, 0.02, 0, false); g.userData.v = v; return g; }
-const ITEM_H = { jar: 0.3, crate: 0.29 };
+function makeBill(v = 0) {
+  const g = wrapItem('bill', s => { s.scale.setScalar(1.5); mk(G.bill, 0x3fbf3a, s, 0, 0.02, 0); mk(BOX(0.1, 0.037, 0.1), 0x23781f, s, 0, 0.02, 0, false); });
+  g.userData.v = v; return g;
+}
+const ITEM_H = { jar: 0.3 * IS, crate: 0.29 * IS };
 
 /* ---------------- flying objects ---------------- */
 const flyers = new Set();
@@ -355,7 +369,7 @@ function makeHumanoid(o) {
     mk(CAP(0.085, 0.16), o.pants, leg, 0, -0.14, 0); mk(BOX(0.17, 0.09, 0.28), o.shoes || 0x5a3a22, leg, 0, -0.34, 0.05);
   }
   root.scale.setScalar(o.scale || 1);
-  const carry = new THREE.Group(); carry.position.set(0, 0.9, 0.46); root.add(carry);
+  const carry = new THREE.Group(); carry.position.set(0, 0.85, 0.58); root.add(carry);
   return { root, B, carry, cyc: Math.random() * 10, t: Math.random() * 10 };
 }
 function animHuman(h, dt, moving, carrying, sp = 1, clip = null) {
@@ -384,15 +398,15 @@ const obstacles = [];
 const addCircle = (x, z, r) => { const o = { c: 1, x, z, r }; obstacles.push(o); return o; };
 const addBox = (x0, x1, z0, z1) => { const o = { c: 0, x0, x1, z0, z1 }; obstacles.push(o); return o; };
 
-const ground = mk(new THREE.PlaneGeometry(200, 200), 0x8fcf5d, scene, 0, 0, 0, false); ground.rotation.x = -PI / 2;
+const ground = mk(new THREE.PlaneGeometry(200, 200), 0x4a9a2e, scene, 0, 0, 0, false); ground.rotation.x = -PI / 2;
 function flat(w, d, c, x, z, y = 0.01) { const m = mk(new THREE.PlaneGeometry(w, d), c, scene, x, y, z, false); m.rotation.x = -PI / 2; return m; }
-flat(34, 20, 0x9ad866, 0, 0, 0.005);                 // farm lawn
-flat(10.6, 11.4, 0x7fc356, -11.6, 0, 0.012);           // hive meadow (W)
-flat(16, 9.4, 0xe8cb8f, -0.6, 0, 0.015);              // work yard (center)
-flat(9.2, 10.6, 0xdcd3c2, 12.6, 0, 0.015);            // customer plaza (E)
+flat(34, 20, 0x67b83a, 0, 0, 0.005);                 // farm lawn
+flat(10.6, 11.4, 0x4fa52e, -11.6, 0, 0.012);           // hive meadow (W)
+flat(16, 9.4, 0xf3c260, -0.6, 0, 0.015);              // work yard (center)
+flat(9.2, 10.6, 0xe9d3a6, 12.6, 0, 0.015);            // customer plaza (E)
 flat(3.2, 200, 0x6d6f75, CONFIG.customers.spawnX, 0, 0.02); // road
 for (let z = -90; z < 90; z += 4) flat(0.18, 1.8, 0xf4f1e6, CONFIG.customers.spawnX, z, 0.025);
-flat(3.4, 2.2, 0xdcd3c2, 18.2, 0, 0.018);
+flat(3.4, 2.2, 0xe9d3a6, 18.2, 0, 0.018);
 
 // fence: west, north, south edges + shop divider
 function fenceLine(x0, z0, x1, z1) {
@@ -520,10 +534,11 @@ function buildHive(i, anim) {
   mk(BOX(1.25, 0.12, 1.25), 0xb46a2c, g, 0, 1.73, 0); mk(BOX(0.9, 0.12, 0.9), 0xb46a2c, g, 0, 1.84, 0);
   mk(BOX(0.4, 0.06, 0.04), 0x3a2410, g, 0.51, 0.5, 0, false).rotation.y = PI / 2;
   const drip = mk(SPH(0.09, 8, 6), jarMat, g, 0.5, 1.15, 0.25, false); drip.scale.y = 1.6;
-  const pallet = mk(BOX(0.75, 0.1, 0.75), 0xc8a06a, scene, x + 1.35, 0.05, z);
-  const tray = new Pile(scene, x + 1.35, 0.1, z, { cols: 2, rows: 2, dx: 0.3, dz: 0.3, dy: ITEM_H.jar });
-  const h = { i, g, tray, pallet, timer: rnd(0, 1), pos: new V3(x, 0, z), trayPos: new V3(x + 1.35, 0, z), maxL: null };
-  h.maxL = addLabel('<span class="maxtag">ĐẦY</span>', '', () => _tmp.set(h.trayPos.x, 1.4, h.trayPos.z).clone(), 0);
+  const TX = 1.55;
+  const pallet = mk(BOX(1.05, 0.1, 1.05), 0xc8a06a, scene, x + TX, 0.05, z);
+  const tray = new Pile(scene, x + TX, 0.1, z, { cols: 2, rows: 2, dx: 0.46, dz: 0.46, dy: ITEM_H.jar });
+  const h = { i, g, tray, pallet, timer: rnd(0, 1), pos: new V3(x, 0, z), trayPos: new V3(x + TX, 0, z), maxL: null };
+  h.maxL = addLabel('<span class="maxtag">MAX</span>', '', () => _tmp.set(h.trayPos.x, 1.6, h.trayPos.z).clone(), 0);
   addCircle(x, z, 0.75);
   if (anim) { popIn(g); confetti(new V3(x, 0.5, z)); }
   for (let b = 0; b < 5; b++) addBee(h.pos, 1.3);
@@ -573,14 +588,14 @@ const machine = { pending: 0, busy: false, t: 0, time: P.time, gold: false };
   for (let i = 0; i < 8; i++) { const t = mk(BOX(0.1, 0.12, 0.08), 0x6b7a86, machine.gear, Math.cos(i * PI / 4) * 0.32, Math.sin(i * PI / 4) * 0.32, 0, false); t.rotation.z = i * PI / 4; }
   const chute = mk(BOX(0.9, 0.06, 0.8), 0x8a97a3, g, 1.6, 0.5, 0); chute.rotation.z = -0.35;
   const tb = new THREE.Group(); tb.position.set(P.input[0], 0, P.input[1]); scene.add(tb);
-  mk(BOX(1.0, 0.5, 0.8), 0xb9773f, tb, 0, 0.25, 0);
-  flat(1.5, 1.5, 0xf7d77a, P.input[0], P.input[1], 0.02);
-  flat(1.6, 1.4, 0xf7d77a, P.output[0], P.output[1], 0.02);
+  mk(BOX(1.25, 0.5, 1.05), 0xb9773f, tb, 0, 0.25, 0);
+  flat(1.9, 1.7, 0xffe08a, P.input[0], P.input[1], 0.02);
+  flat(2.0, 1.8, 0xffe08a, P.output[0], P.output[1], 0.02);
   addBox(mx - 1.4, mx + 1.4, mz - 1.2, mz + 1.2);
-  addBox(P.input[0] - 0.5, P.input[0] + 0.5, P.input[1] - 0.4, P.input[1] + 0.4);
+  addBox(P.input[0] - 0.62, P.input[0] + 0.62, P.input[1] - 0.52, P.input[1] + 0.52);
 })();
-const inputPile = new Pile(scene, P.input[0], 0.5, P.input[1], { cols: 2, rows: 2, dx: 0.32, dz: 0.3, dy: ITEM_H.jar });
-const outputPile = new Pile(scene, P.output[0], 0.02, P.output[1], { cols: 2, rows: 2, dx: 0.48, dz: 0.4, dy: ITEM_H.crate });
+const inputPile = new Pile(scene, P.input[0], 0.5, P.input[1], { cols: 2, rows: 2, dx: 0.46, dz: 0.44, dy: ITEM_H.jar });
+const outputPile = new Pile(scene, P.output[0], 0.02, P.output[1], { cols: 2, rows: 2, dx: 0.74, dz: 0.62, dy: ITEM_H.crate });
 const HOPPER = new V3(P.pos[0] - 0.7, 2.4, P.pos[1]);
 const CHUTE = new V3(P.pos[0] + 1.5, 1.0, P.pos[1]);
 function updateMachine(dt) {
@@ -660,7 +675,7 @@ function updateHives(dt) {
 const PL = CONFIG.player;
 const player = makeHumanoid({ skin: 0xf3c9a0, shirt: 0xe2574c, overall: 0x3f6fb5, pants: 0x3f6fb5, hair: 0x5a3825, hat: 'straw', shoes: 0x5a3a22 });
 player.root.position.set(PL.start[0], 0, PL.start[1]); scene.add(player.root);
-const stack = new Pile(player.carry, 0, 0, 0, { dy: 0.3 });
+const stack = new Pile(player.carry, 0, 0, 0, { dy: ITEM_H.jar });
 let money = 0, sold = 0, earned = 0;
 const vel = new V3();
 let heading = 0;
@@ -673,11 +688,20 @@ const SKINS = [0xf3c9a0, 0xe0ac7e, 0xc68a5c, 0x8d5a3b, 0xffdcb8];
 const SHIRTS = [0x5aa9e6, 0xf27059, 0x7bc950, 0xb57edc, 0xf4a259, 0x4ecdc4, 0xff8fab, 0x8d99ae];
 const HAIRS = [0x2b1d14, 0x5a3825, 0xd9a441, 0x1c1c1c, 0x8b4513, 0xb0b0b0];
 const PANTS = [0x3b4a6b, 0x4a4a4a, 0x7a5c3e, 0x2f5d50, 0x5b4b8a];
-const CROWD = [[9.3, 0], [10.4, -1.4], [10.5, 1.3], [11.6, -0.1], [11.7, -2.6], [11.9, 2.4], [12.9, -1.3], [13.0, 1.2], [13.6, -3.4], [13.8, 3.3], [14.5, 0.1]];
+// crowd: front spot at the counter, then a packed blob filling the plaza (nearest first)
+const CROWD = [[9.3, 0]];
+for (let x = 10.2; x <= 16.2; x += 0.95) for (let z = -4.2; z <= 4.21; z += 0.95) CROWD.push([x + ((Math.round(z / 0.95) & 1) ? 0.45 : 0), z]);
+CROWD.sort((a, b) => Math.hypot(a[0] - 9.3, a[1] * 1.3) - Math.hypot(b[0] - 9.3, b[1] * 1.3));
+// queue: snake line — east along z=0, then back west on z=+1.3, then east on z=-1.3
+const QROW = 8, QSP = 0.82;
 function slotPos(i, c) {
-  if (custMode === 'queue') return new V3(9.3 + i * 1.1, 0, 0);
+  if (custMode === 'queue') {
+    const r = Math.floor(i / QROW), k = i % QROW, zr = [0, 1.3, -1.3, 2.6][Math.min(r, 3)];
+    const col = r % 2 ? QROW - 1 - k : k;
+    return new V3(9.3 + col * QSP + (r ? 0.6 : 0), 0, zr);
+  }
   const p = CROWD[Math.min(i, CROWD.length - 1)], j = i ? 1 : 0;
-  return new V3(p[0] + c.jx * j, 0, p[1] + c.jz * j);
+  return new V3(p[0] + c.jx * j * 0.5, 0, p[1] + c.jz * j * 0.5);
 }
 function spawnCustomer(near = false) {
   const h = makeHumanoid({ skin: pick(SKINS), shirt: pick(SHIRTS), pants: pick(PANTS), hair: pick(HAIRS), hat: pick(['none', 'cap', 'bun', 'none']), hatColor: pick(SHIRTS), scale: rnd(0.92, 1.04) });
@@ -686,7 +710,7 @@ function spawnCustomer(near = false) {
   const idx = customers.filter(k => k.state !== 'out').length;
   const sp = near ? slotPos(idx, c) : new V3(CU.spawnX, 0, side * 14);
   h.root.position.copy(sp); scene.add(h.root);
-  c.pile = new Pile(h.carry, 0, 0, 0, { dy: 0.29 });
+  c.pile = new Pile(h.carry, 0, 0, 0, { dy: ITEM_H.crate });
   c.bub = addLabel('', '', () => _tmp.copy(h.root.position).setY(2.25 * h.root.scale.x).clone(), 0);
   customers.push(c); renderBubble(c);
   return c;
@@ -715,7 +739,7 @@ function updateCustomers(dt) {
     const c = customers[k], r = c.h.root;
     let tgt;
     if (c.state === 'out') { c.outT += dt; tgt = new V3(CU.spawnX, 0, c.exitZ); if (c.outT > 1.6) c.bub.show = false; }
-    else tgt = slotPos(c.idx, c);
+    else { tgt = slotPos(c.idx, c); c.bub.show = c.idx < 4; } // only the people about to be served show a bubble
     const d = new V3(tgt.x - r.position.x, 0, tgt.z - r.position.z), dist = d.length();
     const moving = dist > 0.06;
     if (moving) {
@@ -727,7 +751,7 @@ function updateCustomers(dt) {
       if (!c.arrived) { c.arrived = true; if (c.state === 'in') c.state = 'wait'; }
     }
     if (c.state === 'wait' || c.state === 'in') {
-      if (c.arrived) { c.patience -= dt * (c.idx === 0 ? 1 : 0.5); if (Math.random() < dt * 4) renderBubble(c); }
+      if (c.arrived) { c.patience -= dt * (c.idx === 0 ? 1 : c.idx < 4 ? 0.35 : 0.12); if (Math.random() < dt * 4) renderBubble(c); }
       if (c.patience <= 0) leave(c, false);
     }
     animHuman(c.h, dt, moving, c.pile.count > 0, 0.75, c.state === 'out' && c.happy && !moving ? 'cheer' : null);
@@ -740,7 +764,7 @@ function lerpAngle(a, b, t) { let d = b - a; while (d > PI) d -= PI * 2; while (
 
 /* ---------------- cash ---------------- */
 const CC = CONFIG.counter;
-const cashPile = new Pile(scene, CC.cash[0], 0.03, CC.cash[1], { cols: 2, rows: 3, dx: 0.4, dz: 0.24, dy: 0.04 });
+const cashPile = new Pile(scene, CC.cash[0], 0.03, CC.cash[1], { cols: 2, rows: 3, dx: 0.56, dz: 0.32, dy: 0.06 });
 function pay(c) {
   const amount = c.demand * CU.price; sold += c.demand; earned += amount;
   const n = Math.min(8, Math.max(2, Math.ceil(amount / 6)));
@@ -770,7 +794,7 @@ const pads = CONFIG.unlocks.map((u, i) => {
 function renderPad(p) {
   const rem = p.u.price - p.paid;
   p.lbl.el.className = 'lbl pad' + (money >= rem ? ' ok' : '');
-  p.lbl.el.innerHTML = `<b>${p.u.icon} ${p.u.name}</b>$${rem}`;
+  p.lbl.el.innerHTML = `<span class="ic">${p.u.icon}</span><span class="pr">$${rem}</span>`;
 }
 function revealPads() {
   let firstOpen = pads.find(p => !p.done);
@@ -786,12 +810,12 @@ function doUnlock(id) {
     for (let i = 0; i < 70; i++) { const f = flower(rnd(x0 + 0.3, x1 - 0.3), rnd(z0 + 0.3, z1 - 0.3), pick(FLOWER_COLS), field.flowers, rnd(0.9, 1.3)); popIn(f, i * 0.012); }
     for (let i = 0; i < 8; i++) addBee(new V3((x0 + x1) / 2, 0, (z0 + z1) / 2), 1.8, true);
     confetti(new V3((x0 + x1) / 2, 0.5, (z0 + z1) / 2), 40);
-    floatText('Tổ ong x1.6', new V3((x0 + x1) / 2, 1.5, (z0 + z1) / 2));
+    floatText('🐝 ×1.6', new V3((x0 + x1) / 2, 1.5, (z0 + z1) / 2));
   }
   if (id === 'machine2') {
     machine.time = P.time / 2; machine.body.material = mat(0xffd65a); machine.win.material.color.setHex(0xfff6c8);
     mk(BOX(2.7, 0.14, 2.3), 0xffb000, machine.g, 0, 0.32, 0, false);
-    confetti(new V3(P.pos[0], 1.5, P.pos[1]), 40); floatText('Máy nhanh x2', new V3(P.pos[0], 2.8, P.pos[1]));
+    confetti(new V3(P.pos[0], 1.5, P.pos[1]), 40); floatText('⚡ ×2', new V3(P.pos[0], 2.8, P.pos[1]));
   }
 }
 
@@ -900,7 +924,7 @@ function interact(dt) {
       beep(700 + pd.paid / pd.u.price * 600, 0.03, 'triangle', 0.02);
       if (pd.paid >= pd.u.price) {
         pd.done = true; pd.g.visible = false; pd.lbl.show = false; removeLabel(pd.lbl);
-        doUnlock(pd.u.id); beep(660, 0.1); setTimeout(() => beep(990, 0.15), 90);
+        doUnlock(pd.u.id); tutorialDone = true; beep(660, 0.1); setTimeout(() => beep(990, 0.15), 90);
         revealPads(); checkEnd();
       }
     }
@@ -935,7 +959,7 @@ let endShown = false;
 function checkEnd() {
   if (endShown || pads.some(p => !p.done)) return;
   endShown = true;
-  setTimeout(() => { $('endStats').textContent = `Đã bán ${sold} thùng mật · Doanh thu $${earned}`; $('end').style.display = 'flex'; }, 1300);
+  setTimeout(() => { $('endStats').textContent = `📦 ${sold}   ·   $${earned}`; $('end').style.display = 'flex'; }, 1300);
 }
 $('bKeep').onclick = () => { $('end').style.display = 'none'; };
 $('bRestart').onclick = () => location.reload();
@@ -969,13 +993,15 @@ function guide() {
   if (machine.busy || machine.pending || inputPile.count || belt.items.length) return { p: new V3(P.output[0], 0, P.output[1]), t: 'Máy đang đóng gói…' };
   return { p: bestTray().trayPos, t: 'Chờ ong làm mật…' };
 }
-let hintText = '';
+// The arrow teaches the loop once (hive → machine → crates → counter → cash → first unlock), then retires.
+let tutorialDone = false;
+arrow.scale.setScalar(1.5);
 function updateGuide(t) {
+  if (tutorialDone) { arrow.visible = pointer.visible = false; return; }
   const g = guide(), p = player.root.position;
-  if (g.t !== hintText) { hintText = g.t; $('hint').textContent = g.t; }
   const d = Math.hypot(g.p.x - p.x, g.p.z - p.z);
   arrow.visible = d > 1.2; pointer.visible = d > 2.2;
-  arrow.position.set(g.p.x, 2.3 + Math.sin(t * 5) * 0.2, g.p.z); arrow.rotation.y = t * 2;
+  arrow.position.set(g.p.x, 2.9 + Math.sin(t * 5) * 0.25, g.p.z); arrow.rotation.y = t * 2;
   pointer.position.set(p.x, 0.05, p.z); pointer.rotation.y = Math.atan2(g.p.x - p.x, g.p.z - p.z);
 }
 
@@ -998,6 +1024,7 @@ $('bLayout').onclick = e => { if (!overlay) buildOverlay(); else overlay.visible
 $('bView').onclick = e => { overview = !overview; e.currentTarget.classList.toggle('on', overview); };
 $('bMode').onclick = e => { custMode = custMode === 'queue' ? 'crowd' : 'queue'; e.currentTarget.textContent = custMode === 'queue' ? '👥 Hàng dài' : '👥 Đám đông'; customers.forEach(c => { if (c.state !== 'out') c.arrived = false; }); };
 $('bCash').onclick = () => { money += 100; bumpMoney(); };
+$('bGear').onclick = e => { const pn = $('toolPanel'); pn.hidden = !pn.hidden; e.currentTarget.classList.toggle('on', !pn.hidden); };
 for (const b of document.querySelectorAll('#tools button')) b.addEventListener('pointerdown', e => e.stopPropagation());
 
 /* ---------------- camera ---------------- */
@@ -1025,7 +1052,7 @@ addEventListener('resize', () => { renderer.setSize(innerWidth, innerHeight); ca
 /* ---------------- boot ---------------- */
 for (let i = 0; i < R.startActive; i++) buildHive(i, false);
 hives.forEach(h => { for (let k = 0; k < 3; k++) { const j = makeJar(); h.tray.add(j, 0); } });
-spawnCustomer(true); spawnCustomer(true);
+for (let i = 0; i < CU.startCount; i++) spawnCustomer(true);
 revealPads();
 updateCamera(0, true);
 

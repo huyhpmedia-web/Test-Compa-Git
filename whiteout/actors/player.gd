@@ -232,8 +232,11 @@ func _physics_process(delta: float) -> void:
 			_start_reload()
 		if Input.is_action_just_pressed("interact") and focused_interact != null and is_instance_valid(focused_interact):
 			focused_interact.interact(self)
+			model.play("interact")
 		if Input.is_action_just_pressed("flashlight"):
 			flashlight.visible = not flashlight.visible
+			if flashlight.visible:
+				model.play("flashlight")
 			Game.flags["flashlight_on"] = flashlight.visible
 			Sfx.play("click")
 		if Input.is_action_just_pressed("heal"):
@@ -493,7 +496,10 @@ func hurt(amount: int, from: Vector3 = Vector3.ZERO, grab: bool = false) -> void
 		return
 	invuln = 1.4 if grab else 0.9
 	stun = 0.8 if grab else 0.35
-	model.play("hurt")
+	if from != Vector3.ZERO and model.has_method("hit_react_from"):
+		model.hit_react_from(from, float(amount) * 1.5)   # directional additive react
+	else:
+		model.play("hurt")
 	shake = 1.0
 	Sfx.play("hurt_m")
 	UI.flash_damage()

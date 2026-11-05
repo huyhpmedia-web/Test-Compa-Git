@@ -667,7 +667,7 @@ msgstr ""
 msgid "The road barrier is chained, and the gate motor is dead. No power in the whole town."
 msgstr ""
 
-#: levels/l1_substation.gd:1016 levels/l3_church.gd:1177
+#: levels/l1_substation.gd:1016 levels/l3_church.gd:1184
 msgid "Go through the gate"
 msgstr ""
 
@@ -1693,35 +1693,35 @@ msgstr ""
 msgid "SOUP OF THE DAY: NO"
 msgstr ""
 
-#: levels/l3_church.gd:869
+#: levels/l3_church.gd:876
 msgid "The doors are sealed shut by a half-metre of ice. There must be another way in."
 msgstr ""
 
-#: levels/l3_church.gd:875
+#: levels/l3_church.gd:882
 msgid "ST. BRENDAN'S"
 msgstr ""
 
-#: levels/l3_church.gd:876
+#: levels/l3_church.gd:883
 msgid "ADVENT SERVICES  —  ALL ARE WELCOME"
 msgstr ""
 
-#: levels/l3_church.gd:877
+#: levels/l3_church.gd:884
 msgid "Locked. A tag on the frame reads: 'Sacristy key — see D. Halloran'."
 msgstr ""
 
-#: levels/l3_church.gd:973
+#: levels/l3_church.gd:980
 msgid "HYMNS: 214  118  304"
 msgstr ""
 
-#: levels/l3_church.gd:995
+#: levels/l3_church.gd:1002
 msgid "RING FOR VESPERS"
 msgstr ""
 
-#: levels/l3_church.gd:1004
+#: levels/l3_church.gd:1011
 msgid "Sermon Draft: Advent IV"
 msgstr ""
 
-#: levels/l3_church.gd:1005
+#: levels/l3_church.gd:1012
 msgid ""
 "[b]SERMON — ADVENT IV (draft, unfinished)[/b]\n"
 "\n"
@@ -1736,11 +1736,11 @@ msgid ""
 "[in a different hand] The singing started at three. It sounds like us. Ruth Kade stayed past midnight with the blankets. I told her to go home to the school. She said the lake was calling."
 msgstr ""
 
-#: levels/l3_church.gd:1006
+#: levels/l3_church.gd:1013
 msgid "Mom's Note"
 msgstr ""
 
-#: levels/l3_church.gd:1007
+#: levels/l3_church.gd:1014
 msgid ""
 "[b]Elias —[/b]\n"
 "\n"
@@ -1757,15 +1757,15 @@ msgid ""
 "— Mom"
 msgstr ""
 
-#: levels/l3_church.gd:1116
+#: levels/l3_church.gd:1123
 msgid "Burning barrels and flares keep the Rimebound back. Shops break their line of sight."
 msgstr ""
 
-#: levels/l3_church.gd:1127
+#: levels/l3_church.gd:1134
 msgid "Corvane Community Heat Credit"
 msgstr ""
 
-#: levels/l3_church.gd:1128
+#: levels/l3_church.gd:1135
 msgid ""
 "[b]CORVANE SYSTEMS — Community Partnerships[/b]\n"
 "\n"
@@ -1782,11 +1782,11 @@ msgid ""
 "Director, Community Partnerships"
 msgstr ""
 
-#: levels/l3_church.gd:1133
+#: levels/l3_church.gd:1140
 msgid "Pharmacy Cold-Exposure Log"
 msgstr ""
 
-#: levels/l3_church.gd:1134
+#: levels/l3_church.gd:1141
 msgid ""
 "[b]KETTLE FALLS PHARMACY — COLD EXPOSURE LOG[/b]\n"
 "\n"
@@ -1801,11 +1801,11 @@ msgid ""
 "[i]— D.H.[/i]  (the sacristy key is on my lanyard, if Father Okafor sends anyone)"
 msgstr ""
 
-#: levels/l3_church.gd:1141
+#: levels/l3_church.gd:1148
 msgid "Cardboard Sign: Lindqvist Hardware"
 msgstr ""
 
-#: levels/l3_church.gd:1142
+#: levels/l3_church.gd:1149
 msgid ""
 "[b](marker, on a flattened box)[/b]\n"
 "\n"
@@ -1823,15 +1823,15 @@ msgid ""
 "— Don Lindqvist. Open since 1954. Still open."
 msgstr ""
 
-#: levels/l3_church.gd:1145
+#: levels/l3_church.gd:1152
 msgid "NOTICE — READ ME"
 msgstr ""
 
-#: levels/l3_church.gd:1146
+#: levels/l3_church.gd:1153
 msgid "Notice on the Church Door"
 msgstr ""
 
-#: levels/l3_church.gd:1147
+#: levels/l3_church.gd:1154
 msgid ""
 "[b]ST. BRENDAN'S — NOTICE[/b]\n"
 "\n"
@@ -1846,148 +1846,148 @@ msgid ""
 "P.S. If you hear singing at night, it isn't us."
 msgstr ""
 
-#: levels/l3_church.gd:1151 levels/l3_church.gd:1208
+#: levels/l3_church.gd:1158 levels/l3_church.gd:1215
 msgid "Find the sacristy key — Kettle Falls Pharmacy, west end of Main Street."
 msgstr ""
 
-#: levels/l3_church.gd:1156 levels/l3_church.gd:1206
+#: levels/l3_church.gd:1163 levels/l3_church.gd:1213
 msgid "Unlock the side door of St. Brendan's (west wall)."
 msgstr ""
 
-#: levels/l3_church.gd:1159
+#: levels/l3_church.gd:1166
 msgid "The pharmacist's hand closes on your wrist."
 msgstr ""
 
-#: levels/l3_church.gd:1163
+#: levels/l3_church.gd:1170
 msgid "The Pump Shotgun spreads wide up close. It's loud, and they listen to loud."
 msgstr ""
 
-#: levels/l3_church.gd:1177
+#: levels/l3_church.gd:1184
 msgid "The lakeside gate is chained and frozen shut. You can't leave Mom behind."
 msgstr ""
 
-#: levels/l3_church.gd:1178
+#: levels/l3_church.gd:1185
 msgid "LAKESHORE ROAD — MERIDIAN SITE ACCESS — AUTHORIZED PERSONNEL ONLY"
 msgstr ""
 
-#: levels/l3_church.gd:1179
+#: levels/l3_church.gd:1186
 msgid "NO TRESPASSING — CORVANE SYSTEMS"
 msgstr ""
 
-#: levels/l3_church.gd:1197
+#: levels/l3_church.gd:1204
 msgid "MAIN STREET"
 msgstr ""
 
-#: levels/l3_church.gd:1197
+#: levels/l3_church.gd:1204
 msgid "St. Brendan's — Kettle Falls"
 msgstr ""
 
-#: levels/l3_church.gd:1200 levels/l3_church.gd:1335
+#: levels/l3_church.gd:1207 levels/l3_church.gd:1342
 msgid "Take the lakeside road to MERIDIAN (east gate)."
 msgstr ""
 
-#: levels/l3_church.gd:1202
+#: levels/l3_church.gd:1209
 msgid "Take Ruth's rosary from the altar of St. Brendan's."
 msgstr ""
 
-#: levels/l3_church.gd:1204
+#: levels/l3_church.gd:1211
 msgid "Silence the Choir. The bell in the tower stuns it."
 msgstr ""
 
-#: levels/l3_church.gd:1210
+#: levels/l3_church.gd:1217
 msgid "Cross Main Street to St. Brendan's church, at the far east end."
 msgstr ""
 
-#: levels/l3_church.gd:1221
+#: levels/l3_church.gd:1228
 msgid "A headlamp. Back at the roadblock. Walking like the road's too short for him."
 msgstr ""
 
-#: levels/l3_church.gd:1222
+#: levels/l3_church.gd:1229
 msgid "Light and heat. It's following the light. Get under cover."
 msgstr ""
 
-#: levels/l3_church.gd:1229
+#: levels/l3_church.gd:1236
 msgid "A thin, wet humming comes from behind the counter."
 msgstr ""
 
-#: levels/l3_church.gd:1264
+#: levels/l3_church.gd:1271
 msgid "...Is that singing?"
 msgstr ""
 
-#: levels/l3_church.gd:1267
+#: levels/l3_church.gd:1274
 msgid "'Lo, How a Rose E'er Blooming.' Mom sang it every Advent. In the kitchen. Out of tune."
 msgstr ""
 
-#: levels/l3_church.gd:1268
+#: levels/l3_church.gd:1275
 msgid "Halloran's cardigan. The Lindqvist boys' hockey jackets. They're all still here."
 msgstr ""
 
-#: levels/l3_church.gd:1269
+#: levels/l3_church.gd:1276
 msgid "All of them. Standing in one place. Singing the same note."
 msgstr ""
 
-#: levels/l3_church.gd:1275
+#: levels/l3_church.gd:1282
 msgid "Silence the Choir. The bell in the tower stuns it (find the bell-pull handle)."
 msgstr ""
 
-#: levels/l3_church.gd:1284
+#: levels/l3_church.gd:1291
 msgid "The singing cracks, and stops. Something in the chancel gives way."
 msgstr ""
 
-#: levels/l3_church.gd:1309
+#: levels/l3_church.gd:1316
 msgid "The hum stops. For the first time tonight, you can hear the wind."
 msgstr ""
 
-#: levels/l3_church.gd:1312
+#: levels/l3_church.gd:1319
 msgid "Take Ruth's rosary from the altar."
 msgstr ""
 
-#: levels/l3_church.gd:1328
+#: levels/l3_church.gd:1335
 msgid "Dad? ...Dad, I can hear bells. Are you at the church? Please say yes."
 msgstr ""
 
-#: levels/l3_church.gd:1329
+#: levels/l3_church.gd:1336
 msgid "Yes. It's over. I have Gran's rosary. June, where are you?"
 msgstr ""
 
-#: levels/l3_church.gd:1330
+#: levels/l3_church.gd:1337
 msgid "I followed her. I know, I know. She just kept walking toward the lake like she wasn't cold."
 msgstr ""
 
-#: levels/l3_church.gd:1331
+#: levels/l3_church.gd:1338
 msgid "There's a pipe from the data center going down into the mine. Gran went in through Meridian."
 msgstr ""
 
-#: levels/l3_church.gd:1332
+#: levels/l3_church.gd:1339
 msgid "Stay warm. Stay off the road. Don't follow anyone else. I'm coming."
 msgstr ""
 
-#: levels/l3_church.gd:1333
+#: levels/l3_church.gd:1340
 msgid "You said that about Christmas, too. ...Just hurry."
 msgstr ""
 
-#: levels/l3_church.gd:1336
+#: levels/l3_church.gd:1343
 msgid "The lakeside gate is open to you now."
 msgstr ""
 
-#: levels/l3_church.gd:1340
+#: levels/l3_church.gd:1347
 msgid "Ring the church bell"
 msgstr ""
 
-#: levels/l3_church.gd:1348
+#: levels/l3_church.gd:1355
 msgid "You fit the handle onto the pull-chain."
 msgstr ""
 
-#: levels/l3_church.gd:1350
+#: levels/l3_church.gd:1357
 msgid "The pull-chain hangs bare. The handle is missing."
 msgstr ""
 
-#: levels/l3_church.gd:1354
+#: levels/l3_church.gd:1361
 #, c-format
 msgid "The bell is still swaying. (%d s)"
 msgstr ""
 
-#: levels/l3_church.gd:1359
+#: levels/l3_church.gd:1366
 msgid "The bell tolls. The hum falters."
 msgstr ""
 

@@ -29,7 +29,7 @@ func _ready() -> void:
 	add_child(m)
 	var tgt := Node3D.new(); add_child(tgt); tgt.position = Vector3(2.5, 0, 2.5)
 	var cam := Camera3D.new(); add_child(cam)
-	cam.look_at_from_position(Vector3(0, 1.5, 5.0), Vector3(0, 0.8, 0), Vector3.UP); cam.fov = 40; cam.current = true
+	cam.look_at_from_position(Vector3(0, 1.3, 3.6), Vector3(0, 0.85, 0), Vector3.UP); cam.fov = 40; cam.current = true
 	m.rotation.y = 0.0
 	m.pose = "zombie" if model != "elias" else "normal"
 	var t0 := Time.get_ticks_msec()

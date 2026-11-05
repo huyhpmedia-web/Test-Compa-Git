@@ -6,7 +6,7 @@ extends RefCounted
 ## Marker contract (see world/fx.gd weapon_mesh): the marker frame IS the hand bone frame (X thumb/pinky axis, Y along the fingers, Z palm normal).
 ## Everything here runs in skeleton space; the weapon node is placed with one global transform per frame.
 
-const ANCHOR_R := Vector3(0.0, 0.074, 0.012)    # palm contact point in the hand bone frame (right)
+const ANCHOR_R := Vector3(0.0, 0.058, 0.032)    # centre of the closed fist (the grip axis passes through it), hand bone frame (right)
 const ANCHOR_L := Vector3(0.0, 0.074, 0.012)
 const POLE_R := Vector3(-0.45, -1.0, -0.35)
 const POLE_L := Vector3(0.45, -1.0, -0.35)
@@ -17,16 +17,16 @@ const FINGERS := ["thumb", "index", "middle", "ring", "pinky"]
 const SPECS := {
 	"handgun": {"ik": true, "aim": Vector3(-0.05, 1.405, 0.56), "low": Vector3(-0.085, 1.20, 0.42), "low_pitch": -0.78,
 		"recoil": [0.115, 0.034, 0.035], "move": "Slide", "travel": 0.030, "eject_delay": 0.0,
-		"curl_r": [18.0, 22.0, 72.0, 78.0, 80.0], "curl_l": [20.0, 78.0, 88.0, 92.0, 92.0]},
+		"curl_r": [14.0, 40.0, 80.0, 86.0, 88.0], "curl_l": [20.0, 78.0, 88.0, 92.0, 92.0]},
 	"magnum": {"ik": true, "aim": Vector3(-0.05, 1.405, 0.55), "low": Vector3(-0.085, 1.20, 0.40), "low_pitch": -0.78,
 		"recoil": [0.19, 0.05, 0.06], "move": "", "travel": 0.0, "eject_delay": 0.0,
-		"curl_r": [18.0, 24.0, 74.0, 80.0, 82.0], "curl_l": [20.0, 66.0, 72.0, 76.0, 78.0]},
+		"curl_r": [14.0, 42.0, 82.0, 88.0, 90.0], "curl_l": [20.0, 66.0, 72.0, 76.0, 78.0]},
 	"shotgun": {"ik": true, "aim": Vector3(-0.115, 1.435, 0.46), "low": Vector3(-0.13, 1.17, 0.30), "low_pitch": -0.70,
 		"recoil": [0.15, 0.075, 0.045], "move": "", "travel": 0.0, "eject_delay": 0.30,
-		"curl_r": [20.0, 26.0, 74.0, 80.0, 82.0], "curl_l": [32.0, 56.0, 66.0, 70.0, 72.0]},
+		"curl_r": [16.0, 44.0, 82.0, 88.0, 90.0], "curl_l": [32.0, 56.0, 66.0, 70.0, 72.0]},
 	"launcher": {"ik": true, "aim": Vector3(-0.12, 1.44, 0.42), "low": Vector3(-0.14, 1.18, 0.28), "low_pitch": -0.70,
 		"recoil": [0.16, 0.08, 0.04], "move": "", "travel": 0.0, "eject_delay": 0.0,
-		"curl_r": [20.0, 26.0, 74.0, 80.0, 82.0], "curl_l": [32.0, 56.0, 66.0, 70.0, 72.0]},
+		"curl_r": [16.0, 44.0, 82.0, 88.0, 90.0], "curl_l": [32.0, 56.0, 66.0, 70.0, 72.0]},
 	"knife": {"ik": false, "carry_rot": Vector3(0.0, 0.0, -1.1),
 		"curl_r": [30.0, 78.0, 82.0, 84.0, 84.0], "curl_l": []},
 }

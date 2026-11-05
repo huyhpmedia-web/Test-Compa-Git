@@ -548,9 +548,10 @@ func _prepare_hit(lib: AnimationLibrary, an: String) -> void:
 				var p0: Vector3 = a.track_get_key_value(i, 0)
 				for k in n:
 					a.track_set_key_value(i, k, (a.track_get_key_value(i, k) as Vector3) - p0)
-			elif tt == Animation.TYPE_SCALE_3D:
-				for k in n:
-					a.track_set_key_value(i, k, Vector3.ONE)
+		# scale tracks make no sense for a delta (they would be added: 1+1 = 2x body): drop them
+		for i in range(a.get_track_count() - 1, -1, -1):
+			if a.track_get_type(i) == Animation.TYPE_SCALE_3D:
+				a.remove_track(i)
 		var z := a.duplicate() as Animation
 		for i in z.get_track_count():
 			var tt := z.track_get_type(i)

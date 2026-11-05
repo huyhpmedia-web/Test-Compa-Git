@@ -30,6 +30,8 @@ func _ready() -> void:
 	c.position = Vector3(float(cp[0]), float(cp[1]), float(cp[2]))
 	c.look_at(Vector3(float(lp[0]), float(lp[1]), float(lp[2])))
 	c.fov = float(a.get("fov", 40)); c.current = true
+	var cams: PackedStringArray = String(a.get("cams", "")).split(";", false)
+	var play_a: PackedStringArray = String(a.get("play", "")).split("@")
 	var frames := int(a.get("frames", 40))
 	var kick_at := int(a.get("kick", -1))
 	var shots: PackedStringArray = String(a.get("shots", "")).split(",", false)   # frame numbers to save extra images: out_<n>.png
@@ -41,9 +43,20 @@ func _ready() -> void:
 			w.kick(1.0)
 			SF.muzzle_flash(w.wmodel, w.muzzle, a.get("hold", "handgun"))
 			SF.muzzle_smoke(self, w.muzzle_xf().origin, -w.weapon_basis().z)
+		if play_a.size() == 2 and i == int(play_a[1]):
+			h.play(play_a[0])
+			if a.get("trail", "0") == "1":
+				load("res://world/shot_fx.gd").swing_trail(self, Transform3D(h.global_transform.basis, h.global_position), 1.0)
 		await get_tree().process_frame
 		if str(i) in shots:
 			get_viewport().get_texture().get_image().save_png(a.out.replace(".png", "_%d.png" % i))
+	for ci in cams.size():
+		var pr := cams[ci].split(">")
+		var p0 := pr[0].split(","); var p1 := pr[1].split(",")
+		c.position = Vector3(float(p0[0]), float(p0[1]), float(p0[2]))
+		c.look_at(Vector3(float(p1[0]), float(p1[1]), float(p1[2])))
+		for k in 3: await get_tree().process_frame
+		get_viewport().get_texture().get_image().save_png(String(a.get("out", "/tmp/p.png")).replace(".png", "_c%d.png" % ci))
 	get_viewport().get_texture().get_image().save_png(a.get("out", "/tmp/p.png"))
 	print("POSE_DONE")
 	get_tree().quit()

@@ -27,11 +27,11 @@ static func _box(size: Vector3, mat: Material, pos := Vector3.ZERO) -> MeshInsta
 ## given markers from these offsets (metres, in the flipped frame: forward -Z, up +Y, right +X). support: "pistol" (left palm on the grip's left side)
 ## or "fore" (left palm up under the forend).
 const OFFSETS := {
-	"shotgun": {"flip": true, "grip": Vector3(0.02, 0.02, 0.13), "support": Vector3(0.0, -0.01, -0.22), "support_kind": "fore",
+	"shotgun": {"flip": true, "grip": Vector3(0.0, 0.02, 0.13), "support": Vector3(0.0, -0.01, -0.22), "support_kind": "fore",
 		"muzzle": Vector3(0, 0.03, -0.5), "eject": Vector3(0.03, 0.03, 0.02)},
-	"magnum": {"flip": true, "grip": Vector3(0.018, -0.045, 0.14), "support": Vector3(-0.018, -0.075, 0.14), "support_kind": "pistol",
+	"magnum": {"flip": true, "grip": Vector3(0.0, -0.045, 0.14), "support": Vector3(-0.018, -0.075, 0.14), "support_kind": "pistol",
 		"muzzle": Vector3(0, 0.03, -0.15), "eject": Vector3(0.025, 0.02, -0.02)},
-	"launcher": {"flip": true, "grip": Vector3(0.018, -0.03, 0.075), "support": Vector3(-0.018, -0.06, 0.075), "support_kind": "pistol",
+	"launcher": {"flip": true, "grip": Vector3(0.0, -0.03, 0.075), "support": Vector3(-0.018, -0.06, 0.075), "support_kind": "pistol",
 		"muzzle": Vector3(0, 0.03, -0.12), "eject": Vector3(0.025, 0.02, -0.02)},
 }
 

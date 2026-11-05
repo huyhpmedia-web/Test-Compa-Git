@@ -120,7 +120,7 @@ def _bvh(path):
     return _bvh_cache[path]
 
 
-def bvh_take(rig, path, f0=0, f1=None, xy="drift", yaw=None, name=None, heading_from=None):
+def bvh_take(rig, path, f0=0, f1=None, xy="drift", yaw=None, name=None, heading_from=None, unyaw=False):
     """Retarget BVH frames [f0, f1) onto `rig`. xy: 'drift' (remove linear travel: loops), 'keep' (travel relative to frame 0),
     'zero' (in place). yaw: manual heading offset in degrees (default: align hips-left to +X at f0)."""
     b, W, P = _bvh(path)
@@ -171,6 +171,9 @@ def bvh_take(rig, path, f0=0, f1=None, xy="drift", yaw=None, name=None, heading_
         xyv = xyv * 0
     for k in range(f0, f1):
         f = {}
+        if unyaw:
+            lv = W[hips][k] @ np.array([1.0, 0, 0]); lv = np.array([lv[0], 0, lv[2]]); lv /= max(np.linalg.norm(lv), 1e-6)
+            Ry = np.array([[lv[0], 0, lv[2]], [0, 1, 0], [-lv[2], 0, lv[0]]])
         for tb, bj in MAP.items():
             f[tb] = C @ Ry @ W[b.idx(bj)][k] @ C.T
         D.append(f)
@@ -286,3 +289,41 @@ def emit(rig, frames, name, loop, spec_fn=None, close=True):
         q, l = pose_frame(rig, Rw, lc, spec)
         qs.append(q); locs.append(l)
     return write_action(rig, name, qs, locs, loop=loop)
+
+
+def find_loop(path, lo=0.7, hi=1.6, region=None):
+    """best [f0, f1) frame pair of a BVH whose pose matches (cyclic locomotion). region=(t0,t1) seconds."""
+    b, W, P = _bvh(path)
+    names = ["LeftUpLeg", "RightUpLeg", "LeftLeg", "RightLeg", "LeftFoot", "RightFoot", "LeftArm", "RightArm", "Spine1", "Head"]
+    feat = np.concatenate([W[b.idx(n)].reshape(b.nframes, 9) for n in names], axis=1)
+    a0, a1 = 0, b.nframes
+    if region:
+        a0, a1 = int(region[0] / b.dt), min(b.nframes, int(region[1] / b.dt))
+    feat = feat[a0:a1]
+    best = (1e9, 0, 0)
+    step = max(1, int(round(0.01 / b.dt)))
+    for L in range(int(lo / b.dt), int(hi / b.dt) + 1, step):
+        if L >= len(feat): break
+        e = np.linalg.norm(feat[:-L:step] - feat[L::step], axis=1)
+        i = int(np.argmin(e))
+        if e[i] < best[0]:
+            best = (float(e[i]), a0 + i * step, a0 + i * step + L)
+    return best[1], best[2], best[0]
+
+
+def make_loop(frames, blend):
+    """seamless loop from a non-looping frame list: crossfade the last `blend` frames into the first ones."""
+    n = len(frames)
+    m = n - blend
+    out = []
+    for j in range(m):
+        if j < blend:
+            w = (j + 1) / (blend + 1)
+            R = {}
+            Ra, la = frames[m + j]; Rb, lb = frames[j]
+            for bn in Rb:
+                R[bn] = np.array(to_quat(Ra[bn]).slerp(to_quat(Rb[bn]), w).to_matrix()) if bn in Ra else Rb[bn]
+            out.append((R, la * (1 - w) + lb * w))
+        else:
+            out.append(frames[j])
+    return out

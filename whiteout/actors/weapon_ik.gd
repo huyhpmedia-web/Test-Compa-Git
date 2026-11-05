@@ -22,7 +22,7 @@ const SPECS := {
 		"recoil": [0.19, 0.05, 0.06], "move": "", "travel": 0.0, "eject_delay": 0.0,
 		"curl_r": [18.0, 24.0, 74.0, 80.0, 82.0], "curl_l": [20.0, 66.0, 72.0, 76.0, 78.0]},
 	"shotgun": {"ik": true, "aim": Vector3(-0.115, 1.435, 0.46), "low": Vector3(-0.13, 1.17, 0.30), "low_pitch": -0.70,
-		"recoil": [0.15, 0.075, 0.045], "move": "Pump", "travel": 0.075, "eject_delay": 0.30,
+		"recoil": [0.15, 0.075, 0.045], "move": "", "travel": 0.0, "eject_delay": 0.30,
 		"curl_r": [20.0, 26.0, 74.0, 80.0, 82.0], "curl_l": [32.0, 56.0, 66.0, 70.0, 72.0]},
 	"launcher": {"ik": true, "aim": Vector3(-0.12, 1.44, 0.42), "low": Vector3(-0.14, 1.18, 0.28), "low_pitch": -0.70,
 		"recoil": [0.16, 0.08, 0.04], "move": "", "travel": 0.0, "eject_delay": 0.0,
@@ -128,7 +128,7 @@ func set_weapon(w: Node3D) -> void:
 		if move_node:
 			_move_base = move_node.position
 			# weapon back (+Z of the glb frame) expressed in the moving part's parent frame
-			var pb := _rel(move_node.get_parent() as Node3D, wmodel).basis if move_node.get_parent() != wmodel else Basis.IDENTITY
+			var pb := _rel(move_node.get_parent() as Node3D, wmodel).basis
 			_move_dir = (pb.inverse() * Vector3(0, 0, 1)).normalized()
 	cyl_node = wmodel.find_child("Cylinder", true, false) as Node3D
 	if cyl_node:
@@ -176,8 +176,7 @@ func muzzle_xf() -> Transform3D:
 func _do_eject() -> void:
 	if eject == null or not eject.is_inside_tree() or not eject_cb.is_valid():
 		return
-	var xf := eject.global_transform
-	eject_cb.call(xf.origin, xf.basis.y)   # Eject marker Y (= along the barrel in hand-frame terms) is the barrel axis; callers re-derive the side from wmodel
+	eject_cb.call(eject.global_transform.origin, wmodel.global_transform.basis)
 
 func weapon_basis() -> Basis:
 	return wmodel.global_transform.basis if wmodel and wmodel.is_inside_tree() else cm.global_transform.basis
@@ -189,7 +188,7 @@ func update(delta: float) -> void:
 	_t += delta
 	if weapon == null or spec.is_empty():
 		return
-	var reload_now: bool = cm.is_playing("reload") or cm.is_playing("hurt") and false
+	var reload_now: bool = cm.is_playing("reload")
 	_reload_w = move_toward(_reload_w, 1.0 if reload_now else 0.0, delta * 7.0)
 	_aim_w = cm._aim_w
 	_update_springs(delta)
@@ -209,17 +208,15 @@ func update(delta: float) -> void:
 		w = _apply_recoil(w, pose_w)
 		fwd = -w.basis.z
 		# reach check: keep the support hand reachable by pulling the weapon back
-		var tr := w * m_grip * Transform3D(Basis.IDENTITY, -ANCHOR_R)
-		var shift := 0.0
-		shift = maxf(shift, _excess("upperarm_r", "lowerarm_r", "hand_r", (w * m_grip).origin - w.basis * Vector3.ZERO))
+		var shift := _excess("upperarm_r", "lowerarm_r", "hand_r", (w * m_grip).origin)
 		if has_supp:
 			shift = maxf(shift, _excess("upperarm_l", "lowerarm_l", "hand_l", (w * m_supp).origin))
 		if shift > 0.0 and pose_w > 0.0:
 			w.origin -= fwd * shift * pose_w
-	weapon.global_transform = sk.global_transform * w * wmodel.transform.affine_inverse() if false else _to_wrapper(w)
+	weapon.global_transform = _to_wrapper(w)
 	if spec.ik:
 		var iw := pose_w
-		_ik_arm("r", sk.global_transform.affine_inverse() * Transform3D.IDENTITY if false else w * m_grip * Transform3D(Basis.IDENTITY, Vector3.ZERO), ANCHOR_R, POLE_R, iw)
+		_ik_arm("r", w * m_grip, ANCHOR_R, POLE_R, iw)
 		if has_supp:
 			_ik_arm("l", w * m_supp, ANCHOR_L, POLE_L, iw)
 		_apply_curls(1.0, iw if has_supp else 0.0)
@@ -236,12 +233,8 @@ func _pose_transform(delta: float) -> Transform3D:
 	# --- aim
 	var aim_pos: Vector3 = spec.aim
 	var piv := Vector3(0.0, 1.43, 0.0)
-	var off := aim_pos - piv
 	var ap := clampf(pitch, -0.9, 0.9)
-	off = Vector3(off.x, off.y * cos(ap) + off.z * sin(ap), off.z * cos(ap) - off.y * sin(ap) * 0.0)
-	off.y += sin(ap) * off.z
-	off.z *= cos(ap)
-	var aim_p := piv + off
+	var aim_p := piv + Basis(Vector3.RIGHT, -ap) * (aim_pos - piv)
 	var dir := Vector3(0, sin(ap), cos(ap))
 	if has_aim_point:
 		var tp := sk.global_transform.affine_inverse() * aim_point_world
@@ -298,8 +291,6 @@ func _update_parts(delta: float) -> void:
 			var tt := _slide_t - 0.16
 			if tt >= 0.0 and tt < 0.30:
 				amt = sin(clampf(tt / 0.30, 0.0, 1.0) * PI)
-				if _eject_timer >= 0.0 and tt > 0.07:
-					pass
 		else:
 			if _slide_t < 0.03:
 				amt = _slide_t / 0.03
@@ -318,7 +309,7 @@ func _update_parts(delta: float) -> void:
 		hammer_node.basis = _hammer_base * Basis(Vector3.RIGHT, -k * 0.55)
 	if cyl_node:
 		_cyl_ang = lerpf(_cyl_ang, _cyl_target, clampf(delta * 14.0, 0.0, 1.0))
-		cyl_node.basis = _cyl_base * Basis(Vector3(0, 1, 0), _cyl_ang) if false else _cyl_base * Basis(_cyl_axis_local(), _cyl_ang)
+		cyl_node.basis = _cyl_base * Basis(_cyl_axis_local(), _cyl_ang)
 	if _eject_timer >= 0.0:
 		_eject_timer -= delta
 		if _eject_timer < 0.0:
@@ -326,7 +317,7 @@ func _update_parts(delta: float) -> void:
 
 func _cyl_axis_local() -> Vector3:
 	# the glb forward axis (-Z) in the cylinder's parent frame -> rotation axis (local coords, cylinder base orientation)
-	var pb := _rel(cyl_node.get_parent() as Node3D, wmodel).basis if cyl_node.get_parent() != wmodel else Basis.IDENTITY
+	var pb := _rel(cyl_node.get_parent() as Node3D, wmodel).basis
 	return (_cyl_base.inverse() * pb.inverse() * Vector3(0, 0, -1)).normalized()
 
 # ------------------------------------------------------------------ two-bone IK

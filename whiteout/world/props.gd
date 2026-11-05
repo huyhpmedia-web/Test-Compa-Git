@@ -5,6 +5,8 @@ extends RefCounted
 
 const Mats = preload("res://core/mats.gd")
 const Gore = preload("res://world/gore.gd")
+const Env = preload("res://world/env_assets.gd")
+const FireFX = preload("res://world/fire_fx.gd")
 
 static func _root(parent: Node3D, pos: Vector3, yaw: float, n: String) -> Node3D:
 	var r := Node3D.new()
@@ -72,16 +74,29 @@ static func sphere(r: Node3D, radius: float, pos: Vector3, mat: Material, scl :=
 
 # ------------------------------------------------------------------ furniture
 static func crate(parent: Node3D, pos: Vector3, yaw := 0.0, s := 0.8) -> Node3D:
+	var gk := Env.spawn(parent, "camp/crate_wood_0%d" % (1 + int(abs(pos.x * 7 + pos.z * 3)) % 2), pos, yaw, {"name": "Crate", "fit_len": s * 1.0, "collide": Vector3(s, s, s) * 0.95})
+	if gk:
+		return gk
 	var r := _root(parent, pos, yaw, "Crate")
 	box(r, Vector3(s, s, s), Vector3(0, s * 0.5, 0), Mats.get_mat("wood", 0.8))
 	return r
 
 static func barrel(parent: Node3D, pos: Vector3, yaw := 0.0, rusty := true) -> Node3D:
+	var gb := Env.spawn(parent, "camp/barrel", pos, yaw, {"name": "Barrel", "tint": Color(0.75, 0.55, 0.4) if rusty else Color(0.5, 0.58, 0.6), "collide": "cyl", "cyl_r": 0.3})
+	if gb:
+		return gb
 	var r := _root(parent, pos, yaw, "Barrel")
 	cyl(r, 0.3, 0.9, Vector3(0, 0.45, 0), Mats.get_mat("metal_rust" if rusty else "metal_painted", 0.6))
 	return r
 
 static func desk(parent: Node3D, pos: Vector3, yaw := 0.0) -> Node3D:
+	var gd := Env.spawn(parent, "interior/desk", pos, yaw, {"name": "Desk", "snow": 0.0, "scale": 0.85, "collide": Vector3(1.7, 0.8, 0.8)})
+	if gd:
+		# monitor + papers on top (the model itself is a bare steel desk)
+		box(gd, Vector3(0.5, 0.32, 0.04), Vector3(0.3, 1.0, -0.2), Mats.color(Color(0.05, 0.05, 0.06), 0.3), false)
+		box(gd, Vector3(0.46, 0.27, 0.01), Vector3(0.3, 1.0, -0.177), Mats.emissive(Color(0.05, 0.12, 0.18), 0.6), false)
+		box(gd, Vector3(0.25, 0.01, 0.32), Vector3(-0.45, 0.68, 0.1), Mats.get_mat("paper"), false, Vector3(0, 0.3, 0))
+		return gd
 	var r := _root(parent, pos, yaw, "Desk")
 	var w := Mats.get_mat("wood", 0.8)
 	box(r, Vector3(1.6, 0.06, 0.8), Vector3(0, 0.76, 0), w)
@@ -95,6 +110,11 @@ static func desk(parent: Node3D, pos: Vector3, yaw := 0.0) -> Node3D:
 	return r
 
 static func chair(parent: Node3D, pos: Vector3, yaw := 0.0, toppled := false) -> Node3D:
+	var gc := Env.spawn(parent, "interior/chair_0%d" % (1 + int(abs(pos.x * 5 + pos.z)) % 2), pos, yaw, {"name": "Chair", "snow": 0.0, "collide": Vector3(0.5, 0.9, 0.5), "rot": Vector3(1.45 if toppled else 0.0, 0, 0)})
+	if gc:
+		if toppled:
+			gc.position.y += 0.25
+		return gc
 	var r := _root(parent, pos, yaw, "Chair")
 	var m := Mats.color(Color(0.08, 0.08, 0.09), 0.6)
 	var holder := Node3D.new()
@@ -118,6 +138,12 @@ static func table(parent: Node3D, pos: Vector3, yaw := 0.0, size := Vector2(1.4,
 	return r
 
 static func shelf(parent: Node3D, pos: Vector3, yaw := 0.0, w := 1.8, h := 2.2, books := true) -> Node3D:
+	if Env.has("interior/bookshelf") and h > 1.6:
+		var gs := _root(parent, pos, yaw, "Shelf")
+		var n := maxi(1, int(round(w / 1.37)))
+		for i in n:
+			Env.spawn(gs, "interior/bookshelf", Vector3((i - (n - 1) * 0.5) * 1.37, 0, 0), 0.0, {"snow": 0.0, "fit_h": h})
+		return gs
 	var r := _root(parent, pos, yaw, "Shelf")
 	var m := Mats.get_mat("wood_panel", 1.0)
 	box(r, Vector3(w, h, 0.05), Vector3(0, h * 0.5, -0.2), m)
@@ -149,6 +175,9 @@ static func locker(parent: Node3D, pos: Vector3, yaw := 0.0, count := 3) -> Node
 	return r
 
 static func cabinet(parent: Node3D, pos: Vector3, yaw := 0.0) -> Node3D:
+	var gcb := Env.spawn(parent, "interior/drawer_cabinet", pos, yaw, {"name": "Cabinet", "snow": 0.0, "fit_h": 1.35})
+	if gcb:
+		return gcb
 	var r := _root(parent, pos, yaw, "Cabinet")
 	box(r, Vector3(0.5, 1.3, 0.6), Vector3(0, 0.65, 0), Mats.get_mat("metal_painted", 1.0))
 	for i in 4:
@@ -156,6 +185,9 @@ static func cabinet(parent: Node3D, pos: Vector3, yaw := 0.0) -> Node3D:
 	return r
 
 static func couch(parent: Node3D, pos: Vector3, yaw := 0.0, color := Color(0.3, 0.2, 0.15)) -> Node3D:
+	var gco := Env.spawn(parent, "interior/sofa_0%d" % (2 + int(abs(pos.x + pos.z)) % 2), pos, yaw, {"name": "Couch", "snow": 0.0, "tint": Color(0.7, 0.7, 0.7).lerp(color * 2.5, 0.35)})
+	if gco:
+		return gco
 	var r := _root(parent, pos, yaw, "Couch")
 	var m := Mats.color(color, 0.9)
 	box(r, Vector3(2.0, 0.45, 0.9), Vector3(0, 0.22, 0), m)
@@ -167,10 +199,12 @@ static func couch(parent: Node3D, pos: Vector3, yaw := 0.0, color := Color(0.3, 
 static func bed(parent: Node3D, pos: Vector3, yaw := 0.0, hospital := false) -> Node3D:
 	var r := _root(parent, pos, yaw, "Bed")
 	var frame := Mats.get_mat("metal") if hospital else Mats.get_mat("wood")
-	box(r, Vector3(1.0, 0.3, 2.0), Vector3(0, 0.35, 0), frame)
+	if Env.spawn(r, "interior/bed_frame", Vector3.ZERO, 0.0, {"snow": 0.0, "tint": Color(0.75, 0.8, 0.82) if hospital else Color.WHITE, "collide": Vector3(0.95, 0.5, 2.0)}) == null:
+		box(r, Vector3(1.0, 0.3, 2.0), Vector3(0, 0.35, 0), frame)
 	box(r, Vector3(0.95, 0.18, 1.95), Vector3(0, 0.58, 0), Mats.color(Color(0.8, 0.8, 0.78), 0.95), false)
 	box(r, Vector3(0.6, 0.12, 0.35), Vector3(0, 0.72, -0.75), Mats.color(Color(0.9, 0.9, 0.88), 0.95), false)
-	box(r, Vector3(1.0, 0.9 if not hospital else 0.6, 0.06), Vector3(0, 0.5, -1.0), frame, false)
+	if not Env.has("interior/bed_frame"):
+		box(r, Vector3(1.0, 0.9 if not hospital else 0.6, 0.06), Vector3(0, 0.5, -1.0), frame, false)
 	return r
 
 static func vending(parent: Node3D, pos: Vector3, yaw := 0.0, lit := true) -> Node3D:
@@ -237,6 +271,9 @@ static func corpse(parent: Node3D, pos: Vector3, yaw := 0.0, cfg := {}) -> Node3
 
 # ------------------------------------------------------------------ exterior
 static func car(parent: Node3D, pos: Vector3, yaw := 0.0, color := Color(0.25, 0.28, 0.3), wrecked := false, kind := "sedan") -> Node3D:
+	var gcar := _glb_car(parent, pos, yaw, color, wrecked, kind)
+	if gcar:
+		return gcar
 	var r := _root(parent, pos, yaw, "Car")
 	var body := Mats.color(color, 0.25, 0.6)
 	body.clearcoat_enabled = true
@@ -278,7 +315,10 @@ static func car(parent: Node3D, pos: Vector3, yaw := 0.0, color := Color(0.25, 0
 	return r
 
 static func tree(parent: Node3D, pos: Vector3, h := 9.0, seed := 0) -> Node3D:
-	## Bare winter tree: trunk + recursively branching limbs.
+	## Bare winter tree: generated skin (assets/env/trees/bare_N.glb) with a high-detail model and a cheap LOD.
+	var gt := _glb_bare_tree(parent, pos, h, seed)
+	if gt:
+		return gt
 	var r := _root(parent, pos, 0.0, "Tree")
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed if seed != 0 else int(pos.x * 97 + pos.z * 53)
@@ -314,6 +354,8 @@ static func _branch(r: Node3D, from: Vector3, dir: Vector3, length: float, radiu
 		_branch(r, to, d, length * 0.62, radius * 0.6, depth + 1, rng, mat)
 
 static func lamp_post(parent: Node3D, pos: Vector3, yaw := 0.0, on := true, color := Color(1.0, 0.75, 0.45)) -> Node3D:
+	if Env.has("street/lamp_01"):
+		return _glb_lamp(parent, pos, yaw, on, color)
 	var r := _root(parent, pos, yaw, "LampPost")
 	var m := Mats.get_mat("metal_painted", 1.0)
 	cyl(r, 0.09, 5.5, Vector3(0, 2.75, 0), m, true, 0.06)
@@ -334,6 +376,8 @@ static func lamp_post(parent: Node3D, pos: Vector3, yaw := 0.0, on := true, colo
 
 static func fence(parent: Node3D, a: Vector3, b: Vector3, h := 2.2, mat := "metal") -> Node3D:
 	## Chain-link style fence from a to b (world positions relative to parent).
+	if Env.has("street/fence_post"):
+		return _glb_fence(parent, a, b, h)
 	var r := _root(parent, a, 0.0, "Fence")
 	var d := b - a
 	var len := Vector2(d.x, d.z).length()

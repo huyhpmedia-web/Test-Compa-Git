@@ -17,7 +17,8 @@ extends Node3D
 const MODEL_DIR := "res://assets/characters/"
 const DEFAULT_MODEL := "elias"
 const ZOMBIE_MODELS := ["rimebound_parka_m", "rimebound_jacket_m", "rimebound_parka_f", "rimebound_flannel_m", "rimebound_tee_m",
-	"rimebound_tee_f", "rimebound_nurse", "rimebound_miner", "rimebound_cop", "rimebound_patient"]
+	"rimebound_tee_f", "rimebound_nurse", "rimebound_miner", "rimebound_cop", "rimebound_patient",
+	"rimebound_hivis_m", "rimebound_old_m", "rimebound_teen_f", "rimebound_fat_m"]
 
 static var _mat_cache := {}
 
@@ -28,6 +29,8 @@ var pose := "normal"
 var aim_pitch := 0.0          # radians, positive looks up
 var death_variant := -1       # 0 back, 1 forward, 2 kneel, 3 side; -1 random
 var held: Node3D              # weapon slot in the right hand
+var weapon_ik                 # actors/weapon_ik.gd: two-hand IK + recoil for weapons with Grip_R markers (see hold())
+var aim_point := Vector3.ZERO # world point the weapon should converge on (Player sets it while aiming)
 
 # humanoid.gd-compatible pivots (BoneAttachment3D nodes; bone-local axes: +Y runs along the bone)
 var hips: Node3D
@@ -173,6 +176,10 @@ func _model_height(n: String) -> float:
 		"rimebound_miner": return 1.78
 		"rimebound_cop": return 1.82
 		"rimebound_patient": return 1.72
+		"rimebound_hivis_m": return 1.77
+		"rimebound_old_m": return 1.68
+		"rimebound_teen_f": return 1.57
+		"rimebound_fat_m": return 1.75
 	return 1.75
 
 func _find(n: Node, cls: String) -> Node:
@@ -396,6 +403,13 @@ func _make_pivots() -> void:
 
 func hold(node: Node3D) -> void:
 	if held == null:
+		return
+	if weapon_ik == null and skeleton != null:
+		weapon_ik = load("res://actors/weapon_ik.gd").new(self)
+	if weapon_ik != null and weapon_ik.valid() and (node == null or node.has_meta("weapon_id")):
+		for c in held.get_children():
+			c.queue_free()
+		weapon_ik.set_weapon(node)
 		return
 	for c in held.get_children():
 		c.queue_free()
@@ -645,6 +659,11 @@ func _process(delta: float) -> void:
 	tree.advance(delta)
 	_apply_aim_pitch()
 	_apply_extra_rot()
+	if weapon_ik != null and weapon_ik.weapon != null:
+		weapon_ik.move_speed = spd
+		weapon_ik.has_aim_point = aim and aim_point != Vector3.ZERO
+		weapon_ik.aim_point_world = aim_point
+		weapon_ik.update(delta)
 	_apply_bone_scales()
 
 # aim pitch: bend the spine/head about the character's lateral axis (after animation)

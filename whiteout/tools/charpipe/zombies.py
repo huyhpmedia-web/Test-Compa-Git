@@ -40,7 +40,7 @@ def pick_points(pos, mask, n=60, seed=0):
     return [tuple(pos[i]) for i in sel]
 
 
-def cloth_painter(color, contrast, gcfg, seed, label, rough=0.9, tint2=None):
+def cloth_painter(color, contrast, gcfg, seed, label, rough=0.9, tint2=None, bands=False):
     def paint(cb, P, pos, comp, ids, orig, size):
         tris = [t for t in pt.tri_list(P.faces) if comp[t[0]] in ids]
         nrm = pt.vertex_normals(pos, [f[0] for f in P.faces])
@@ -57,6 +57,11 @@ def cloth_painter(color, contrast, gcfg, seed, label, rough=0.9, tint2=None):
         d = gore.fbm(p, 110, seed + 3)
         col = col * (0.86 + 0.2 * d[:, None])
         col = col * (1 - 0.3 * pt.smoothstep(0.25, 0.0, p[:, 2])[:, None])        # dirty low
+        if bands:   # hi-vis reflective bands (dirty silver)
+            zc0 = cb.conv(cb.H.joint("joint-spine-1"))[2]
+            bd = np.maximum(pt.smoothstep(0.03, 0.01, np.abs(p[:, 2] - (zc0 + 0.03))), pt.smoothstep(0.03, 0.01, np.abs(p[:, 2] - (zc0 + 0.26))))
+            bd = bd * (0.6 + 0.4 * d)
+            col = col * (1 - bd[:, None]) + np.array([0.42, 0.43, 0.44])[None] * bd[:, None]
         mask = np.isin(comp, list(ids))
         zc = cb.conv(cb.H.joint("joint-spine-1"))[2]
         cand = (pos[:, 2] > zc - 0.18) & (pos[:, 2] < zc + 0.16) & mask
@@ -155,6 +160,14 @@ def zombie_skin(cb, spec, size=1024):
     sock = np.exp(-(((ax - 0.036) / 0.026) ** 2 + ((z - (eye_z + 0.002)) / 0.02) ** 2)) * fwd
     hh0 = -sock * 1.2 * spec.get('sunken', 1.0)
     col = col * (1 - 0.35 * sock[:, None]) + np.array([0.16, 0.09, 0.14])[None] * 0.35 * sock[:, None]
+    em = spec.get("eye_missing")
+    eye_blood = np.zeros(len(p))
+    if em:
+        sx = 1.0 if em == "l" else -1.0
+        cav = np.exp(-(((x - sx * 0.035) / 0.021) ** 2 + ((z - eye_z) / 0.015) ** 2)) * fwd
+        col = col * (1 - np.clip(cav * 1.6, 0, 0.97)[:, None]) + np.array([0.09, 0.012, 0.014])[None] * np.clip(cav * 1.6, 0, 0.97)[:, None]
+        hh0 = hh0 - cav * 3.0
+        eye_blood = pt.smoothstep(0.012, 0.003, np.abs(x - sx * 0.036 - 0.004 * np.sin(z * 300))) * pt.smoothstep(0.0, 0.012, eye_z - z) * pt.smoothstep(0.14, 0.05, eye_z - z) * fwd * 0.9 + cav
     # --- cracked purple lips
     lips = np.exp(-(((ax) / 0.034) ** 2 + ((z - (mouth_z - 0.002)) / 0.011) ** 2)) * fwd
     col = col * (1 - 0.85 * lips[:, None]) + np.array([0.27, 0.13, 0.21])[None] * 0.85 * lips[:, None]
@@ -207,7 +220,7 @@ def zombie_skin(cb, spec, size=1024):
     nk = np.clip(r["wn"][:, 0], 0, 1) * pt.smoothstep(0.35, 0.65, gore.fbm(p, 40, seed + 33)) * gcfg.get("neck", 0.0) * fwd
     tear = (pt.smoothstep(0.006, 0.0, np.abs(ax - 0.04 - 0.02 * pt.smoothstep(0.0, 0.06, eye_z - z))) * pt.smoothstep(0.0, 0.006, eye_z - z) * pt.smoothstep(0.075, 0.03, eye_z - z) * fwd
             * pt.smoothstep(0.3, 0.6, gore.fbm(p, 90, seed + 35))) * gcfg.get("tears", 0.0)
-    f["blood"] = np.clip(np.maximum(f["blood"], np.maximum(np.maximum(hb, nk * 0.9), tear * 0.9)), 0, 1)
+    f["blood"] = np.clip(np.maximum(f["blood"], np.maximum(np.maximum(hb, nk * 0.9), np.maximum(tear * 0.9, eye_blood))), 0, 1)
     f["h"] = f["h"] + hh + hh0
     rg = np.full(len(p), 0.62) - 0.2 * ice - 0.1 * vv
     col, rg = gore.shade(col, rg, f, p, seed)
@@ -390,7 +403,7 @@ def build_zombie(cb, spec):
     if o in ("parka", "jacket", "cop", "worker"):
         s_rel, s_png = SUIT["suit05"]
         pieces = [dict(match=lambda zmin, zmax, n_: zmax > 1.2 and zmin > 0.5 and n_ > 1000, label="coat",
-                       painter=P_(col, 0.45, "coat", rough=0.85), dec=0.55, inflate=0.012 if o != "jacket" else 0.006,
+                       painter=P_(col, 0.45, "coat", rough=0.85, bands=spec.get("hivis", False)), dec=0.55, inflate=0.012 if o != "jacket" else 0.006,
                        stretch=(zw + 0.03, 1.8, 0.1) if o == "parka" else None),
                   dict(match=lambda zmin, zmax, n_: zmax > 1.2 and zmin > 0.5 and 200 < n_ <= 1000, label="liner", painter=P_(col2, 0.2, "liner"), dec=0.6),
                   dict(match=low, label="trousers", painter=P_(spec.get("pants", (0.14, 0.16, 0.22)), 0.4, "trousers"), cut_below=0.2, dec=0.6)]

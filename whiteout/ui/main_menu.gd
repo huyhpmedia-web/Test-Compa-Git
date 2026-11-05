@@ -21,7 +21,7 @@ func _ready() -> void:
 	shade.color = Color(0, 0, 0, 0.35)
 	add_child(shade)
 	var v := VBoxContainer.new()
-	v.position = Vector2(90, 180)
+	v.position = Vector2(90, 120)
 	v.add_theme_constant_override("separation", 10)
 	add_child(v)
 	var t := UI._label("KETTLE FALLS", 64, Color(0.92, 0.92, 0.9))
@@ -46,7 +46,7 @@ func _ready() -> void:
 	UI._button("Quit", func(): get_tree().quit(), v)
 	nb.grab_focus()
 	var foot := UI._label("A fan-made survival horror homage. Built with Godot.", 13, UI.C_DIM)
-	foot.position = Vector2(90, 660)
+	foot.position = Vector2(90, 684)
 	add_child(foot)
 	_box = v
 	_build_language_switch()

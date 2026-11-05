@@ -17,7 +17,12 @@ def face_parts(cb, spec, hair=None, hair_tint=None, brow="eyebrows/eyebrow002/ey
     emat_png = (eye_fn or eye_image)(n + "_eye.jpg", spec.get("iris", (0.5, 0.33, 0.2)))
     emat = make_pbr(n + "_eyes", emat_png, rough=0.12 if eye_fn is None else 0.28, spec=0.8)
     P_e = mh.Proxy(A("eyes/low-poly/low-poly.mhclo"))
-    ob = cb.add_mesh("eyes", cb.conv(P_e.fit(H.v, H.base_v)), [f[0] for f in P_e.faces], [f[1] for f in P_e.faces], P_e.uv, bone="head", mat=emat)
+    epos0 = cb.conv(P_e.fit(H.v, H.base_v))
+    if spec.get("eye_missing"):
+        sx = 1.0 if spec["eye_missing"] == "l" else -1.0
+        mm = (epos0[:, 0] * sx) > 0
+        epos0[mm, 1] += 0.04          # sink that eye back into the skull
+    ob = cb.add_mesh("eyes", epos0, [f[0] for f in P_e.faces], [f[1] for f in P_e.faces], P_e.uv, bone="head", mat=emat)
     if subdiv:
         sub = ob.modifiers.new("sub", 'SUBSURF'); sub.levels = 1; sub.render_levels = 1
         bpy.context.view_layer.objects.active = ob

@@ -7,7 +7,7 @@ MH = "https://raw.githubusercontent.com/vidya-hub/makehuman-core/main/data/"
 CMU = "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/master/data/"
 ASSETS = ["clothes/male_casualsuit03", "clothes/male_casualsuit05", "clothes/male_worksuit01", "clothes/female_casualsuit01",
           "clothes/female_elegantsuit01", "clothes/shoes02", "clothes/shoes04", "clothes/shoes05", "clothes/shoes06",
-          "hair/short02", "hair/short03", "hair/short04", "hair/bob01", "hair/bob02", "hair/ponytail01",
+          "hair/short01", "hair/short02", "hair/short03", "hair/short04", "hair/bob01", "hair/bob02", "hair/ponytail01", "hair/long01", "hair/braid01", "teeth/teeth_base", "tongue/tongue01",
           "eyebrows/eyebrow001", "eyebrows/eyebrow002", "eyelashes/eyelashes01", "eyes/low-poly",
           "skins/middleage_caucasian_male", "skins/young_caucasian_female", "skins/middleage_caucasian_female", "skins/old_caucasian_female"]
 def get(out, rel):

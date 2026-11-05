@@ -668,6 +668,22 @@ def assemble(cb, spec):
     hp = messy(cb.conv(Ph.fit(H.v, H.base_v)), Ph.faces, 0.007)
     cb.add_mesh("hair", hp, [f[0] for f in Ph.faces], [f[1] for f in Ph.faces], Ph.uv, W=Ph.skin_weights(cb.Wfull), mat=hm)
 
+
+# ---- v3 body / head variety (heavy, thin, old, young, hi-vis worker, missing eye / jaw)
+_z("rimebound_hivis_m", "jacket", 1.0, 49, (0.72, 0.30, 0.05), (0.2, 0.2, 0.22), 51, hair="hair/short04", hair_tint=(0.2, 0.17, 0.14), height=1.77, weight=0.92, muscle=0.5, pants=(0.12, 0.13, 0.16),
+   hivis=True, boots=("shoes02", (0.09, 0.08, 0.07), 0.2), gore_cloth=dict(mouth=0.7, soak=0.3, wounds=2, torn=0, splat=0.08, frost=0.3, hem=0.2, hands=0.6), gore_skin=dict(mouth=0.7, neck=0.6, wounds=2, splat=0.06, hands=0.6), tears=3)
+_z("rimebound_old_m", "flannel", 1.0, 78, (0.28, 0.33, 0.25), (0.22, 0.2, 0.18), 52, hair="hair/short03", hair_tint=(0.62, 0.62, 0.64), height=1.68, weight=0.1, muscle=0.05, pallor=(0.78, 0.84, 0.88),
+   boots=("shoes04", (0.2, 0.17, 0.13), 0.1), gore_cloth=dict(mouth=0.8, soak=0.5, wounds=1, torn=0, splat=0.05, frost=0.3, hem=0.3, hands=0.5), gore_skin=dict(mouth=0.8, neck=0.6, wounds=1, splat=0.05, hands=0.5, tears=0.5), tears=2, sunken=1.4)
+_z("rimebound_teen_f", "parka", 0.0, 16, (0.42, 0.24, 0.3), (0.16, 0.17, 0.24), 53, hair="hair/long01", hair_tint=(0.3, 0.22, 0.16), height=1.57, weight=0.3, muscle=0.2,
+   gore_cloth=dict(mouth=0.9, soak=0.5, wounds=1, torn=0, splat=0.06, frost=0.3, hem=0.2, hands=0.7), gore_skin=dict(mouth=0.9, neck=0.8, wounds=1, splat=0.06, hands=0.7, tears=0.6), pants=(0.1, 0.12, 0.18), tears=2)
+_z("rimebound_fat_m", "tee_m", 1.0, 55, (0.38, 0.42, 0.32), (0.18, 0.2, 0.26), 54, hair=None, height=1.75, weight=1.0, muscle=0.2, pallor=(0.72, 0.8, 0.86),
+   boots=("shoes06", (0.2, 0.2, 0.22), 0.1), gore_cloth=dict(mouth=0.9, soak=0.6, wounds=2, torn=0, splat=0.1, frost=0.3, hem=0.4, hands=0.6), gore_skin=dict(mouth=0.9, neck=0.8, wounds=2, splat=0.08, hands=0.6), tears=3, body_dec=0.36)
+# head variants on existing bodies: one missing an eye, one missing most of the jaw
+SPECS["rimebound_cop"]["eye_missing"] = "l"
+SPECS["rimebound_tee_m"].update(open_mouth=True, details=[("head", "head-age", 0.5, "decr", "incr"), ("chin", "chin-jaw-drop", 1.0, "decr", "incr"), ("mouth", "mouth-scale-vert", 1.0, "decr", "incr"),
+    ("mouth", "mouth-lowerlip-height", 1.0, "decr", "incr"), ("eyes", "l-eye-bag", 1.0, "decr", "incr"), ("eyes", "r-eye-bag", 1.0, "decr", "incr"), ("cheek", "l-cheek-volume", -1.0, "decr", "incr"), ("cheek", "r-cheek-volume", -1.0, "decr", "incr")])
+SPECS["rimebound_tee_m"]["gore_skin"]["mouth"] = 1.0
+
 # poly budget (<= ~13k tris incl. lashes)
 for _n, _d in (("rimebound_tee_f", 0.3), ("rimebound_cop", 0.34), ("rimebound_parka_f", 0.34), ("rimebound_miner", 0.36)):
     SPECS[_n]["body_dec"] = _d

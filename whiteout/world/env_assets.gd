@@ -138,7 +138,6 @@ static func local_aabb(root: Node3D) -> AABB:
 	_meshes(root, meshes)
 	var box := AABB()
 	var first := true
-	var inv := root.global_transform.affine_inverse() if root.is_inside_tree() else Transform3D.IDENTITY
 	for mi in meshes:
 		var m: MeshInstance3D = mi
 		if m.mesh == null:
@@ -173,6 +172,12 @@ static func spawn(parent: Node3D, rel: String, pos := Vector3.ZERO, yaw := 0.0, 
 	var inst := ps.instantiate() as Node3D
 	root.add_child(inst)
 	var sc = opts.get("scale", 1.0)
+	if opts.has("fit_h") or opts.has("fit_len"):
+		var nat := local_aabb(inst)
+		if opts.has("fit_h") and nat.size.y > 0.001:
+			sc = float(opts.fit_h) / nat.size.y
+		elif nat.size.z > 0.001:
+			sc = float(opts.fit_len) / max(nat.size.z, nat.size.x)
 	inst.scale = sc if sc is Vector3 else Vector3.ONE * float(sc)
 	var snow: float = float(opts.get("snow", snow_default))
 	var tint: Color = opts.get("tint", Color.WHITE)

@@ -22,6 +22,24 @@ static func _box(size: Vector3, mat: Material, pos := Vector3.ZERO) -> MeshInsta
 ## origin = palm contact point. Optional movable parts: Slide / Pump / Hammer / Cylinder / Trigger (see actors/weapon_ik.gd, SPECS).
 ## The returned wrapper keeps the old "barrel along -Y" convention so pickups lying on the ground still work; meta "weapon_id" + "model"
 ## (the glb root, forward -Z) are read by actors/weapon_ik.gd.
+## Weapons whose glb has no marker nodes (generated single meshes: origin = bbox centre, muzzle toward +Z). They are turned to the -Z contract and
+## given markers from these offsets (metres, in the flipped frame: forward -Z, up +Y, right +X). support: "pistol" (left palm on the grip's left side)
+## or "fore" (left palm up under the forend).
+const OFFSETS := {
+	"shotgun": {"flip": true, "grip": Vector3(0.02, 0.02, 0.13), "support": Vector3(0.0, -0.01, -0.22), "support_kind": "fore",
+		"muzzle": Vector3(0, 0.03, -0.5), "eject": Vector3(0.03, 0.03, 0.02)},
+	"magnum": {"flip": true, "grip": Vector3(0.018, -0.045, 0.14), "support": Vector3(-0.018, -0.075, 0.14), "support_kind": "pistol",
+		"muzzle": Vector3(0, 0.03, -0.15), "eject": Vector3(0.025, 0.02, -0.02)},
+	"launcher": {"flip": true, "grip": Vector3(0.018, -0.03, 0.075), "support": Vector3(-0.018, -0.06, 0.075), "support_kind": "pistol",
+		"muzzle": Vector3(0, 0.03, -0.12), "eject": Vector3(0.025, 0.02, -0.02)},
+}
+
+static func _marker(parent: Node3D, name: String, pos: Vector3, b := Basis.IDENTITY) -> void:
+	var m := Node3D.new()
+	m.name = name
+	m.transform = Transform3D(b, pos)
+	parent.add_child(m)
+
 static func weapon_mesh(id: String) -> Node3D:
 	var path := "res://assets/weapons/%s/%s.glb" % [id, id]
 	if not ResourceLoader.exists(path):
@@ -29,6 +47,21 @@ static func weapon_mesh(id: String) -> Node3D:
 	var wrap := Node3D.new()
 	wrap.name = "Weapon_" + id
 	var model: Node3D = (load(path) as PackedScene).instantiate()
+	if OFFSETS.has(id) and model.find_child("Grip_R", true, false) == null:
+		var o: Dictionary = OFFSETS[id]
+		var frame := Node3D.new()
+		frame.add_child(model)
+		if o.get("flip", false):
+			model.rotation.y = PI
+		var F := Vector3(0, 0, -1); var U := Vector3.UP; var L := Vector3(-1, 0, 0); var R := Vector3.RIGHT
+		_marker(frame, "Grip_R", o.grip, Basis(U, F, L))
+		_marker(frame, "Muzzle", o.muzzle)
+		_marker(frame, "Eject", o.eject, Basis(U, F, R))
+		if o.get("support_kind", "pistol") == "fore":
+			_marker(frame, "Support_L", o.support, Basis(R, F, U))
+		else:
+			_marker(frame, "Support_L", o.support, Basis(-U, F, R))
+		model = frame
 	model.name = "Model"
 	model.rotation = Vector3(-PI * 0.5, 0, 0)
 	wrap.add_child(model)
@@ -38,8 +71,6 @@ static func weapon_mesh(id: String) -> Node3D:
 		(mi as MeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 	return wrap
 
-## Weapon model held in the right hand. Hand space: -Y is down the fingers, +Z forward
-## once the aim pose rotates the hand; barrel points along -Y in hand space.
 static func _legacy_weapon_mesh(id: String) -> Node3D:
 	var root := Node3D.new()
 	var steel := Mats.color(Color(0.13, 0.13, 0.14), 0.35, 0.85)

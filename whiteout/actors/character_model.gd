@@ -999,50 +999,44 @@ var _death_idx := 0
 var _rag_delay := -1.0
 
 # ------------------------------------------------------------------ look-at head tracking (zombies watch the player)
+## Manual yaw/pitch blend over neck + head after the animation (LookAtModifier3D's axis handling was unreliable on this rig).
 var look_target: Node3D
 var _look_w := 0.0
-var _look_mods: Array = []
-var _look_node: Node3D
+var _look_yaw := 0.0
+var _look_pitch := 0.0
+const LOOK_BONES := [["spine_03", 0.15], ["neck_01", 0.3], ["head", 0.55]]
 
-## Make the head (and a little neck) follow `n` (e.g. the player) within anatomical limits; null releases.
+## Make the head (and a little neck/chest) follow `n` (e.g. the player) within anatomical limits; null releases.
 func set_look_target(n: Node3D) -> void:
 	look_target = n
 
-func _ensure_look() -> void:
-	if not _look_mods.is_empty() or skeleton == null:
-		return
-	_look_node = Node3D.new()
-	_look_node.name = "LookTarget"
-	_look_node.top_level = true
-	add_child(_look_node)
-	for spec in [["neck_01", 0.35, 35.0, 20.0], ["head", 0.85, 70.0, 40.0]]:
-		if skeleton.find_bone(spec[0]) < 0:
-			continue
-		var lm := LookAtModifier3D.new()
-		lm.name = "Look_" + spec[0]
-		skeleton.add_child(lm)
-		lm.bone_name = spec[0]
-		lm.forward_axis = 4   # BONE_AXIS_PLUS_Z (head bones are y-up / z-forward)
-		lm.primary_rotation_axis = Vector3.AXIS_Y
-		lm.use_angle_limitation = true
-		lm.symmetry_limitation = true
-		lm.primary_limit_angle = deg_to_rad(spec[2])
-		lm.secondary_limit_angle = deg_to_rad(spec[3])
-		lm.target_node = lm.get_path_to(_look_node)
-		lm.influence = 0.0
-		lm.set_meta("max_w", spec[1])
-		_look_mods.append(lm)
-
 func _update_look(delta: float) -> void:
 	var want := 0.0
-	if look_target != null and is_instance_valid(look_target) and pose in ["zombie", "normal"] and skeleton != null:
-		want = 1.0
-		_ensure_look()
-		if _look_node != null:
-			_look_node.global_position = look_target.global_position + Vector3(0, 1.45, 0)
-	_look_w = move_toward(_look_w, want, delta * 3.0)
-	for lm in _look_mods:
-		lm.influence = _look_w * float(lm.get_meta("max_w", 0.8))
+	var ty := 0.0
+	var tp := 0.0
+	if look_target != null and is_instance_valid(look_target) and pose in ["zombie", "normal"] and skeleton != null and is_inside_tree():
+		var d := to_local(look_target.global_position + Vector3(0, 1.45, 0)) - Vector3(0, 1.5, 0)
+		if Vector2(d.x, d.z).length() > 0.2:
+			want = 1.0
+			ty = clampf(atan2(d.x, d.z), deg_to_rad(-75.0), deg_to_rad(75.0))
+			tp = clampf(-atan2(d.y, Vector2(d.x, d.z).length()), deg_to_rad(-20.0), deg_to_rad(20.0))
+	_look_w = move_toward(_look_w, want, delta * 2.5)
+	_look_yaw = lerp_angle(_look_yaw, ty, clampf(delta * 5.0, 0.0, 1.0))
+	_look_pitch = lerpf(_look_pitch, tp, clampf(delta * 5.0, 0.0, 1.0))
+	if _look_w < 0.01 or skeleton == null:
+		return
+	var up := (skeleton.global_transform.basis.inverse() * global_transform.basis * Vector3.UP).normalized()
+	var right := (skeleton.global_transform.basis.inverse() * global_transform.basis * Vector3.RIGHT).normalized()
+	for lb in LOOK_BONES:
+		var i := skeleton.find_bone(lb[0])
+		if i < 0:
+			continue
+		var w: float = lb[1] * _look_w
+		var par := skeleton.get_bone_parent(i)
+		var pg := skeleton.get_bone_global_pose(par).basis if par >= 0 else Basis.IDENTITY
+		var r := Basis(up, _look_yaw * w) * Basis(right, -_look_pitch * w * 0.5)
+		var local_rot := (pg.inverse() * r * pg) * Basis(skeleton.get_bone_pose_rotation(i))
+		skeleton.set_bone_pose_rotation(i, local_rot.get_rotation_quaternion())
 
 # ------------------------------------------------------------------ ragdoll (death clip first, then physics takes over)
 const RAG_BONES := [

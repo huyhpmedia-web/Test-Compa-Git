@@ -392,6 +392,9 @@ static func fence(parent: Node3D, a: Vector3, b: Vector3, h := 2.2, mat := "meta
 	return r
 
 static func bench(parent: Node3D, pos: Vector3, yaw := 0.0) -> Node3D:
+	var gbn := Env.spawn(parent, "interior/sofa_02", pos, yaw + PI, {"name": "Bench", "snow": 0.3, "scale": 0.95, "tint": Color(0.75, 0.78, 0.8)})
+	if gbn:
+		return gbn
 	var r := _root(parent, pos, yaw, "Bench")
 	var w := Mats.get_mat("wood", 0.6)
 	var m := Mats.get_mat("metal_painted", 1.0)

@@ -206,13 +206,13 @@
    "legacy": true
   },
   "getup_back": {
-   "duration": 3.566666666666667
+   "duration": 2.3666666666666667
   },
   "getup_front": {
-   "duration": 3.2666666666666666
+   "duration": 2.533333333333333
   },
   "getup_side": {
-   "duration": 3.8666666666666667
+   "duration": 2.033333333333333
   },
   "grab": {
    "duration": 1.9

@@ -55,7 +55,7 @@ func _make_model() -> Node3D:
 	h.stretch({"spine_02": Vector3(1.1, 1.0, 1.12), "upperarm": Vector3(1.28, 1.0, 1.28), "thigh": Vector3(1.15, 1.0, 1.15), "neck": Vector3(1.3, 1.0, 1.3)})
 	RimeLook.decorate(h, rime * 0.5, rng.randi())
 	var s: float = h._s
-	var m := RimeLook.glacial("deep")
+	var m := RimeLook.flesh("scab")   # v3: crusted necrotic hide plates (no ice)
 	var list: Array = []
 	# --- armour plates: [bone, bone-local pos, dir, length, width, thickness]; limb bones run along +Y, torso bones are y-up / z-forward
 	for sd in ["l", "r"]:
@@ -73,10 +73,11 @@ func _make_model() -> Node3D:
 		var ba: Node3D = h.bone_attachment(e[0])
 		if ba == null:
 			continue
-		var n := Kit.crystal(ba, e[1], e[2], e[3], 1.0, m, rng.randi() % 8)
-		# flatten into a plate: width x length x thickness
-		var bs: Basis = n.transform.basis.orthonormalized()
-		n.transform.basis = Basis(bs.x * e[4] * 1.25, bs.y * e[3] * 1.0, bs.z * e[5] * 2.6)
+		var dirv: Vector3 = e[2]
+		var n := Kit.mi(ba, Kit.blob(1.0, rng.randi() % 99, 0.22, Vector3.ONE, 8, 12), m, e[1])
+		# a lumpy scab slab lying on the body: broad x length, thin along the outward direction
+		var bs: Basis = Kit.basis_y(dirv).orthonormalized()
+		n.transform = Transform3D(Basis(bs.x * e[4] * 1.5, bs.y * e[5] * 2.0, bs.z * e[3] * 0.55), e[1] + dirv.normalized() * 0.01)
 		_plates.append(n)
 	# shedding order: shuffled, but chest/head plates tend to go last
 	for i in range(_plates.size() - 1, 0, -1):
@@ -122,7 +123,7 @@ func _chip_armor(amount: float, pos: Vector3) -> void:
 	var before := armor_hp
 	armor_hp = max(0.0, armor_hp - amount)
 	_armor_flash = 0.15
-	Kit.shard_burst(get_tree().current_scene, pos, 2, 2.0, 0.07)
+	Kit.shard_burst(get_tree().current_scene, pos, 2, 2.0, 0.07, "flesh_raw")
 	# shed plates progressively
 	var want := int(floor(float(_plates.size()) * (1.0 - armor_hp / armor_max)))
 	if armor_hp <= 0.0:
@@ -131,7 +132,7 @@ func _chip_armor(amount: float, pos: Vector3) -> void:
 		var pl: MeshInstance3D = _plates[_shed]
 		_shed += 1
 		if is_instance_valid(pl):
-			Kit.shard_burst(get_tree().current_scene, pl.global_position, 4, 2.5, 0.1)
+			Kit.shard_burst(get_tree().current_scene, pl.global_position, 4, 2.5, 0.1, "flesh_raw")
 			Kit.drop_piece(pl, get_tree().current_scene, (pl.global_position - global_position).normalized() * 2.0)
 			Sfx.play_at(_sound("crack"), global_position, 2.0)
 	if before > 0.0 and armor_hp <= 0.0:
@@ -151,4 +152,4 @@ func _on_death() -> void:
 	for pl in _plates:
 		if is_instance_valid(pl):
 			Kit.drop_piece(pl, w, (pl.global_position - global_position).normalized() * 1.5)
-	Kit.shard_burst(w, global_position + Vector3(0, 1.0, 0), 8, 3.0, 0.1)
+	Kit.shard_burst(w, global_position + Vector3(0, 1.0, 0), 8, 3.0, 0.1, "bone")

@@ -51,22 +51,22 @@ func _make_model() -> Node3D:
 	RimeLook.decorate(h, rime, rng.randi(), {"mouth": false})
 	# throat: swollen goiter of resonating crystals (neck bone: y up, z forward)
 	var nk: Node3D = h.bone_attachment("neck_01")
-	var gm: StandardMaterial3D = RimeLook.glacial("glow").duplicate()
+	var gm: StandardMaterial3D = RimeLook.flesh("gland").duplicate()   # v3: swollen, veined throat bladder
 	_throat_mats.append(gm)
-	Kit.sphere(nk, 0.058 * s, gm, Vector3(0, 0.05, 0.045) * s, Vector3(1.0, 1.5, 0.9))
-	for i in 9:
-		var ang := TAU * float(i) / 9.0
-		var d := Vector3(sin(ang), rng.randf_range(-0.3, 0.9), cos(ang) * 0.9 + 0.2)
-		Kit.crystal(nk, Vector3(0, 0.05, 0.045) * s + d.normalized() * 0.045 * s, d, rng.randf_range(0.05, 0.11) * s, 0.011 * s, gm, i)
+	Kit.mi(nk, Kit.blob(0.058 * s, 3, 0.1, Vector3(1.0, 1.5, 0.9), 10, 14), gm, Vector3(0, 0.05, 0.045) * s)
+	for i in 5:   # secondary lumps / boils on the throat
+		var ang := TAU * float(i) / 5.0
+		var d := Vector3(sin(ang), rng.randf_range(-0.3, 0.7), cos(ang) * 0.9 + 0.3).normalized()
+		Kit.mi(nk, Kit.blob(0.02 * s, 20 + i, 0.2, Vector3.ONE, 6, 8), gm, Vector3(0, 0.05, 0.045) * s + d * 0.05 * s)
 	# crystal "teeth" in the dropped jaw
 	var teeth := Kit.mat("tooth")
 	var hb: Node3D = h.bone_attachment("head")
 	for i in 7:
 		var a: float = lerp(-0.5, 0.5, float(i) / 6.0)
-		Kit.crystal(hb, Vector3(sin(a) * 0.035, -0.07, 0.085 + cos(a) * 0.02) * s, Vector3(0, 1, 0.1), 0.03 * s * rng.randf_range(0.7, 1.4), 0.006 * s, teeth, i)
+		Kit.crystal(hb, Vector3(sin(a) * 0.035, -0.07, 0.085 + cos(a) * 0.02) * s, Vector3(0, 1, 0.1), 0.022 * s * rng.randf_range(0.7, 1.4), 0.0045 * s, teeth, i)
 	_throat_light = OmniLight3D.new()
-	_throat_light.light_color = Color(0.45, 0.9, 1.0)
-	_throat_light.light_energy = 0.6
+	_throat_light.light_color = Color(0.9, 0.3, 0.25)
+	_throat_light.light_energy = 0.4
 	_throat_light.omni_range = 3.5
 	_throat_light.shadow_enabled = false
 	_throat_light.position = Vector3(0, 0.05, 0.12) * s
@@ -185,6 +185,6 @@ func _on_death() -> void:
 	_hum_k = 0.0
 	if _throat_light:
 		_throat_light.light_energy = 0.0
-	Kit.shard_burst(get_tree().current_scene, global_position + Vector3(0, 1.5, 0), 12, 3.0, 0.1, "ice_glow")
+	Kit.shard_burst(get_tree().current_scene, global_position + Vector3(0, 1.5, 0), 8, 3.0, 0.1, "flesh_raw")
 	for gm in _throat_mats:
 		gm.emission_energy_multiplier = 0.0

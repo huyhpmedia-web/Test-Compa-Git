@@ -111,9 +111,9 @@ def zombie_skin(cb, spec, size=1024):
     lum = (orig * np.array([0.3, 0.59, 0.11])).sum(1, keepdims=True)
     lum = np.clip(lum / max(float(np.median(lum)), 1e-3), 0.35, 1.5)
     tone = spec.get('tone', (seed % 3))
-    base_t = [np.array([0.50, 0.53, 0.47]), np.array([0.47, 0.51, 0.55]), np.array([0.55, 0.52, 0.44])][tone]   # grey-olive / grey-blue / sallow
+    base_t = [np.array([0.44, 0.50, 0.42]), np.array([0.43, 0.48, 0.52]), np.array([0.50, 0.47, 0.40])][tone]   # grey-olive / grey-blue / sallow
     cool = base_t * (pal / np.array([0.70, 0.80, 0.90]))[None]
-    col = 0.88 * cool * (0.5 + 0.5 * lum) + 0.12 * orig * pal[None]
+    col = (0.88 * cool * (0.5 + 0.5 * lum) + 0.12 * orig * pal[None]) * 0.68
     # livor mottling (purple, low contrast) + greenish decay patches + frost-pale patches
     m1 = gore.fbm(p, 20, seed)
     liv = pt.smoothstep(0.52, 0.74, m1) * (0.45 + 0.4 * ext + 0.25 * (1 - zbody))
@@ -265,7 +265,7 @@ def zombie_face(cb, spec, hair, hair_tint, brow="eyebrows/eyebrow001/eyebrow001"
     from specs import milky_eye_image
     spec.setdefault("iris", (0.92, 0.95, 1.0))
     c2.face_parts(cb, spec, hair=hair, hair_tint=hair_tint, brow=brow, brow_tint=(0.3, 0.3, 0.3), lashes=True, eye_tint=(0.7, 0.85, 1.0),
-                  decim_hair=0.35, subdiv=False, eye_fn=milky_eye_image, lash_tint=(0.2, 0.2, 0.2), frost_hair=spec.get("hair_frost", 0.0), frost_brow=0.0)
+                  decim_hair=1.0, subdiv=False, eye_fn=milky_eye_image, lash_tint=(0.2, 0.2, 0.2), frost_hair=spec.get("hair_frost", 0.0), frost_brow=0.0)
 
 
 def load_nrm_img(P, size=1024):
@@ -462,7 +462,7 @@ def build_zombie(cb, spec):
     d = c2.head_dims(cb)
     if spec.get("clean"):
         c2.face_parts(cb, spec, hair=spec.get("hair"), hair_tint=spec.get("hair_tint"), brow="eyebrows/eyebrow002/eyebrow002", brow_tint=(0.35, 0.3, 0.28),
-                      lashes=spec.get("gender", 1) < 0.5, eye_tint=(0.8, 0.85, 1.0), decim_hair=0.8, subdiv=True)
+                      lashes=spec.get("gender", 1) < 0.5, eye_tint=(0.8, 0.85, 1.0), decim_hair=1.0, subdiv=True)
     else:
         zombie_face(cb, spec, spec.get("hair"), spec.get("hair_tint", (0.3, 0.3, 0.32)))
     if not spec.get("clean"):

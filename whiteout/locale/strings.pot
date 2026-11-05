@@ -2220,10 +2220,6 @@ msgid "HALL C  ·  RELEASED"
 msgstr ""
 
 #: levels/l4_meridian.gd:661
-msgid "hallc"
-msgstr ""
-
-#: levels/l4_meridian.gd:661
 msgid "NOC  ·  RELEASED"
 msgstr ""
 
@@ -3737,10 +3733,6 @@ msgid "Pack full: stashed %s in the supply crate."
 msgstr ""
 
 #: levels/level.gd:528
-msgid "prompt"
-msgstr ""
-
-#: levels/level.gd:528
 msgid "Open door"
 msgstr ""
 
@@ -3804,7 +3796,7 @@ msgstr ""
 msgid "New Game"
 msgstr ""
 
-#: ui/main_menu.gd:41 ui/ui.gd:851 ui/ui.gd:928
+#: ui/main_menu.gd:41 ui/ui.gd:851 ui/ui.gd:931
 msgid "Load Game"
 msgstr ""
 
@@ -3846,10 +3838,6 @@ msgstr ""
 
 #: ui/ui.gd:227 core/game.gd:1
 msgid "FINE"
-msgstr ""
-
-#: ui/ui.gd:269
-msgid "ammo"
 msgstr ""
 
 #: ui/ui.gd:510 ui/ui.gd:749
@@ -3944,10 +3932,6 @@ msgstr ""
 msgid "Inventory full."
 msgstr ""
 
-#: ui/ui.gd:746
-msgid "weapon"
-msgstr ""
-
 #: ui/ui.gd:779
 msgid "RECORD PROGRESS"
 msgstr ""
@@ -4010,7 +3994,7 @@ msgstr ""
 msgid "Resume"
 msgstr ""
 
-#: ui/ui.gd:860 ui/ui.gd:931
+#: ui/ui.gd:860 ui/ui.gd:934
 msgid "Quit to Title"
 msgstr ""
 
@@ -4054,10 +4038,16 @@ msgid ""
 msgstr ""
 
 #: ui/ui.gd:866
+msgid ""
+"[b]Typeface[/b]\n"
+"Be Vietnam Pro by the Be Vietnam Pro Project Authors (SIL Open Font License 1.1). Full text: fonts/OFL.txt"
+msgstr ""
+
+#: ui/ui.gd:866
 msgid "Inspired by the late-90s survival-horror genre. Story, characters and setting are original."
 msgstr ""
 
-#: ui/ui.gd:889
+#: ui/ui.gd:892
 msgid ""
 "[b]WASD[/b] move   ·   [b]Shift[/b] run   ·   [b]Mouse[/b] look\n"
 "[b]Right mouse[/b] aim   ·   [b]Left mouse[/b] fire (while aiming)\n"
@@ -4067,77 +4057,77 @@ msgid ""
 "[b]Esc[/b] pause / close menus"
 msgstr ""
 
-#: ui/ui.gd:889
+#: ui/ui.gd:892
 msgid ""
 "Hold aim without moving to tighten the reticle — a focused shot does far more damage. Headshots deal double damage and stop the dead from getting back up.\n"
 "Zombies that fall may not stay down. Ammunition is scarce: avoid fights you don't need."
 msgstr ""
 
-#: ui/ui.gd:922
+#: ui/ui.gd:925
 msgid "YOU ARE DEAD"
 msgstr ""
 
-#: ui/ui.gd:925
+#: ui/ui.gd:928
 msgid "Continue (retry area)"
 msgstr ""
 
-#: ui/ui.gd:979
+#: ui/ui.gd:982
 #, c-format
 msgid "Clear time %s   ·   Saves %d   ·   Deaths %d   ·   Rank %s"
 msgstr ""
 
-#: ui/ui.gd:980
+#: ui/ui.gd:983
 msgid "Return to Title"
 msgstr ""
 
-#: ui/ui.gd:987
+#: ui/ui.gd:990
 msgid "[center][b]ENDING: DARK[/b][/center]"
 msgstr ""
 
-#: ui/ui.gd:987
+#: ui/ui.gd:990
 msgid "Elias pulled the last disconnect by hand. Somewhere on the lake, forty thousand servers went quiet, and the warm breath in the pipeline stopped."
 msgstr ""
 
-#: ui/ui.gd:987
+#: ui/ui.gd:990
 msgid "Down in the cavern, the hum fell an octave, and then another, until it was only the sound of the ice settling. The lattice grew dull. Whatever had worn his mother's face went still and stayed still."
 msgstr ""
 
-#: ui/ui.gd:987
+#: ui/ui.gd:990
 msgid "At 7:52 the sun came up over Kettle Falls for the first time in three days. The co-op's crews found the town's feeders closed, the school lit, and eighty-one people alive in its gym."
 msgstr ""
 
-#: ui/ui.gd:987
+#: ui/ui.gd:990
 msgid "Corvane Systems filed suit against Lakeshore Electric on December 28th. Elias was named personally. He kept the letter on the fridge, next to June's drawing of the substation, and never once regretted it."
 msgstr ""
 
-#: ui/ui.gd:987
+#: ui/ui.gd:990
 msgid "[i]\"Load shed: Meridian. Priority: Kettle Falls.\"[/i]"
 msgstr ""
 
-#: ui/ui.gd:998
+#: ui/ui.gd:1001
 msgid "[center][b]ENDING: THAW[/b][/center]"
 msgstr ""
 
-#: ui/ui.gd:998
+#: ui/ui.gd:1001
 msgid "Elias opened the pipeline to full. The brine boiled. The cavern screamed in a hundred voices and one of them was his mother's, and then all of them were steam."
 msgstr ""
 
-#: ui/ui.gd:998
+#: ui/ui.gd:1001
 msgid "By morning nothing in the Lower Kettle mine was alive, and nothing in it ever would be again. Meridian never dropped a single request."
 msgstr ""
 
-#: ui/ui.gd:998
+#: ui/ui.gd:1001
 msgid "Corvane's statement called it \"a tragic mining accident during an extreme weather event.\" Northline's insurers paid out. The data centre doubled its capacity the following spring."
 msgstr ""
 
-#: ui/ui.gd:998
+#: ui/ui.gd:1001
 msgid "June doesn't talk about that night. Sometimes she leaves her radio on 146.52 and just listens to the static, as if someone down there might still answer."
 msgstr ""
 
-#: ui/ui.gd:1007
+#: ui/ui.gd:1010
 msgid "[center][b]THE END[/b][/center]"
 msgstr ""
 
-#: ui/ui.gd:1007
+#: ui/ui.gd:1010
 msgid "Kettle Falls is behind you. The cold is not."
 msgstr ""

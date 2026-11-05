@@ -201,8 +201,8 @@ def shade(col, rough, f, p, seed):
         spark = pt.smoothstep(0.55, 0.9, n3(p, 520, seed + 120))
         fr = np.clip(fr * (0.75 + 0.5 * spark), 0, 1)
     col = col * (1 - fr[:, None] * 0.7) + FROST[None] * fr[:, None] * 0.7
-    rough = rough * (1 - thick * a) + (0.78 - 0.62 * core) * thick * a       # core ~0.16, dry edge ~0.78
-    rough = rough * (1 - fl) + 0.16 * fl
+    rough = rough * (1 - thick * a) + (0.8 - 0.5 * core) * thick * a       # core ~0.3 (wet but not plastic), dry edge ~0.8
+    rough = rough * (1 - fl) + 0.28 * fl
     rough = rough * (1 - fr * 0.6) + 0.5 * fr * 0.6
     return col, rough
 

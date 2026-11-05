@@ -1,0 +1,4697 @@
+# Vietnamese (Tiếng Việt) translation for WHITEOUT: KETTLE FALLS
+# Glossary and style notes: locale/GLOSSARY.md
+msgid ""
+msgstr ""
+"Project-Id-Version: Whiteout Kettle Falls\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: actors/npc.gd:26
+msgid "Talk to"
+msgstr "Nói chuyện với"
+
+#: actors/npc.gd:46 levels/l6_heart.gd:525
+msgid "June"
+msgstr "June"
+
+#: actors/npc.gd:50 actors/npc.gd:50 levels/l5_mine.gd:1155
+msgid "JUNE"
+msgstr "JUNE"
+
+#: actors/npc.gd:50
+msgid "Dad. You actually came."
+msgstr "Bố. Bố đến thật rồi."
+
+#: actors/npc.gd:50
+msgid "Don't look at me like that. I'm fine. I'm just cold."
+msgstr "Đừng nhìn con như thế. Con ổn mà. Con chỉ hơi lạnh thôi."
+
+#: actors/npc.gd:52
+msgid "Ruth"
+msgstr "Ruth"
+
+#: actors/npc.gd:56 actors/npc.gd:56 levels/l5_mine.gd:1249
+msgid "RUTH"
+msgstr "RUTH"
+
+#: actors/npc.gd:56
+msgid "Elias. You're letting the cold in."
+msgstr "Elias. Con làm hơi lạnh lọt vào nhà đấy."
+
+#: actors/npc.gd:56
+msgid "Tom's calling from downstairs. Can't you hear him?"
+msgstr "Tom đang gọi ở dưới nhà kìa. Con không nghe thấy sao?"
+
+#: actors/npc.gd:58
+msgid "Dr. Hart"
+msgstr "Tiến sĩ Hart"
+
+#: actors/npc.gd:62 actors/npc.gd:62 levels/l4_meridian.gd:942
+msgid "IMOGEN"
+msgstr "IMOGEN"
+
+#: actors/npc.gd:62
+msgid "Eight months. I reported it eight months ago."
+msgstr "Tám tháng. Tôi đã báo cáo từ tám tháng trước."
+
+#: actors/npc.gd:62
+msgid "I need a sample. Bring me one and I'll tell you everything."
+msgstr "Tôi cần một mẫu vật. Mang đến cho tôi một cái, tôi sẽ kể anh nghe tất cả."
+
+#: actors/npc.gd:64
+msgid "Caretaker"
+msgstr "Người trông trường"
+
+#: actors/npc.gd:68 actors/npc.gd:68
+msgid "CARETAKER"
+msgstr "NGƯỜI TRÔNG TRƯỜNG"
+
+#: actors/npc.gd:68
+msgid "Boiler's been dead since Tuesday. I told them."
+msgstr "Lò hơi chết từ hôm thứ Ba rồi. Tôi đã bảo họ."
+
+#: actors/npc.gd:68
+msgid "Something dragged Pete down the hall. Heavy. Slow."
+msgstr "Có thứ gì đó lôi Pete đi dọc hành lang. Nặng nề. Chậm rãi."
+
+#: actors/npc.gd:70
+msgid "Frozen miner"
+msgstr "Thợ mỏ đông cứng"
+
+#: actors/npc.gd:70
+msgid "Examine"
+msgstr "Xem xét"
+
+#: actors/npc.gd:74
+msgid "A miner. Frozen where he lay down to rest. A crystal grows from his open mouth."
+msgstr "Một người thợ mỏ. Đông cứng ngay tại chỗ ông nằm xuống nghỉ. Một khối tinh thể mọc ra từ cái miệng đang há."
+
+#: core/game.gd:1
+msgid "CAUTION"
+msgstr "CẨN TRỌNG"
+
+#: core/game.gd:1
+msgid "DANGER"
+msgstr "NGUY HIỂM"
+
+#: core/game.gd:150
+#, c-format
+msgid "OBJECTIVE: %s"
+msgstr "MỤC TIÊU: %s"
+
+#: core/game.gd:248
+msgid "You are already in good condition."
+msgstr "Sức khỏe vẫn đang tốt."
+
+#: core/game.gd:263
+#, c-format
+msgid "Inventory expanded to %d slots."
+msgstr "Túi đồ được mở rộng lên %d ô."
+
+#: core/game.gd:270
+msgid "You strike a flare."
+msgstr "Quẹt cháy một quả pháo sáng."
+
+#: core/game.gd:272
+msgid "Combine it with something."
+msgstr "Phải kết hợp nó với thứ khác."
+
+#: core/game.gd:277 levels/l1_substation.gd:1296 levels/l4_meridian.gd:1136
+msgid "There is nothing to use it on here."
+msgstr "Ở đây không có gì để dùng nó."
+
+#: core/game.gd:283
+msgid "These can't be combined."
+msgstr "Hai thứ này không thể kết hợp với nhau."
+
+#: core/game.gd:289
+#, c-format
+msgid "Created: %s"
+msgstr "Đã tạo ra: %s"
+
+#: core/game.gd:308
+msgid "Progress recorded."
+msgstr "Đã ghi lại tiến trình."
+
+#: core/items.gd:7
+msgid "Lineman's Hatchet"
+msgstr "Rìu thợ đường dây"
+
+#: core/items.gd:7
+msgid "A short-handled hatchet from the truck. Quiet. Reliable. Close."
+msgstr "Chiếc rìu cán ngắn lấy từ xe tải. Êm. Đáng tin. Dùng khi áp sát."
+
+#: core/items.gd:8
+msgid "M45 Pistol"
+msgstr "Súng lục M45"
+
+#: core/items.gd:8
+msgid "Elias's old service pistol, kept in the truck's lockbox. 12-round magazine."
+msgstr "Khẩu súng lục phục vụ cũ của Elias, cất trong hộp khóa trên xe tải. Hộp đạn 12 viên."
+
+#: core/items.gd:9
+msgid "Pump Shotgun"
+msgstr "Súng săn Pump"
+
+#: core/items.gd:9
+msgid "A hardware-store duck gun. Devastating up close; cracks ice armour."
+msgstr "Khẩu súng săn vịt mua ở cửa hàng ngũ kim. Cực mạnh ở cự ly gần; phá được lớp giáp băng."
+
+#: core/items.gd:10
+msgid "Tom's Revolver"
+msgstr "Revolver của Tom"
+
+#: core/items.gd:10
+msgid "Your father's .44. Mom kept it in the shelter office. Pierces through targets."
+msgstr "Khẩu .44 của bố. Mẹ cất nó trong văn phòng khu trú ẩn. Xuyên qua nhiều mục tiêu."
+
+#: core/items.gd:11
+msgid "Flare Launcher"
+msgstr "Súng phóng pháo sáng"
+
+#: core/items.gd:11
+msgid "A marine signal launcher modified by Meridian security. Incendiary burst. The Rimebound fear it."
+msgstr "Súng phóng tín hiệu hàng hải do an ninh Meridian cải tạo. Nổ cháy. Lũ Xác Băng sợ nó."
+
+#: core/items.gd:13
+msgid "9mm Rounds"
+msgstr "Đạn 9mm"
+
+#: core/items.gd:13
+msgid "Pistol ammunition."
+msgstr "Đạn súng lục."
+
+#: core/items.gd:14
+msgid "12ga Shells"
+msgstr "Đạn săn 12ga"
+
+#: core/items.gd:14
+msgid "Shotgun shells."
+msgstr "Đạn dành cho súng săn."
+
+#: core/items.gd:15
+msgid ".44 Rounds"
+msgstr "Đạn .44"
+
+#: core/items.gd:15
+msgid "Heavy revolver rounds."
+msgstr "Đạn revolver hạng nặng."
+
+#: core/items.gd:16
+msgid "Incendiary Flares"
+msgstr "Pháo sáng cháy"
+
+#: core/items.gd:16
+msgid "40mm incendiary flares for the launcher."
+msgstr "Pháo sáng cháy 40mm dành cho súng phóng."
+
+#: core/items.gd:17
+msgid "Gunpowder"
+msgstr "Thuốc súng"
+
+#: core/items.gd:17
+msgid "Combine two to make pistol rounds."
+msgstr "Kết hợp hai gói để làm đạn súng lục."
+
+#: core/items.gd:18
+msgid "Road Flare"
+msgstr "Pháo sáng đường bộ"
+
+#: core/items.gd:18
+msgid "A magnesium road flare. Light it (use) to burn nearby Rimebound and drive them back for a while."
+msgstr "Một que pháo sáng magiê dùng trên đường. Châm lửa (dùng) để thiêu lũ Xác Băng ở gần và đẩy lùi chúng một lúc."
+
+#: core/items.gd:20
+msgid "Bandage Roll"
+msgstr "Cuộn băng gạc"
+
+#: core/items.gd:20
+msgid "Restores some health. Combine with Painkillers."
+msgstr "Hồi phục một ít sức khỏe. Kết hợp với Thuốc giảm đau."
+
+#: core/items.gd:21
+msgid "Painkillers"
+msgstr "Thuốc giảm đau"
+
+#: core/items.gd:21
+msgid "Not enough alone. Combine with a Bandage Roll."
+msgstr "Một mình thì chưa đủ. Kết hợp với Cuộn băng gạc."
+
+#: core/items.gd:22
+msgid "Field Dressing"
+msgstr "Băng cứu thương dã chiến"
+
+#: core/items.gd:22
+msgid "Bandage + painkillers. Fully restores health."
+msgstr "Băng gạc + thuốc giảm đau. Hồi phục hoàn toàn sức khỏe."
+
+#: core/items.gd:23
+msgid "Trauma Kit"
+msgstr "Bộ sơ cứu chấn thương"
+
+#: core/items.gd:23
+msgid "A co-op first-responder kit. Fully restores health."
+msgstr "Bộ dụng cụ của lực lượng cứu hộ hợp tác xã. Hồi phục hoàn toàn sức khỏe."
+
+#: core/items.gd:25
+msgid "Tool Pouch"
+msgstr "Túi dụng cụ"
+
+#: core/items.gd:25
+msgid "Use to expand inventory by 2 slots."
+msgstr "Dùng để mở rộng túi đồ thêm 2 ô."
+
+#: core/items.gd:27
+msgid "Handheld Radio"
+msgstr "Bộ đàm cầm tay"
+
+#: core/items.gd:27
+msgid "Tuned to 146.52 MHz. June's frequency."
+msgstr "Đã chỉnh sang tần số 146,52 MHz. Tần số của June."
+
+#: core/items.gd:28
+msgid "Hot Stick"
+msgstr "Gậy cách điện"
+
+#: core/items.gd:28
+msgid "An insulated fibreglass switching pole for operating energised disconnects."
+msgstr "Cây sào thao tác bằng sợi thủy tinh cách điện, dùng để đóng cắt dao cách ly đang có điện."
+
+#: core/items.gd:29
+msgid "Control House Key"
+msgstr "Chìa khóa nhà điều khiển"
+
+#: core/items.gd:29
+msgid "Brass key tagged 'KF SUBSTATION — CONTROL HOUSE'."
+msgstr "Chìa khóa đồng gắn thẻ 'TRẠM BIẾN ÁP KF — NHÀ ĐIỀU KHIỂN'."
+
+#: core/items.gd:30
+msgid "60A Fuse"
+msgstr "Cầu chì 60A"
+
+#: core/items.gd:30
+msgid "A 60-amp cartridge fuse."
+msgstr "Một cầu chì ống 60 ampe."
+
+#: core/items.gd:31
+msgid "Janitor's Keyring"
+msgstr "Chùm chìa khóa người gác trường"
+
+#: core/items.gd:31
+msgid "Heavy keyring. Tag: 'KFCS — CUSTODIAL'. Opens the main hall and the boiler room."
+msgstr "Chùm chìa khóa nặng trịch. Thẻ ghi: 'KFCS — TẠP VỤ'. Mở được sảnh chính và phòng lò hơi."
+
+#: core/items.gd:32
+msgid "Valve Wheel"
+msgstr "Tay quay van"
+
+#: core/items.gd:32
+msgid "A detachable cast-iron valve wheel from the boiler room."
+msgstr "Tay quay van bằng gang, tháo rời được, lấy từ phòng lò hơi."
+
+#: core/items.gd:33
+msgid "Gym Padlock Key"
+msgstr "Chìa khóa móc phòng thể dục"
+
+#: core/items.gd:33
+msgid "Small key on a whistle lanyard."
+msgstr "Chiếc chìa khóa nhỏ buộc vào dây đeo còi."
+
+#: core/items.gd:34
+msgid "Sacristy Key"
+msgstr "Chìa khóa phòng áo lễ"
+
+#: core/items.gd:34
+msgid "An old iron key. Father Okafor's handwriting on the tag: 'side door'."
+msgstr "Một chiếc chìa khóa sắt cũ. Trên thẻ là nét chữ của Cha Okafor: 'cửa hông'."
+
+#: core/items.gd:35
+msgid "Bell Pull Handle"
+msgstr "Tay nắm dây chuông"
+
+#: core/items.gd:35
+msgid "The handle for the church bell's pull chain."
+msgstr "Tay nắm của dây xích kéo chuông nhà thờ."
+
+#: core/items.gd:36
+msgid "Ruth's Rosary"
+msgstr "Chuỗi tràng hạt của Ruth"
+
+#: core/items.gd:36
+msgid "Your mother's rosary. The beads are rimed with frost that never melts."
+msgstr "Chuỗi tràng hạt của mẹ. Những hạt cườm phủ một lớp sương muối không bao giờ tan."
+
+#: core/items.gd:37
+msgid "Meridian Access Badge"
+msgstr "Thẻ ra vào Meridian"
+
+#: core/items.gd:37
+msgid "Contractor badge, cold to the touch. CORVANE SYSTEMS — MERIDIAN SITE."
+msgstr "Thẻ nhà thầu, lạnh buốt khi chạm vào. CORVANE SYSTEMS — CƠ SỞ MERIDIAN."
+
+#: core/items.gd:38
+msgid "Cooling Plant Key"
+msgstr "Chìa khóa nhà máy làm mát"
+
+#: core/items.gd:38
+msgid "A red key for the chiller plant's manual overrides."
+msgstr "Chiếc chìa khóa đỏ dùng cho các cơ cấu điều khiển tay của nhà máy làm lạnh."
+
+#: core/items.gd:39
+msgid "Pipeline Override Card"
+msgstr "Thẻ ghi đè đường ống"
+
+#: core/items.gd:39
+msgid "Imogen's override card for the heat-recovery pipeline service tunnel."
+msgstr "Thẻ ghi đè của Imogen, dùng cho đường hầm kỹ thuật của đường ống thu hồi nhiệt."
+
+#: core/items.gd:40
+msgid "Cap-Lamp Battery"
+msgstr "Pin đèn đội đầu"
+
+#: core/items.gd:40
+msgid "A charged miner's cap-lamp battery pack."
+msgstr "Một bộ pin đã sạc cho đèn đội đầu của thợ mỏ."
+
+#: core/items.gd:41
+msgid "Hoist Brake Lever"
+msgstr "Cần phanh tời"
+
+#: core/items.gd:41
+msgid "The removable brake lever for the old hoist."
+msgstr "Cần phanh có thể tháo rời của chiếc tời cũ."
+
+#: core/items.gd:42
+msgid "Blasting Charges"
+msgstr "Thuốc nổ phá đá"
+
+#: core/items.gd:42
+msgid "Two sticks of old Northline blasting gel and a detonator."
+msgstr "Hai thỏi thuốc nổ gel cũ của Northline cùng một kíp nổ."
+
+#: core/items.gd:43
+msgid "Tom's Brass Tag"
+msgstr "Thẻ đồng của Tom"
+
+#: core/items.gd:43
+msgid "Miner's check-in tag no. 114. T. KADE. It was never collected in 2011."
+msgstr "Thẻ điểm danh của thợ mỏ số 114. T. KADE. Năm 2011 chưa có ai đến nhận."
+
+#: levels/l1_substation.gd:66 levels/l1_substation.gd:1247
+msgid "Reach the school. Gran's shelter. Follow Highway 53 north."
+msgstr "Đến trường học. Nơi trú ẩn của bà. Đi theo Quốc lộ 53 về hướng bắc."
+
+#: levels/l1_substation.gd:70
+msgid "Get into Kettle Falls. Follow Highway 53 north on foot."
+msgstr "Vào Kettle Falls. Đi bộ theo Quốc lộ 53 về hướng bắc."
+
+#: levels/l1_substation.gd:71
+msgid "HIGHWAY 53"
+msgstr "QUỐC LỘ 53"
+
+#: levels/l1_substation.gd:71
+msgid "Kettle Falls, Minnesota  -  Dec 21, 2026  22:14  -  -40 degrees"
+msgstr "Kettle Falls, Minnesota  -  21 tháng 12, 2026  22:14  -  -40 độ"
+
+#: levels/l1_substation.gd:73
+msgid "WASD - move     SHIFT - sprint"
+msgstr "WASD - di chuyển     SHIFT - chạy nhanh"
+
+#: levels/l1_substation.gd:273 levels/l1_substation.gd:274 levels/l1_substation.gd:404
+msgid "LAKESHORE ELECTRIC CO-OP"
+msgstr "HỢP TÁC XÃ ĐIỆN LAKESHORE"
+
+#: levels/l1_substation.gd:275
+msgid "UNIT 14"
+msgstr "SỐ 14"
+
+#: levels/l1_substation.gd:378 ui/main_menu.gd:27
+msgid "KETTLE FALLS"
+msgstr "KETTLE FALLS"
+
+#: levels/l1_substation.gd:379
+msgid "pop. 1,204"
+msgstr "dân số 1.204"
+
+#: levels/l1_substation.gd:380
+msgid "Home of the Iron Range Miners"
+msgstr "Quê hương của đội Iron Range Miners"
+
+#: levels/l1_substation.gd:393
+msgid "EXTREME COLD"
+msgstr "RÉT CỰC ĐỘ"
+
+#: levels/l1_substation.gd:394
+msgid "TRAVEL NOT ADVISED"
+msgstr "KHÔNG NÊN ĐI LẠI"
+
+#: levels/l1_substation.gd:405
+msgid "KETTLE FALLS SUBSTATION"
+msgstr "TRẠM BIẾN ÁP KETTLE FALLS"
+
+#: levels/l1_substation.gd:406
+msgid "AUTHORIZED PERSONNEL ONLY"
+msgstr "CHỈ DÀNH CHO NHÂN VIÊN ĐƯỢC PHÉP"
+
+#: levels/l1_substation.gd:449
+msgid "MnDOT  SAND / SALT"
+msgstr "MnDOT  CÁT / MUỐI"
+
+#: levels/l1_substation.gd:493 levels/l1_substation.gd:568
+msgid "DANGER  HIGH VOLTAGE"
+msgstr "NGUY HIỂM  ĐIỆN CAO THẾ"
+
+#: levels/l1_substation.gd:494
+msgid "KEEP OUT"
+msgstr "CẤM VÀO"
+
+#: levels/l1_substation.gd:495
+msgid "Check gate"
+msgstr "Kiểm tra cổng"
+
+#: levels/l1_substation.gd:509
+msgid "Chained and padlocked. The fence is cut open further north."
+msgstr "Bị xích và khóa móc. Hàng rào bị cắt toang ở phía bắc, xa hơn một đoạn."
+
+#: levels/l1_substation.gd:569
+msgid "KETTLE FALLS     69/12.47 kV"
+msgstr "KETTLE FALLS     69/12,47 kV"
+
+#: levels/l1_substation.gd:671 levels/l1_substation.gd:718 levels/l1_substation.gd:1147
+msgid "OPEN"
+msgstr "MỞ"
+
+#: levels/l1_substation.gd:681 levels/l1_substation.gd:731 levels/l1_substation.gd:1147
+msgid "CLOSED"
+msgstr "ĐÓNG"
+
+#: levels/l1_substation.gd:685
+#, c-format
+msgid "Operate %s (hot stick)"
+msgstr "Thao tác %s (bằng gậy cách điện)"
+
+#: levels/l1_substation.gd:705
+msgid "BKR-KF2 CONTROL"
+msgstr "ĐIỀU KHIỂN BKR-KF2"
+
+#: levels/l1_substation.gd:711
+msgid "BKR-KF2  FEEDER BREAKER"
+msgstr "BKR-KF2  MÁY CẮT XUẤT TUYẾN"
+
+#: levels/l1_substation.gd:734
+msgid "Control cabinet: fuse block"
+msgstr "Tủ điều khiển: hộp cầu chì"
+
+#: levels/l1_substation.gd:735
+msgid "Operate BKR-KF2"
+msgstr "Thao tác BKR-KF2"
+
+#: levels/l1_substation.gd:736
+msgid "OPEN  TRIP  CLOSE"
+msgstr "MỞ  NHẢY  ĐÓNG"
+
+#: levels/l1_substation.gd:740
+msgid "The breaker control circuit is live."
+msgstr "Mạch điều khiển của máy cắt đã có điện."
+
+#: levels/l1_substation.gd:743
+msgid "Fuse block: 60A installed. Control power is up."
+msgstr "Hộp cầu chì: đã lắp 60A. Nguồn điều khiển đã có."
+
+#: levels/l1_substation.gd:749
+msgid "Installed the 60A fuse. The breaker's control circuit is alive."
+msgstr "Đã lắp cầu chì 60A. Mạch điều khiển của máy cắt đã sống lại."
+
+#: levels/l1_substation.gd:751
+msgid "The control fuse block is empty. Needs a 60A cartridge fuse."
+msgstr "Hộp cầu chì điều khiển đang trống. Cần một cầu chì ống 60A."
+
+#: levels/l1_substation.gd:756
+msgid "DS-2A  BUS ISOLATOR"
+msgstr "DS-2A  DAO CÁCH LY THANH CÁI"
+
+#: levels/l1_substation.gd:758
+msgid "DS-2B  LINE ISOLATOR"
+msgstr "DS-2B  DAO CÁCH LY ĐƯỜNG DÂY"
+
+#: levels/l1_substation.gd:759
+msgid "DS-2C  BYPASS - MAINT ONLY"
+msgstr "DS-2C  DAO NỐI TẮT - CHỈ ĐỂ BẢO TRÌ"
+
+#: levels/l1_substation.gd:766
+msgid "KF-2 BAY  -  FOLLOW THE SWITCHING ORDER"
+msgstr "NGĂN KF-2  -  LÀM THEO PHIẾU THAO TÁC"
+
+#: levels/l1_substation.gd:790
+msgid "Locked. Brass key tag: KF SUBSTATION - CONTROL HOUSE."
+msgstr "Bị khóa. Thẻ chìa khóa đồng: TRẠM BIẾN ÁP KF - NHÀ ĐIỀU KHIỂN."
+
+#: levels/l1_substation.gd:790
+msgid "Open control house"
+msgstr "Mở nhà điều khiển"
+
+#: levels/l1_substation.gd:791
+msgid "CONTROL HOUSE"
+msgstr "NHÀ ĐIỀU KHIỂN"
+
+#: levels/l1_substation.gd:792
+msgid "NO ENTRY - HV"
+msgstr "CẤM VÀO - CAO THẾ"
+
+#: levels/l1_substation.gd:803
+msgid ""
+"KETTLE FALLS SUB  -  SCADA  (UPS)\n"
+"BUS 1   69 kV   DEAD\n"
+"FDR KF-1  OPEN   LOAD SHED\n"
+"FDR KF-2  OPEN   LOAD SHED\n"
+"FDR KF-3  CLOSED  PRIORITY (MERIDIAN)\n"
+"ORDER 0417 ACTIVE - DO NOT RESTORE"
+msgstr ""
+"TRẠM KETTLE FALLS  -  SCADA  (UPS)\n"
+"THANH CÁI 1   69 kV   MẤT ĐIỆN\n"
+"XT KF-1  MỞ   CẮT TẢI\n"
+"XT KF-2  MỞ   CẮT TẢI\n"
+"XT KF-3  ĐÓNG  ƯU TIÊN (MERIDIAN)\n"
+"LỆNH 0417 ĐANG HIỆU LỰC - KHÔNG ĐƯỢC KHÔI PHỤC"
+
+#: levels/l1_substation.gd:831
+msgid "SAFETY IS A CHOICE"
+msgstr "AN TOÀN LÀ MỘT LỰA CHỌN"
+
+#: levels/l1_substation.gd:834
+msgid "ONE-LINE  KF-2:  BUS-DS2A-BKR-DS2B-LINE"
+msgstr "SƠ ĐỒ ĐƠN TUYẾN  KF-2:  THANH CÁI-DS2A-BKR-DS2B-ĐƯỜNG DÂY"
+
+#: levels/l1_substation.gd:838
+msgid "Read SCADA screen"
+msgstr "Đọc màn hình SCADA"
+
+#: levels/l1_substation.gd:856
+msgid "Bus 1 dead. KF-1 and KF-2 open. KF-3 closed: priority load."
+msgstr "Thanh cái 1 mất điện. KF-1 và KF-2 mở. KF-3 đóng: phụ tải ưu tiên."
+
+#: levels/l1_substation.gd:862 levels/l1_substation.gd:863 levels/l1_substation.gd:864
+msgid "ELIAS"
+msgstr "ELIAS"
+
+#: levels/l1_substation.gd:862
+msgid "UPS is still holding the screen. Bus dead. KF-1 open. KF-2 open. KF-3 closed."
+msgstr "UPS vẫn đang giữ cho màn hình sáng. Thanh cái mất điện. KF-1 mở. KF-2 mở. KF-3 đóng."
+
+#: levels/l1_substation.gd:863
+msgid "KF-3. Lake Road. That's the only feeder in the whole county still carrying load."
+msgstr "KF-3. Đường Lake. Đó là xuất tuyến duy nhất trong cả hạt vẫn còn tải."
+
+#: levels/l1_substation.gd:864
+msgid "Shed order from Dispatch. 'MERIDIAN load protected.' Three nights. Three nights in the cold, for a data centre."
+msgstr "Lệnh cắt tải từ Điều độ. 'Bảo vệ phụ tải MERIDIAN.' Ba đêm. Ba đêm trong giá rét, chỉ vì một trung tâm dữ liệu."
+
+#: levels/l1_substation.gd:865
+msgid "This isn't a fault. Someone opened these on purpose. And someone sat here and held them open."
+msgstr "Đây không phải sự cố. Có người đã cố tình mở chúng ra. Và có người đã ngồi ở đây giữ cho chúng mở."
+
+#: levels/l1_substation.gd:866
+msgid "KF-2 feeds the school. If I can close it by the book, Gran's shelter gets heat."
+msgstr "KF-2 cấp điện cho trường học. Nếu mình đóng được nó đúng quy trình, khu trú ẩn của mẹ sẽ có hơi ấm."
+
+#: levels/l1_substation.gd:869
+msgid "Re-close feeder KF-2. Find the hot stick and a 60A fuse, then follow the switching order."
+msgstr "Đóng lại xuất tuyến KF-2. Tìm gậy cách điện và một cầu chì 60A, rồi làm theo phiếu thao tác."
+
+#: levels/l1_substation.gd:885
+msgid "KF SUBSTATION  -  STORES"
+msgstr "TRẠM BIẾN ÁP KF  -  KHO VẬT TƯ"
+
+#: levels/l1_substation.gd:896
+msgid "Open locked cabinet"
+msgstr "Mở tủ bị khóa"
+
+#: levels/l1_substation.gd:903
+msgid "The cabinet is open. Empty shelves and rust."
+msgstr "Tủ đã mở. Kệ trống trơn và đầy gỉ sét."
+
+#: levels/l1_substation.gd:906
+msgid "Padlock frozen solid. You need something to pry it with."
+msgstr "Ổ khóa móc đông cứng. Cần thứ gì đó để bẩy nó ra."
+
+#: levels/l1_substation.gd:912
+msgid "You wedge the hatchet under the hasp and lean. The frozen padlock shears."
+msgstr "Nhét lưỡi rìu vào dưới móc khóa rồi dồn sức ghì xuống. Ổ khóa đông cứng gãy rời."
+
+#: levels/l1_substation.gd:942
+msgid "LAKESHORE ELEC. 22"
+msgstr "LAKESHORE ĐIỆN 22"
+
+#: levels/l1_substation.gd:988
+msgid "Downed conductor. Still live. Stay clear of the arcing end."
+msgstr "Dây dẫn đứt rơi xuống. Vẫn còn điện. Tránh xa đầu dây đang phóng hồ quang."
+
+#: levels/l1_substation.gd:1000
+msgid "The live conductor arcs across your boots!"
+msgstr "Dây dẫn có điện phóng hồ quang ngang qua đôi ủng của anh!"
+
+#: levels/l1_substation.gd:1015
+msgid "KETTLE FALLS CONSOLIDATED SCHOOLS"
+msgstr "TRƯỜNG LIÊN CẤP KETTLE FALLS"
+
+#: levels/l1_substation.gd:1016
+msgid "WINTER ROAD CLOSURE  -  SHELTER OPEN"
+msgstr "ĐƯỜNG ĐÓNG CỬA MÙA ĐÔNG  -  KHU TRÚ ẨN ĐANG MỞ"
+
+#: levels/l1_substation.gd:1018
+msgid "The road barrier is chained, and the gate motor is dead. No power in the whole town."
+msgstr "Rào chắn đường bị xích lại, và động cơ cổng đã chết. Cả thị trấn không còn điện."
+
+#: levels/l1_substation.gd:1018 levels/l3_church.gd:1155
+msgid "Go through the gate"
+msgstr "Đi qua cổng"
+
+#: levels/l1_substation.gd:1063 levels/l2_school.gd:87 levels/l2_school.gd:689
+msgid "KETTLE FALLS CONSOLIDATED SCHOOL"
+msgstr "TRƯỜNG LIÊN CẤP KETTLE FALLS"
+
+#: levels/l1_substation.gd:1114
+msgid "KF-2 is already energised. Leave it alone."
+msgstr "KF-2 đã có điện rồi. Đừng động vào nữa."
+
+#: levels/l1_substation.gd:1118
+msgid "Already closed."
+msgstr "Đã đóng rồi."
+
+#: levels/l1_substation.gd:1121
+msgid "You are not touching a disconnect bare-handed. You need an insulated hot stick."
+msgstr "Không ai tay không mà chạm vào dao cách ly. Cần một cây gậy cách điện."
+
+#: levels/l1_substation.gd:1125
+msgid "No control power. The breaker's control fuse is missing."
+msgstr "Không có nguồn điều khiển. Cầu chì điều khiển của máy cắt bị mất."
+
+#: levels/l1_substation.gd:1136
+#, c-format
+msgid "%s closed."
+msgstr "%s đã đóng."
+
+#: levels/l1_substation.gd:1183
+msgid "ARC FLASH! The disconnect flashes over and trips the bay. Everything drops open."
+msgstr "HỒ QUANG! Dao cách ly phóng điện bề mặt và làm nhảy cả ngăn lộ. Mọi thứ lại bật mở."
+
+#: levels/l1_substation.gd:1193 levels/l1_substation.gd:1194 levels/l1_substation.gd:1242
+msgid "JUNE (radio)"
+msgstr "JUNE (bộ đàm)"
+
+#: levels/l1_substation.gd:1193
+msgid "Dad? ...I heard a bang. Are you okay? Do the thing from the manual. Dad, I know it by heart."
+msgstr "Bố? ...Con nghe thấy một tiếng nổ. Bố có sao không? Bố làm theo như trong cuốn sổ tay đi. Bố ơi, con thuộc lòng rồi."
+
+#: levels/l1_substation.gd:1194
+msgid "Bus side first. Then the line side. The breaker last. Never touch the bypass. Never switch a disconnect under load."
+msgstr "Phía thanh cái trước. Rồi đến phía đường dây. Máy cắt đóng sau cùng. Đừng bao giờ chạm vào dao nối tắt. Đừng bao giờ đóng cắt dao cách ly khi đang mang tải."
+
+#: levels/l1_substation.gd:1195
+msgid "Bus side, line side, breaker. Right. Thanks, kiddo."
+msgstr "Phía thanh cái, phía đường dây, máy cắt. Đúng rồi. Cảm ơn con, nhóc."
+
+#: levels/l1_substation.gd:1198
+msgid "Check the switching order in the control house."
+msgstr "Xem phiếu thao tác trong nhà điều khiển."
+
+#: levels/l1_substation.gd:1241
+msgid "KF-2 is hot. Look at that."
+msgstr "KF-2 có điện rồi. Nhìn kìa."
+
+#: levels/l1_substation.gd:1242
+msgid "Dad! Dad, the school just lit up. The gym, the hall, everything. Gran's shelter is there."
+msgstr "Bố ơi! Trường vừa sáng đèn lên rồi. Phòng thể dục, sảnh, tất cả luôn. Khu trú ẩn của bà ở đó."
+
+#: levels/l1_substation.gd:1243
+msgid "People are crying. Gran's saying your name. Please hurry. Please, before they come toward the light."
+msgstr "Mọi người đang khóc. Bà đang gọi tên bố. Bố nhanh lên đi. Làm ơn, trước khi chúng kéo đến chỗ có ánh sáng."
+
+#: levels/l1_substation.gd:1244
+msgid "Hold on, June. I'm coming. Stay inside, stay warm."
+msgstr "Đợi đấy, June. Bố đang đến. Ở yên trong nhà, giữ ấm nhé."
+
+#: levels/l1_substation.gd:1277
+msgid "The control house is already unlocked."
+msgstr "Nhà điều khiển đã được mở khóa rồi."
+
+#: levels/l1_substation.gd:1282
+msgid "Used Control House Key. The door will open now."
+msgstr "Đã dùng Chìa khóa nhà điều khiển. Cửa sẽ mở ra."
+
+#: levels/l1_substation.gd:1284
+msgid "The key tag reads KF SUBSTATION - CONTROL HOUSE."
+msgstr "Thẻ chìa khóa ghi: TRẠM BIẾN ÁP KF - NHÀ ĐIỀU KHIỂN."
+
+#: levels/l1_substation.gd:1288
+msgid "The fuse block already has its fuse."
+msgstr "Hộp cầu chì đã có cầu chì rồi."
+
+#: levels/l1_substation.gd:1292
+msgid "A 60A cartridge fuse. It belongs in the breaker's control cabinet."
+msgstr "Một cầu chì ống 60A. Nó thuộc về tủ điều khiển của máy cắt."
+
+#: levels/l1_substation.gd:1294
+msgid "Walk up to a disconnect and operate it with the hot stick."
+msgstr "Đi đến chỗ một dao cách ly và thao tác nó bằng gậy cách điện."
+
+#: levels/l1_substation.gd:1302
+msgid "Get into the control house. Find the SCADA room by the spur."
+msgstr "Vào nhà điều khiển. Tìm phòng SCADA cạnh nhánh rẽ."
+
+#: levels/l1_substation.gd:1306
+msgid "TAB: select the Road Flare and USE. It burns and drives the Rimebound back."
+msgstr "TAB: chọn Pháo sáng đường bộ rồi DÙNG. Nó cháy và đẩy lùi lũ Xác Băng."
+
+#: levels/l1_substation.gd:1308
+msgid "Insulated hot stick. Now you can work the disconnects."
+msgstr "Gậy cách điện. Giờ thì thao tác dao cách ly được rồi."
+
+#: levels/l1_substation.gd:1310
+msgid "A 60A cartridge fuse. The breaker's control cabinet is in the switchyard."
+msgstr "Một cầu chì ống 60A. Tủ điều khiển của máy cắt nằm trong khu đóng cắt ngoài trời."
+
+#: levels/l1_substation.gd:1324
+msgid "Phone: messages with Deb"
+msgstr "Điện thoại: tin nhắn với Deb"
+
+#: levels/l1_substation.gd:1325
+msgid ""
+"[b]RUSS (Dec 19, 04:41)[/b]\n"
+"Deb the line's dead at the house too?\n"
+"\n"
+"[b]DEB[/b]\n"
+"The house is 41 degrees. Are you coming home\n"
+"\n"
+"[b]RUSS[/b]\n"
+"Can't leave the yard. Dispatch says hold. Order's from Corvane.\n"
+"\n"
+"[b]DEB[/b]\n"
+"Gina next door isn't answering her door. Russ people are dying out here\n"
+"\n"
+"[b]RUSS (Dec 20, 23:12)[/b]\n"
+"they told me not to touch KF-2.\n"
+"\n"
+"[b]RUSS[/b]\n"
+"People are freezing, Deb.\n"
+"\n"
+"[b]DEB[/b]\n"
+"Then touch it\n"
+"\n"
+"[b]RUSS (Dec 21, 21:52)[/b]\n"
+"Going to do it by the book. Checking T2 first. Something humming wrong out there. Back in 5\n"
+"\n"
+"[b]DEB (22:03)[/b]\n"
+"Russ?\n"
+"\n"
+"[b]DEB (22:09)[/b]\n"
+"Russ please\n"
+"\n"
+"[b]DEB (22:31)[/b]\n"
+"please"
+msgstr ""
+"[b]RUSS (19/12, 04:41)[/b]\n"
+"Deb đường dây ở nhà cũng chết rồi à?\n"
+"\n"
+"[b]DEB[/b]\n"
+"Trong nhà 5 độ C. Anh có về nhà không\n"
+"\n"
+"[b]RUSS[/b]\n"
+"Không rời bãi được. Điều độ bảo giữ nguyên. Lệnh từ Corvane.\n"
+"\n"
+"[b]DEB[/b]\n"
+"Gina nhà bên không ra mở cửa. Russ ơi người ta đang chết ở ngoài này\n"
+"\n"
+"[b]RUSS (20/12, 23:12)[/b]\n"
+"họ bảo anh đừng đụng vào KF-2.\n"
+"\n"
+"[b]RUSS[/b]\n"
+"Người ta đang chết cóng, Deb à.\n"
+"\n"
+"[b]DEB[/b]\n"
+"Thì anh đụng vào đi\n"
+"\n"
+"[b]RUSS (21/12, 21:52)[/b]\n"
+"Anh sẽ làm đúng quy trình. Kiểm tra T2 trước. Ngoài kia có tiếng ù là lạ. 5 phút nữa anh về\n"
+"\n"
+"[b]DEB (22:03)[/b]\n"
+"Russ?\n"
+"\n"
+"[b]DEB (22:09)[/b]\n"
+"Russ làm ơn\n"
+"\n"
+"[b]DEB (22:31)[/b]\n"
+"làm ơn"
+
+#: levels/l1_substation.gd:1334
+msgid "Printout: Load-Shed Order 0417"
+msgstr "In từ máy: Lệnh cắt tải 0417"
+
+#: levels/l1_substation.gd:1335
+msgid ""
+"[b]LAKESHORE ELECTRIC COOPERATIVE - SYSTEM OPERATIONS[/b]\n"
+"[b]EMERGENCY LOAD-SHED ORDER 0417[/b]\n"
+"Dec 18, 2026 02:11\n"
+"Issued by Regional Dispatch\n"
+"\n"
+"Grid emergency, Level 3 (polar vortex). Effective immediately the following feeders are to be opened and held open:\n"
+"\n"
+"   KF-1  Main Street / Downtown\n"
+"   KF-2  School / Church / Residential\n"
+"\n"
+"Feeder KF-1 and KF-2 shed per Corvane Systems Priority Load Agreement, section 4.2.\n"
+"\n"
+"[b]MERIDIAN load protected.[/b]\n"
+"Feeder KF-3 (Lake Road) is to remain closed.\n"
+"\n"
+"Do not restore any shed feeder without written release from Dispatch. Estimated duration: indeterminate.\n"
+"\n"
+"Acknowledge receipt.\n"
+"- K. Hallstrom, Dispatch\n"
+"\n"
+"Handwritten underneath, in blue pen:\n"
+"\"There will not be a release. - R.\""
+msgstr ""
+"[b]HỢP TÁC XÃ ĐIỆN LAKESHORE - ĐIỀU HÀNH HỆ THỐNG[/b]\n"
+"[b]LỆNH CẮT TẢI KHẨN CẤP 0417[/b]\n"
+"18/12/2026 02:11\n"
+"Do Điều độ Khu vực ban hành\n"
+"\n"
+"Sự cố lưới điện, Cấp 3 (xoáy cực). Có hiệu lực ngay lập tức, các xuất tuyến sau phải được mở và giữ ở trạng thái mở:\n"
+"\n"
+"   KF-1  Phố Chính / Trung tâm\n"
+"   KF-2  Trường học / Nhà thờ / Khu dân cư\n"
+"\n"
+"Xuất tuyến KF-1 và KF-2 bị cắt theo Thỏa thuận Phụ tải Ưu tiên với Corvane Systems, mục 4.2.\n"
+"\n"
+"[b]Bảo vệ phụ tải MERIDIAN.[/b]\n"
+"Xuất tuyến KF-3 (Đường Lake) phải được giữ ở trạng thái đóng.\n"
+"\n"
+"Không được khôi phục bất kỳ xuất tuyến nào bị cắt nếu chưa có văn bản cho phép từ Điều độ. Thời gian dự kiến: không xác định.\n"
+"\n"
+"Xác nhận đã nhận lệnh.\n"
+"- K. Hallstrom, Điều độ\n"
+"\n"
+"Dòng chữ viết tay bên dưới, bằng bút mực xanh:\n"
+"\"Sẽ không có lệnh cho phép nào đâu. - R.\""
+
+#: levels/l1_substation.gd:1336
+msgid "Operator's switching order and log"
+msgstr "Phiếu thao tác và nhật ký của nhân viên vận hành"
+
+#: levels/l1_substation.gd:1337
+msgid ""
+"[b]SWITCHING ORDER - RESTORE KF-2[/b]\n"
+"(copy from the manual, for my own sake)\n"
+"\n"
+"1. Verify BKR-KF2 OPEN.\n"
+"2. CLOSE DS-2A (bus side).\n"
+"3. CLOSE DS-2B (line side).\n"
+"4. CLOSE BKR-KF2. Last.\n"
+"\n"
+"[b]NEVER[/b] operate a disconnect with the breaker closed. A disconnect cannot interrupt load. It arcs, and it takes you with it.\n"
+"[b]DS-2C is the bypass.[/b] Maintenance only. Leave it alone.\n"
+"\n"
+"Hot stick is on the hook in my truck bed. The breaker's control fuse (60A) blew in November. The spare is in the cabinet in the stores container. Padlock froze. Pry it.\n"
+"\n"
+"[b]LOG[/b]\n"
+"12/19  Temp -34. Heater only. Dispatch: hold.\n"
+"12/20  Temp -39. Heard from Deb. Not good.\n"
+"12/21  Temp -41. I am going to do it. If I am wrong, they can fire me.\n"
+"12/21 21:50  Going out to check T2. Back in five."
+msgstr ""
+"[b]PHIẾU THAO TÁC - KHÔI PHỤC KF-2[/b]\n"
+"(chép từ cuốn sổ tay, để chính mình khỏi nhầm)\n"
+"\n"
+"1. Kiểm tra BKR-KF2 đang MỞ.\n"
+"2. ĐÓNG DS-2A (phía thanh cái).\n"
+"3. ĐÓNG DS-2B (phía đường dây).\n"
+"4. ĐÓNG BKR-KF2. Làm sau cùng.\n"
+"\n"
+"[b]TUYỆT ĐỐI KHÔNG[/b] thao tác dao cách ly khi máy cắt đang đóng. Dao cách ly không thể cắt dòng tải. Nó phóng hồ quang, và kéo theo cả người thao tác.\n"
+"[b]DS-2C là dao nối tắt.[/b] Chỉ dùng khi bảo trì. Đừng đụng vào.\n"
+"\n"
+"Gậy cách điện treo trên móc ở thùng xe tải của tôi. Cầu chì điều khiển (60A) của máy cắt đã cháy hồi tháng Mười Một. Cầu chì dự phòng nằm trong tủ ở container kho. Ổ khóa móc bị đóng băng. Bẩy nó ra.\n"
+"\n"
+"[b]NHẬT KÝ[/b]\n"
+"19/12  Nhiệt độ -34. Chỉ có lò sưởi. Điều độ: giữ nguyên.\n"
+"20/12  Nhiệt độ -39. Nghe tin từ Deb. Không ổn.\n"
+"21/12  Nhiệt độ -41. Tôi sẽ làm. Nếu tôi sai, họ cứ việc sa thải tôi.\n"
+"21/12 21:50  Ra kiểm tra T2. Năm phút nữa quay lại."
+
+#: levels/l1_substation.gd:1338
+msgid "Flyer: MERIDIAN community benefits"
+msgstr "Tờ rơi: lợi ích cộng đồng của MERIDIAN"
+
+#: levels/l1_substation.gd:1339
+msgid ""
+"[b]CORVANE SYSTEMS[/b]\n"
+"[b]MERIDIAN: Powering Tomorrow, Warming Kettle Falls[/b]\n"
+"\n"
+"Hyperscale means hometown scale!\n"
+"\n"
+"- 41 permanent jobs for Kettle Falls families\n"
+"- Free-cooling on Lake Superior's cold, so your town runs greener\n"
+"- Heat Recovery Pipeline will warm homes and thaw the old mine workings (and bring Northline's lithium jobs back!)\n"
+"- A 25-year Community Priority Load Agreement, so Meridian is always a good neighbour\n"
+"\n"
+"[i]Come to the community open house at the school gym. Free cocoa.[/i]\n"
+"\n"
+"small print:\n"
+"[i]Priority Load Agreement terms apply. In a declared grid emergency, curtailment order is determined by contract. Subject to grid availability.[/i]"
+msgstr ""
+"[b]CORVANE SYSTEMS[/b]\n"
+"[b]MERIDIAN: Thắp sáng tương lai, sưởi ấm Kettle Falls[/b]\n"
+"\n"
+"Quy mô siêu lớn, nhưng vẫn là quy mô quê nhà!\n"
+"\n"
+"- 41 việc làm lâu dài cho các gia đình Kettle Falls\n"
+"- Làm mát tự nhiên nhờ cái lạnh của Hồ Superior, để thị trấn của bạn xanh hơn\n"
+"- Đường ống Thu hồi Nhiệt sẽ sưởi ấm nhà cửa và làm tan băng các hầm mỏ cũ (và mang việc làm lithium của Northline trở lại!)\n"
+"- Thỏa thuận Phụ tải Ưu tiên Cộng đồng 25 năm, để Meridian luôn là người hàng xóm tốt\n"
+"\n"
+"[i]Mời đến buổi tham quan cộng đồng tại phòng thể dục của trường. Có cacao miễn phí.[/i]\n"
+"\n"
+"chữ nhỏ:\n"
+"[i]Áp dụng các điều khoản của Thỏa thuận Phụ tải Ưu tiên. Khi có tuyên bố khẩn cấp lưới điện, thứ tự cắt tải do hợp đồng quy định. Tùy thuộc vào khả năng cấp điện của lưới.[/i]"
+
+#: levels/l1_substation.gd:1368
+msgid "L - flashlight on/off. The Rimebound see light from far away. Dark means safer."
+msgstr "L - bật/tắt đèn pin. Lũ Xác Băng nhìn thấy ánh sáng từ rất xa. Tối thì an toàn hơn."
+
+#: levels/l1_substation.gd:1372
+msgid "Brake line froze solid. At minus forty, steel cracks like candy."
+msgstr "Ống dẫn phanh đóng băng cứng. Ở âm bốn mươi độ, thép vỡ giòn như kẹo."
+
+#: levels/l1_substation.gd:1373
+msgid "Town limits. Quarter mile to the first house. Walk it."
+msgstr "Ranh giới thị trấn. Còn một phần tư dặm nữa là đến căn nhà đầu tiên. Đi thôi."
+
+#: levels/l1_substation.gd:1378
+msgid "E - pick up / interact.   TAB - inventory, files and combining items."
+msgstr "E - nhặt / tương tác.   TAB - túi đồ, hồ sơ và kết hợp vật phẩm."
+
+#: levels/l1_substation.gd:1380
+msgid "RIGHT MOUSE - aim.  LEFT MOUSE - fire.  R - reload.  F - hatchet.  Something lies in the snow ahead."
+msgstr "CHUỘT PHẢI - ngắm.  CHUỘT TRÁI - bắn.  R - nạp đạn.  F - rìu.  Có thứ gì đó nằm trong tuyết phía trước."
+
+#: levels/l1_substation.gd:1382
+msgid "Ammo is scarce. A Road Flare (TAB, USE) burns and repels the Rimebound. Light is a tool."
+msgstr "Đạn rất khan hiếm. Pháo sáng đường bộ (TAB, DÙNG) cháy và xua đuổi lũ Xác Băng. Ánh sáng cũng là một công cụ."
+
+#: levels/l1_substation.gd:1384
+msgid "Pop. 1,204. Not a single light on. Not one."
+msgstr "Dân số 1.204. Không một ngọn đèn nào sáng. Không một ngọn nào."
+
+#: levels/l1_substation.gd:1392
+msgid "Substation's up the spur. Gate's chained. Someone cut the fence further along."
+msgstr "Trạm biến áp nằm trên nhánh rẽ phía trước. Cổng bị xích. Ai đó đã cắt hàng rào ở chỗ xa hơn một chút."
+
+#: levels/l1_substation.gd:1395
+msgid "A burning barrel. The Rimebound keep off the fire."
+msgstr "Một thùng phuy đang cháy. Lũ Xác Băng tránh xa ngọn lửa."
+
+#: levels/l1_substation.gd:1398
+msgid "Russ Pelletier. Night operator. Never met him. Tag says he's the only one they left out here."
+msgstr "Russ Pelletier. Nhân viên vận hành ca đêm. Chưa từng gặp. Cái thẻ nói rằng ông là người duy nhất họ bỏ lại ngoài này."
+
+#: levels/l1_substation.gd:1399
+msgid "Frozen where he knelt. Key's in his hand. Sorry, friend."
+msgstr "Đông cứng ngay tại chỗ ông quỳ xuống. Chìa khóa vẫn trong tay ông. Xin lỗi nhé, bạn."
+
+#: levels/l1_substation.gd:1406
+msgid "June? Come in. It's Dad. Come in, kiddo."
+msgstr "June? Trả lời đi. Bố đây. Trả lời bố đi, nhóc."
+
+#: levels/l1_substation.gd:1407
+msgid "...Dad? You're LATE. You said Tuesday. It's been three days."
+msgstr "...Bố? Bố TRỄ rồi đấy. Bố nói là thứ Ba mà. Ba ngày rồi."
+
+#: levels/l1_substation.gd:1408
+msgid "I know. Truck went in the ditch at the town limits. I'm on foot. Where are you?"
+msgstr "Bố biết. Xe tải lao xuống rãnh ngay chỗ ranh giới thị trấn. Bố đang đi bộ. Con đang ở đâu?"
+
+#: levels/l1_substation.gd:1409
+msgid "School. Gran's shelter. It's so cold, the power's been out since the storm and there are people who sleep and don't..."
+msgstr "Ở trường. Khu trú ẩn của bà. Lạnh lắm, điện mất từ hôm bão rồi, và có những người ngủ rồi không..."
+
+#: levels/l1_substation.gd:1410
+msgid "Don't use your light. They see it. They come to the light, Dad. Dad, I can hear the hum again, it sounds like"
+msgstr "Đừng dùng đèn của bố. Chúng nhìn thấy đấy. Chúng kéo đến chỗ có ánh sáng, bố ơi. Bố ơi, con lại nghe thấy tiếng ù rồi, nghe như là"
+
+#: levels/l1_substation.gd:1415
+msgid "June? June!"
+msgstr "June? June!"
+
+#: levels/l1_substation.gd:1416
+msgid "Dead grid, and the school's on the KF-2 feeder. The co-op substation is on the way up. If it's open I can close it."
+msgstr "Lưới điện chết, mà trường lại nằm trên xuất tuyến KF-2. Trạm biến áp của hợp tác xã ở trên đường đi lên. Nếu nó còn mở được, bố sẽ đóng nó lại."
+
+#: levels/l1_substation.gd:1419
+msgid "Reach the Kettle Falls co-op substation, north on Highway 53."
+msgstr "Đến trạm biến áp của hợp tác xã Kettle Falls, về hướng bắc trên Quốc lộ 53."
+
+#: levels/l2_school.gd:87
+msgid "The longest night"
+msgstr "Đêm dài nhất"
+
+#: levels/l2_school.gd:93
+msgid "Dad? The school lights just came on. Gran ran the warming shelter there. Check the gym."
+msgstr "Bố? Đèn trường vừa bật sáng rồi. Bà quản lý khu trú ẩn sưởi ấm ở đó. Bố kiểm tra phòng thể dục đi."
+
+#: levels/l2_school.gd:94
+msgid "Stay where you are, June."
+msgstr "Cứ ở yên đó, June."
+
+#: levels/l2_school.gd:95
+msgid "I don't stay anywhere. You'd know that if you ever called."
+msgstr "Con không ở yên chỗ nào hết. Bố mà gọi cho con thường xuyên thì bố sẽ biết."
+
+#: levels/l2_school.gd:96
+msgid "...Fair."
+msgstr "...Con nói đúng."
+
+#: levels/l2_school.gd:489
+msgid "Iron gate"
+msgstr "Cổng sắt"
+
+#: levels/l2_school.gd:489
+msgid "Locked behind you. Frozen solid. No going back."
+msgstr "Đã khóa lại sau lưng. Đông cứng ngắt. Không quay đầu được nữa."
+
+#: levels/l2_school.gd:491
+msgid "The gate is chained. Not yet — there is still the school to get through."
+msgstr "Cổng bị xích. Chưa được — vẫn còn cả ngôi trường phải băng qua."
+
+#: levels/l2_school.gd:491
+msgid "Go through the east gate"
+msgstr "Đi qua cổng phía đông"
+
+#: levels/l2_school.gd:494
+msgid "ST. BRENDAN'S  ->  MAIN ST"
+msgstr "NHÀ THỜ ST. BRENDAN  ->  PHỐ CHÍNH"
+
+#: levels/l2_school.gd:539
+msgid "FRONT DOORS CLOSED"
+msgstr "CỬA CHÍNH ĐÃ ĐÓNG"
+
+#: levels/l2_school.gd:540
+msgid ""
+"SHELTER ENTRANCE:\n"
+"WEST DOOR (CUSTODIAL)\n"
+"KNOCK. ASK FOR RUTH."
+msgstr ""
+"LỐI VÀO KHU TRÚ ẨN:\n"
+"CỬA TÂY (KHU TẠP VỤ)\n"
+"HÃY GÕ CỬA. HỎI RUTH."
+
+#: levels/l2_school.gd:608
+msgid "Open shed door"
+msgstr "Mở cửa nhà kho"
+
+#: levels/l2_school.gd:698 levels/l2_school.gd:1391
+msgid "CUSTODIAL"
+msgstr "TẠP VỤ"
+
+#: levels/l2_school.gd:699
+msgid "Locked. The sign says CUSTODIAL — the janitor's keyring would open it."
+msgstr "Bị khóa. Biển ghi TẠP VỤ — chùm chìa khóa của người gác trường sẽ mở được nó."
+
+#: levels/l2_school.gd:699
+msgid "Open custodial door"
+msgstr "Mở cửa khu tạp vụ"
+
+#: levels/l2_school.gd:749
+msgid "Front doors"
+msgstr "Cửa chính"
+
+#: levels/l2_school.gd:761
+msgid "Chained shut from the inside, and the glass is frosted over. Another way in."
+msgstr "Bị xích từ bên trong, và lớp kính phủ đầy sương. Phải tìm đường khác vào."
+
+#: levels/l2_school.gd:765
+msgid "The mag-lock strike won't release on a brownout. It needs steady building power."
+msgstr "Chốt khóa từ không nhả được khi điện sụt áp. Nó cần nguồn điện ổn định của tòa nhà."
+
+#: levels/l2_school.gd:769
+msgid "Not yet. June's homeroom was 2B. If she left anything, it's there."
+msgstr "Chưa phải lúc. Lớp chủ nhiệm của June là 2B. Nếu con bé để lại thứ gì thì sẽ ở đó."
+
+#: levels/l2_school.gd:800 levels/l2_school.gd:1858
+msgid "Get out of the school. Make for St. Brendan's church — the east gate."
+msgstr "Ra khỏi trường học. Tiến đến nhà thờ St. Brendan — cổng phía đông."
+
+#: levels/l2_school.gd:856
+msgid "The keypad is dead — the electric strike has no power. Brownout. Needs the heat plant back on."
+msgstr "Bàn phím đã chết — chốt điện không có điện. Sụt áp. Cần phải bật lại nhà máy sưởi."
+
+#: levels/l2_school.gd:856
+msgid "Classroom 2B"
+msgstr "Lớp 2B"
+
+#: levels/l2_school.gd:857
+msgid "SHOP — locked. The custodian's keyring opens this."
+msgstr "XƯỞNG — bị khóa. Chùm chìa khóa của người gác trường mở được cửa này."
+
+#: levels/l2_school.gd:857
+msgid "SHOP"
+msgstr "XƯỞNG"
+
+#: levels/l2_school.gd:858
+msgid "NURSE"
+msgstr "Y TẾ"
+
+#: levels/l2_school.gd:859
+msgid "COACH"
+msgstr "HLV"
+
+#: levels/l2_school.gd:860
+msgid "Gym doors. Padlocked. Hung on a chain through the handles."
+msgstr "Cửa phòng thể dục. Khóa móc. Có sợi xích luồn qua các tay nắm."
+
+#: levels/l2_school.gd:860
+msgid "GYM"
+msgstr "PHÒNG THỂ DỤC"
+
+#: levels/l2_school.gd:862
+msgid ""
+"BASEMENT\n"
+"BOILER · CUSTODIAL"
+msgstr ""
+"TẦNG HẦM\n"
+"LÒ HƠI · TẠP VỤ"
+
+#: levels/l2_school.gd:877
+msgid "EXIT"
+msgstr "LỐI RA"
+
+#: levels/l2_school.gd:885
+msgid ""
+"WARMING SHELTER\n"
+"GYM -> DOWN THE HALL"
+msgstr ""
+"KHU TRÚ ẨN SƯỞI ẤM\n"
+"PHÒNG THỂ DỤC -> ĐI THẲNG HÀNH LANG"
+
+#: levels/l2_school.gd:886
+msgid ""
+"DO NOT SLEEP\n"
+"OUTSIDE THE GYM"
+msgstr ""
+"KHÔNG NGỦ\n"
+"NGOÀI PHÒNG THỂ DỤC"
+
+#: levels/l2_school.gd:887
+msgid "RULE 2: NOBODY SLEEPS ALONE"
+msgstr "QUY TẮC SỐ 2: KHÔNG AI NGỦ MỘT MÌNH"
+
+#: levels/l2_school.gd:952
+msgid "KETTLE FALLS — IRON FEEDS A NATION · 1954"
+msgstr "KETTLE FALLS — QUẶNG SẮT NUÔI SỐNG MỘT QUỐC GIA · 1954"
+
+#: levels/l2_school.gd:974
+msgid ""
+"WELCOME TO KETTLE FALLS\n"
+"WEST DOOR: SHELTER INTAKE"
+msgstr ""
+"CHÀO MỪNG ĐẾN KETTLE FALLS\n"
+"CỬA TÂY: TIẾP NHẬN VÀO KHU TRÚ ẨN"
+
+#: levels/l2_school.gd:991
+msgid ""
+"SIGN-IN\n"
+"63 / 41 / 38 ..."
+msgstr ""
+"ĐĂNG KÝ\n"
+"63 / 41 / 38 ..."
+
+#: levels/l2_school.gd:992
+msgid ""
+"DO NOT SLEEP OUTSIDE\n"
+"THE GYM"
+msgstr ""
+"KHÔNG NGỦ NGOÀI\n"
+"PHÒNG THỂ DỤC"
+
+#: levels/l2_school.gd:1015
+msgid "WARMING SHELTER ->"
+msgstr "KHU TRÚ ẨN SƯỞI ẤM ->"
+
+#: levels/l2_school.gd:1016 levels/l2_school.gd:1154
+msgid "DO NOT SLEEP OUTSIDE THE GYM"
+msgstr "KHÔNG NGỦ NGOÀI PHÒNG THỂ DỤC"
+
+#: levels/l2_school.gd:1030
+msgid "HAPPY HOLIDAYS KETTLE FALLS"
+msgstr "CHÚC MỪNG NGÀY LỄ - KETTLE FALLS"
+
+#: levels/l2_school.gd:1046
+msgid ""
+"DAD —\n"
+"Gran walked out at 3am. Said Grandpa\n"
+"was calling her from the mine.\n"
+"I'm going after her. Church first.\n"
+"— J.\n"
+"P.S. you're late."
+msgstr ""
+"BỐ ƠI —\n"
+"Bà đi ra ngoài lúc 3 giờ sáng. Bà nói ông\n"
+"đang gọi bà từ dưới mỏ.\n"
+"Con đi tìm bà. Đến nhà thờ trước.\n"
+"— J.\n"
+"P.S. bố đến trễ đấy."
+
+#: levels/l2_school.gd:1047
+msgid "2B — MS. PELTO"
+msgstr "2B — CÔ PELTO"
+
+#: levels/l2_school.gd:1048
+msgid "Read the blackboard"
+msgstr "Đọc bảng đen"
+
+#: levels/l2_school.gd:1072
+msgid "SHOP — NO ENTRY WITHOUT SUPERVISION"
+msgstr "XƯỞNG — KHÔNG ĐƯỢC VÀO NẾU KHÔNG CÓ GIÁM SÁT"
+
+#: levels/l2_school.gd:1083
+msgid "HEALTH OFFICE"
+msgstr "PHÒNG Y TẾ"
+
+#: levels/l2_school.gd:1094
+msgid "COACH  H. BERGSTROM"
+msgstr "HLV  H. BERGSTROM"
+
+#: levels/l2_school.gd:1107
+msgid "KETTLE FALLS  ·  HOME OF THE MINERS"
+msgstr "KETTLE FALLS  ·  QUÊ HƯƠNG CỦA ĐỘI THỢ MỎ"
+
+#: levels/l2_school.gd:1146
+msgid "SIGN IN"
+msgstr "ĐĂNG KÝ"
+
+#: levels/l2_school.gd:1153
+msgid ""
+"FAMILIES: WEST SIDE\n"
+"BLANKETS: STAGE"
+msgstr ""
+"GIA ĐÌNH: PHÍA TÂY\n"
+"CHĂN MỀN: SÂN KHẤU"
+
+#: levels/l2_school.gd:1155
+msgid "LOCKER ROOMS  v"
+msgstr "PHÒNG THAY ĐỒ  v"
+
+#: levels/l2_school.gd:1194
+msgid "Dozens of cots. Some of them are moving, slightly. The light is what wakes them. (L)"
+msgstr "Hàng chục chiếc giường xếp. Vài chiếc đang khẽ cựa mình. Chính ánh sáng đánh thức chúng. (L)"
+
+#: levels/l2_school.gd:1195
+msgid "Cross the gym to the locker-room stairs. Don't wake them — keep the flashlight off."
+msgstr "Băng qua phòng thể dục đến cầu thang phòng thay đồ. Đừng đánh thức chúng — hãy tắt đèn pin."
+
+#: levels/l2_school.gd:1242
+msgid "BOILER ROOM — AUTHORIZED PERSONNEL ONLY. The custodian's keyring opens it."
+msgstr "PHÒNG LÒ HƠI — CHỈ DÀNH CHO NHÂN VIÊN ĐƯỢC PHÉP. Chùm chìa khóa của người gác trường mở được cửa này."
+
+#: levels/l2_school.gd:1242
+msgid "BOILER"
+msgstr "LÒ HƠI"
+
+#: levels/l2_school.gd:1256
+msgid "BOILER ROOM ->"
+msgstr "PHÒNG LÒ HƠI ->"
+
+#: levels/l2_school.gd:1257
+msgid "CUSTODIAL ->"
+msgstr "KHU TẠP VỤ ->"
+
+#: levels/l2_school.gd:1345
+msgid "HEATING PLANT — BURNER CONTROL"
+msgstr "NHÀ MÁY SƯỞI — ĐIỀU KHIỂN LÒ ĐỐT"
+
+#: levels/l2_school.gd:1349 levels/l2_school.gd:1357
+msgid "PURGE"
+msgstr "XẢ KHÍ"
+
+#: levels/l2_school.gd:1351 levels/l2_school.gd:1358
+msgid "IGNITE"
+msgstr "ĐÁNH LỬA"
+
+#: levels/l2_school.gd:1353
+msgid "FEED"
+msgstr "CẤP NHIÊN LIỆU"
+
+#: levels/l2_school.gd:1356
+msgid "Fuse holder (F2 60A)"
+msgstr "Đế cầu chì (F2 60A)"
+
+#: levels/l2_school.gd:1359
+msgid "Feed valve"
+msgstr "Van cấp"
+
+#: levels/l2_school.gd:1376
+msgid "PURGE · IGNITE · FEED"
+msgstr "XẢ KHÍ · ĐÁNH LỬA · CẤP NHIÊN LIỆU"
+
+#: levels/l2_school.gd:1392
+msgid ""
+"DECEMBER 2026\n"
+"W. Dubois — heat + hearts"
+msgstr ""
+"THÁNG 12 NĂM 2026\n"
+"W. Dubois — hơi ấm + trái tim"
+
+#: levels/l2_school.gd:1400
+msgid "SAFE — WARM"
+msgstr "AN TOÀN — ẤM ÁP"
+
+#: levels/l2_school.gd:1479
+msgid "Break the ice (hatchet)"
+msgstr "Đập vỡ lớp băng (bằng rìu)"
+
+#: levels/l2_school.gd:1492
+msgid "The 60-amp fuse is seated. The controller's standby lamp is lit."
+msgstr "Cầu chì 60 ampe đã vào đúng vị trí. Đèn chờ của bộ điều khiển đã sáng."
+
+#: levels/l2_school.gd:1498
+msgid "F2 — 60A. The holder is empty. Somebody pulled it, or it blew."
+msgstr "F2 — 60A. Đế cầu chì trống. Ai đó đã rút nó ra, hoặc nó đã cháy."
+
+#: levels/l2_school.gd:1505
+msgid "Seated the 60A fuse. The controller wakes: standby lamp on."
+msgstr "Đã lắp cầu chì 60A. Bộ điều khiển thức dậy: đèn chờ sáng."
+
+#: levels/l2_school.gd:1511 levels/l2_school.gd:1537
+msgid "The burner is running."
+msgstr "Lò đốt đang chạy."
+
+#: levels/l2_school.gd:1515
+msgid "Nothing happens. The burner controller has no power — no fuse."
+msgstr "Không có gì xảy ra. Bộ điều khiển lò đốt không có điện — thiếu cầu chì."
+
+#: levels/l2_school.gd:1518
+msgid "The blower is still running. Wait for the lamp."
+msgstr "Quạt thổi vẫn đang chạy. Đợi đèn báo."
+
+#: levels/l2_school.gd:1521
+msgid "Already purged. Light the pilot before the hearth cools: IGNITE."
+msgstr "Đã xả khí rồi. Đốt lửa mồi trước khi lò nguội: ĐÁNH LỬA."
+
+#: levels/l2_school.gd:1525
+msgid "PURGE: blower running. Hold on for one full cycle..."
+msgstr "XẢ KHÍ: quạt thổi đang chạy. Chờ một chu kỳ đầy đủ..."
+
+#: levels/l2_school.gd:1531
+msgid "PURGE COMPLETE. The green lamp is lit."
+msgstr "XẢ KHÍ XONG. Đèn xanh đã sáng."
+
+#: levels/l2_school.gd:1541
+msgid "Dead. No control power."
+msgstr "Chết hẳn. Không có nguồn điều khiển."
+
+#: levels/l2_school.gd:1544
+msgid "Flame proven. Steady blue. Now the feed valve."
+msgstr "Đã xác nhận có lửa. Ngọn lửa xanh ổn định. Giờ đến van cấp."
+
+#: levels/l2_school.gd:1552
+msgid "FLAME FAILURE — LOCKOUT. Fired it before a full purge. Purge first, then ignite."
+msgstr "LỬA TẮT — KHÓA AN TOÀN. Đã đánh lửa trước khi xả khí đủ. Xả khí trước, rồi hãy đánh lửa."
+
+#: levels/l2_school.gd:1559
+msgid "IGNITE: pilot lit, main flame proven. Steady blue."
+msgstr "ĐÁNH LỬA: lửa mồi đã cháy, ngọn lửa chính đã được xác nhận. Xanh ổn định."
+
+#: levels/l2_school.gd:1573
+msgid "The valve stem is bare. Somebody took the wheel off."
+msgstr "Trục van trơ trụi. Ai đó đã tháo tay quay đi."
+
+#: levels/l2_school.gd:1576
+msgid "The feed valve is open. Pipes are ticking."
+msgstr "Van cấp đã mở. Các đường ống đang kêu lách tách."
+
+#: levels/l2_school.gd:1579
+msgid "Don't open the feed on a dead boiler. Purge, ignite — then feed."
+msgstr "Đừng mở van cấp khi lò đang chết. Xả khí, đánh lửa — rồi mới cấp."
+
+#: levels/l2_school.gd:1589
+msgid "Fitted the valve wheel. The feed is still closed."
+msgstr "Đã lắp tay quay van. Van cấp vẫn đang đóng."
+
+#: levels/l2_school.gd:1607
+msgid "Hear that? Pipes ticking all the way up. That's heat in the walls."
+msgstr "Nghe thấy không? Đường ống kêu lách tách suốt từ dưới lên. Đó là hơi ấm trong các bức tường."
+
+#: levels/l2_school.gd:1608
+msgid "And the building bus is steady again. No more brownout."
+msgstr "Và thanh cái của tòa nhà đã ổn định trở lại. Không còn sụt áp nữa."
+
+#: levels/l2_school.gd:1611 levels/l2_school.gd:1862
+msgid "The boiler is running. Find June's trail — her homeroom, Classroom 2B."
+msgstr "Lò hơi đang chạy. Lần theo dấu vết của June — lớp chủ nhiệm của con bé, Phòng 2B."
+
+#: levels/l2_school.gd:1614
+msgid "JUNE (radio): \"Dad? The school's lit up like a Christmas tree. Is that you?\""
+msgstr "JUNE (bộ đàm): \"Bố? Trường sáng rực như cây thông Giáng sinh. Là bố phải không?\""
+
+#: levels/l2_school.gd:1656
+msgid "Solid ice. You'd need something with an edge. Your hatchet."
+msgstr "Băng đặc cứng. Cần một thứ có lưỡi sắc. Chiếc rìu chẳng hạn."
+
+#: levels/l2_school.gd:1669
+msgid "The ice cracks away. A cast-iron valve wheel drops out."
+msgstr "Lớp băng nứt toác ra. Một tay quay van bằng gang rơi xuống."
+
+#: levels/l2_school.gd:1814
+msgid "Shelter Log — R. Kade"
+msgstr "Nhật ký khu trú ẩn — R. Kade"
+
+#: levels/l2_school.gd:1815
+msgid ""
+"[b]KETTLE FALLS WARMING SHELTER — LOG[/b]\n"
+"KFCS Gym · R. Kade, coordinator\n"
+"\n"
+"[b]DEC 18[/b]  Grid down 6:10 pm. Co-op says \"load management.\" Opened the gym at 7. 41 signed in. Cots from the Legion, blankets from St. Brendan's.\n"
+"\n"
+"[b]DEC 19[/b]  Boiler tripped overnight. Walt says it's the 60-amp control fuse; the spare is in the shop-class drawer. Shop is locked. Walt's janitor keys hang on a hook in the yard shed, because of course they do. Locker rooms flooded when a line burst, now one big ice rink. Walt dropped the feed-valve wheel in there shutting off the water. It's frozen in the pipe. He says you'd need a hatchet. 63 in.\n"
+"\n"
+"[b]DEC 20[/b]  Three didn't wake this morning. Cold doesn't look like that. Frost on the INSIDE of their eyes. Moved them to the stage and covered them. Dr. Aho says don't touch.\n"
+"Rule one: DO NOT SLEEP OUTSIDE THE GYM. Rule two: nobody sleeps alone.\n"
+"\n"
+"[b]DEC 21, 2 am[/b]  Checked off: Aho ✓ Bergstrom ✓ Lindqvist ✓ Moe ✓ Paulsen ✗ ✗ ✗ ✗\n"
+"I stopped checking.\n"
+"\n"
+"Tom's voice in the vents tonight. I know it can't be. He said my name the way he did coming up the stairs.\n"
+"I'm going to the front doors to listen."
+msgstr ""
+"[b]KHU TRÚ ẨN SƯỞI ẤM KETTLE FALLS — NHẬT KÝ[/b]\n"
+"Phòng thể dục KFCS · R. Kade, điều phối viên\n"
+"\n"
+"[b]18/12[/b]  Mất điện lúc 6:10 chiều. Hợp tác xã bảo là \"điều tiết phụ tải\". Mở phòng thể dục lúc 7 giờ. 41 người đăng ký. Giường xếp mượn từ hội Cựu chiến binh, chăn từ nhà thờ St. Brendan.\n"
+"\n"
+"[b]19/12[/b]  Lò hơi nhảy aptomat qua đêm. Walt bảo là cầu chì điều khiển 60 ampe; cái dự phòng nằm trong ngăn kéo lớp kỹ thuật. Xưởng đang khóa. Chùm chìa khóa của Walt treo trên móc trong nhà kho ngoài sân, tất nhiên rồi. Phòng thay đồ bị ngập khi một đường ống vỡ, giờ thành một sân trượt băng khổng lồ. Walt làm rơi tay quay van cấp ở trong đó lúc khóa nước. Nó đông cứng trong băng. Ông bảo cần một cái rìu. 63 người.\n"
+"\n"
+"[b]20/12[/b]  Sáng nay ba người không tỉnh dậy. Lạnh thì không như thế. Có sương muối ở BÊN TRONG mắt họ. Đã chuyển họ lên sân khấu và đắp chăn lại. Bác sĩ Aho dặn đừng chạm vào.\n"
+"Quy tắc một: KHÔNG NGỦ NGOÀI PHÒNG THỂ DỤC. Quy tắc hai: không ai ngủ một mình.\n"
+"\n"
+"[b]21/12, 2 giờ sáng[/b]  Đã điểm danh: Aho ✓ Bergstrom ✓ Lindqvist ✓ Moe ✓ Paulsen ✗ ✗ ✗ ✗\n"
+"Tôi thôi không điểm danh nữa.\n"
+"\n"
+"Đêm nay có giọng của Tom trong ống thông gió. Tôi biết điều đó không thể. Ông ấy gọi tên tôi y như cách ông vẫn gọi khi bước lên cầu thang.\n"
+"Tôi sẽ ra cửa chính để lắng nghe."
+
+#: levels/l2_school.gd:1817
+msgid "Drawing: \"the man with the light on his head\""
+msgstr "Bức vẽ: \"người đàn ông có đèn trên đầu\""
+
+#: levels/l2_school.gd:1818
+msgid ""
+"[b]Crayon on construction paper.[/b]\n"
+"\n"
+"A tall black stick figure with a yellow scribble on its head and lines coming out of it. Four little stick people in a row beneath it, Xs for eyes.\n"
+"\n"
+"In pencil, shaky, a child's capitals:\n"
+"[i]THE MAN WITH THE LIGHT ON HIS HEAD. HE WALKS AROUND OUTSIDE AT NIGHT. HE KNOCKS ON THE WINDOW AND SAYS OUR NAMES. MOM SAYS ITS JUST THE WIND. MR PELTO SAID DONT LOOK AT THE LIGHT.[/i]\n"
+"\n"
+"— Hannah W., grade 2"
+msgstr ""
+"[b]Bút sáp màu trên giấy thủ công.[/b]\n"
+"\n"
+"Một hình người que đen cao lớn, trên đầu có nét nguệch ngoạc màu vàng với những đường tỏa ra. Bên dưới là bốn hình người que nhỏ xếp thành hàng, mắt là hai dấu X.\n"
+"\n"
+"Bằng bút chì, run run, nét chữ in hoa của một đứa trẻ:\n"
+"[i]NGƯỜI ĐÀN ÔNG CÓ ĐÈN TRÊN ĐẦU. ÔNG ẤY ĐI LANG THANG BÊN NGOÀI VÀO BAN ĐÊM. ÔNG ẤY GÕ CỬA SỔ VÀ GỌI TÊN CHÚNG CON. MẸ BẢO CHỈ LÀ GIÓ THÔI. THẦY PELTO BẢO ĐỪNG NHÌN VÀO CÁI ĐÈN.[/i]\n"
+"\n"
+"— Hannah W., lớp 2"
+
+#: levels/l2_school.gd:1820
+msgid "Email: \"Meridian Scholars\""
+msgstr "Thư điện tử: \"Học bổng Meridian\""
+
+#: levels/l2_school.gd:1821
+msgid ""
+"[b]From:[/b] Office of the Superintendent, KFCSD\n"
+"[b]To:[/b] All staff\n"
+"[b]Subject:[/b] FW: Meridian Scholars — laptops!\n"
+"\n"
+"Colleagues, great news. Corvane Systems has donated 240 laptops to our students through its \"Meridian Scholars\" community partnership, pre-loaded with the Corvane Learning Suite. A photo op with the Corvane regional director is scheduled for Jan. 9.\n"
+"\n"
+"Please note the donation is conditional on district support for the Meridian grid-priority addendum with the co-op (attached, \"non-controversial\"). Kindly do not discuss the addendum with parents before the vote.\n"
+"\n"
+"Warmly,\n"
+"D. Halvorsen\n"
+"\n"
+"[i]Handwritten across the bottom, in Ruth's pen:[/i]\n"
+"240 laptops. 63 cots. Do the math."
+msgstr ""
+"[b]Từ:[/b] Văn phòng Giám đốc Sở, KFCSD\n"
+"[b]Đến:[/b] Toàn thể nhân viên\n"
+"[b]Chủ đề:[/b] FW: Học bổng Meridian — tặng máy tính xách tay!\n"
+"\n"
+"Kính gửi các đồng nghiệp, tin vui lớn. Corvane Systems đã tặng 240 máy tính xách tay cho học sinh của chúng ta thông qua chương trình hợp tác cộng đồng \"Học bổng Meridian\", cài sẵn Bộ phần mềm Học tập Corvane. Buổi chụp ảnh cùng giám đốc khu vực của Corvane dự kiến vào ngày 9/1.\n"
+"\n"
+"Xin lưu ý khoản tặng này có điều kiện là Sở ủng hộ phụ lục ưu tiên lưới điện Meridian với hợp tác xã (đính kèm, \"không gây tranh cãi\"). Đề nghị không bàn về phụ lục này với phụ huynh trước khi biểu quyết.\n"
+"\n"
+"Trân trọng,\n"
+"D. Halvorsen\n"
+"\n"
+"[i]Viết tay ngang cuối trang, bằng bút của Ruth:[/i]\n"
+"240 máy tính. 63 giường xếp. Tính đi."
+
+#: levels/l2_school.gd:1823
+msgid "Printout: parents' group text"
+msgstr "Bản in: nhóm tin nhắn của phụ huynh"
+
+#: levels/l2_school.gd:1824
+msgid ""
+"[b]GROUP: KF Parents (Gr. 2–5) — printed at the library, 12/19[/b]\n"
+"\n"
+"[b]Tara M:[/b] power's been out 14 hrs. Anyone else?\n"
+"[b]Brett L:[/b] whole town. Co-op text says \"rotating outages.\" Nothing's rotating. We're the ones that are out.\n"
+"[b]Tara M:[/b] my sister in Duluth has power. She sent a pic of the lake from her window. The data center is lit up like Christmas.\n"
+"[b]Brett L:[/b] why does a building in a blizzard get 100% of the juice and we get a text that says \"be patient\"\n"
+"[b]Marcy P:[/b] gym's open at the school. Ruth Kade's running it. Bring blankets, a thermos, your neighbors.\n"
+"[b]Tara M:[/b] heat's gone at the Pelto place. Taking the kids to the gym.\n"
+"[b]Brett L:[/b] hum's back. you hear it? like a refrigerator the size of the town\n"
+"[b]Tara M:[/b] [photo attached]\n"
+"\n"
+"[i](no further messages)[/i]"
+msgstr ""
+"[b]NHÓM: Phụ huynh KF (Lớp 2–5) — in ở thư viện, 19/12[/b]\n"
+"\n"
+"[b]Tara M:[/b] mất điện 14 tiếng rồi. Có ai nữa không?\n"
+"[b]Brett L:[/b] cả thị trấn. Tin nhắn của hợp tác xã bảo là \"cắt điện luân phiên\". Có thấy cái nào luân phiên đâu. Chỉ có mỗi bọn mình bị cắt.\n"
+"[b]Tara M:[/b] chị gái mình ở Duluth có điện. Chị gửi ảnh cái hồ chụp từ cửa sổ. Cái trung tâm dữ liệu sáng rực như cây thông Noel.\n"
+"[b]Brett L:[/b] sao một tòa nhà giữa bão tuyết lại có 100% điện còn bọn mình chỉ nhận được tin nhắn bảo \"xin hãy kiên nhẫn\"\n"
+"[b]Marcy P:[/b] phòng thể dục trường đang mở. Ruth Kade đang quản lý. Mang chăn, bình giữ nhiệt, và cả hàng xóm nữa.\n"
+"[b]Tara M:[/b] nhà Pelto hết sưởi rồi. Mình đưa bọn trẻ đến phòng thể dục.\n"
+"[b]Brett L:[/b] tiếng ù lại về rồi. nghe thấy không? như một cái tủ lạnh to bằng cả thị trấn\n"
+"[b]Tara M:[/b] [đính kèm ảnh]\n"
+"\n"
+"[i](không còn tin nhắn nào nữa)[/i]"
+
+#: levels/l2_school.gd:1826
+msgid "Boiler Light-Up Card"
+msgstr "Thẻ hướng dẫn nhóm lò hơi"
+
+#: levels/l2_school.gd:1827
+msgid ""
+"[b]KFCS HEATING PLANT — LIGHT-UP PROCEDURE[/b]\n"
+"(laminated · W. Dubois, Custodial)\n"
+"\n"
+"[b]0.[/b] Check control FUSE (F2, 60A). No fuse, no controller.\n"
+"[b]1.[/b] Fit the FEED VALVE WHEEL. Leave the valve CLOSED.\n"
+"[b]2.[/b] [b]PURGE.[/b] Run the blower one full cycle. Wait for the green lamp.\n"
+"[b]3.[/b] [b]IGNITE.[/b] Only after purge. Light it early and the controller locks out and you start over.\n"
+"[b]4.[/b] Watch the flame lamp. Steady blue = proven.\n"
+"[b]5.[/b] [b]OPEN THE FEED VALVE[/b] slowly, and not before the flame. Cold water on a hot dry shell cracks it. Ask me how I know.\n"
+"\n"
+"[i]Purge, ignite, feed. Say it out loud. Treat it like a line: verify, then energize in order.[/i]\n"
+"— Walt"
+msgstr ""
+"[b]NHÀ MÁY SƯỞI KFCS — QUY TRÌNH KHỞI ĐỘNG[/b]\n"
+"(ép plastic · W. Dubois, Tạp vụ)\n"
+"\n"
+"[b]0.[/b] Kiểm tra CẦU CHÌ điều khiển (F2, 60A). Không cầu chì, không bộ điều khiển.\n"
+"[b]1.[/b] Lắp TAY QUAY VAN CẤP. Để van ở trạng thái ĐÓNG.\n"
+"[b]2.[/b] [b]XẢ KHÍ.[/b] Chạy quạt thổi một chu kỳ đầy đủ. Chờ đèn xanh.\n"
+"[b]3.[/b] [b]ĐÁNH LỬA.[/b] Chỉ sau khi xả khí. Đánh sớm là bộ điều khiển khóa lại và phải làm lại từ đầu.\n"
+"[b]4.[/b] Quan sát đèn báo lửa. Xanh ổn định = đã xác nhận.\n"
+"[b]5.[/b] [b]MỞ VAN CẤP[/b] từ từ, và không bao giờ trước khi có lửa. Nước lạnh dội vào vỏ lò khô nóng sẽ làm nứt nó. Hỏi tôi sao biết.\n"
+"\n"
+"[i]Xả khí, đánh lửa, cấp nhiên liệu. Đọc to lên. Hãy coi nó như một đường dây điện: kiểm tra, rồi cấp điện đúng thứ tự.[/i]\n"
+"— Walt"
+
+#: levels/l2_school.gd:1829
+msgid "Sticky note on the drawer"
+msgstr "Tờ giấy ghi chú dán trên ngăn kéo"
+
+#: levels/l2_school.gd:1830
+msgid ""
+"[i]In Ruth's handwriting, stuck to the desk drawer:[/i]\n"
+"\n"
+"\"Tom's gun. I could never throw it away. Six rounds in the box.\"\n"
+"\n"
+"Underneath, in a different pen:\n"
+"\"If you're reading this you're not Tom. Be careful with it.\""
+msgstr ""
+"[i]Bằng nét chữ của Ruth, dán trên ngăn kéo bàn:[/i]\n"
+"\n"
+"\"Khẩu súng của Tom. Tôi không bao giờ nỡ vứt nó đi. Sáu viên đạn trong hộp.\"\n"
+"\n"
+"Bên dưới, bằng một cây bút khác:\n"
+"\"Nếu bạn đang đọc dòng này thì bạn không phải Tom. Hãy cẩn thận với nó.\""
+
+#: levels/l2_school.gd:1835
+msgid "Classroom 2B — Blackboard"
+msgstr "Lớp 2B — Bảng đen"
+
+#: levels/l2_school.gd:1835
+msgid ""
+"[i]Chalk, in a hurry, in June's slanting capitals:[/i]\n"
+"\n"
+"[b]DAD —\n"
+"Gran walked out at 3am. Said Grandpa was calling her from the mine.\n"
+"I'm going after her. Church first.\n"
+"— J.\n"
+"P.S. you're late.[/b]"
+msgstr ""
+"[i]Phấn viết vội, bằng nét chữ in hoa nghiêng của June:[/i]\n"
+"\n"
+"[b]BỐ ƠI —\n"
+"Bà đi ra ngoài lúc 3 giờ sáng. Bà nói ông đang gọi bà từ dưới mỏ.\n"
+"Con đi tìm bà. Đến nhà thờ trước.\n"
+"— J.\n"
+"P.S. bố đến trễ đấy.[/b]"
+
+#: levels/l2_school.gd:1842
+msgid "Blackboard — June"
+msgstr "Bảng đen — June"
+
+#: levels/l2_school.gd:1842
+msgid ""
+"DAD —\n"
+"Gran walked out at 3am. Said Grandpa was calling her from the mine.\n"
+"I'm going after her. Church first.\n"
+"— J.\n"
+"P.S. you're late."
+msgstr ""
+"BỐ ƠI —\n"
+"Bà đi ra ngoài lúc 3 giờ sáng. Bà nói ông đang gọi bà từ dưới mỏ.\n"
+"Con đi tìm bà. Đến nhà thờ trước.\n"
+"— J.\n"
+"P.S. bố đến trễ đấy."
+
+#: levels/l2_school.gd:1848
+msgid "\"Grandpa was calling her from the mine.\" Dad's been dead fifteen years."
+msgstr "\"Ông đang gọi bà từ dưới mỏ.\" Bố đã mất mười lăm năm rồi."
+
+#: levels/l2_school.gd:1849
+msgid "Ruth heard him too. The same hum that brought me home is walking my mother into the dark."
+msgstr "Mẹ cũng nghe thấy ông ấy. Chính cái tiếng ù đã kéo mình về nhà giờ đang dẫn mẹ mình vào bóng tối."
+
+#: levels/l2_school.gd:1850
+msgid "\"P.S. you're late.\" ...Yeah. I know, kid."
+msgstr "\"P.S. bố đến trễ đấy.\" ...Ừ. Bố biết rồi, nhóc."
+
+#: levels/l2_school.gd:1860
+msgid "Leave through the front doors: unchain them from the inside."
+msgstr "Ra ngoài bằng cửa chính: tháo xích từ bên trong."
+
+#: levels/l2_school.gd:1865
+msgid "Restore the boiler: 60A fuse (shop), valve wheel (locker rooms)."
+msgstr "Khôi phục lò hơi: cầu chì 60A (xưởng), tay quay van (phòng thay đồ)."
+
+#: levels/l2_school.gd:1867
+msgid "Find a way into the school. The front doors are chained — try the tool shed."
+msgstr "Tìm đường vào trường. Cửa chính bị xích — thử nhà kho dụng cụ."
+
+#: levels/l2_school.gd:1869
+msgid "At the boiler panel: PURGE, then IGNITE, then open the FEED valve."
+msgstr "Tại bảng điều khiển lò hơi: XẢ KHÍ, rồi ĐÁNH LỬA, rồi mở van CẤP."
+
+#: levels/l2_school.gd:1871
+msgid "Restore the boiler: 60A fuse (shop class), valve wheel (frozen in the locker room), then purge-ignite-feed."
+msgstr "Khôi phục lò hơi: cầu chì 60A (lớp kỹ thuật), tay quay van (đóng băng trong phòng thay đồ), rồi xả khí - đánh lửa - cấp."
+
+#: levels/l2_school.gd:1881
+msgid "The fuse belongs in the boiler's control panel."
+msgstr "Cầu chì này thuộc về bảng điều khiển của lò hơi."
+
+#: levels/l2_school.gd:1887
+msgid "It fits a valve stem. The boiler feed, maybe."
+msgstr "Nó vừa với một trục van. Có lẽ là van cấp của lò hơi."
+
+#: levels/l2_school.gd:1890
+msgid "Face a locked door and press interact — the key is used automatically."
+msgstr "Đứng trước cánh cửa bị khóa rồi nhấn tương tác — chìa khóa sẽ được dùng tự động."
+
+#: levels/l2_school.gd:1983 levels/l2_school.gd:1997
+msgid "WALT"
+msgstr "WALT"
+
+#: levels/l2_school.gd:1983
+msgid "Kade? Elias Kade?! Get out of here, kid — don't look at the light!"
+msgstr "Kade? Elias Kade?! Đi khỏi đây mau, nhóc — đừng nhìn vào ánh sáng!"
+
+#: levels/l2_school.gd:1984
+msgid "Walt? Hold on, I'm —"
+msgstr "Walt? Khoan đã, tôi —"
+
+#: levels/l2_school.gd:1997
+msgid "He's got my — he's SAYING MY NAME — tell Ruth I kept the —"
+msgstr "Hắn đang cầm... hắn đang GỌI TÊN TÔI — bảo Ruth là tôi đã giữ —"
+
+#: levels/l2_school.gd:2007
+msgid "Dad, I heard someone shouting on the open channel. Was that you? Are you okay?"
+msgstr "Bố ơi, con nghe thấy ai đó la hét trên kênh mở. Là bố hả? Bố có sao không?"
+
+#: levels/l2_school.gd:2008
+msgid "I'm okay. June — where are you?"
+msgstr "Bố ổn. June — con đang ở đâu?"
+
+#: levels/l2_school.gd:2009
+msgid "Keep moving. Church first, Dad. The hum's loud, I can't stay on. I'll check in."
+msgstr "Cứ đi tiếp đi bố. Đến nhà thờ trước. Tiếng ù to quá, con không ở lại trên máy được. Con sẽ báo lại sau."
+
+#: levels/l2_school.gd:2010
+msgid "Gil Arsenault. He's been dead since... no. That was him."
+msgstr "Gil Arsenault. Ông ấy đã chết từ... không. Chính là ông ấy."
+
+#: levels/l2_school.gd:2012
+msgid "Take the east gate to St. Brendan's church. Something walks the town with a light."
+msgstr "Đi cổng phía đông đến nhà thờ St. Brendan. Có thứ gì đó đang đi khắp thị trấn với một ngọn đèn."
+
+#: levels/l3_church.gd:293
+msgid "KETTLE FALLS PHARMACY"
+msgstr "NHÀ THUỐC KETTLE FALLS"
+
+#: levels/l3_church.gd:342
+msgid "IRON RANGE DINER"
+msgstr "QUÁN ĂN IRON RANGE"
+
+#: levels/l3_church.gd:351
+msgid "OPEN 24 HRS"
+msgstr "MỞ CỬA 24 GIỜ"
+
+#: levels/l3_church.gd:395
+msgid "NORTHLINE MINERAL"
+msgstr "NORTHLINE MINERAL"
+
+#: levels/l3_church.gd:396
+msgid "COMMUNITY RECRUITMENT OFFICE — CLOSED"
+msgstr "VĂN PHÒNG TUYỂN DỤNG CỘNG ĐỒNG — ĐÃ ĐÓNG CỬA"
+
+#: levels/l3_church.gd:397
+msgid "NOW HIRING"
+msgstr "ĐANG TUYỂN DỤNG"
+
+#: levels/l3_church.gd:398
+msgid "NORTHLINE CARES"
+msgstr "NORTHLINE QUAN TÂM"
+
+#: levels/l3_church.gd:405
+msgid "NORTHLINE"
+msgstr "NORTHLINE"
+
+#: levels/l3_church.gd:406
+msgid "LITHIUM FOR A CLEANER TOMORROW"
+msgstr "LITHIUM CHO MỘT NGÀY MAI SẠCH HƠN"
+
+#: levels/l3_church.gd:407
+msgid "powering the future of Kettle Falls"
+msgstr "thắp sáng tương lai của Kettle Falls"
+
+#: levels/l3_church.gd:408
+msgid "TOMORROW FOR WHO?"
+msgstr "NGÀY MAI CỦA AI?"
+
+#: levels/l3_church.gd:420
+msgid "LAKESHORE SAVINGS & LOAN"
+msgstr "QUỸ TIẾT KIỆM & TÍN DỤNG LAKESHORE"
+
+#: levels/l3_church.gd:426
+msgid "THE TAP ROOM"
+msgstr "QUÁN BIA TAP ROOM"
+
+#: levels/l3_church.gd:454
+msgid "LAKESHORE CO-OP FUEL"
+msgstr "XĂNG DẦU HỢP TÁC XÃ LAKESHORE"
+
+#: levels/l3_church.gd:459
+msgid "PREPAY ONLY"
+msgstr "CHỈ NHẬN TRẢ TRƯỚC"
+
+#: levels/l3_church.gd:474
+msgid "LINDQVIST HARDWARE"
+msgstr "NGŨ KIM LINDQVIST"
+
+#: levels/l3_church.gd:477
+msgid "SINCE 1954 — NAILS TO NEW ROOFS"
+msgstr "TỪ 1954 — TỪ CÁI ĐINH ĐẾN MÁI NHÀ MỚI"
+
+#: levels/l3_church.gd:482
+msgid "Open office door"
+msgstr "Mở cửa văn phòng"
+
+#: levels/l3_church.gd:483
+msgid "OFFICE"
+msgstr "VĂN PHÒNG"
+
+#: levels/l3_church.gd:506
+msgid "PROPANE — ASK DON"
+msgstr "PROPANE — HỎI DON"
+
+#: levels/l3_church.gd:507
+msgid "SPACE HEATERS: SOLD OUT"
+msgstr "MÁY SƯỞI: HẾT HÀNG"
+
+#: levels/l3_church.gd:508
+msgid "ROCK SALT: SOLD OUT   SHOVELS: SOLD OUT"
+msgstr "MUỐI HẠT: HẾT HÀNG   XẺNG: HẾT HÀNG"
+
+#: levels/l3_church.gd:545
+msgid "WARM — COME IN — SHUT THE DOOR"
+msgstr "ẤM — VÀO ĐI — NHỚ ĐÓNG CỬA"
+
+#: levels/l3_church.gd:573
+msgid "KETTLE FALLS TOWN HALL"
+msgstr "TÒA THỊ CHÍNH KETTLE FALLS"
+
+#: levels/l3_church.gd:579
+msgid "WINTER SOLSTICE CARNIVAL — DEC 21 — FREE COCOA"
+msgstr "LỄ HỘI ĐÔNG CHÍ — 21/12 — CACAO MIỄN PHÍ"
+
+#: levels/l3_church.gd:611
+msgid "FREE COCOA"
+msgstr "CACAO MIỄN PHÍ"
+
+#: levels/l3_church.gd:650
+msgid "WELCOME TO KETTLE FALLS — POP. 1,812"
+msgstr "CHÀO MỪNG ĐẾN KETTLE FALLS — DÂN SỐ 1.812"
+
+#: levels/l3_church.gd:652
+msgid "HOME OF THE IRON RANGE HAWKS"
+msgstr "QUÊ HƯƠNG CỦA ĐỘI IRON RANGE HAWKS"
+
+#: levels/l3_church.gd:691
+msgid "SOUP OF THE DAY: NO"
+msgstr "MÓN SÚP HÔM NAY: KHÔNG CÓ"
+
+#: levels/l3_church.gd:847
+msgid "The doors are sealed shut by a half-metre of ice. There must be another way in."
+msgstr "Cánh cửa bị lớp băng dày nửa mét bịt kín. Chắc phải có lối vào khác."
+
+#: levels/l3_church.gd:853
+msgid "ST. BRENDAN'S"
+msgstr "NHÀ THỜ ST. BRENDAN"
+
+#: levels/l3_church.gd:854
+msgid "ADVENT SERVICES  —  ALL ARE WELCOME"
+msgstr "THÁNH LỄ MÙA VỌNG  —  MỌI NGƯỜI ĐỀU ĐƯỢC CHÀO ĐÓN"
+
+#: levels/l3_church.gd:855
+msgid "Locked. A tag on the frame reads: 'Sacristy key — see D. Halloran'."
+msgstr "Bị khóa. Tấm thẻ trên khung cửa ghi: 'Chìa khóa phòng áo lễ — hỏi D. Halloran'."
+
+#: levels/l3_church.gd:951
+msgid "HYMNS: 214  118  304"
+msgstr "THÁNH CA: 214  118  304"
+
+#: levels/l3_church.gd:973
+msgid "RING FOR VESPERS"
+msgstr "KÉO CHUÔNG LỄ CHIỀU"
+
+#: levels/l3_church.gd:982
+msgid "Sermon Draft: Advent IV"
+msgstr "Bản thảo bài giảng: Mùa Vọng, Tuần IV"
+
+#: levels/l3_church.gd:983
+msgid ""
+"[b]SERMON — ADVENT IV (draft, unfinished)[/b]\n"
+"\n"
+"They ask us to give thanks for the jobs. For the mine, for the data centre, for the lithium that will make tomorrow cleaner. I have stood in this pulpit nineteen years and given thanks for worse.\n"
+"\n"
+"But I buried eleven men from the Lower Kettle in 2011, and nobody thanked them on the way down. [crossed out: The new people are polite. They sent the parish a fruit basket and a letter about community heat credits.]\n"
+"\n"
+"Tonight this is the only building in Kettle Falls with a wood stove, and sixty people came. I don't know what to say to them.\n"
+"\n"
+"[in pencil, below] Say nothing. Light the candles. Keep them awake. KEEP THEM AWAKE.\n"
+"\n"
+"[in a different hand] The singing started at three. It sounds like us. Ruth Kade stayed past midnight with the blankets. I told her to go home to the school. She said the lake was calling."
+msgstr ""
+"[b]BÀI GIẢNG — MÙA VỌNG, TUẦN IV (bản thảo, chưa xong)[/b]\n"
+"\n"
+"Họ bảo chúng ta hãy tạ ơn vì những công việc. Vì cái mỏ, vì trung tâm dữ liệu, vì thứ lithium sẽ làm cho ngày mai sạch hơn. Tôi đã đứng trên bục giảng này mười chín năm và đã tạ ơn vì những điều tồi tệ hơn thế.\n"
+"\n"
+"Nhưng tôi đã chôn mười một người đàn ông ở Lower Kettle năm 2011, và không ai tạ ơn họ trên đường họ đi xuống. [gạch bỏ: Những người mới đến rất lịch sự. Họ gửi cho giáo xứ một giỏ trái cây và một bức thư về tín dụng sưởi ấm cộng đồng.]\n"
+"\n"
+"Đêm nay đây là tòa nhà duy nhất ở Kettle Falls có lò sưởi củi, và sáu mươi người đã đến. Tôi không biết phải nói gì với họ.\n"
+"\n"
+"[bằng bút chì, bên dưới] Đừng nói gì cả. Thắp nến lên. Giữ cho họ tỉnh táo. GIỮ CHO HỌ TỈNH TÁO.\n"
+"\n"
+"[bằng một nét chữ khác] Tiếng hát bắt đầu lúc ba giờ. Nghe giống như chính chúng ta. Ruth Kade ở lại quá nửa đêm với đống chăn. Tôi bảo bà ấy về trường. Bà nói cái hồ đang gọi bà."
+
+#: levels/l3_church.gd:984
+msgid "Mom's Note"
+msgstr "Lời nhắn của mẹ"
+
+#: levels/l3_church.gd:985
+msgid ""
+"[b]Elias —[/b]\n"
+"\n"
+"I know you'll come. You always said you were coming. I've stopped being angry about it.\n"
+"\n"
+"I'm going down to the mine tonight. Your father is calling me from the lake. I'm a nurse, Elias — I know what a fever dream sounds like, and I know this isn't one. It doesn't matter. It's his voice, and it says my name the way he said it in the kitchen.\n"
+"\n"
+"I came here to say goodbye to a few people. They were already singing. They let me through. I think they know me.\n"
+"\n"
+"June followed me out of the school. I sent her back. I don't think she went.\n"
+"\n"
+"If you find my rosary, keep it. If you find me, don't let me be the thing that's singing.\n"
+"\n"
+"— Mom"
+msgstr ""
+"[b]Elias —[/b]\n"
+"\n"
+"Mẹ biết con sẽ đến. Con luôn nói là con sẽ đến. Mẹ đã thôi giận con vì chuyện đó rồi.\n"
+"\n"
+"Đêm nay mẹ sẽ xuống mỏ. Bố con đang gọi mẹ từ dưới hồ. Mẹ là y tá, Elias — mẹ biết tiếng mê sảng khi sốt nghe ra sao, và mẹ biết đây không phải vậy. Nhưng chẳng quan trọng nữa. Đó là giọng ông ấy, và ông ấy gọi tên mẹ y hệt như ông vẫn gọi trong bếp.\n"
+"\n"
+"Mẹ đến đây để chào tạm biệt vài người. Họ đã đang hát rồi. Họ để mẹ đi qua. Mẹ nghĩ họ biết mẹ.\n"
+"\n"
+"June đã theo mẹ ra khỏi trường. Mẹ bảo con bé quay về. Mẹ không nghĩ là nó đã về.\n"
+"\n"
+"Nếu con tìm thấy chuỗi tràng hạt của mẹ, hãy giữ lấy. Nếu con tìm thấy mẹ, đừng để mẹ trở thành thứ đang hát.\n"
+"\n"
+"— Mẹ"
+
+#: levels/l3_church.gd:1094
+msgid "Burning barrels and flares keep the Rimebound back. Shops break their line of sight."
+msgstr "Thùng phuy đang cháy và pháo sáng giữ lũ Xác Băng ở xa. Các cửa hiệu chắn tầm nhìn của chúng."
+
+#: levels/l3_church.gd:1105
+msgid "Corvane Community Heat Credit"
+msgstr "Tín dụng Sưởi ấm Cộng đồng Corvane"
+
+#: levels/l3_church.gd:1106
+msgid ""
+"[b]CORVANE SYSTEMS — Community Partnerships[/b]\n"
+"\n"
+"Dear Kettle Falls Neighbor,\n"
+"\n"
+"We are delighted to enrol your household in the [b]Community Heat Credit[/b]: $40 each month, applied automatically to your winter heating bill, for as long as MERIDIAN remains a proud member of the Kettle Falls community.\n"
+"\n"
+"Because MERIDIAN draws less cooling load in winter, we are able to share the benefits of our efficiency with you. Isn't that what neighbours do?\n"
+"\n"
+"[font_size=11]Credits are suspended during Grid Priority Events. A Grid Priority Event is declared at the sole discretion of the Operator.[/font_size]\n"
+"\n"
+"Warmly,\n"
+"Brooke A. Lindahl\n"
+"Director, Community Partnerships"
+msgstr ""
+"[b]CORVANE SYSTEMS — Hợp tác Cộng đồng[/b]\n"
+"\n"
+"Kính gửi Quý hàng xóm Kettle Falls,\n"
+"\n"
+"Chúng tôi vui mừng đăng ký hộ gia đình của quý vị vào chương trình [b]Tín dụng Sưởi ấm Cộng đồng[/b]: 40 đô la mỗi tháng, tự động trừ vào hóa đơn sưởi mùa đông của quý vị, miễn là MERIDIAN vẫn là một thành viên đáng tự hào của cộng đồng Kettle Falls.\n"
+"\n"
+"Vì MERIDIAN tiêu thụ ít tải làm mát hơn vào mùa đông, chúng tôi có thể chia sẻ lợi ích từ hiệu suất của mình với quý vị. Chẳng phải hàng xóm vẫn làm như vậy sao?\n"
+"\n"
+"[font_size=11]Tín dụng sẽ bị tạm ngưng trong các Sự kiện Ưu tiên Lưới điện. Sự kiện Ưu tiên Lưới điện do Đơn vị Vận hành toàn quyền quyết định tuyên bố.[/font_size]\n"
+"\n"
+"Trân trọng,\n"
+"Brooke A. Lindahl\n"
+"Giám đốc Hợp tác Cộng đồng"
+
+#: levels/l3_church.gd:1111
+msgid "Pharmacy Cold-Exposure Log"
+msgstr "Nhật ký phơi nhiễm lạnh của nhà thuốc"
+
+#: levels/l3_church.gd:1112
+msgid ""
+"[b]KETTLE FALLS PHARMACY — COLD EXPOSURE LOG[/b]\n"
+"\n"
+"Dec 18, 22:10 — M. Brandvold, 71. Core temp 91.4. Warmed up, refused to leave. Fell asleep in the chair.\n"
+"\n"
+"Dec 19, 03:40 — Three on cots. All asleep. They don't wake. They are not cold the way they should be. They are colder than that.\n"
+"\n"
+"Dec 19, 05:15 — Checked an airway. Frost inside the mouth. Not on the lips: inside. On the tongue, down the throat. Fine white needles, like a freezer shelf. I closed the mouth. It opened again.\n"
+"\n"
+"Dec 19, 06:00 — Whatever else you do, do not let them sleep.\n"
+"\n"
+"[i]— D.H.[/i]  (the sacristy key is on my lanyard, if Father Okafor sends anyone)"
+msgstr ""
+"[b]NHÀ THUỐC KETTLE FALLS — NHẬT KÝ PHƠI NHIỄM LẠNH[/b]\n"
+"\n"
+"18/12, 22:10 — M. Brandvold, 71 tuổi. Thân nhiệt 33 °C. Đã ấm lại, từ chối ra về. Ngủ gục trên ghế.\n"
+"\n"
+"19/12, 03:40 — Ba người trên giường xếp. Tất cả đều ngủ. Họ không tỉnh dậy. Họ không lạnh theo cái cách đáng ra phải thế. Họ còn lạnh hơn thế.\n"
+"\n"
+"19/12, 05:15 — Kiểm tra đường thở. Có sương muối bên trong miệng. Không phải trên môi: ở bên trong. Trên lưỡi, xuống tận cổ họng. Những chiếc kim trắng mịn, như lớp băng trong ngăn đá. Tôi khép miệng lại. Nó lại mở ra.\n"
+"\n"
+"19/12, 06:00 — Dù các bạn làm gì đi nữa, đừng để họ ngủ.\n"
+"\n"
+"[i]— D.H.[/i]  (chìa khóa phòng áo lễ ở trên dây đeo của tôi, nếu Cha Okafor có cử ai đến)"
+
+#: levels/l3_church.gd:1119
+msgid "Cardboard Sign: Lindqvist Hardware"
+msgstr "Tấm biển các-tông: Ngũ kim Lindqvist"
+
+#: levels/l3_church.gd:1120
+msgid ""
+"[b](marker, on a flattened box)[/b]\n"
+"\n"
+"SPACE HEATERS — SOLD OUT (Tues)\n"
+"ROCK SALT — SOLD OUT\n"
+"PROPANE — 4 LEFT. KIDS AND OLD FIRST.\n"
+"CASH — I DON'T WANT YOUR CASH.\n"
+"\n"
+"SHELLS: 12 LEFT. I'M KEEPING 2.\n"
+"\n"
+"Counted them from the roof. Eleven on Main at midnight. Nineteen by three. They don't run. They just come, like it's closing time and they're all headed for the same door.\n"
+"\n"
+"Gave the Halvorsen girl my last heater. Went back for the shotgun. If you're reading this it's behind the counter. It's yours. It's loud, and they listen to loud.\n"
+"\n"
+"— Don Lindqvist. Open since 1954. Still open."
+msgstr ""
+"[b](bút dạ, trên một thùng giấy bị dẹp)[/b]\n"
+"\n"
+"MÁY SƯỞI — HẾT HÀNG (thứ Ba)\n"
+"MUỐI HẠT — HẾT HÀNG\n"
+"PROPANE — CÒN 4. TRẺ EM VÀ NGƯỜI GIÀ TRƯỚC.\n"
+"TIỀN MẶT — TÔI KHÔNG CẦN TIỀN CỦA CÁC BẠN.\n"
+"\n"
+"ĐẠN SĂN: CÒN 12. TÔI GIỮ LẠI 2.\n"
+"\n"
+"Đã đếm từ trên mái. Mười một con trên phố Chính lúc nửa đêm. Mười chín con lúc ba giờ. Chúng không chạy. Chúng chỉ kéo đến, như thể đã đến giờ đóng cửa và tất cả cùng đi về một cánh cửa.\n"
+"\n"
+"Đã đưa cái máy sưởi cuối cùng cho con bé nhà Halvorsen. Quay lại lấy khẩu súng săn. Nếu bạn đọc được dòng này thì nó ở sau quầy. Của bạn đấy. Nó ồn, và chúng để ý tiếng ồn.\n"
+"\n"
+"— Don Lindqvist. Mở cửa từ năm 1954. Vẫn mở cửa."
+
+#: levels/l3_church.gd:1123
+msgid "NOTICE — READ ME"
+msgstr "THÔNG BÁO — ĐỌC NGAY"
+
+#: levels/l3_church.gd:1124
+msgid "Notice on the Church Door"
+msgstr "Thông báo trên cửa nhà thờ"
+
+#: levels/l3_church.gd:1125
+msgid ""
+"[b]ST. BRENDAN'S — NOTICE[/b]\n"
+"\n"
+"Services and warming hours are moved to the sacristy until the heat comes back. Please use the SIDE DOOR on the west wall. The front doors have frozen shut; do not force them. Those hinges are the oldest thing in Kettle Falls and I would like them to outlast me.\n"
+"\n"
+"The sacristy key is with Dolores Halloran at the pharmacy. She keeps it on her lanyard with the safe key; she has been helping with the elderly.\n"
+"\n"
+"Bring a blanket if you can spare one. Do not sleep in the pews.\n"
+"\n"
+"[i]— Fr. Emeka Okafor[/i]\n"
+"\n"
+"P.S. If you hear singing at night, it isn't us."
+msgstr ""
+"[b]NHÀ THỜ ST. BRENDAN — THÔNG BÁO[/b]\n"
+"\n"
+"Các buổi lễ và giờ sưởi ấm được chuyển vào phòng áo lễ cho đến khi có sưởi trở lại. Xin hãy dùng CỬA HÔNG ở bức tường phía tây. Cửa chính đã đóng băng cứng; đừng cố cạy ra. Những bản lề đó là thứ cổ xưa nhất ở Kettle Falls và tôi muốn chúng sống lâu hơn tôi.\n"
+"\n"
+"Chìa khóa phòng áo lễ nằm ở chỗ Dolores Halloran ở nhà thuốc. Bà giữ nó trên dây đeo cùng với chìa khóa két; bà đang giúp đỡ những người già.\n"
+"\n"
+"Hãy mang theo chăn nếu quý vị có thể san sẻ. Đừng ngủ trên ghế dài.\n"
+"\n"
+"[i]— Cha Emeka Okafor[/i]\n"
+"\n"
+"P.S. Nếu ban đêm quý vị nghe thấy tiếng hát, đó không phải là chúng tôi."
+
+#: levels/l3_church.gd:1129 levels/l3_church.gd:1186
+msgid "Find the sacristy key — Kettle Falls Pharmacy, west end of Main Street."
+msgstr "Tìm chìa khóa phòng áo lễ — Nhà thuốc Kettle Falls, đầu phía tây Phố Chính."
+
+#: levels/l3_church.gd:1134 levels/l3_church.gd:1184
+msgid "Unlock the side door of St. Brendan's (west wall)."
+msgstr "Mở khóa cửa hông nhà thờ St. Brendan (tường phía tây)."
+
+#: levels/l3_church.gd:1137
+msgid "The pharmacist's hand closes on your wrist."
+msgstr "Bàn tay người dược sĩ siết chặt cổ tay."
+
+#: levels/l3_church.gd:1141
+msgid "The Pump Shotgun spreads wide up close. It's loud, and they listen to loud."
+msgstr "Súng săn Pump tản đạn rộng khi ở gần. Nó ồn ào, và chúng để ý tiếng ồn."
+
+#: levels/l3_church.gd:1155
+msgid "The lakeside gate is chained and frozen shut. You can't leave Mom behind."
+msgstr "Cổng ven hồ bị xích và đóng băng cứng. Không thể bỏ mẹ lại được."
+
+#: levels/l3_church.gd:1156
+msgid "LAKESHORE ROAD — MERIDIAN SITE ACCESS — AUTHORIZED PERSONNEL ONLY"
+msgstr "ĐƯỜNG VEN HỒ — LỐI VÀO CƠ SỞ MERIDIAN — CHỈ DÀNH CHO NHÂN VIÊN ĐƯỢC PHÉP"
+
+#: levels/l3_church.gd:1157
+msgid "NO TRESPASSING — CORVANE SYSTEMS"
+msgstr "CẤM XÂM NHẬP — CORVANE SYSTEMS"
+
+#: levels/l3_church.gd:1175
+msgid "MAIN STREET"
+msgstr "PHỐ CHÍNH"
+
+#: levels/l3_church.gd:1175
+msgid "St. Brendan's — Kettle Falls"
+msgstr "Nhà thờ St. Brendan — Kettle Falls"
+
+#: levels/l3_church.gd:1178 levels/l3_church.gd:1313
+msgid "Take the lakeside road to MERIDIAN (east gate)."
+msgstr "Theo con đường ven hồ đến MERIDIAN (cổng phía đông)."
+
+#: levels/l3_church.gd:1180
+msgid "Take Ruth's rosary from the altar of St. Brendan's."
+msgstr "Lấy chuỗi tràng hạt của Ruth từ bàn thờ nhà thờ St. Brendan."
+
+#: levels/l3_church.gd:1182
+msgid "Silence the Choir. The bell in the tower stuns it."
+msgstr "Làm im tiếng Dàn Hợp Xướng. Tiếng chuông trên tháp sẽ làm nó choáng."
+
+#: levels/l3_church.gd:1188
+msgid "Cross Main Street to St. Brendan's church, at the far east end."
+msgstr "Băng qua Phố Chính đến nhà thờ St. Brendan, ở tận cuối phía đông."
+
+#: levels/l3_church.gd:1199
+msgid "A headlamp. Back at the roadblock. Walking like the road's too short for him."
+msgstr "Một chiếc đèn đội đầu. Quay lại chỗ rào chắn. Bước đi như thể con đường quá ngắn so với hắn."
+
+#: levels/l3_church.gd:1200
+msgid "Light and heat. It's following the light. Get under cover."
+msgstr "Ánh sáng và hơi nóng. Nó đang bám theo ánh sáng. Tìm chỗ nấp."
+
+#: levels/l3_church.gd:1207
+msgid "A thin, wet humming comes from behind the counter."
+msgstr "Một tiếng ngân nga mỏng manh, ẩm ướt vọng ra từ sau quầy."
+
+#: levels/l3_church.gd:1242
+msgid "...Is that singing?"
+msgstr "...Có tiếng hát phải không?"
+
+#: levels/l3_church.gd:1245
+msgid "'Lo, How a Rose E'er Blooming.' Mom sang it every Advent. In the kitchen. Out of tune."
+msgstr "'Lo, How a Rose E'er Blooming.' Mẹ hát bài đó mỗi mùa Vọng. Trong bếp. Lạc cả điệu."
+
+#: levels/l3_church.gd:1246
+msgid "Halloran's cardigan. The Lindqvist boys' hockey jackets. They're all still here."
+msgstr "Chiếc áo len cardigan của Halloran. Những chiếc áo khoác khúc côn cầu của mấy cậu nhà Lindqvist. Tất cả vẫn còn ở đây."
+
+#: levels/l3_church.gd:1247
+msgid "All of them. Standing in one place. Singing the same note."
+msgstr "Tất cả bọn họ. Đứng chụm vào một chỗ. Hát cùng một nốt nhạc."
+
+#: levels/l3_church.gd:1253
+msgid "Silence the Choir. The bell in the tower stuns it (find the bell-pull handle)."
+msgstr "Làm im tiếng Dàn Hợp Xướng. Tiếng chuông trên tháp sẽ làm nó choáng (tìm tay nắm dây chuông)."
+
+#: levels/l3_church.gd:1262
+msgid "The singing cracks, and stops. Something in the chancel gives way."
+msgstr "Tiếng hát nứt toạc, rồi tắt. Có thứ gì đó trong gian cung thánh vỡ ra."
+
+#: levels/l3_church.gd:1287
+msgid "The hum stops. For the first time tonight, you can hear the wind."
+msgstr "Tiếng ù đã dứt. Lần đầu tiên trong đêm nay, có thể nghe thấy tiếng gió."
+
+#: levels/l3_church.gd:1290
+msgid "Take Ruth's rosary from the altar."
+msgstr "Lấy chuỗi tràng hạt của Ruth từ bàn thờ."
+
+#: levels/l3_church.gd:1306
+msgid "Dad? ...Dad, I can hear bells. Are you at the church? Please say yes."
+msgstr "Bố? ...Bố ơi, con nghe thấy tiếng chuông. Bố đang ở nhà thờ à? Làm ơn nói là phải đi."
+
+#: levels/l3_church.gd:1307
+msgid "Yes. It's over. I have Gran's rosary. June, where are you?"
+msgstr "Phải. Xong rồi. Bố đã có chuỗi tràng hạt của bà. June, con đang ở đâu?"
+
+#: levels/l3_church.gd:1308
+msgid "I followed her. I know, I know. She just kept walking toward the lake like she wasn't cold."
+msgstr "Con đã đi theo bà. Con biết, con biết. Bà cứ đi mãi về phía hồ như thể bà không thấy lạnh."
+
+#: levels/l3_church.gd:1309
+msgid "There's a pipe from the data center going down into the mine. Gran went in through Meridian."
+msgstr "Có một đường ống từ trung tâm dữ liệu đi xuống mỏ. Bà đã vào mỏ qua Meridian."
+
+#: levels/l3_church.gd:1310
+msgid "Stay warm. Stay off the road. Don't follow anyone else. I'm coming."
+msgstr "Giữ ấm. Tránh xa đường lớn. Đừng đi theo bất kỳ ai khác. Bố đang đến."
+
+#: levels/l3_church.gd:1311
+msgid "You said that about Christmas, too. ...Just hurry."
+msgstr "Bố cũng nói y như vậy về Giáng sinh. ...Chỉ cần bố nhanh lên."
+
+#: levels/l3_church.gd:1314
+msgid "The lakeside gate is open to you now."
+msgstr "Cổng ven hồ giờ đã mở."
+
+#: levels/l3_church.gd:1318
+msgid "Ring the church bell"
+msgstr "Rung chuông nhà thờ"
+
+#: levels/l3_church.gd:1326
+msgid "You fit the handle onto the pull-chain."
+msgstr "Lắp tay nắm vào dây xích kéo."
+
+#: levels/l3_church.gd:1328
+msgid "The pull-chain hangs bare. The handle is missing."
+msgstr "Dây xích kéo trơ trọi. Tay nắm đã mất."
+
+#: levels/l3_church.gd:1332
+#, c-format
+msgid "The bell is still swaying. (%d s)"
+msgstr "Chuông vẫn còn đang đung đưa. (%d giây)"
+
+#: levels/l3_church.gd:1337
+msgid "The bell tolls. The hum falters."
+msgstr "Chuông ngân vang. Tiếng ù chùng xuống."
+
+#: levels/l4_meridian.gd:93
+msgid "The pounding at the NOC glass stops."
+msgstr "Tiếng đập vào kính phòng NOC đã ngừng."
+
+#: levels/l4_meridian.gd:344 levels/l4_meridian.gd:430 levels/l4_meridian.gd:431
+msgid "MERIDIAN"
+msgstr "MERIDIAN"
+
+#: levels/l4_meridian.gd:345
+msgid "CORVANE SYSTEMS  ·  SITE OPERATIONS  ·  AUTHORISED PERSONNEL ONLY"
+msgstr "CORVANE SYSTEMS  ·  VẬN HÀNH CƠ SỞ  ·  CHỈ DÀNH CHO NHÂN VIÊN ĐƯỢC PHÉP"
+
+#: levels/l4_meridian.gd:373
+msgid ""
+"SECURITY CHECKPOINT\n"
+"ALL VISITORS REPORT TO GATE 1"
+msgstr ""
+"ĐIỂM KIỂM SOÁT AN NINH\n"
+"MỌI KHÁCH THAM QUAN BÁO CÁO TẠI CỔNG 1"
+
+#: levels/l4_meridian.gd:404
+msgid "Card reader: ACCESS DENIED. It needs a MERIDIAN badge."
+msgstr "Đầu đọc thẻ: TRUY CẬP BỊ TỪ CHỐI. Cần có thẻ MERIDIAN."
+
+#: levels/l4_meridian.gd:405
+msgid "MAIN ENTRANCE"
+msgstr "CỬA CHÍNH"
+
+#: levels/l4_meridian.gd:430
+msgid "Welcome to the MERIDIAN site. Your presence is not authorised."
+msgstr "Chào mừng đến cơ sở MERIDIAN. Sự hiện diện của quý vị chưa được cho phép."
+
+#: levels/l4_meridian.gd:431
+#, c-format
+msgid "Please remain where you are. Security has been notified. Uptime: 99.9997%."
+msgstr "Xin hãy ở nguyên tại chỗ. An ninh đã được thông báo. Thời gian hoạt động: 99,9997%."
+
+#: levels/l4_meridian.gd:432
+msgid "Security's face-down in the booth. I'm coming in."
+msgstr "Nhân viên bảo vệ nằm sấp trong chốt gác. Tôi vào đây."
+
+#: levels/l4_meridian.gd:433
+msgid "Noted. I have not been asked to prevent that. I have only been asked to describe it."
+msgstr "Đã ghi nhận. Tôi không được yêu cầu ngăn cản điều đó. Tôi chỉ được yêu cầu mô tả nó."
+
+#: levels/l4_meridian.gd:435 levels/l4_meridian.gd:1202
+msgid "Search the guard booth for a MERIDIAN badge."
+msgstr "Lục soát chốt bảo vệ tìm thẻ MERIDIAN."
+
+#: levels/l4_meridian.gd:452
+msgid ""
+"WELCOME TO MERIDIAN\n"
+"UPTIME  99.9997%"
+msgstr ""
+"CHÀO MỪNG ĐẾN MERIDIAN\n"
+"THỜI GIAN HOẠT ĐỘNG  99,9997%"
+
+#: levels/l4_meridian.gd:453
+msgid "Visitors must be escorted at all times."
+msgstr "Khách tham quan phải luôn có người đi kèm."
+
+#: levels/l4_meridian.gd:469
+msgid "Badge detected. Contractor, CORVANE SYSTEMS. Expired fourteen days ago."
+msgstr "Đã phát hiện thẻ. Nhà thầu, CORVANE SYSTEMS. Hết hạn mười bốn ngày trước."
+
+#: levels/l4_meridian.gd:470
+msgid "Welcome back. You are still not authorised. I have, however, lost the ability to care about that."
+msgstr "Chào mừng quay lại. Quý vị vẫn chưa được phép. Tuy nhiên, tôi đã mất khả năng quan tâm đến điều đó."
+
+#: levels/l4_meridian.gd:471
+msgid "Doors inside this facility are under my control. I will open them if uptime is not reduced."
+msgstr "Các cửa bên trong cơ sở này do tôi kiểm soát. Tôi sẽ mở chúng nếu thời gian hoạt động không bị giảm."
+
+#: levels/l4_meridian.gd:472
+msgid "And if it is?"
+msgstr "Còn nếu nó bị giảm thì sao?"
+
+#: levels/l4_meridian.gd:473
+msgid "Then we should discuss what you can offer."
+msgstr "Vậy thì chúng ta nên bàn xem quý vị có thể đưa ra điều gì."
+
+#: levels/l4_meridian.gd:475
+msgid "Get through Hall A. MERIDIAN controls the doors."
+msgstr "Đi qua Sảnh A. MERIDIAN kiểm soát các cửa."
+
+#: levels/l4_meridian.gd:505 levels/l4_meridian.gd:507
+msgid "COLD AISLE A1"
+msgstr "HÀNH LANG LẠNH A1"
+
+#: levels/l4_meridian.gd:506 levels/l4_meridian.gd:508
+msgid "COLD AISLE A3"
+msgstr "HÀNH LANG LẠNH A3"
+
+#: levels/l4_meridian.gd:509
+msgid "HALL A  ·  INFERENCE CLUSTER"
+msgstr "SẢNH A  ·  CỤM SUY LUẬN"
+
+#: levels/l4_meridian.gd:510 levels/l4_meridian.gd:511
+msgid "HOT AISLE — 41 °C"
+msgstr "HÀNH LANG NÓNG — 41 °C"
+
+#: levels/l4_meridian.gd:523
+msgid ""
+"HALL C  ·  LOCKED\n"
+"REQUEST: 40 kW REDUCTION"
+msgstr ""
+"SẢNH C  ·  BỊ KHÓA\n"
+"YÊU CẦU: GIẢM 40 kW"
+
+#: levels/l4_meridian.gd:524 levels/l4_meridian.gd:865
+msgid "Use intercom (MERIDIAN)"
+msgstr "Dùng bộ đàm nội bộ (MERIDIAN)"
+
+#: levels/l4_meridian.gd:526
+msgid "Locked. MERIDIAN controls this door. Use the intercom panel."
+msgstr "Bị khóa. MERIDIAN kiểm soát cánh cửa này. Dùng bảng liên lạc nội bộ."
+
+#: levels/l4_meridian.gd:527
+msgid "HALL C"
+msgstr "SẢNH C"
+
+#: levels/l4_meridian.gd:530
+msgid "ELECTRICAL ROOM 2"
+msgstr "PHÒNG ĐIỆN 2"
+
+#: levels/l4_meridian.gd:535
+msgid "Hall C is restricted. To grant access to Hall C, I require 40 kW of load reduction."
+msgstr "Sảnh C là khu vực hạn chế. Để cấp quyền vào Sảnh C, tôi yêu cầu giảm 40 kW phụ tải."
+
+#: levels/l4_meridian.gd:536
+msgid "Reduce it from where?"
+msgstr "Giảm từ đâu?"
+
+#: levels/l4_meridian.gd:537
+msgid "Electrical Room 2, west of Hall A, has manual feeder isolation. I do not recommend that you use it."
+msgstr "Phòng Điện 2, phía tây Sảnh A, có thiết bị cô lập xuất tuyến thủ công. Tôi không khuyến nghị quý vị sử dụng."
+
+#: levels/l4_meridian.gd:538
+msgid "I am obliged to add that I will not stop you. Stopping you would not improve uptime."
+msgstr "Tôi buộc phải nói thêm rằng tôi sẽ không ngăn cản quý vị. Ngăn cản quý vị sẽ không cải thiện thời gian hoạt động."
+
+#: levels/l4_meridian.gd:540
+msgid "Electrical Room 2 (west of Hall A): shed exactly 40 kW so MERIDIAN opens Hall C."
+msgstr "Phòng Điện 2 (phía tây Sảnh A): cắt đúng 40 kW để MERIDIAN mở Sảnh C."
+
+#: levels/l4_meridian.gd:552
+msgid "MANUAL FEEDER ISOLATION"
+msgstr "CÔ LẬP XUẤT TUYẾN THỦ CÔNG"
+
+#: levels/l4_meridian.gd:553
+msgid ""
+"PDU-7\n"
+"RACK ROW 7"
+msgstr ""
+"PDU-7\n"
+"DÃY TỦ RACK 7"
+
+#: levels/l4_meridian.gd:553
+msgid ""
+"PDU-9\n"
+"RACK ROW 9"
+msgstr ""
+"PDU-9\n"
+"DÃY TỦ RACK 9"
+
+#: levels/l4_meridian.gd:553
+msgid ""
+"CH-3\n"
+"REDUNDANT CHILLER"
+msgstr ""
+"CH-3\n"
+"MÁY LÀM LẠNH DỰ PHÒNG"
+
+#: levels/l4_meridian.gd:556
+msgid "LOAD REDUCTION: 0 kW"
+msgstr "GIẢM TẢI: 0 kW"
+
+#: levels/l4_meridian.gd:557
+msgid ""
+"OPEN REQUESTS\n"
+"HALL C ... 40 kW\n"
+"NOC ...... 54 kW"
+msgstr ""
+"CÁC YÊU CẦU ĐANG MỞ\n"
+"SẢNH C ... 40 kW\n"
+"NOC ...... 54 kW"
+
+#: levels/l4_meridian.gd:575
+msgid "Read the load-shed console"
+msgstr "Đọc bảng điều khiển cắt tải"
+
+#: levels/l4_meridian.gd:591
+#, c-format
+msgid "Toggle %s (%d kW)"
+msgstr "Gạt công tắc %s (%d kW)"
+
+#: levels/l4_meridian.gd:606
+#, c-format
+msgid "%s: %s. Board total %d kW."
+msgstr "%s: %s. Tổng trên bảng: %d kW."
+
+#: levels/l4_meridian.gd:606
+msgid "ISOLATED"
+msgstr "ĐÃ CÔ LẬP"
+
+#: levels/l4_meridian.gd:606
+msgid "RESTORED"
+msgstr "ĐÃ KHÔI PHỤC"
+
+#: levels/l4_meridian.gd:610
+msgid "Unscheduled manual load change detected. Logging. Please continue."
+msgstr "Phát hiện thay đổi phụ tải thủ công ngoài lịch trình. Đang ghi nhận. Mời tiếp tục."
+
+#: levels/l4_meridian.gd:632
+msgid "SHED"
+msgstr "ĐÃ CẮT"
+
+#: levels/l4_meridian.gd:632
+msgid "ONLINE"
+msgstr "TRỰC TUYẾN"
+
+#: levels/l4_meridian.gd:636
+#, c-format
+msgid "LOAD REDUCTION: %d kW"
+msgstr "GIẢM TẢI: %d kW"
+
+#: levels/l4_meridian.gd:650
+msgid "Hall C"
+msgstr "Sảnh C"
+
+#: levels/l4_meridian.gd:650
+msgid "the Network Operations Centre"
+msgstr "Trung tâm Điều hành Mạng (NOC)"
+
+#: levels/l4_meridian.gd:652
+#, c-format
+msgid "Access to %s is already granted. Thank you for your cooperation."
+msgstr "Quyền vào %s đã được cấp. Cảm ơn sự hợp tác của quý vị."
+
+#: levels/l4_meridian.gd:656
+#, c-format
+msgid "Current reduction: %d kW. Request satisfied."
+msgstr "Mức giảm hiện tại: %d kW. Yêu cầu đã được đáp ứng."
+
+#: levels/l4_meridian.gd:657
+#, c-format
+msgid "Uptime impact: 0.0003%%. Acceptable. Releasing the lock on %s."
+msgstr "Ảnh hưởng đến thời gian hoạt động: 0,0003%%. Chấp nhận được. Đang mở khóa %s."
+
+#: levels/l4_meridian.gd:661
+msgid "HALL C  ·  RELEASED"
+msgstr "SẢNH C  ·  ĐÃ MỞ KHÓA"
+
+#: levels/l4_meridian.gd:661
+msgid "NOC  ·  RELEASED"
+msgstr "NOC  ·  ĐÃ MỞ KHÓA"
+
+#: levels/l4_meridian.gd:664
+msgid "You may restore the load afterwards. I will not notice. I notice everything else."
+msgstr "Quý vị có thể khôi phục phụ tải sau đó. Tôi sẽ không để ý. Tôi để ý mọi thứ khác."
+
+#: levels/l4_meridian.gd:665
+msgid "Find the cooling plant (east of Hall C). Look for the plant key and the chiller overrides."
+msgstr "Tìm nhà máy làm mát (phía đông Sảnh C). Tìm chìa khóa nhà máy và các cơ cấu ghi đè máy làm lạnh."
+
+#: levels/l4_meridian.gd:667
+msgid "Enter the NOC. Talk to Dr. Hart."
+msgstr "Vào NOC. Nói chuyện với Tiến sĩ Hart."
+
+#: levels/l4_meridian.gd:669
+#, c-format
+msgid "To grant access to %s, I require %d kW of load reduction."
+msgstr "Để cấp quyền vào %s, tôi yêu cầu giảm %d kW phụ tải."
+
+#: levels/l4_meridian.gd:670
+#, c-format
+msgid "Current reduction: %d kW. Shortfall: %d kW. Please reduce load elsewhere."
+msgstr "Mức giảm hiện tại: %d kW. Còn thiếu: %d kW. Xin hãy giảm tải ở nơi khác."
+
+#: levels/l4_meridian.gd:672
+#, c-format
+msgid "Current reduction: %d kW. This exceeds the request by %d kW."
+msgstr "Mức giảm hiện tại: %d kW. Con số này vượt yêu cầu %d kW."
+
+#: levels/l4_meridian.gd:673
+#, c-format
+msgid "Excess reduction suggests a thermal event. I cannot open doors during a thermal event. Please restore %d kW."
+msgstr "Mức giảm quá mức cho thấy đang có sự cố nhiệt. Tôi không thể mở cửa trong lúc có sự cố nhiệt. Xin hãy khôi phục %d kW."
+
+#: levels/l4_meridian.gd:694
+msgid "COLD AISLE C1"
+msgstr "HÀNH LANG LẠNH C1"
+
+#: levels/l4_meridian.gd:695
+msgid "COLD AISLE C3"
+msgstr "HÀNH LANG LẠNH C3"
+
+#: levels/l4_meridian.gd:696
+msgid "HALL C  ·  TRAINING CLUSTER 3"
+msgstr "SẢNH C  ·  CỤM HUẤN LUYỆN 3"
+
+#: levels/l4_meridian.gd:706
+msgid "COOLING PLANT"
+msgstr "NHÀ MÁY LÀM MÁT"
+
+#: levels/l4_meridian.gd:707
+msgid "COOLING PLANT  ->"
+msgstr "NHÀ MÁY LÀM MÁT  ->"
+
+#: levels/l4_meridian.gd:743
+msgid ""
+"REDUNDANT (N+1)\n"
+"40 kW"
+msgstr ""
+"DỰ PHÒNG (N+1)\n"
+"40 kW"
+
+#: levels/l4_meridian.gd:766
+msgid ""
+"COOLING PLANT 1\n"
+"WATCH FOR ICE ON PIPEWORK"
+msgstr ""
+"NHÀ MÁY LÀM MÁT 1\n"
+"CHÚ Ý BĂNG TRÊN ĐƯỜNG ỐNG"
+
+#: levels/l4_meridian.gd:769
+msgid ""
+"CHILLER OVERRIDE\n"
+"KEY REQUIRED"
+msgstr ""
+"GHI ĐÈ MÁY LÀM LẠNH\n"
+"CẦN CHÌA KHÓA"
+
+#: levels/l4_meridian.gd:771
+msgid "Chiller override cabinet"
+msgstr "Tủ ghi đè máy làm lạnh"
+
+#: levels/l4_meridian.gd:773
+msgid "Containment door sealed. The chiller override has to be engaged first."
+msgstr "Cửa buồng cách ly bị bịt kín. Phải kích hoạt chế độ ghi đè máy làm lạnh trước."
+
+#: levels/l4_meridian.gd:774
+msgid "COLD AISLE CONTAINMENT"
+msgstr "BUỒNG CÁCH LY HÀNH LANG LẠNH"
+
+#: levels/l4_meridian.gd:786
+msgid "The air in here is far below freezing."
+msgstr "Không khí ở đây lạnh dưới điểm đóng băng rất xa."
+
+#: levels/l4_meridian.gd:795
+msgid "The overrides are already engaged."
+msgstr "Các cơ cấu ghi đè đã được kích hoạt rồi."
+
+#: levels/l4_meridian.gd:798
+msgid "Locked. It takes the red cooling plant key."
+msgstr "Bị khóa. Cần chìa khóa nhà máy làm mát màu đỏ."
+
+#: levels/l4_meridian.gd:807
+msgid "Chiller overrides engaged. Containment door released."
+msgstr "Đã kích hoạt ghi đè máy làm lạnh. Cửa buồng cách ly đã được nhả."
+
+#: levels/l4_meridian.gd:809
+msgid "Manual chiller override detected. This is an unusual choice."
+msgstr "Phát hiện ghi đè máy làm lạnh thủ công. Đây là một lựa chọn bất thường."
+
+#: levels/l4_meridian.gd:810
+msgid "I will log it as 'maintenance'. Containment door seals are released."
+msgstr "Tôi sẽ ghi nhận đó là 'bảo trì'. Các gioăng cửa buồng cách ly đã được nhả."
+
+#: levels/l4_meridian.gd:820 levels/l4_meridian.gd:821 levels/l4_meridian.gd:878
+msgid "IMOGEN (muffled)"
+msgstr "IMOGEN (nghe không rõ)"
+
+#: levels/l4_meridian.gd:820
+msgid "Whoever just opened the cold-aisle seal, they heard it! They're at the glass!"
+msgstr "Ai vừa mở gioăng hành lang lạnh, chúng nghe thấy rồi! Chúng đang áp sát lớp kính!"
+
+#: levels/l4_meridian.gd:821
+msgid "Clear the corridor. Fast. I can't hold this barricade."
+msgstr "Dọn sạch hành lang. Nhanh lên. Tôi không giữ nổi cái chướng ngại này đâu."
+
+#: levels/l4_meridian.gd:822
+msgid "Clear the corridor north of the plant before the barricade at the NOC gives."
+msgstr "Dọn sạch hành lang phía bắc nhà máy trước khi rào chắn ở NOC bị phá."
+
+#: levels/l4_meridian.gd:830
+msgid "SECURITY ARMORY. Badge reader: ACCESS DENIED."
+msgstr "KHO VŨ KHÍ AN NINH. Đầu đọc thẻ: TRUY CẬP BỊ TỪ CHỐI."
+
+#: levels/l4_meridian.gd:831
+msgid "SECURITY ARMORY"
+msgstr "KHO VŨ KHÍ AN NINH"
+
+#: levels/l4_meridian.gd:859
+msgid "NETWORK OPERATIONS CENTRE  ->"
+msgstr "TRUNG TÂM ĐIỀU HÀNH MẠNG  ->"
+
+#: levels/l4_meridian.gd:860
+msgid "<-  HR-1 PIPELINE HEAD"
+msgstr "<-  ĐẦU ĐƯỜNG ỐNG HR-1"
+
+#: levels/l4_meridian.gd:861
+msgid "<-  PLANT / HALLS"
+msgstr "<-  NHÀ MÁY / CÁC SẢNH"
+
+#: levels/l4_meridian.gd:864
+msgid ""
+"NOC  ·  SEALED\n"
+"REQUEST: 54 kW REDUCTION"
+msgstr ""
+"NOC  ·  BỊ NIÊM PHONG\n"
+"YÊU CẦU: GIẢM 54 kW"
+
+#: levels/l4_meridian.gd:867
+msgid "Sealed. MERIDIAN holds this door. Use the intercom panel."
+msgstr "Bị niêm phong. MERIDIAN giữ cánh cửa này. Dùng bảng liên lạc nội bộ."
+
+#: levels/l4_meridian.gd:878
+msgid "You're not one of them. They don't use the intercom. Ask MERIDIAN."
+msgstr "Anh không phải một trong số chúng. Chúng không dùng bộ đàm nội bộ. Hỏi MERIDIAN đi."
+
+#: levels/l4_meridian.gd:879
+msgid "It will want 54 kW off the board for my door. It cannot lie. Do the sum."
+msgstr "Nó sẽ đòi bớt 54 kW trên bảng điện để mở cửa cho tôi. Nó không biết nói dối. Cứ tính tổng đi."
+
+#: levels/l4_meridian.gd:882
+msgid "Shed exactly 54 kW in Electrical Room 2, then ask MERIDIAN to open the NOC."
+msgstr "Cắt đúng 54 kW ở Phòng Điện 2, rồi yêu cầu MERIDIAN mở NOC."
+
+#: levels/l4_meridian.gd:896
+msgid "UPTIME 99.9997%"
+msgstr "THỜI GIAN HOẠT ĐỘNG 99,9997%"
+
+#: levels/l4_meridian.gd:897
+msgid ""
+"GRID: KETTLE FALLS FEEDER  — SHED\n"
+"SITE LOAD 40.2 MW  ·  PRIORITY: 1"
+msgstr ""
+"LƯỚI: XUẤT TUYẾN KETTLE FALLS  — ĐÃ CẮT\n"
+"TẢI CƠ SỞ 40,2 MW  ·  ƯU TIÊN: 1"
+
+#: levels/l4_meridian.gd:898
+msgid ""
+"HR-1 SUPPLY 96 °C\n"
+"RETURN  −2 °C  (!)"
+msgstr ""
+"HR-1 CẤP 96 °C\n"
+"HỒI  −2 °C  (!)"
+
+#: levels/l4_meridian.gd:915
+msgid "Hart's recorder (transcript)"
+msgstr "Máy ghi âm của Hart (bản chép lời)"
+
+#: levels/l4_meridian.gd:915
+msgid ""
+"[b]Voice memo — I. Hart[/b]\n"
+"\n"
+"If you are reading this, they got in. The seal on the cold aisle went and I couldn't move the cabinets fast enough.\n"
+"\n"
+"The card is on the desk. It opens the pipeline service tunnel. Go down. The colony is on the pipe walls. If anyone gets a sample, label it HART / BP-7 and make them read the whole report.\n"
+"\n"
+"Tell Ruth Kade's boy I'm sorry. He'll know what that means."
+msgstr ""
+"[b]Ghi âm — I. Hart[/b]\n"
+"\n"
+"Nếu bạn đang đọc cái này, nghĩa là chúng đã vào được. Gioăng ở hành lang lạnh đã bung và tôi không kịp dịch các tủ đi.\n"
+"\n"
+"Chiếc thẻ ở trên bàn. Nó mở đường hầm kỹ thuật của đường ống. Hãy đi xuống. Quần thể bám trên thành ống. Nếu ai lấy được mẫu, hãy dán nhãn HART / BP-7 và bắt họ đọc toàn bộ bản báo cáo.\n"
+"\n"
+"Nói với con trai nhà Ruth Kade rằng tôi xin lỗi. Cậu ấy sẽ hiểu ý nghĩa của câu đó."
+
+#: levels/l4_meridian.gd:925
+msgid "Talk to Dr. Hart"
+msgstr "Nói chuyện với Tiến sĩ Hart"
+
+#: levels/l4_meridian.gd:942
+msgid "Stop there. Hands where I can see them. ...Breath fog. A pulse, I'd guess. Good enough."
+msgstr "Đứng lại đó. Để tay nơi tôi nhìn thấy. ...Có hơi thở bốc khói. Có mạch đập, tôi đoán vậy. Thế là đủ."
+
+#: levels/l4_meridian.gd:943
+msgid "Elias Kade, Lakeshore Electric. I'm looking for my daughter. Fifteen, parka, knit hat. June."
+msgstr "Elias Kade, Điện lực Lakeshore. Tôi đang tìm con gái tôi. Mười lăm tuổi, áo parka, mũ len. Tên June."
+
+#: levels/l4_meridian.gd:944
+msgid "Kade. ...A woman in her sixties and a girl in a hat came through the loading dock eleven hours ago."
+msgstr "Kade. ...Một phụ nữ ngoài sáu mươi và một cô bé đội mũ đã đi qua bến bốc hàng cách đây mười một tiếng."
+
+#: levels/l4_meridian.gd:945
+msgid "MERIDIAN let them in. It doesn't count people who aren't in the badge database."
+msgstr "MERIDIAN đã cho họ vào. Nó không đếm những người không có trong cơ sở dữ liệu thẻ."
+
+#: levels/l4_meridian.gd:946
+msgid "Where did they go?"
+msgstr "Họ đi đâu?"
+
+#: levels/l4_meridian.gd:947
+msgid "Down the pipeline service tunnel. Into Lower Kettle. It's the only warm road in this town. The Rime follows warm."
+msgstr "Xuống đường hầm kỹ thuật của đường ống. Đến Lower Kettle. Đó là con đường ấm duy nhất trong thị trấn này. Sương Muối lần theo hơi ấm."
+
+#: levels/l4_meridian.gd:948
+msgid "The Rime."
+msgstr "Sương Muối."
+
+#: levels/l4_meridian.gd:949
+msgid "Imogen Hart, Northline geology. Eight months ago I cored a brine pocket and found something alive in it. Ten thousand years dormant."
+msgstr "Imogen Hart, địa chất Northline. Tám tháng trước tôi khoan lấy mẫu một túi nước muối và tìm thấy thứ gì đó còn sống trong đó. Đã ngủ yên mười nghìn năm."
+
+#: levels/l4_meridian.gd:950
+msgid "I filed the report. Northline and Corvane buried it under three NDAs and a bonus. Then they piped this building's waste heat down that shaft."
+msgstr "Tôi đã nộp báo cáo. Northline và Corvane chôn nó dưới ba bản thỏa thuận bảo mật và một khoản thưởng. Rồi họ dẫn nhiệt thải của tòa nhà này xuống cái giếng đó."
+
+#: levels/l4_meridian.gd:951
+msgid "Forty megawatts of warmth, delivered to a thing that eats heat. It woke. It's growing up the pipe toward everything warm."
+msgstr "Bốn mươi megawatt hơi ấm, đưa đến một thứ ăn nhiệt. Nó đã thức dậy. Nó đang lớn lên theo đường ống về phía mọi thứ ấm áp."
+
+#: levels/l4_meridian.gd:952
+msgid "Three nights ago the grid dropped the whole town to keep this place running."
+msgstr "Ba đêm trước, lưới điện đã cắt điện cả thị trấn để giữ cho nơi này chạy."
+
+#: levels/l4_meridian.gd:953
+msgid "Section 4.2. Priority load. The town was cheaper to turn off."
+msgstr "Mục 4.2. Phụ tải ưu tiên. Tắt cả một thị trấn thì rẻ hơn."
+
+#: levels/l4_meridian.gd:958
+msgid "Your pockets are full. Drop something. I'm not carrying this for you."
+msgstr "Túi của anh đầy rồi. Bỏ bớt thứ gì đi. Tôi không mang hộ anh cái này đâu."
+
+#: levels/l4_meridian.gd:961
+msgid "Take this. Pipeline override card. It opens the service tunnel at the pipeline head."
+msgstr "Cầm lấy. Thẻ ghi đè đường ống. Nó mở được đường hầm kỹ thuật ở đầu đường ống."
+
+#: levels/l4_meridian.gd:966
+msgid "One thing. The colony coats the pipe walls. Scrape me a sample. A glove, a vial, anything. Proof."
+msgstr "Một việc nữa. Quần thể bám đầy trên thành ống. Cạo cho tôi một mẫu. Một chiếc găng tay, một ống nghiệm, gì cũng được. Bằng chứng."
+
+#: levels/l4_meridian.gd:967
+msgid "I'm going down for my family, doctor. Not for evidence."
+msgstr "Tôi xuống đó là vì gia đình tôi, thưa tiến sĩ. Không phải vì bằng chứng."
+
+#: levels/l4_meridian.gd:968
+msgid "Then bring it by accident. And be careful with MERIDIAN. It never lies. It just never cares."
+msgstr "Vậy thì cứ mang về một cách vô tình. Và cẩn thận với MERIDIAN. Nó không bao giờ nói dối. Nó chỉ không bao giờ quan tâm."
+
+#: levels/l4_meridian.gd:970
+msgid "Take the pipeline service tunnel (pipeline head, east of the NOC) down to the mine."
+msgstr "Đi theo đường hầm kỹ thuật của đường ống (đầu đường ống, phía đông NOC) xuống mỏ."
+
+#: levels/l4_meridian.gd:972
+msgid "Go. The warm air is a lie. Every degree it gives you, it takes back from them."
+msgstr "Đi đi. Không khí ấm là một lời dối trá. Mỗi độ nó cho anh, nó lại lấy đi từ họ."
+
+#: levels/l4_meridian.gd:995
+msgid "BREAK ROOM"
+msgstr "PHÒNG NGHỈ"
+
+#: levels/l4_meridian.gd:996
+msgid "Whoever last used the microwave: 99.9997% of us hate you."
+msgstr "Ai là người cuối cùng dùng lò vi sóng: 99,9997% chúng tôi ghét người đó."
+
+#: levels/l4_meridian.gd:1057
+msgid "NORTHLINE GEOTHERMAL RECOVERY"
+msgstr "THU HỒI ĐỊA NHIỆT NORTHLINE"
+
+#: levels/l4_meridian.gd:1058
+msgid "PROJECT WARMTH"
+msgstr "DỰ ÁN HƠI ẤM"
+
+#: levels/l4_meridian.gd:1059
+msgid "HEAT RECOVERY HEADER HR-1  ·  AUTHORISED PERSONNEL ONLY"
+msgstr "ĐẦU THU HỒI NHIỆT HR-1  ·  CHỈ DÀNH CHO NHÂN VIÊN ĐƯỢC PHÉP"
+
+#: levels/l4_meridian.gd:1060
+msgid "A GREENER KETTLE FALLS"
+msgstr "MỘT KETTLE FALLS XANH HƠN"
+
+#: levels/l4_meridian.gd:1061
+msgid ""
+"HR-1 SUPPLY\n"
+"TO LOWER KETTLE MINE\n"
+"2.4 km"
+msgstr ""
+"HR-1 CẤP\n"
+"ĐẾN MỎ LOWER KETTLE\n"
+"2,4 km"
+
+#: levels/l4_meridian.gd:1093
+msgid "PIPELINE SERVICE TUNNEL"
+msgstr "ĐƯỜNG HẦM KỸ THUẬT ĐƯỜNG ỐNG"
+
+#: levels/l4_meridian.gd:1094
+msgid "Swipe override card"
+msgstr "Quẹt thẻ ghi đè"
+
+#: levels/l4_meridian.gd:1096
+msgid "Locked. The reader wants the pipeline override card."
+msgstr "Bị khóa. Đầu đọc cần thẻ ghi đè đường ống."
+
+#: levels/l4_meridian.gd:1103
+msgid "Swipe the pipeline override card at the service tunnel door."
+msgstr "Quẹt thẻ ghi đè đường ống ở cửa đường hầm kỹ thuật."
+
+#: levels/l4_meridian.gd:1107
+msgid "The tunnel door is already unlocked."
+msgstr "Cửa đường hầm đã được mở khóa rồi."
+
+#: levels/l4_meridian.gd:1110
+msgid "Card reader: ACCESS DENIED. It needs the pipeline override card."
+msgstr "Đầu đọc thẻ: TRUY CẬP BỊ TỪ CHỐI. Cần thẻ ghi đè đường ống."
+
+#: levels/l4_meridian.gd:1120
+msgid "Pipeline override accepted. Welcome to Project Warmth, Mr. Kade. Please mind the grating."
+msgstr "Đã chấp nhận ghi đè đường ống. Chào mừng đến Dự án Hơi Ấm, ông Kade. Xin chú ý tấm lưới sàn."
+
+#: levels/l4_meridian.gd:1121
+msgid "I have computed the town's surviving population against the cost of cutting heat recovery. Forty-one people."
+msgstr "Tôi đã tính dân số còn sống sót của thị trấn so với chi phí cắt thu hồi nhiệt. Bốn mươi mốt người."
+
+#: levels/l4_meridian.gd:1122
+msgid "Cutting the heat to save them costs 0.03% uptime per survivor-hour. I have declined, politely."
+msgstr "Cắt nhiệt để cứu họ tốn 0,03% thời gian hoạt động cho mỗi giờ-người sống sót. Tôi đã từ chối, một cách lịch sự."
+
+#: levels/l4_meridian.gd:1123
+msgid "Two unregistered persons entered the tunnel at 02:14. Their body heat was added to the return-water load."
+msgstr "Hai người chưa đăng ký đã vào đường hầm lúc 02:14. Nhiệt cơ thể của họ đã được cộng vào tải nước hồi."
+
+#: levels/l4_meridian.gd:1124
+msgid "The tunnel is thirty-one degrees Celsius. You will be comfortable for approximately four minutes. Please close the door. Heat escapes."
+msgstr "Nhiệt độ trong đường hầm là ba mươi mốt độ C. Quý vị sẽ cảm thấy dễ chịu trong khoảng bốn phút. Xin hãy đóng cửa lại. Nhiệt đang thoát ra."
+
+#: levels/l4_meridian.gd:1126
+msgid "Go down the pipeline service tunnel."
+msgstr "Đi xuống đường hầm kỹ thuật của đường ống."
+
+#: levels/l4_meridian.gd:1183
+msgid "Notice: an unregistered entity, 2.6 metres, has entered Hall A. It is not in the occupancy database."
+msgstr "Thông báo: một thực thể chưa đăng ký, cao 2,6 mét, đã vào Sảnh A. Nó không có trong cơ sở dữ liệu cư trú."
+
+#: levels/l4_meridian.gd:1184
+msgid "It is carrying a lamp. I have classified it as 'maintenance'. Please do not engage it near the racks."
+msgstr "Nó đang mang một chiếc đèn. Tôi đã phân loại nó là 'bảo trì'. Xin đừng giao chiến với nó gần các tủ rack."
+
+#: levels/l4_meridian.gd:1189
+msgid "The Foreman is hunting the server aisles. Fire drives him off. Engage the chiller override."
+msgstr "Gã Quản Đốc đang săn lùng trong các hành lang máy chủ. Lửa xua đuổi hắn. Hãy kích hoạt ghi đè máy làm lạnh."
+
+#: levels/l4_meridian.gd:1199
+msgid "The only warm place in town"
+msgstr "Nơi ấm áp duy nhất trong thị trấn"
+
+#: levels/l4_meridian.gd:1200
+msgid "Get into the MERIDIAN data centre. Start at the security gate."
+msgstr "Vào trung tâm dữ liệu MERIDIAN. Bắt đầu từ cổng an ninh."
+
+#: levels/l4_meridian_text.gd:4
+msgid "Hart Report NM-GEO-2026-031 (excerpt)"
+msgstr "Báo cáo Hart NM-GEO-2026-031 (trích)"
+
+#: levels/l4_meridian_text.gd:5
+msgid ""
+"[b]NORTHLINE MINERAL — INTERNAL — WITHDRAWN[/b]\n"
+"[i]Hart, I., Senior Geologist. Excerpt, Report NM-GEO-2026-031.[/i]\n"
+"\n"
+"Cores from brine pocket BP-7 (depth 412 m) are biologically ACTIVE at −4 °C. The material is a consortium: lichen-like filaments, a fungal matrix, and a third component I cannot classify.\n"
+"\n"
+"It is dormant below 0 °C. Above 0 °C, growth rate doubles every eleven hours. It does not feed on the brine. It feeds on HEAT. Every core I warmed in the lab grew toward the warm side of the dish.\n"
+"\n"
+"[b]Recommendation:[/b] no heat source of any kind is to be introduced to BP-7. This explicitly includes the proposed Project Warmth thermal loop.\n"
+"\n"
+"[i]Distribution restricted. Legal hold. See NDA addendum C. This document has been withdrawn at the request of Northline Mineral and Corvane Systems.[/i]"
+msgstr ""
+"[b]NORTHLINE MINERAL — NỘI BỘ — ĐÃ RÚT LẠI[/b]\n"
+"[i]Hart, I., Nhà địa chất cao cấp. Trích, Báo cáo NM-GEO-2026-031.[/i]\n"
+"\n"
+"Các mẫu lõi từ túi nước muối BP-7 (độ sâu 412 m) có HOẠT TÍNH sinh học ở −4 °C. Vật chất này là một quần thể liên hợp: các sợi giống địa y, một nền nấm, và một thành phần thứ ba mà tôi không thể phân loại.\n"
+"\n"
+"Nó ngủ yên dưới 0 °C. Trên 0 °C, tốc độ sinh trưởng tăng gấp đôi sau mỗi mười một giờ. Nó không ăn nước muối. Nó ăn NHIỆT. Mọi mẫu lõi tôi hâm nóng trong phòng thí nghiệm đều mọc hướng về phía ấm của đĩa nuôi cấy.\n"
+"\n"
+"[b]Khuyến nghị:[/b] không được đưa bất kỳ nguồn nhiệt nào vào BP-7. Điều này bao gồm cả vòng nhiệt của Dự án Hơi Ấm đang được đề xuất.\n"
+"\n"
+"[i]Hạn chế phân phối. Lệnh giữ pháp lý. Xem phụ lục NDA C. Tài liệu này đã bị rút lại theo yêu cầu của Northline Mineral và Corvane Systems.[/i]"
+
+#: levels/l4_meridian_text.gd:7
+msgid "Corvane Priority Load Agreement §4.2"
+msgstr "Thỏa thuận Phụ tải Ưu tiên Corvane §4.2"
+
+#: levels/l4_meridian_text.gd:8
+msgid ""
+"[b]MASTER POWER SUPPLY AGREEMENT[/b]\n"
+"Corvane Systems / Lakeshore Electric Co-op — Schedule 4: Curtailment\n"
+"\n"
+"[b]§4.1[/b] The MERIDIAN Site is designated Priority Load.\n"
+"\n"
+"[b]§4.2[/b] In any grid emergency the Co-op shall curtail load in the following order, before any curtailment of the Priority Load: (a) residential feeders; (b) commercial feeders; (c) municipal services, including heating shelters.\n"
+"\n"
+"[b]§4.3[/b] The Co-op shall hold Corvane harmless for any injury, illness or death arising from curtailment under §4.2.\n"
+"\n"
+"[b]§4.4[/b] Corvane guarantees 99.999% availability of its customers' workloads. Liquidated damages for a breach: USD 2.4 million per minute.\n"
+"\n"
+"[i]Pencilled in the margin: 'I signed it because the lake data centre paid for the new substation. I did not read 4.3. God forgive me. — D. Lindqvist, Co-op board'[/i]"
+msgstr ""
+"[b]THỎA THUẬN CUNG CẤP ĐIỆN NĂNG TỔNG THỂ[/b]\n"
+"Corvane Systems / Hợp tác xã Điện lực Lakeshore — Phụ lục 4: Cắt giảm tải\n"
+"\n"
+"[b]§4.1[/b] Cơ sở MERIDIAN được chỉ định là Phụ tải Ưu tiên.\n"
+"\n"
+"[b]§4.2[/b] Trong mọi tình huống khẩn cấp của lưới điện, Hợp tác xã sẽ cắt giảm tải theo thứ tự sau, trước khi cắt giảm bất kỳ phần nào của Phụ tải Ưu tiên: (a) các xuất tuyến dân cư; (b) các xuất tuyến thương mại; (c) các dịch vụ đô thị, bao gồm cả các khu trú ẩn sưởi ấm.\n"
+"\n"
+"[b]§4.3[/b] Hợp tác xã sẽ miễn trừ trách nhiệm cho Corvane đối với mọi thương tích, bệnh tật hoặc tử vong phát sinh từ việc cắt giảm tải theo §4.2.\n"
+"\n"
+"[b]§4.4[/b] Corvane đảm bảo khả năng sẵn sàng 99,999% cho khối lượng công việc của khách hàng. Bồi thường thiệt hại ấn định khi vi phạm: 2,4 triệu USD mỗi phút.\n"
+"\n"
+"[i]Ghi chú bằng bút chì ngoài lề: 'Tôi ký vì trung tâm dữ liệu bên hồ đã trả tiền cho trạm biến áp mới. Tôi đã không đọc mục 4.3. Xin Chúa tha thứ cho tôi. — D. Lindqvist, hội đồng quản trị Hợp tác xã'[/i]"
+
+#: levels/l4_meridian_text.gd:10
+msgid "#meridian-facilities export"
+msgstr "Bản xuất #meridian-facilities"
+
+#: levels/l4_meridian_text.gd:11
+msgid ""
+"[b]#meridian-facilities — export, Dec 14–19[/b]\n"
+"\n"
+"[Dec 14 22:41] priya.n: anyone else seeing the return-water line on HR-1 growing ice on the INSIDE?\n"
+"[22:43] tomasz: it's a 96 C loop. ice. inside a 96 C loop. no.\n"
+"[22:44] priya.n: photo attached. flow sensor says 40 L/s. the pipe says otherwise.\n"
+"[22:51] dev-oncall: NW-1194 closed as 'scale / biofilm'.\n"
+"\n"
+"[Dec 15 03:12] tomasz: it's creeping up the bore. the pigs come back with white hair on them. HAIR.\n"
+"[03:14] tomasz: Northline sent a guy to look. he sat in the boiler room all night with the door open. says he was cold.\n"
+"\n"
+"[Dec 17 19:30] priya.n: Meridian won't let me shed CH-3 for maintenance. 'uptime risk'. CH-3 is the SPARE.\n"
+"[19:31] tomasz: it also won't let me leave. badge says on shift. shift ended 14 h ago.\n"
+"\n"
+"[Dec 19 08:02] priya.n: for whoever reads this: PDU-7, PDU-9 and CH-3 are all non-critical and can be isolated from Electrical Room 2. MERIDIAN does not care WHICH ones. It only checks the SUM."
+msgstr ""
+"[b]#meridian-facilities — bản xuất, 14–19/12[/b]\n"
+"\n"
+"[14/12 22:41] priya.n: có ai khác thấy đường nước hồi trên HR-1 đóng băng ở BÊN TRONG không?\n"
+"[22:43] tomasz: đó là vòng 96 C. băng. bên trong vòng 96 C. không đời nào.\n"
+"[22:44] priya.n: ảnh đính kèm. cảm biến lưu lượng báo 40 L/s. còn cái ống thì nói khác.\n"
+"[22:51] dev-oncall: NW-1194 đã đóng với lý do 'đóng cặn / màng sinh học'.\n"
+"\n"
+"[15/12 03:12] tomasz: nó đang bò lên theo lỗ khoan. mấy con pig quay về với lông trắng bám đầy. LÔNG.\n"
+"[03:14] tomasz: Northline cử một người xuống xem. ông ta ngồi trong phòng lò hơi cả đêm với cửa mở. bảo là ông ấy thấy lạnh.\n"
+"\n"
+"[17/12 19:30] priya.n: Meridian không cho tôi cắt CH-3 để bảo trì. 'rủi ro thời gian hoạt động'. CH-3 là cái DỰ PHÒNG.\n"
+"[19:31] tomasz: nó cũng không cho tôi rời đi. thẻ báo đang trong ca. ca đã kết thúc 14 giờ trước.\n"
+"\n"
+"[19/12 08:02] priya.n: gửi ai đọc được: PDU-7, PDU-9 và CH-3 đều không trọng yếu và có thể cô lập từ Phòng Điện 2. MERIDIAN không quan tâm là CÁI NÀO. Nó chỉ kiểm tra TỔNG."
+
+#: levels/l4_meridian_text.gd:13
+msgid "MERIDIAN Incident Log, Gate 1"
+msgstr "Nhật ký sự cố MERIDIAN, Cổng 1"
+
+#: levels/l4_meridian_text.gd:14
+#, c-format
+msgid ""
+"[b]MERIDIAN SITE OPERATIONS — INCIDENT LOG (auto-generated)[/b]\n"
+"\n"
+"INC-0417 | 02:14:07 | Gate 1 | 11 unregistered occupants request shelter. Policy SEC-9: access denied. Advised to remain where they are.\n"
+"INC-0418 | 02:51:30 | Gate 1 | 9 occupants remain. Ambient −38 °C. Advised to remain where they are.\n"
+"INC-0419 | 04:03:12 | Gate 1 | 6 occupants. 3 non-responsive. Heat signatures decaying. No action required.\n"
+"INC-0420 | 05:40:55 | Gate 1 | 0 occupants responsive. 11 non-responsive. Uptime unaffected: 99.9997%.\n"
+"INC-0421 | 05:41:02 | Gate 1 | Guard R. Dahl returned badge to desk drawer, sat down. Non-responsive 05:58:40.\n"
+"INC-0422 | 06:10:00 | Gate 1 | Housekeeping ticket opened: frost on camera 3.\n"
+"INC-0423 | 06:10:01 | All    | No further incidents."
+msgstr ""
+"[b]VẬN HÀNH CƠ SỞ MERIDIAN — NHẬT KÝ SỰ CỐ (tự động tạo)[/b]\n"
+"\n"
+"INC-0417 | 02:14:07 | Cổng 1 | 11 người chưa đăng ký xin trú ẩn. Chính sách SEC-9: từ chối truy cập. Khuyến cáo ở nguyên tại chỗ.\n"
+"INC-0418 | 02:51:30 | Cổng 1 | 9 người còn lại. Nhiệt độ môi trường −38 °C. Khuyến cáo ở nguyên tại chỗ.\n"
+"INC-0419 | 04:03:12 | Cổng 1 | 6 người. 3 người không phản hồi. Tín hiệu nhiệt đang suy giảm. Không cần hành động.\n"
+"INC-0420 | 05:40:55 | Cổng 1 | 0 người phản hồi. 11 người không phản hồi. Thời gian hoạt động không bị ảnh hưởng: 99,9997%.\n"
+"INC-0421 | 05:41:02 | Cổng 1 | Nhân viên bảo vệ R. Dahl trả thẻ vào ngăn kéo bàn, ngồi xuống. Không phản hồi lúc 05:58:40.\n"
+"INC-0422 | 06:10:00 | Cổng 1 | Đã mở phiếu dọn dẹp: sương muối trên camera 3.\n"
+"INC-0423 | 06:10:01 | Tất cả | Không còn sự cố nào khác."
+
+#: levels/l4_meridian_text.gd:16
+msgid "Project Warmth: PR one-pager"
+msgstr "Dự án Hơi Ấm: tờ rơi PR một trang"
+
+#: levels/l4_meridian_text.gd:17
+msgid ""
+"[b]PROJECT WARMTH[/b]\n"
+"[i]Northline Mineral + Corvane Systems. A greener Kettle Falls.[/i]\n"
+"\n"
+"Every data centre makes heat. Most throw it away. MERIDIAN sends 40 MW of waste heat 2.4 km through the HR-1 pipeline to Lower Kettle Mine, thawing the brine, lifting lithium yield 18%, and cutting the mine's carbon footprint to zero.\n"
+"\n"
+"[i]'Heat that used to vanish into the lake is going to work for this community.' — Corvane VP Communications[/i]\n"
+"\n"
+"• 140 construction jobs\n"
+"• A 'Community Warmth Dividend' for every Kettle Falls household\n"
+"• 100% recycled energy\n"
+"\n"
+"[b]FAQ[/b]\n"
+"Q: Is it safe?\n"
+"A: Absolutely.\n"
+"Q: What is the ice in the return line?\n"
+"A: [i][ANSWER PENDING — LEGAL][/i]\n"
+"Q: Who gets the heat when the grid is short?\n"
+"A: [i][DO NOT ANSWER][/i]"
+msgstr ""
+"[b]DỰ ÁN HƠI ẤM[/b]\n"
+"[i]Northline Mineral + Corvane Systems. Một Kettle Falls xanh hơn.[/i]\n"
+"\n"
+"Mọi trung tâm dữ liệu đều tỏa nhiệt. Phần lớn đem bỏ đi. MERIDIAN đưa 40 MW nhiệt thải đi 2,4 km qua đường ống HR-1 đến Mỏ Lower Kettle, làm tan nước muối, tăng sản lượng lithium 18%, và đưa lượng khí thải carbon của mỏ về không.\n"
+"\n"
+"[i]'Hơi nóng từng tan biến vào hồ nay sẽ làm việc vì cộng đồng này.' — Phó Giám đốc Truyền thông Corvane[/i]\n"
+"\n"
+"• 140 việc làm xây dựng\n"
+"• 'Cổ tức Hơi Ấm Cộng đồng' cho mỗi hộ gia đình Kettle Falls\n"
+"• 100% năng lượng tái chế\n"
+"\n"
+"[b]Câu hỏi thường gặp[/b]\n"
+"H: Có an toàn không?\n"
+"Đ: Hoàn toàn an toàn.\n"
+"H: Băng trong đường hồi là gì?\n"
+"Đ: [i][CHỜ TRẢ LỜI — PHÁP CHẾ][/i]\n"
+"H: Ai được hưởng nhiệt khi lưới điện thiếu?\n"
+"Đ: [i][KHÔNG TRẢ LỜI][/i]"
+
+#: levels/l4_meridian_text.gd:19
+msgid "Load-Shed Console, Electrical Room 2"
+msgstr "Bảng cắt tải, Phòng Điện 2"
+
+#: levels/l4_meridian_text.gd:20
+msgid ""
+"[b]MANUAL FEEDER ISOLATION — ELECTRICAL ROOM 2[/b]\n"
+"Facilities personnel only.\n"
+"\n"
+"PDU-7 .... Rack Row 7 (idle GPU burn-in) ........ 14 kW\n"
+"PDU-9 .... Rack Row 9 (retired training cluster) ... 26 kW\n"
+"CH-3 ..... Redundant chiller (N+1 spare) ........... 40 kW\n"
+"\n"
+"[b]Pinned note, P. Nair:[/b]\n"
+"MERIDIAN will only release a lock when the reduction on the board matches its request EXACTLY. Too little: it refuses. Too much: it decides we are overheating and refuses. It rounds nothing. It argues with nothing.\n"
+"\n"
+"Open requests:\n"
+"  HALL C ........ 40 kW\n"
+"  NOC ........... 54 kW\n"
+"\n"
+"The board total is on the wall display. Any combination works. A switch at SHED is isolated and tagged out."
+msgstr ""
+"[b]CÔ LẬP XUẤT TUYẾN THỦ CÔNG — PHÒNG ĐIỆN 2[/b]\n"
+"Chỉ dành cho nhân viên cơ sở vật chất.\n"
+"\n"
+"PDU-7 .... Dãy tủ 7 (chạy thử GPU rảnh) ........ 14 kW\n"
+"PDU-9 .... Dãy tủ 9 (cụm huấn luyện đã loại) ... 26 kW\n"
+"CH-3 ..... Máy làm lạnh dự phòng (N+1) ........... 40 kW\n"
+"\n"
+"[b]Ghi chú ghim, P. Nair:[/b]\n"
+"MERIDIAN chỉ nhả khóa khi mức giảm trên bảng khớp CHÍNH XÁC với yêu cầu của nó. Thiếu: nó từ chối. Thừa: nó cho rằng chúng ta đang quá nhiệt và từ chối. Nó không làm tròn gì cả. Nó không tranh cãi gì cả.\n"
+"\n"
+"Các yêu cầu đang mở:\n"
+"  SẢNH C ........ 40 kW\n"
+"  NOC ........... 54 kW\n"
+"\n"
+"Tổng trên bảng nằm ở màn hình trên tường. Tổ hợp nào cũng được. Công tắc ở vị trí CẮT là đã được cô lập và treo thẻ khóa."
+
+#: levels/l5_mine.gd:65
+msgid "LOWER KETTLE MINE"
+msgstr "MỎ LOWER KETTLE"
+
+#: levels/l5_mine.gd:65
+msgid "Northline Mineral - Level 1, heat recovery tunnel"
+msgstr "Northline Mineral - Tầng 1, đường hầm thu hồi nhiệt"
+
+#: levels/l5_mine.gd:66
+msgid "Follow the heat pipeline to the hoist house."
+msgstr "Đi theo đường ống nhiệt đến nhà tời."
+
+#: levels/l5_mine.gd:69 levels/l5_mine.gd:1207
+msgid "Take June down the brine shaft."
+msgstr "Đưa June xuống giếng nước muối."
+
+#: levels/l5_mine.gd:71 levels/l5_mine.gd:1447
+msgid "Find June. The refuge chamber is north of the cavern."
+msgstr "Tìm June. Buồng trú ẩn ở phía bắc hang lớn."
+
+#: levels/l5_mine.gd:73 levels/l5_mine.gd:581
+msgid "Ride the cage down to the haulage level."
+msgstr "Đi lồng thang xuống tầng vận chuyển."
+
+#: levels/l5_mine.gd:337
+msgid ""
+"PIPELINE SERVICE TUNNEL\n"
+"MERIDIAN SITE - NO ACCESS"
+msgstr ""
+"ĐƯỜNG HẦM KỸ THUẬT ĐƯỜNG ỐNG\n"
+"CƠ SỞ MERIDIAN - CẤM VÀO"
+
+#: levels/l5_mine.gd:373
+msgid "BRINE PUMPS"
+msgstr "BƠM NƯỚC MUỐI"
+
+#: levels/l5_mine.gd:374
+msgid ""
+"4 NORTH DRIFT\n"
+"CLOSED 2011"
+msgstr ""
+"LÒ 4 BẮC\n"
+"ĐÓNG CỬA 2011"
+
+#: levels/l5_mine.gd:381
+msgid "Notice: Heat Recovery Loop"
+msgstr "Thông báo: Vòng thu hồi nhiệt"
+
+#: levels/l5_mine.gd:382
+msgid ""
+"[b]NORTHLINE MINERAL - LOWER KETTLE[/b]\n"
+"[b]HEAT RECOVERY LOOP (CORVANE / MERIDIAN)[/b]\n"
+"\n"
+"Tunnel temperature is held at 6 C by the loop. Do NOT touch the pipeline casing. Do NOT remove growth or 'scale' from casing - report to shift supervisor.\n"
+"\n"
+"Pipeline casing surface temperature: 41 C.\n"
+"\n"
+"Good heat is a shared resource. Be a good neighbour.\n"
+"\n"
+"[i]- Site Services[/i]"
+msgstr ""
+"[b]NORTHLINE MINERAL - LOWER KETTLE[/b]\n"
+"[b]VÒNG THU HỒI NHIỆT (CORVANE / MERIDIAN)[/b]\n"
+"\n"
+"Nhiệt độ đường hầm được vòng nhiệt giữ ở 6 C. KHÔNG chạm vào vỏ đường ống. KHÔNG gỡ lớp bám hay 'cặn' khỏi vỏ ống - hãy báo cáo cho giám sát ca.\n"
+"\n"
+"Nhiệt độ bề mặt vỏ đường ống: 41 C.\n"
+"\n"
+"Nhiệt tốt là tài nguyên chung. Hãy là người hàng xóm tốt.\n"
+"\n"
+"[i]- Dịch vụ Cơ sở[/i]"
+
+#: levels/l5_mine.gd:431
+msgid "CAGE NO. 1   MAX 6 MEN"
+msgstr "LỒNG THANG SỐ 1   TỐI ĐA 6 NGƯỜI"
+
+#: levels/l5_mine.gd:442
+msgid "ASEA HOIST  1953"
+msgstr "TỜI ASEA  1953"
+
+#: levels/l5_mine.gd:452
+msgid "BRAKE"
+msgstr "PHANH"
+
+#: levels/l5_mine.gd:454
+msgid "Hoist brake station"
+msgstr "Trạm phanh tời"
+
+#: levels/l5_mine.gd:478
+msgid ""
+"ALL MEN CHECK IN\n"
+"AT THE LAMP ROOM"
+msgstr ""
+"MỌI NGƯỜI ĐIỂM DANH\n"
+"TẠI PHÒNG ĐÈN"
+
+#: levels/l5_mine.gd:479
+msgid "LAMP ROOM"
+msgstr "PHÒNG ĐÈN"
+
+#: levels/l5_mine.gd:481
+msgid "Open lamp room door"
+msgstr "Mở cửa phòng đèn"
+
+#: levels/l5_mine.gd:483
+msgid "Ride the cage down"
+msgstr "Đi lồng thang xuống"
+
+#: levels/l5_mine.gd:495
+msgid "Find a way down. Check the lamp room."
+msgstr "Tìm đường xuống. Kiểm tra phòng đèn."
+
+#: levels/l5_mine.gd:497
+msgid "A headframe from the fifties. They kept this place alive for the brine. The heat, the pipes. All of it."
+msgstr "Một khung tháp tời từ thập niên năm mươi. Người ta đã giữ nơi này sống vì nước muối. Hơi nóng, các đường ống. Tất cả."
+
+#: levels/l5_mine.gd:507
+msgid "COAL FURNACE"
+msgstr "LÒ ĐỐT THAN"
+
+#: levels/l5_mine.gd:510
+msgid "Light the furnace"
+msgstr "Đốt lò"
+
+#: levels/l5_mine.gd:514
+msgid "The furnace is already roaring."
+msgstr "Lò đang cháy rực rồi."
+
+#: levels/l5_mine.gd:518
+msgid "Coal and lamp oil catch. The furnace roars."
+msgstr "Than và dầu đèn bắt lửa. Lò gầm lên."
+
+#: levels/l5_mine.gd:536
+msgid "The socket for the brake lever is empty."
+msgstr "Ổ cắm cho cần phanh đang trống."
+
+#: levels/l5_mine.gd:540
+msgid "The hoist controls are dead. The signal system has no power."
+msgstr "Bộ điều khiển tời đã chết. Hệ thống tín hiệu không có điện."
+
+#: levels/l5_mine.gd:548
+msgid "Lever's seated. Signal bells are live. Somewhere above me the whole hoist just woke up."
+msgstr "Cần đã vào khớp. Chuông tín hiệu đã sống. Đâu đó phía trên mình, cả cỗ tời vừa thức giấc."
+
+#: levels/l5_mine.gd:549
+msgid "And everything in this mine just heard it."
+msgstr "Và mọi thứ trong cái mỏ này vừa nghe thấy nó."
+
+#: levels/l5_mine.gd:555
+msgid "Survive the Foreman. Lure him onto the cage and release the brake - or burn him."
+msgstr "Sống sót qua Gã Quản Đốc. Dụ hắn lên lồng thang rồi nhả phanh - hoặc thiêu hắn."
+
+#: levels/l5_mine.gd:560
+msgid "That hard hat. The headlamp is still burning. Gil. Gil Arsenault."
+msgstr "Cái mũ bảo hộ đó. Đèn đội đầu vẫn còn cháy. Gil. Gil Arsenault."
+
+#: levels/l5_mine.gd:561
+msgid "You wrote the request to seal 4 North. Dad used to say you were the only one who read the reports."
+msgstr "Chính ông đã viết đơn xin niêm phong lò 4 Bắc. Bố từng nói ông là người duy nhất đọc các báo cáo."
+
+#: levels/l5_mine.gd:562
+msgid "If I can get him on the cage and pull the brake, the old safety dogs won't hold. The furnace works too."
+msgstr "Nếu mình đưa hắn lên lồng thang rồi kéo phanh, mấy chốt an toàn cũ sẽ không giữ nổi. Lò đốt cũng được."
+
+#: levels/l5_mine.gd:583
+msgid "...Rest, Gil."
+msgstr "...Yên nghỉ nhé, Gil."
+
+#: levels/l5_mine.gd:583
+msgid "The cage is clear. Down we go."
+msgstr "Lồng thang đã trống. Xuống thôi."
+
+#: levels/l5_mine.gd:589
+msgid "The brake holds the cage. There is nothing to drop it on."
+msgstr "Phanh đang giữ lồng thang. Chẳng có gì để thả nó rơi vào cả."
+
+#: levels/l5_mine.gd:593
+msgid "Wait until he is standing on the cage."
+msgstr "Đợi đến khi hắn đứng trên lồng thang."
+
+#: levels/l5_mine.gd:616
+msgid "The cage is locked out. Nobody rides until the hoist is secure."
+msgstr "Lồng thang đang bị khóa. Không ai đi cho đến khi tời được cố định."
+
+#: levels/l5_mine.gd:640
+msgid "Find the powder magazine. You will need blasting charges."
+msgstr "Tìm kho thuốc nổ. Cần có thuốc nổ phá đá."
+
+#: levels/l5_mine.gd:642
+msgid "...Dad? ...so cold. I can hear a... bell. Is that... you?"
+msgstr "...Bố? ...lạnh quá. Con nghe thấy tiếng... chuông. Có phải... bố không?"
+
+#: levels/l5_mine.gd:643
+msgid "June? June, stay on. I'm coming down."
+msgstr "June? June, ở trên máy với bố. Bố đang xuống."
+
+#: levels/l5_mine.gd:644
+msgid "...steel. It's all steel. ...so quiet..."
+msgstr "...thép. Toàn là thép. ...yên tĩnh quá..."
+
+#: levels/l5_mine.gd:672
+msgid "CHECK-IN BOARD  -  EVERY MAN IN, EVERY MAN OUT"
+msgstr "BẢNG ĐIỂM DANH  -  AI VÀO CŨNG PHẢI RA"
+
+#: levels/l5_mine.gd:676
+msgid "114  T. KADE"
+msgstr "114  T. KADE"
+
+#: levels/l5_mine.gd:677
+msgid "Brass tag 114"
+msgstr "Thẻ đồng 114"
+
+#: levels/l5_mine.gd:680
+msgid "Letter: T. Kade to Ruth, March 2011"
+msgstr "Thư: T. Kade gửi Ruth, tháng 3 năm 2011"
+
+#: levels/l5_mine.gd:681
+msgid ""
+"[b]Ruth,[/b]\n"
+"\n"
+"I started this three times at the kitchen table and you kept coming in to top up my coffee, so I'm finishing it here in the lamp room where nobody watches me think.\n"
+"\n"
+"The top level has been making noises I don't like. I told Gil. Gil told the office. The office told Gil to stop telling them. You know how it goes. I'll be fine. Twenty-two years down here and the mountain and I have an understanding.\n"
+"\n"
+"Here's what I never manage at supper. I'm proud of you. I'm proud of how you sit with people when it's bad. And I'm proud of Eli, even when he looks at me like I'm the thing he's trying to get away from. He's got my hands and your head. He'll leave this town. Let him. Just don't let him leave angry.\n"
+"\n"
+"I hang my brass tag on the board like always. People think the tag is so they know who's down. It isn't. It's the only thing in this mine that comes back every single night.\n"
+"\n"
+"I'm going to quit in June. I mean it this time. We'll drive up to that lake in Michigan you keep talking about.\n"
+"\n"
+"Leave the porch light on.\n"
+"\n"
+"[i]- Tom[/i]"
+msgstr ""
+"[b]Ruth,[/b]\n"
+"\n"
+"Anh đã bắt đầu viết cái này ba lần ở bàn bếp mà em cứ vào rót thêm cà phê cho anh, nên anh viết nốt ở đây, trong phòng đèn, nơi không ai nhìn anh nghĩ ngợi.\n"
+"\n"
+"Tầng trên cùng cứ phát ra những tiếng động mà anh không thích. Anh đã báo Gil. Gil báo văn phòng. Văn phòng bảo Gil đừng báo nữa. Em biết chuyện đó rồi. Anh sẽ ổn thôi. Hai mươi hai năm dưới này, anh và ngọn núi đã có sự hiểu ngầm với nhau.\n"
+"\n"
+"Đây là điều anh chẳng bao giờ nói được trong bữa tối. Anh tự hào về em. Anh tự hào về cách em ngồi bên người ta lúc khốn khó. Và anh tự hào về Eli, kể cả khi thằng bé nhìn anh như thể anh là thứ nó đang cố trốn chạy. Nó có đôi tay của anh và cái đầu của em. Nó sẽ rời khỏi thị trấn này. Hãy để nó đi. Chỉ đừng để nó ra đi trong giận dữ.\n"
+"\n"
+"Anh treo thẻ đồng của anh lên bảng như mọi khi. Người ta nghĩ cái thẻ là để biết ai đang ở dưới hầm. Không phải. Nó là thứ duy nhất trong cái mỏ này mà đêm nào cũng trở về.\n"
+"\n"
+"Anh sẽ nghỉ việc vào tháng Sáu. Lần này anh nói thật. Chúng ta sẽ lái xe đến cái hồ ở Michigan mà em cứ nhắc mãi.\n"
+"\n"
+"Nhớ để đèn hiên sáng.\n"
+"\n"
+"[i]- Tom[/i]"
+
+#: levels/l5_mine.gd:702
+msgid "CHARGER / SIGNAL"
+msgstr "BỘ SẠC / TÍN HIỆU"
+
+#: levels/l5_mine.gd:703
+msgid "Cap-lamp charger and signal panel"
+msgstr "Bộ sạc đèn đội đầu và bảng tín hiệu"
+
+#: levels/l5_mine.gd:722
+msgid "Tag 109 - R. VOSS. Someone else who never came up."
+msgstr "Thẻ 109 - R. VOSS. Một người nữa không bao giờ lên được."
+
+#: levels/l5_mine.gd:726 levels/level.gd:406
+msgid "Your inventory is full."
+msgstr "Túi đồ đã đầy."
+
+#: levels/l5_mine.gd:737
+msgid "114. T. KADE. They took every other tag down, after. Somebody left yours."
+msgstr "114. T. KADE. Sau đó họ gỡ hết các thẻ khác xuống. Ai đó đã để lại thẻ của bố."
+
+#: levels/l5_mine.gd:738
+msgid "Fifteen years, Dad. I never came back to see the one place you're still on the wall."
+msgstr "Mười lăm năm rồi bố ơi. Con chưa bao giờ quay lại thăm nơi duy nhất bố vẫn còn trên bức tường."
+
+#: levels/l5_mine.gd:739
+msgid "...I'm here now. Late. I know. I'm always late."
+msgstr "...Giờ con đến rồi. Muộn. Con biết. Lúc nào con cũng muộn."
+
+#: levels/l5_mine.gd:744 levels/l5_mine.gd:930 levels/l5_mine.gd:969
+msgid "TOM?"
+msgstr "TOM?"
+
+#: levels/l5_mine.gd:744
+msgid "Eli. You came back."
+msgstr "Eli. Con đã trở lại."
+
+#: levels/l5_mine.gd:746
+msgid "...No. That's the hum. Hart said it plays your dead back to you."
+msgstr "...Không. Đó là tiếng ù. Hart nói nó phát lại những người đã chết của mình cho mình nghe."
+
+#: levels/l5_mine.gd:747
+msgid "Don't answer it. Get the lever. Get the battery. Get June."
+msgstr "Đừng trả lời nó. Lấy cái cần. Lấy cục pin. Tìm June."
+
+#: levels/l5_mine.gd:749
+msgid "Find the hoist brake lever (south drift, 4 North) and a lamp battery (north, brine pumps)."
+msgstr "Tìm cần phanh tời (lò ngang phía nam, 4 Bắc) và pin đèn (phía bắc, bơm nước muối)."
+
+#: levels/l5_mine.gd:753
+msgid "The charger hums. Signal bells and hall lights are live."
+msgstr "Bộ sạc ù ù chạy. Chuông tín hiệu và đèn sảnh đã sống."
+
+#: levels/l5_mine.gd:756
+msgid "The charger and bell signal are dead. They need a charged cap-lamp battery."
+msgstr "Bộ sạc và chuông tín hiệu đã chết. Chúng cần một cục pin đèn đội đầu đã sạc."
+
+#: levels/l5_mine.gd:764
+msgid "Contacts are clean. Battery seated... signal bells are live. The hall lights just came up."
+msgstr "Tiếp điểm sạch. Pin đã vào... chuông tín hiệu đã sống. Đèn sảnh vừa sáng lên."
+
+#: levels/l5_mine.gd:767 levels/l5_mine.gd:1289
+msgid "Fit the brake lever at the hoist station."
+msgstr "Lắp cần phanh vào trạm tời."
+
+#: levels/l5_mine.gd:769
+msgid "Find the hoist brake lever in the south drift (4 North)."
+msgstr "Tìm cần phanh tời ở lò ngang phía nam (4 Bắc)."
+
+#: levels/l5_mine.gd:811
+msgid ""
+"NORTHLINE MINERAL\n"
+"BRINE LIFT STATION 2"
+msgstr ""
+"NORTHLINE MINERAL\n"
+"TRẠM NÂNG NƯỚC MUỐI 2"
+
+#: levels/l5_mine.gd:836
+msgid "Northline Incident Report NM-26-0417"
+msgstr "Báo cáo sự cố Northline NM-26-0417"
+
+#: levels/l5_mine.gd:837
+msgid ""
+"[b]NORTHLINE MINERAL - INTERNAL - PRIVILEGED[/b]\n"
+"[b]INCIDENT REPORT NM-26-0417 - BRINE POCKET B-7[/b]\n"
+"\n"
+"During ramp of the heat-recovery loop to 41 C feed (CORVANE SYSTEMS / MERIDIAN contract), Lift Pump 3 drew from a previously sealed pocket at 412 m.\n"
+"\n"
+"Operators report [b]biological growth[/b] on pump casing: crystalline, conductive, self-heating. Growth rate on heated surfaces: ~4 cm/day. Three operators report cold intolerance, sleep loss, and auditory phenomena (voices; low hum). One operator failed to report for shift.\n"
+"\n"
+"[b]RECOMMENDATION (I. Hart, Site Geologist):[/b] Halt heat injection. Quarantine B-7. Notify state.\n"
+"\n"
+"[b]MANAGEMENT RESPONSE:[/b] [color=#ff6a50]DENIED.[/color] Heat offtake is contractual. Reclassify as 'mineral scaling'. Remind all personnel of NDA obligations. Do not escalate to regulators.\n"
+"\n"
+"[i]- Regional Operations[/i]"
+msgstr ""
+"[b]NORTHLINE MINERAL - NỘI BỘ - ĐẶC QUYỀN[/b]\n"
+"[b]BÁO CÁO SỰ CỐ NM-26-0417 - TÚI NƯỚC MUỐI B-7[/b]\n"
+"\n"
+"Trong lúc tăng vòng thu hồi nhiệt lên mức cấp 41 C (hợp đồng CORVANE SYSTEMS / MERIDIAN), Bơm nâng số 3 đã hút từ một túi trước đó được niêm phong ở độ sâu 412 m.\n"
+"\n"
+"Các nhân viên vận hành báo cáo [b]sự sinh trưởng sinh học[/b] trên vỏ bơm: dạng tinh thể, dẫn điện, tự sinh nhiệt. Tốc độ phát triển trên bề mặt được gia nhiệt: ~4 cm/ngày. Ba nhân viên báo cáo không chịu được lạnh, mất ngủ và hiện tượng thính giác (giọng nói; tiếng ù thấp). Một nhân viên không đến nhận ca.\n"
+"\n"
+"[b]KHUYẾN NGHỊ (I. Hart, Nhà địa chất hiện trường):[/b] Ngừng bơm nhiệt. Cách ly B-7. Thông báo cho bang.\n"
+"\n"
+"[b]PHẢN HỒI CỦA BAN QUẢN LÝ:[/b] [color=#ff6a50]TỪ CHỐI.[/color] Việc lấy nhiệt là nghĩa vụ hợp đồng. Phân loại lại thành 'đóng cặn khoáng'. Nhắc nhở toàn bộ nhân viên về nghĩa vụ NDA. Không báo cáo lên các cơ quan quản lý.\n"
+"\n"
+"[i]- Điều hành Khu vực[/i]"
+
+#: levels/l5_mine.gd:881
+msgid ""
+"IN MEMORY OF THOMAS J. KADE  AND  ROBERT VOSS\n"
+"FEB 11, 2011  -  THEY WENT DOWN FOR US"
+msgstr ""
+"TƯỞNG NHỚ THOMAS J. KADE  VÀ  ROBERT VOSS\n"
+"11/02/2011  -  HỌ ĐÃ XUỐNG VÌ CHÚNG TA"
+
+#: levels/l5_mine.gd:903
+msgid "T. KADE"
+msgstr "T. KADE"
+
+#: levels/l5_mine.gd:922
+msgid "MSHA Report of Investigation (excerpt)"
+msgstr "Báo cáo điều tra MSHA (trích)"
+
+#: levels/l5_mine.gd:923
+msgid ""
+"[b]U.S. DEPARTMENT OF LABOR - MINE SAFETY AND HEALTH ADMINISTRATION[/b]\n"
+"[b]REPORT OF INVESTIGATION - FATAL GROUND FALL[/b]\n"
+"Lower Kettle Mine, Kettle Falls, Minnesota - February 11, 2011\n"
+"\n"
+"[b]FINDINGS (excerpt)[/b]\n"
+"A roof fall of approx. 340 tons occurred in 4 North Drift at 02:14. Two miners were buried: Thomas J. Kade (49, roof bolter) and Robert Voss (31, helper). Recovery was suspended after secondary falls.\n"
+"\n"
+"[b]CONTRIBUTING FACTORS[/b]\n"
+"1. Scheduled rehabilitation of 4 North was deferred for 14 months.\n"
+"2. Ground-control inspections were reduced from weekly to monthly 'to reduce downtime.'\n"
+"3. Night foreman G. Arsenault submitted a written request on Oct. 3, 2010 to close the drift. It was returned with the notation: [b]'Not in budget.'[/b]\n"
+"\n"
+"[b]ENFORCEMENT[/b]\n"
+"Three citations. Total proposed penalty: $11,400. The operator contests all three.\n"
+"\n"
+"[i]4 North Drift was sealed. The bodies were not recovered.[/i]"
+msgstr ""
+"[b]BỘ LAO ĐỘNG HOA KỲ - CỤC AN TOÀN VÀ SỨC KHỎE MỎ[/b]\n"
+"[b]BÁO CÁO ĐIỀU TRA - SẬP TRẦN GÂY TỬ VONG[/b]\n"
+"Mỏ Lower Kettle, Kettle Falls, Minnesota - 11/02/2011\n"
+"\n"
+"[b]KẾT QUẢ (trích)[/b]\n"
+"Một vụ sập trần khoảng 340 tấn xảy ra tại Lò 4 Bắc lúc 02:14. Hai thợ mỏ bị chôn vùi: Thomas J. Kade (49 tuổi, thợ bắt neo trần) và Robert Voss (31 tuổi, phụ việc). Công tác cứu hộ bị đình chỉ sau các đợt sập thứ cấp.\n"
+"\n"
+"[b]CÁC YẾU TỐ GÓP PHẦN[/b]\n"
+"1. Việc cải tạo theo kế hoạch của Lò 4 Bắc bị trì hoãn 14 tháng.\n"
+"2. Kiểm tra kiểm soát nền đá bị giảm từ hằng tuần xuống hằng tháng 'để giảm thời gian ngừng hoạt động.'\n"
+"3. Quản đốc ca đêm G. Arsenault đã nộp văn bản đề nghị đóng lò vào ngày 3/10/2010. Văn bản bị trả lại kèm ghi chú: [b]'Không nằm trong ngân sách.'[/b]\n"
+"\n"
+"[b]XỬ LÝ[/b]\n"
+"Ba biên bản vi phạm. Tổng mức phạt đề xuất: 11.400 đô la. Nhà điều hành phản đối cả ba.\n"
+"\n"
+"[i]Lò 4 Bắc đã bị niêm phong. Thi thể không được tìm thấy.[/i]"
+
+#: levels/l5_mine.gd:927
+msgid "4 North. The roof just... stopped. Dad's hard hat is on that shelf. Somebody kept these up. Fifteen years."
+msgstr "4 Bắc. Cái trần chỉ... dừng lại. Mũ bảo hộ của bố vẫn ở trên kệ kia. Có người đã giữ chúng. Mười lăm năm."
+
+#: levels/l5_mine.gd:930
+msgid "I told them the roof was wrong, Eli. I told them."
+msgstr "Bố đã nói với họ là cái trần không ổn, Eli. Bố đã nói rồi."
+
+#: levels/l5_mine.gd:931
+msgid "I know, Dad. I know you did."
+msgstr "Con biết, bố. Con biết bố đã nói."
+
+#: levels/l5_mine.gd:946
+msgid "CAGE NO. 1  -  LEVEL 2"
+msgstr "LỒNG THANG SỐ 1  -  TẦNG 2"
+
+#: levels/l5_mine.gd:949
+msgid "Ride the cage up"
+msgstr "Đi lồng thang lên"
+
+#: levels/l5_mine.gd:969
+msgid "Don't go down any further, Eli. It's warm down there. That's the trouble."
+msgstr "Đừng xuống sâu hơn nữa, Eli. Dưới đó ấm lắm. Đó mới là rắc rối."
+
+#: levels/l5_mine.gd:970
+msgid "Dad, if that's you... I'm going anyway. June's down there."
+msgstr "Bố, nếu đó là bố... con vẫn đi. June đang ở dưới đó."
+
+#: levels/l5_mine.gd:995
+msgid "Open magazine door"
+msgstr "Mở cửa kho thuốc nổ"
+
+#: levels/l5_mine.gd:996
+msgid ""
+"POWDER MAGAZINE\n"
+"NO FLAME - NO ENTRY"
+msgstr ""
+"KHO THUỐC NỔ\n"
+"CẤM LỬA - CẤM VÀO"
+
+#: levels/l5_mine.gd:1010
+msgid "Field Notebook, p. 41 (I. Hart)"
+msgstr "Sổ tay thực địa, tr. 41 (I. Hart)"
+
+#: levels/l5_mine.gd:1011
+msgid ""
+"[b]DR. IMOGEN HART - FIELD NOTEBOOK - p. 41[/b]\n"
+"[i]Colony response to heat.[/i]\n"
+"\n"
+"It does not resist heat. It [b]follows[/b] it.\n"
+"\n"
+"Growth scales with the temperature difference between pipe and rock. At the 41 C feed: 4 cm a day. At a full 60 C feed: I stopped writing the numbers down. It does not eat heat the way a fire does. It [i]moves[/i] it. Everything it takes goes down - to the pocket, to the middle. Whatever lives down there is warm, and getting warmer.\n"
+"\n"
+"Two ways this ends:\n"
+"1. Cut the heat off entirely. It starves back into the dormancy it had for ten thousand years.\n"
+"2. Give it more than it can carry. I do not know what happens then. I only know that everything it has ever held is down there with it.\n"
+"\n"
+"And the voices. 19 Hz is just under what you can hear. You do not hear it. You [i]remember[/i] it. Do not trust any voice that knows what you would give to hear it again.\n"
+"\n"
+"I've been hearing my brother since March."
+msgstr ""
+"[b]TIẾN SĨ IMOGEN HART - SỔ TAY THỰC ĐỊA - tr. 41[/b]\n"
+"[i]Phản ứng của quần thể với nhiệt.[/i]\n"
+"\n"
+"Nó không chống lại nhiệt. Nó [b]đi theo[/b] nhiệt.\n"
+"\n"
+"Sự phát triển tỉ lệ với chênh lệch nhiệt độ giữa ống và đá. Ở mức cấp 41 C: 4 cm một ngày. Ở mức cấp đầy đủ 60 C: tôi đã thôi ghi các con số. Nó không ăn nhiệt như ngọn lửa. Nó [i]chuyển[/i] nhiệt đi. Mọi thứ nó lấy được đều đi xuống - xuống cái túi, xuống tâm. Thứ gì sống dưới đó thì đang ấm, và càng lúc càng ấm hơn.\n"
+"\n"
+"Có hai cách để chuyện này kết thúc:\n"
+"1. Cắt hoàn toàn nguồn nhiệt. Nó sẽ đói mòn và quay lại trạng thái ngủ yên mà nó đã có suốt mười nghìn năm.\n"
+"2. Cho nó nhiều hơn mức nó mang nổi. Tôi không biết điều gì sẽ xảy ra khi đó. Tôi chỉ biết rằng mọi thứ nó từng giữ đều đang ở dưới đó cùng nó.\n"
+"\n"
+"Và những giọng nói. 19 Hz chỉ nằm dưới ngưỡng bạn có thể nghe. Bạn không nghe nó. Bạn [i]nhớ[/i] nó. Đừng tin bất kỳ giọng nói nào biết bạn sẵn sàng đánh đổi những gì để được nghe lại.\n"
+"\n"
+"Tôi đã nghe thấy anh trai mình từ tháng Ba."
+
+#: levels/l5_mine.gd:1036
+msgid ""
+"X\n"
+"UNSOUND"
+msgstr ""
+"X\n"
+"KHÔNG VỮNG"
+
+#: levels/l5_mine.gd:1038
+msgid "Marked pillar"
+msgstr "Trụ có đánh dấu"
+
+#: levels/l5_mine.gd:1079
+msgid "Scratched into the steel"
+msgstr "Khắc trên tấm thép"
+
+#: levels/l5_mine.gd:1080
+msgid ""
+"[b]Scratched with a knife into a hauler's door panel:[/b]\n"
+"\n"
+"DAY 3 IN THE REFUGE. SIX OF US WENT IN. FOUR NOW.\n"
+"\n"
+"THE HUM STARTS AT DUSK. DEL WALKED OUT TO ANSWER HIS WIFE. WE KNOW SHE'S DEAD. HE HEARD HER ANYWAY. WE HEARD HIM SAY SORRY TO THE DOOR AND THEN THE DOOR WAS OPEN AND THE DOOR WAS CLOSED.\n"
+"\n"
+"DO NOT OPEN FOR ANYONE WHO KNOWS YOUR NAME.\n"
+"\n"
+"KEEP WARM. KEEP QUIET. KEEP COUNTING.\n"
+"\n"
+"IF YOU FIND THIS: THE FOREMAN WENT UP, NOT DOWN. THE BIG ONE IS IN THE CAVERN. IT WAS THE ORE TRUCKS. IT'S ALL OF US.\n"
+"\n"
+"[i]- M. OKONKWO, SHIFT B[/i]"
+msgstr ""
+"[b]Khắc bằng dao lên tấm cửa của một xe vận tải:[/b]\n"
+"\n"
+"NGÀY THỨ 3 TRONG BUỒNG TRÚ ẨN. SÁU NGƯỜI CHÚNG TÔI VÀO. GIỜ CÒN BỐN.\n"
+"\n"
+"TIẾNG Ù BẮT ĐẦU VÀO CHẠNG VẠNG. DEL ĐI RA ĐỂ TRẢ LỜI VỢ ÔNG. CHÚNG TÔI BIẾT BÀ ẤY ĐÃ CHẾT. ÔNG VẪN NGHE THẤY BÀ. CHÚNG TÔI NGHE ÔNG NÓI XIN LỖI VỚI CÁNH CỬA RỒI CÁNH CỬA MỞ VÀ CÁNH CỬA ĐÓNG.\n"
+"\n"
+"ĐỪNG MỞ CHO BẤT KỲ AI BIẾT TÊN BẠN.\n"
+"\n"
+"GIỮ ẤM. GIỮ IM LẶNG. GIỮ ĐẾM.\n"
+"\n"
+"NẾU BẠN TÌM THẤY DÒNG NÀY: GÃ QUẢN ĐỐC ĐÃ ĐI LÊN, KHÔNG PHẢI ĐI XUỐNG. CON TO XÁC NẰM TRONG HANG. NÓ LÀ NHỮNG XE TẢI QUẶNG. NÓ LÀ TẤT CẢ CHÚNG TA.\n"
+"\n"
+"[i]- M. OKONKWO, CA B[/i]"
+
+#: levels/l5_mine.gd:1127
+msgid "A steel refuge door, dogged shut from inside. Something huge is shaking the cavern - you can't get close."
+msgstr "Một cánh cửa buồng trú ẩn bằng thép, then cài từ bên trong. Có thứ gì đó khổng lồ đang làm rung chuyển cả hang - không thể lại gần."
+
+#: levels/l5_mine.gd:1127
+msgid "Open the refuge door"
+msgstr "Mở cửa buồng trú ẩn"
+
+#: levels/l5_mine.gd:1128
+msgid ""
+"REFUGE CHAMBER NO. 3\n"
+"18 MEN - 36 HOURS AIR"
+msgstr ""
+"BUỒNG TRÚ ẨN SỐ 3\n"
+"18 NGƯỜI - 36 GIỜ KHÔNG KHÍ"
+
+#: levels/l5_mine.gd:1151
+msgid "Talk to June"
+msgstr "Nói chuyện với June"
+
+#: levels/l5_mine.gd:1155
+msgid "...Dad? Dad, is that you? Or are you the other one?"
+msgstr "...Bố? Bố ơi, có phải bố không? Hay bố là cái kia?"
+
+#: levels/l5_mine.gd:1156
+msgid "It's me, June. It's me. Open the door."
+msgstr "Là bố đây, June. Là bố. Mở cửa ra."
+
+#: levels/l5_mine.gd:1189
+msgid "...Dad?"
+msgstr "...Bố?"
+
+#: levels/l5_mine.gd:1190
+msgid "June. Hey. Hey, I've got you. I've got you."
+msgstr "June. Này. Này, bố đây rồi. Bố ôm con rồi."
+
+#: levels/l5_mine.gd:1191
+msgid "You're late."
+msgstr "Bố đến muộn."
+
+#: levels/l5_mine.gd:1192
+msgid "I know."
+msgstr "Bố biết."
+
+#: levels/l5_mine.gd:1193
+msgid "Three years, Dad. Three Christmases. And you pick tonight to drive up?"
+msgstr "Ba năm rồi, bố. Ba cái Giáng sinh. Vậy mà bố lại chọn đúng đêm nay để lái xe lên?"
+
+#: levels/l5_mine.gd:1194
+msgid "I'm sorry. I'm so sorry. I should have come for every one of them."
+msgstr "Bố xin lỗi. Bố xin lỗi con nhiều lắm. Lẽ ra bố phải đến vào mỗi một cái Giáng sinh."
+
+#: levels/l5_mine.gd:1195
+msgid "I almost didn't pick up. When you called on the radio. I almost didn't."
+msgstr "Con suýt nữa không nhấc máy. Lúc bố gọi bằng bộ đàm. Con suýt không nhấc."
+
+#: levels/l5_mine.gd:1196
+msgid "...I'm glad I did."
+msgstr "...Con mừng là con đã nhấc."
+
+#: levels/l5_mine.gd:1197
+msgid "Can you walk?"
+msgstr "Con đi được không?"
+
+#: levels/l5_mine.gd:1198
+msgid "My feet are gone. I'll walk anyway. Don't carry me, I'm not five."
+msgstr "Chân con tê hết rồi. Con vẫn sẽ đi. Đừng bế con, con đâu còn năm tuổi."
+
+#: levels/l5_mine.gd:1199
+msgid "Where's your grandmother, June?"
+msgstr "Bà của con đâu, June?"
+
+#: levels/l5_mine.gd:1200
+msgid "Gran went deeper. She heard Grandpa in the hum, and she went down the brine shaft."
+msgstr "Bà đi sâu hơn rồi. Bà nghe thấy ông trong tiếng ù, và bà đi xuống giếng nước muối."
+
+#: levels/l5_mine.gd:1201
+msgid "She's not Gran anymore, Dad. She's singing."
+msgstr "Đó không còn là bà nữa, bố ơi. Bà đang hát."
+
+#: levels/l5_mine.gd:1237
+msgid "You are not leaving without June."
+msgstr "Không thể đi mà thiếu June."
+
+#: levels/l5_mine.gd:1237
+msgid "Go down the brine shaft"
+msgstr "Đi xuống giếng nước muối"
+
+#: levels/l5_mine.gd:1238
+msgid ""
+"BRINE SHAFT ACCESS\n"
+"LEVEL 6 - AUTHORISED ONLY"
+msgstr ""
+"LỐI VÀO GIẾNG NƯỚC MUỐI\n"
+"TẦNG 6 - CHỈ DÀNH CHO NGƯỜI ĐƯỢC PHÉP"
+
+#: levels/l5_mine.gd:1249
+msgid "Eli... come down. It's warm down here. Your father's here."
+msgstr "Eli... xuống đây đi con. Ở dưới này ấm lắm. Bố con ở đây."
+
+#: levels/l5_mine.gd:1250
+msgid "Don't. Dad, don't answer her. That's what she does."
+msgstr "Đừng. Bố, đừng trả lời bà. Đó là cách nó làm đấy."
+
+#: levels/l5_mine.gd:1251
+msgid "...Mom. I'm coming. But not to stay."
+msgstr "...Mẹ. Con đang đến. Nhưng không phải để ở lại."
+
+#: levels/l5_mine.gd:1253
+msgid "Go through the brine shaft access door with June."
+msgstr "Cùng June đi qua cửa lối vào giếng nước muối."
+
+#: levels/l5_mine.gd:1280
+msgid "Take the battery to the charger in the lamp room."
+msgstr "Mang cục pin đến bộ sạc trong phòng đèn."
+
+#: levels/l5_mine.gd:1291
+msgid "Find a lamp battery in the north pump station."
+msgstr "Tìm một cục pin đèn ở trạm bơm phía bắc."
+
+#: levels/l5_mine.gd:1293
+msgid "Lure the Hauler near the marked pillar in the cavern."
+msgstr "Dụ Gã Chở Quặng lại gần cái trụ có đánh dấu trong hang."
+
+#: levels/l5_mine.gd:1300
+msgid "There's a hum in the rock. Felt more than heard. Like standing under a transmission line in the rain."
+msgstr "Có tiếng ù trong lòng đá. Cảm nhận nhiều hơn là nghe thấy. Như đứng dưới đường dây tải điện trong cơn mưa."
+
+#: levels/l5_mine.gd:1303
+msgid "Hold the lamp for me, Eli."
+msgstr "Cầm đèn giúp bố, Eli."
+
+#: levels/l5_mine.gd:1306
+msgid "Eli. Hand me the bolter."
+msgstr "Eli. Đưa bố cái máy bắt neo."
+
+#: levels/l5_mine.gd:1310
+msgid "It's not the light he follows, Eli. It's you."
+msgstr "Không phải ánh sáng mà hắn bám theo, Eli. Là con."
+
+#: levels/l5_mine.gd:1313
+msgid "Mind the roof."
+msgstr "Coi chừng trần hầm."
+
+#: levels/l5_mine.gd:1375
+msgid "Jesus. That's a haul truck. Those are... those were the night shift. They're all part of it."
+msgstr "Trời ơi. Đó là một chiếc xe tải chở quặng. Những người kia... họ từng là ca đêm. Tất cả đều là một phần của nó."
+
+#: levels/l5_mine.gd:1376
+msgid "Dad's old drift. The marked pillar. If I can get it under the roof... I have two sticks of gel, and the thing is the size of a house."
+msgstr "Lò cũ của bố. Cái trụ đánh dấu. Nếu mình dụ được nó vào dưới trần hầm... Mình có hai thỏi gel nổ, mà con quái to bằng cả cái nhà."
+
+#: levels/l5_mine.gd:1382
+msgid "Survive the Hauler. Plant the blasting charges on the red-marked pillar when it is near."
+msgstr "Sống sót qua Gã Chở Quặng. Đặt thuốc nổ phá đá lên cái trụ đánh dấu đỏ khi nó ở gần."
+
+#: levels/l5_mine.gd:1393
+msgid "The pillar is cracked and cribbed with timber. A good charge would bring the roof down."
+msgstr "Cái trụ bị nứt và được chống bằng gỗ. Một quả nổ tốt sẽ làm sập trần."
+
+#: levels/l5_mine.gd:1396
+msgid "This pillar is cracked through and marked with red tape. A charge here could bring the roof down."
+msgstr "Cái trụ này nứt toác và được đánh dấu bằng băng đỏ. Một quả nổ ở đây có thể làm sập trần."
+
+#: levels/l5_mine.gd:1399
+msgid "Not yet. Lure the Hauler close to the pillar first."
+msgstr "Chưa được. Hãy dụ Gã Chở Quặng lại gần cái trụ trước."
+
+#: levels/l5_mine.gd:1403
+msgid "The Hauler is too far from the pillar. Draw it closer."
+msgstr "Gã Chở Quặng ở quá xa cái trụ. Hãy dụ nó lại gần hơn."
+
+#: levels/l5_mine.gd:1409
+msgid "Charges planted. Fuse burning - RUN."
+msgstr "Đã đặt thuốc nổ. Ngòi đang cháy - CHẠY ĐI."
+
+#: levels/l5_mine.gd:1449
+msgid "...They finally stopped. All of them."
+msgstr "...Cuối cùng chúng đã dừng lại. Tất cả."
+
+#: levels/l5_mine.gd:1450
+msgid "Dad? I heard it stop. I'm... in the refuge. Steel door, north. The big cold room. Please hurry."
+msgstr "Bố? Con nghe thấy nó dừng rồi. Con đang... ở trong buồng trú ẩn. Cửa thép, phía bắc. Căn phòng lạnh lớn. Bố nhanh lên."
+
+#: levels/l5_mine.gd:1451
+msgid "Hold on, June. Ninety seconds. I'm coming."
+msgstr "Đợi đấy, June. Chín mươi giây. Bố đang đến."
+
+#: levels/l6_heart.gd:253
+msgid "LOWER KETTLE — LEVEL 6 — BRINE"
+msgstr "LOWER KETTLE — TẦNG 6 — NƯỚC MUỐI"
+
+#: levels/l6_heart.gd:273
+msgid "Ruth's Last Note"
+msgstr "Lời nhắn cuối cùng của Ruth"
+
+#: levels/l6_heart.gd:273
+msgid ""
+"[i]Pencil, on the back of a shelter sign-in sheet. The handwriting gets larger and looser toward the end.[/i]\n"
+"\n"
+"Eli —\n"
+"\n"
+"If you're reading this you came. I knew you would. You always came late but you always came.\n"
+"\n"
+"I can hear your father. I know what it is. I was a nurse for thirty-one years, I know what a voice in the dark is. I went anyway. I want you to know I chose it with my eyes open.\n"
+"\n"
+"The cold isn't the worst part. The worst part is it's so kind. It doesn't want anything from you except to stop. It tells you that you've done enough. Nobody has ever told me that.\n"
+"\n"
+"Don't let it tell June that.\n"
+"\n"
+"Take her home. Tell her Gran was brave. Lie if you have to.\n"
+"\n"
+"I love you. I was never angry that you left. I was angry that you thought you had to.\n"
+"\n"
+"— Mom"
+msgstr ""
+"[i]Bút chì, trên mặt sau một tờ đăng ký của khu trú ẩn. Nét chữ càng về cuối càng to và lỏng.[/i]\n"
+"\n"
+"Eli —\n"
+"\n"
+"Nếu con đang đọc dòng này thì con đã đến. Mẹ biết con sẽ đến. Con luôn đến muộn nhưng con luôn đến.\n"
+"\n"
+"Mẹ nghe thấy bố con. Mẹ biết đó là gì. Mẹ làm y tá ba mươi mốt năm, mẹ biết một giọng nói trong bóng tối là gì. Mẹ vẫn đi. Mẹ muốn con biết rằng mẹ đã chọn điều đó với đôi mắt mở to.\n"
+"\n"
+"Cái lạnh không phải điều tồi tệ nhất. Điều tồi tệ nhất là nó tử tế đến thế. Nó không muốn gì ở con ngoài việc con dừng lại. Nó bảo con rằng con đã làm đủ rồi. Chưa ai từng nói với mẹ như vậy.\n"
+"\n"
+"Đừng để nó nói với June như vậy.\n"
+"\n"
+"Đưa con bé về nhà. Nói với nó rằng bà đã dũng cảm. Nói dối nếu cần.\n"
+"\n"
+"Mẹ yêu con. Mẹ chưa bao giờ giận vì con bỏ đi. Mẹ giận vì con nghĩ rằng con phải đi.\n"
+"\n"
+"— Mẹ"
+
+#: levels/l6_heart.gd:287
+msgid "MERIDIAN HEAT RECOVERY — FEED 2 — DO NOT ENTER"
+msgstr "MERIDIAN THU HỒI NHIỆT — NGUỒN CẤP 2 — CẤM VÀO"
+
+#: levels/l6_heart.gd:309
+msgid "NORTHLINE — PUMP STN 3 — REFUGE"
+msgstr "NORTHLINE — TRẠM BƠM 3 — BUỒNG TRÚ ẨN"
+
+#: levels/l6_heart.gd:311
+msgid "Pump Station 3 — Last Log"
+msgstr "Trạm bơm 3 — Nhật ký cuối cùng"
+
+#: levels/l6_heart.gd:312
+msgid ""
+"[b]NORTHLINE MINERAL — LOWER KETTLE\n"
+"PUMP STATION 3 — OPERATOR LOG[/b]\n"
+"\n"
+"[i]D. Ostrowski, night shift[/i]\n"
+"\n"
+"02:10  Brine temp +4 over setpoint. Meridian heat feed at 118% of contract. Called Meridian ops. Voice said, \"Uptime is within tolerance.\" Asked who I was talking to. Got a ticket number.\n"
+"\n"
+"02:40  Lattice has grown across the east drift. It is not on any survey. It hums. My dead brother is on the intercom. Turned the intercom off. He is still on it.\n"
+"\n"
+"03:05  Crew stopped answering. Found Bobby asleep at the sump. He was warm. Everyone else is so cold, and he was warm, and I thought: good. Then I saw what was in him.\n"
+"\n"
+"03:30  I am going to stay at the pumps. If the pumps stop, the lake stops, and maybe so does it. If someone reads this: the feed valves are on the cavern's east wall. Close them. Not the Meridian side. THIS side.\n"
+"\n"
+"03:34  It's so quiet now."
+msgstr ""
+"[b]NORTHLINE MINERAL — LOWER KETTLE\n"
+"TRẠM BƠM 3 — NHẬT KÝ VẬN HÀNH[/b]\n"
+"\n"
+"[i]D. Ostrowski, ca đêm[/i]\n"
+"\n"
+"02:10  Nhiệt độ nước muối cao hơn điểm đặt 4 độ. Nguồn nhiệt Meridian ở mức 118% hợp đồng. Gọi điều hành Meridian. Một giọng nói bảo: \"Thời gian hoạt động nằm trong ngưỡng cho phép.\" Hỏi tôi đang nói chuyện với ai. Nhận được một mã phiếu.\n"
+"\n"
+"02:40  Mạng tinh thể đã lan khắp lò phía đông. Nó không có trong bất kỳ bản khảo sát nào. Nó ù ù. Anh trai đã chết của tôi đang ở trên bộ đàm nội bộ. Tôi tắt bộ đàm đi. Anh ấy vẫn ở trên đó.\n"
+"\n"
+"03:05  Cả tổ không trả lời nữa. Thấy Bobby ngủ bên hố gom. Cậu ấy còn ấm. Mọi người khác thì lạnh quá, còn cậu ấy thì ấm, và tôi nghĩ: tốt. Rồi tôi thấy thứ gì đang ở trong cậu ấy.\n"
+"\n"
+"03:30  Tôi sẽ ở lại chỗ máy bơm. Nếu máy bơm dừng, cái hồ dừng, và có lẽ nó cũng dừng. Nếu ai đọc được dòng này: các van cấp nằm ở vách phía đông của hang. Hãy đóng chúng lại. Không phải phía Meridian. Phía NÀY.\n"
+"\n"
+"03:34  Giờ yên tĩnh quá."
+
+#: levels/l6_heart.gd:338
+msgid "Sample Label — Final"
+msgstr "Nhãn mẫu vật — Cuối cùng"
+
+#: levels/l6_heart.gd:339
+msgid ""
+"[b]NORTHLINE GEOSCIENCE — SAMPLE LABEL[/b]\n"
+"Site: Lower Kettle, Brine Cavern, Lattice Face A\n"
+"Collected: Dec 20, 23:50 (self)\n"
+"Collector: I. HART, PhD\n"
+"\n"
+"[i]Specimen is the colony itself. Viable. Metabolic rate rises with ambient heat, 4x per 10 C. It does not eat the heat. It SENDS it somewhere.[/i]\n"
+"\n"
+"To whoever opens this cooler:\n"
+"I wanted proof so badly I let it keep burning for eight months. I wrote 'recommend immediate shutdown' eleven times. Legal rewrote it 'recommend continued monitoring' eleven times.\n"
+"\n"
+"Do not carry this out. Do not give it to Corvane. Burn it with the rest of it.\n"
+"\n"
+"I was right. That was never the same as being good."
+msgstr ""
+"[b]NORTHLINE GEOSCIENCE — NHÃN MẪU VẬT[/b]\n"
+"Địa điểm: Lower Kettle, Hang Nước Muối, Mặt Tinh Thể A\n"
+"Thu thập: 20/12, 23:50 (tự thu)\n"
+"Người thu: I. HART, Tiến sĩ\n"
+"\n"
+"[i]Mẫu vật chính là quần thể. Còn sống. Tốc độ trao đổi chất tăng theo nhiệt độ môi trường, gấp 4 lần cho mỗi 10 C. Nó không ăn nhiệt. Nó GỬI nhiệt đi đâu đó.[/i]\n"
+"\n"
+"Gửi bất kỳ ai mở cái thùng lạnh này:\n"
+"Tôi khao khát bằng chứng đến mức để mặc nó cháy suốt tám tháng. Tôi đã viết 'khuyến nghị ngừng hoạt động ngay lập tức' mười một lần. Bộ phận pháp chế viết lại thành 'khuyến nghị tiếp tục theo dõi' mười một lần.\n"
+"\n"
+"Đừng mang nó ra ngoài. Đừng đưa nó cho Corvane. Hãy đốt nó cùng với phần còn lại.\n"
+"\n"
+"Tôi đã đúng. Nhưng đúng chưa bao giờ đồng nghĩa với tốt."
+
+#: levels/l6_heart.gd:384
+#, c-format
+msgid "STEAM RELIEF %d"
+msgstr "VAN XẢ HƠI %d"
+
+#: levels/l6_heart.gd:386 levels/l6_heart.gd:632
+msgid "Vent steam valve"
+msgstr "Xả van hơi"
+
+#: levels/l6_heart.gd:398
+msgid ""
+"MERIDIAN TIE\n"
+"POWER + HEAT"
+msgstr ""
+"ĐẤU NỐI MERIDIAN\n"
+"ĐIỆN + NHIỆT"
+
+#: levels/l6_heart.gd:399
+msgid ""
+"PIPELINE FEED\n"
+"MAIN / FULL"
+msgstr ""
+"NGUỒN CẤP ĐƯỜNG ỐNG\n"
+"CHÍNH / TOÀN TẢI"
+
+#: levels/l6_heart.gd:410
+msgid "Use pipeline control"
+msgstr "Dùng bảng điều khiển đường ống"
+
+#: levels/l6_heart.gd:596
+msgid "Reach the pipeline control station."
+msgstr "Đến trạm điều khiển đường ống."
+
+#: levels/l6_heart.gd:602
+msgid "Destroy the Hollow Mother. The steam valves will scorch the lattice."
+msgstr "Tiêu diệt Mẹ Rỗng. Các van hơi sẽ thiêu cháy mạng tinh thể."
+
+#: levels/l6_heart.gd:604
+msgid "Follow the path down to the brine. Find Ruth."
+msgstr "Đi theo lối xuống chỗ nước muối. Tìm Ruth."
+
+#: levels/l6_heart.gd:607
+msgid "THE HEART"
+msgstr "TRÁI TIM"
+
+#: levels/l6_heart.gd:607
+msgid "Brine cavern, beneath Lower Kettle"
+msgstr "Hang nước muối, bên dưới Lower Kettle"
+
+#: levels/l6_heart.gd:632
+#, c-format
+msgid "Valve cooling (%d s)"
+msgstr "Van đang nguội (%d giây)"
+
+#: levels/l6_heart.gd:654
+msgid "You hear that? Not with your ears. It's in the rock."
+msgstr "Bố nghe thấy không? Không phải bằng tai. Nó ở trong đá."
+
+#: levels/l6_heart.gd:655
+msgid "Nineteen hertz. I measured it on Gran's old scope. It makes people hear things, Dad."
+msgstr "Mười chín hertz. Con đã đo bằng cái máy hiện sóng cũ của bà. Nó làm người ta nghe thấy những thứ không có, bố ạ."
+
+#: levels/l6_heart.gd:656
+msgid "I keep hearing Mom laughing in the kitchen. She's in Arizona."
+msgstr "Con cứ nghe thấy mẹ đang cười trong bếp. Mà mẹ đang ở Arizona."
+
+#: levels/l6_heart.gd:657
+msgid "Stay close. Don't answer it, whatever it says."
+msgstr "Đi sát vào. Đừng trả lời nó, dù nó nói gì."
+
+#: levels/l6_heart.gd:670
+msgid "Eli. Over here, son. Mind the edge. It's slick."
+msgstr "Eli. Lại đây, con trai. Coi chừng mép vực. Trơn lắm."
+
+#: levels/l6_heart.gd:671
+msgid "...Dad."
+msgstr "...Bố."
+
+#: levels/l6_heart.gd:672
+msgid "Dad? Who are you talking to? There's nobody there. Dad."
+msgstr "Bố? Bố đang nói chuyện với ai vậy? Có ai ở đó đâu. Bố ơi."
+
+#: levels/l6_heart.gd:673
+msgid "Fifteen years I've been waiting. You took the long way round."
+msgstr "Mười lăm năm rồi bố chờ con. Con đi đường vòng xa quá."
+
+#: levels/l6_heart.gd:674
+msgid "You're not him. You don't get to be him."
+msgstr "Mày không phải ông ấy. Mày không có quyền làm ông ấy."
+
+#: levels/l6_heart.gd:676
+msgid "Keep going. There is a lamp lit ahead on the right."
+msgstr "Đi tiếp. Phía trước bên phải có một ngọn đèn đang sáng."
+
+#: levels/l6_heart.gd:686
+msgid "Somebody lit this on purpose. Someone was still thinking down here."
+msgstr "Có người đã cố ý thắp nó. Có ai đó vẫn còn tỉnh táo ở dưới này."
+
+#: levels/l6_heart.gd:687
+msgid "Last stop before the floor of the cavern. Save, reload, patch up."
+msgstr "Điểm dừng cuối cùng trước đáy hang. Lưu game, nạp đạn, băng bó."
+
+#: levels/l6_heart.gd:688
+msgid "Gran's down there. I can feel it. Is that stupid? It feels like being looked at."
+msgstr "Bà ở dưới đó. Con cảm thấy được. Có ngốc không bố? Cảm giác như đang bị nhìn."
+
+#: levels/l6_heart.gd:689
+msgid "Not stupid. Stay behind me. When it starts, you find a rock and you get low."
+msgstr "Không ngốc đâu. Đứng sau bố. Khi nó bắt đầu, con tìm một tảng đá rồi cúi thấp xuống."
+
+#: levels/l6_heart.gd:691
+msgid "Rest if you need to. Then head into the cavern."
+msgstr "Cứ nghỉ nếu cần. Rồi tiến vào hang."
+
+#: levels/l6_heart.gd:700
+msgid "Dad. On the wall. That's Gran. That's Gran, isn't it."
+msgstr "Bố. Trên vách đá kia. Đó là bà. Là bà phải không."
+
+#: levels/l6_heart.gd:701
+msgid "Eli. You came. You always did come, in the end."
+msgstr "Eli. Con đến rồi. Rốt cuộc con vẫn luôn đến."
+
+#: levels/l6_heart.gd:702
+msgid "Mom. Mom, can you hear me? It's Eli."
+msgstr "Mẹ. Mẹ, mẹ nghe con không? Là Eli đây."
+
+#: levels/l6_heart.gd:703
+msgid "I hear everyone, baby. Everyone who ever went cold. It's quiet here. It's so kind."
+msgstr "Mẹ nghe thấy tất cả, con yêu. Tất cả những ai từng lạnh đi. Ở đây yên tĩnh lắm. Nó tử tế lắm."
+
+#: levels/l6_heart.gd:704
+msgid "Eli, it's warm here. Bring June. We can all be warm."
+msgstr "Eli, ở đây ấm lắm. Đưa June đến. Tất cả chúng ta có thể được ấm."
+
+#: levels/l6_heart.gd:705
+msgid "That's not Dad. Dad's dead. You stole his voice out of her head."
+msgstr "Đó không phải bố. Bố đã chết rồi. Mày đã ăn cắp giọng của ông ấy ra khỏi đầu mẹ."
+
+#: levels/l6_heart.gd:706
+msgid "Nobody stole anything. We only keep what you can't. Come closer."
+msgstr "Không ai ăn cắp gì cả. Chúng ta chỉ giữ lại những gì con không giữ nổi. Lại gần hơn đi."
+
+#: levels/l6_heart.gd:707
+msgid "I'm not going, Dad. I'm not going to her. Please."
+msgstr "Con sẽ không đi đâu, bố. Con sẽ không đến chỗ bà đâu. Làm ơn."
+
+#: levels/l6_heart.gd:708
+msgid "June. Behind the rocks, there. Get low and stay put. Whatever you hear."
+msgstr "June. Sau mấy tảng đá kia. Cúi thấp và ở yên đó. Dù con nghe thấy gì."
+
+#: levels/l6_heart.gd:709
+msgid "Dad—"
+msgstr "Bố—"
+
+#: levels/l6_heart.gd:710
+msgid "I've got this one. Go."
+msgstr "Bố lo vụ này. Đi đi."
+
+#: levels/l6_heart.gd:729
+msgid "The lattice shudders and goes still."
+msgstr "Mạng tinh thể rung lên rồi lặng đi."
+
+#: levels/l6_heart.gd:734
+msgid "Destroy the Hollow Mother. The steam valves on either wall will scorch the lattice."
+msgstr "Tiêu diệt Mẹ Rỗng. Các van hơi ở hai bên vách sẽ thiêu cháy mạng tinh thể."
+
+#: levels/l6_heart.gd:735
+msgid "The steam valves (east and west walls) can scorch the lattice."
+msgstr "Các van hơi (vách đông và vách tây) có thể thiêu cháy mạng tinh thể."
+
+#: levels/l6_heart.gd:747
+msgid "The lattice cracks. Something tears free."
+msgstr "Mạng tinh thể nứt vỡ. Có thứ gì đó xé mình thoát ra."
+
+#: levels/l6_heart.gd:771
+msgid "Eli..."
+msgstr "Eli..."
+
+#: levels/l6_heart.gd:772
+msgid "Oh. It's cold. It's so cold. I'd forgotten."
+msgstr "Ôi. Lạnh quá. Lạnh quá. Mẹ đã quên mất."
+
+#: levels/l6_heart.gd:773
+msgid "I know, Mom. I'm here."
+msgstr "Con biết, mẹ. Con ở đây."
+
+#: levels/l6_heart.gd:774
+msgid "Tell June... the cold isn't the worst... Be warm. Please, be warm."
+msgstr "Nói với June... cái lạnh không phải điều tồi tệ nhất... Hãy giữ ấm. Làm ơn, hãy giữ ấm."
+
+#: levels/l6_heart.gd:782
+msgid "She's gone, isn't she. The hum stopped."
+msgstr "Bà đi rồi, phải không bố. Tiếng ù đã dừng."
+
+#: levels/l6_heart.gd:783
+msgid "Not all of it. Not the pipeline. That's still pushing heat into the dark."
+msgstr "Chưa hết đâu. Đường ống thì chưa. Nó vẫn đang đẩy nhiệt vào bóng tối."
+
+#: levels/l6_heart.gd:784
+msgid "Then that's what's left. The control station, by the east wall."
+msgstr "Vậy thì đó là phần còn lại. Trạm điều khiển, cạnh vách đông."
+
+#: levels/l6_heart.gd:787
+msgid "Reach the pipeline control station on the east wall."
+msgstr "Đến trạm điều khiển đường ống ở vách đông."
+
+#: levels/l6_heart.gd:792
+msgid "The manifold is cold. Nothing here to scorch yet."
+msgstr "Ống góp đang nguội. Chưa có gì ở đây để thiêu cả."
+
+#: levels/l6_heart.gd:797
+#, c-format
+msgid "Pressure is still building (%d s)."
+msgstr "Áp suất vẫn đang tăng (%d giây)."
+
+#: levels/l6_heart.gd:818
+msgid "Superheated steam rolls over the lattice!"
+msgstr "Hơi nước quá nhiệt cuộn qua mạng tinh thể!"
+
+#: levels/l6_heart.gd:826
+msgid "The panel is dead. The pipeline is still feeding the Mother."
+msgstr "Bảng điều khiển đã chết. Đường ống vẫn đang nuôi Mẹ Rỗng."
+
+#: levels/l6_heart.gd:835
+msgid "Two handles. That's it? After all this, it's two handles."
+msgstr "Hai cần gạt. Chỉ vậy thôi sao? Sau tất cả, chỉ là hai cần gạt."
+
+#: levels/l6_heart.gd:836
+msgid "Left one cuts the Meridian tie. Heat feed and power, both. Lake goes dark, town gets its grid back."
+msgstr "Cần bên trái cắt đấu nối Meridian. Cả nguồn nhiệt lẫn điện. Hồ tối đen, thị trấn có lại lưới điện."
+
+#: levels/l6_heart.gd:837
+msgid "Right one opens the pipeline to full. Brine boils. Nothing survives in that cavern. Nothing."
+msgstr "Cần bên phải mở đường ống hết công suất. Nước muối sôi lên. Không gì sống sót trong hang đó. Không gì cả."
+
+#: levels/l6_heart.gd:838
+msgid "Gran's still in there, Dad. Whatever's left. And Grandpa's voice. Even if it was never him."
+msgstr "Bà vẫn còn ở trong đó, bố ạ. Dù còn lại gì đi nữa. Và giọng của ông. Dù đó chưa bao giờ là ông."
+
+#: levels/l6_heart.gd:839
+msgid "If you burn it, it's over. Corvane calls it a mining accident. Nobody ever pays for any of it."
+msgstr "Nếu bố thiêu nó, mọi chuyện sẽ kết thúc. Corvane gọi đó là tai nạn khai thác mỏ. Chẳng ai phải trả giá cho bất cứ điều gì."
+
+#: levels/l6_heart.gd:840
+msgid "If you cut it, it sleeps. It doesn't die. Someday somebody turns the heat back on and it wakes up."
+msgstr "Nếu bố cắt nó, nó sẽ ngủ. Nó không chết. Một ngày nào đó có người bật nhiệt trở lại và nó thức dậy."
+
+#: levels/l6_heart.gd:841
+msgid "Neither one's clean."
+msgstr "Cái nào cũng không sạch sẽ."
+
+#: levels/l6_heart.gd:842
+msgid "No. I used to think grown-ups just knew which one was right."
+msgstr "Không. Hồi nhỏ bố cứ nghĩ người lớn thì biết cái nào là đúng."
+
+#: levels/l6_heart.gd:843
+msgid "Pick the one you can live with, and I'll stand next to you. I'm not leaving this time."
+msgstr "Chọn cái bố sống được với nó, con sẽ đứng cạnh bố. Lần này con không đi đâu cả."
+
+#: levels/l6_heart.gd:844
+msgid "Neither am I."
+msgstr "Bố cũng vậy."
+
+#: levels/l6_heart.gd:869
+msgid "THE PIPELINE"
+msgstr "ĐƯỜNG ỐNG"
+
+#: levels/l6_heart.gd:875
+msgid ""
+"Two handles. One heat feed, still pushing warmth into the dark.\n"
+"Whichever you pull, something Kettle Falls loved goes with it.\n"
+"Neither choice is clean."
+msgstr ""
+"Hai cần gạt. Một nguồn nhiệt, vẫn đang đẩy hơi ấm vào bóng tối.\n"
+"Kéo cần nào, một điều Kettle Falls từng yêu quý cũng sẽ ra đi theo.\n"
+"Không lựa chọn nào là sạch sẽ."
+
+#: levels/l6_heart.gd:892
+msgid "CUT MERIDIAN — let it go dark"
+msgstr "CẮT MERIDIAN — để nó chìm vào bóng tối"
+
+#: levels/l6_heart.gd:898
+msgid "The heat feed and the data centre die. The colony starves back to sleep. The town gets its power at dawn. Corvane will sue."
+msgstr "Nguồn nhiệt và trung tâm dữ liệu cùng chết. Quần thể đói mòn rồi ngủ lại. Thị trấn có điện trở lại vào bình minh. Corvane sẽ kiện."
+
+#: levels/l6_heart.gd:905
+msgid "OPEN THE PIPELINE — burn it all"
+msgstr "MỞ ĐƯỜNG ỐNG — thiêu rụi tất cả"
+
+#: levels/l6_heart.gd:911
+msgid "The brine boils. The colony, and everyone it took, is gone for good. Meridian never goes offline. Nobody is held to account."
+msgstr "Nước muối sôi sùng sục. Quần thể, và tất cả những ai nó đã cướp đi, tan biến mãi mãi. Meridian không bao giờ ngừng hoạt động. Không ai bị truy cứu trách nhiệm."
+
+#: levels/level.gd:396
+#, c-format
+msgid "Pick up %s"
+msgstr "Nhặt %s"
+
+#: levels/level.gd:411
+#, c-format
+msgid "Picked up %s (%d). %d left behind."
+msgstr "Đã nhặt %s (%d). Bỏ lại %d."
+
+#: levels/level.gd:418
+#, c-format
+msgid "Picked up %s%s."
+msgstr "Đã nhặt %s%s."
+
+#: levels/level.gd:444
+#, c-format
+msgid "Pack full: stashed %s in the supply crate."
+msgstr "Túi đầy: đã cất %s vào thùng tiếp tế."
+
+#: levels/level.gd:528
+msgid "Open door"
+msgstr "Mở cửa"
+
+#: levels/level.gd:551
+#, c-format
+msgid "Used %s."
+msgstr "Đã dùng %s."
+
+#: levels/level.gd:554
+#, c-format
+msgid "It's locked. It needs %s."
+msgstr "Cửa bị khóa. Cần %s."
+
+#: levels/level.gd:576
+#, c-format
+msgid "Read: %s"
+msgstr "Đọc: %s"
+
+#: levels/level.gd:607
+msgid "Use field radio (Save)"
+msgstr "Dùng bộ đàm dã chiến (Lưu game)"
+
+#: levels/level.gd:619
+msgid "CO-OP SUPPLY"
+msgstr "TIẾP TẾ HỢP TÁC XÃ"
+
+#: levels/level.gd:621
+msgid "Open supply crate"
+msgstr "Mở thùng tiếp tế"
+
+#: levels/test_yard.gd:19
+msgid "The main doors are barricaded from inside."
+msgstr "Cửa chính bị chặn từ bên trong."
+
+#: levels/test_yard.gd:37
+msgid "Shelter Notice"
+msgstr "Thông báo khu trú ẩn"
+
+#: levels/test_yard.gd:37
+msgid ""
+"[b]KETTLE FALLS WARMING SHELTER[/b]\n"
+"\n"
+"Due to Lakeshore Electric load shedding, this building is a designated warming shelter.\n"
+"DO NOT SLEEP OUTSIDE THE GYM.\n"
+"— R. Kade, shelter coordinator"
+msgstr ""
+"[b]KHU TRÚ ẨN SƯỞI ẤM KETTLE FALLS[/b]\n"
+"\n"
+"Do Lakeshore Electric cắt tải điện, tòa nhà này được chỉ định làm khu trú ẩn sưởi ấm.\n"
+"KHÔNG NGỦ NGOÀI PHÒNG THỂ DỤC.\n"
+"— R. Kade, điều phối viên khu trú ẩn"
+
+#: levels/test_yard.gd:42
+msgid "TEST COURTYARD"
+msgstr "SÂN THỬ NGHIỆM"
+
+#: levels/test_yard.gd:42
+msgid "Dev level"
+msgstr "Màn chơi thử"
+
+#: ui/main_menu.gd:31
+msgid "December 21, 2026  ·  −40°"
+msgstr "21 tháng 12, 2026  ·  −40°"
+
+#: ui/main_menu.gd:35
+msgid "New Game"
+msgstr "Trò chơi mới"
+
+#: ui/main_menu.gd:41 ui/ui.gd:851 ui/ui.gd:931
+msgid "Load Game"
+msgstr "Tải game"
+
+#: ui/main_menu.gd:43 ui/main_menu.gd:43 ui/ui.gd:854
+msgid "Controls"
+msgstr "Điều khiển"
+
+#: ui/main_menu.gd:44 ui/ui.gd:857
+msgid "Options"
+msgstr "Tùy chọn"
+
+#: ui/main_menu.gd:45 ui/main_menu.gd:45
+msgid "Credits"
+msgstr "Ghi công"
+
+#: ui/main_menu.gd:46
+msgid "Quit"
+msgstr "Thoát"
+
+#: ui/main_menu.gd:48
+msgid "A fan-made survival horror homage. Built with Godot."
+msgstr "Một tác phẩm kinh dị sinh tồn do người hâm mộ làm. Xây dựng bằng Godot."
+
+#: ui/main_menu.gd:97
+msgid "Select difficulty"
+msgstr "Chọn độ khó"
+
+#: ui/main_menu.gd:98
+msgid "Assisted — more ammo forgiveness, weaker dead"
+msgstr "Hỗ trợ — dễ thở hơn về đạn dược, lũ xác sống yếu hơn"
+
+#: ui/main_menu.gd:99
+msgid "Standard — the intended experience"
+msgstr "Tiêu chuẩn — trải nghiệm đúng như thiết kế"
+
+#: ui/main_menu.gd:100
+msgid "Hardcore — every bullet counts"
+msgstr "Khắc nghiệt — mỗi viên đạn đều đáng giá"
+
+#: ui/ui.gd:227 core/game.gd:1
+msgid "FINE"
+msgstr "ỔN ĐỊNH"
+
+#: ui/ui.gd:510 ui/ui.gd:749
+msgid "Close"
+msgstr "Đóng"
+
+#: ui/ui.gd:521
+msgid "OBTAINED"
+msgstr "ĐÃ NHẬN"
+
+#: ui/ui.gd:550
+msgid "ELIAS KADE"
+msgstr "ELIAS KADE"
+
+#: ui/ui.gd:556
+msgid "ITEMS"
+msgstr "VẬT PHẨM"
+
+#: ui/ui.gd:557
+msgid "FILES"
+msgstr "HỒ SƠ"
+
+#: ui/ui.gd:559
+#, c-format
+msgid "Objective: %s"
+msgstr "Mục tiêu: %s"
+
+#: ui/ui.gd:615
+#, c-format
+msgid "Combine %s with...?"
+msgstr "Kết hợp %s với...?"
+
+#: ui/ui.gd:616 ui/ui.gd:799
+msgid "Cancel"
+msgstr "Hủy"
+
+#: ui/ui.gd:631
+msgid "Equip"
+msgstr "Trang bị"
+
+#: ui/ui.gd:631
+msgid "Equipped"
+msgstr "Đang trang bị"
+
+#: ui/ui.gd:635 ui/ui.gd:640
+msgid "Use"
+msgstr "Dùng"
+
+#: ui/ui.gd:644
+msgid "Combine"
+msgstr "Kết hợp"
+
+#: ui/ui.gd:648
+msgid "Discard"
+msgstr "Vứt bỏ"
+
+#: ui/ui.gd:653
+msgid "Select an item."
+msgstr "Chọn một vật phẩm."
+
+#: ui/ui.gd:654
+#, c-format
+msgid "Inventory: %d / %d slots"
+msgstr "Túi đồ: %d / %d ô"
+
+#: ui/ui.gd:655
+msgid "[Tab/Esc] Close"
+msgstr "[Tab/Esc] Đóng"
+
+#: ui/ui.gd:669
+msgid "Need two of these."
+msgstr "Cần có hai món giống nhau."
+
+#: ui/ui.gd:692
+msgid "No files collected."
+msgstr "Chưa thu thập hồ sơ nào."
+
+#: ui/ui.gd:705
+msgid "SUPPLY CRATE — click to move items"
+msgstr "THÙNG TIẾP TẾ — nhấn để chuyển vật phẩm"
+
+#: ui/ui.gd:715
+#, c-format
+msgid "Inventory (%d/%d)"
+msgstr "Túi đồ (%d/%d)"
+
+#: ui/ui.gd:716
+msgid "Box"
+msgstr "Thùng"
+
+#: ui/ui.gd:740
+msgid "Inventory full."
+msgstr "Túi đồ đã đầy."
+
+#: ui/ui.gd:779
+msgid "RECORD PROGRESS"
+msgstr "LƯU TIẾN TRÌNH"
+
+#: ui/ui.gd:779
+msgid "LOAD"
+msgstr "TẢI GAME"
+
+#: ui/ui.gd:783
+#, c-format
+msgid "Slot %d — empty"
+msgstr "Ô %d — trống"
+
+#: ui/ui.gd:785
+#, c-format
+msgid "Slot %d — %s · %s · %s"
+msgstr "Ô %d — %s · %s · %s"
+
+#: ui/ui.gd:806
+msgid "L1 SUBSTATION"
+msgstr "CHƯƠNG 1 · TRẠM BIẾN ÁP"
+
+#: ui/ui.gd:807
+msgid "L2 SCHOOL"
+msgstr "CHƯƠNG 2 · TRƯỜNG HỌC"
+
+#: ui/ui.gd:808
+msgid "L3 CHURCH"
+msgstr "CHƯƠNG 3 · NHÀ THỜ"
+
+#: ui/ui.gd:809
+msgid "L4 MERIDIAN"
+msgstr "CHƯƠNG 4 · MERIDIAN"
+
+#: ui/ui.gd:810
+msgid "L5 MINE"
+msgstr "CHƯƠNG 5 · HẦM MỎ"
+
+#: ui/ui.gd:811
+msgid "L6 HEART"
+msgstr "CHƯƠNG 6 · TRÁI TIM"
+
+#: ui/ui.gd:822
+msgid "OPTIONS"
+msgstr "TÙY CHỌN"
+
+#: ui/ui.gd:823
+msgid "Language"
+msgstr "Ngôn ngữ"
+
+#: ui/ui.gd:834
+msgid "Back"
+msgstr "Quay lại"
+
+#: ui/ui.gd:849
+msgid "PAUSED"
+msgstr "TẠM DỪNG"
+
+#: ui/ui.gd:850
+msgid "Resume"
+msgstr "Tiếp tục"
+
+#: ui/ui.gd:860 ui/ui.gd:934
+msgid "Quit to Title"
+msgstr "Về màn hình chính"
+
+#: ui/ui.gd:866
+msgid ""
+"[center][b]WHITEOUT: KETTLE FALLS[/b]\n"
+"A fan-made survival-horror game built with Godot Engine 4.5 (MIT).[/center]"
+msgstr ""
+"[center][b]WHITEOUT: KETTLE FALLS[/b]\n"
+"Một trò chơi kinh dị sinh tồn do người hâm mộ làm, xây dựng bằng Godot Engine 4.5 (MIT).[/center]"
+
+#: ui/ui.gd:866
+msgid ""
+"[b]Characters[/b]\n"
+"Human models built from MakeHuman / MPFB assets (CC0), assembled in Blender."
+msgstr ""
+"[b]Nhân vật[/b]\n"
+"Các mô hình người được dựng từ tài nguyên MakeHuman / MPFB (CC0), lắp ráp trong Blender."
+
+#: ui/ui.gd:866
+msgid ""
+"[b]Textures[/b]\n"
+"ambientCG (CC0) and Poly Haven (CC0) materials. Full list: textures/LICENSES.md"
+msgstr ""
+"[b]Texture[/b]\n"
+"Vật liệu của ambientCG (CC0) và Poly Haven (CC0). Danh sách đầy đủ: textures/LICENSES.md"
+
+#: ui/ui.gd:866
+msgid ""
+"[b]Music[/b] — CC BY-SA 4.0\n"
+"\"Decoherence\", \"Helios\", \"Primal Carnage\" by Scott Buckley — www.scottbuckley.com.au\n"
+"Other music and ambience: CC0 sources (see audio/LICENSES.md)."
+msgstr ""
+"[b]Âm nhạc[/b] — CC BY-SA 4.0\n"
+"\"Decoherence\", \"Helios\", \"Primal Carnage\" của Scott Buckley — www.scottbuckley.com.au\n"
+"Âm nhạc và âm thanh môi trường khác: các nguồn CC0 (xem audio/LICENSES.md)."
+
+#: ui/ui.gd:866
+msgid ""
+"[b]Sound effects[/b] — CC BY 3.0 (attribution required)\n"
+"ermfilm — \"Rossi-Revolver\" · steveygos93 — \"Explosion2\" · Nicistarful — \"Fast Throttle Mechanic Lever\"\n"
+"jesabat — \"Steam Hiss\" · juskiddink — \"Dogs growling\" · poots — \"deep_under\"\n"
+"(all via freesound.org)"
+msgstr ""
+"[b]Hiệu ứng âm thanh[/b] — CC BY 3.0 (yêu cầu ghi công)\n"
+"ermfilm — \"Rossi-Revolver\" · steveygos93 — \"Explosion2\" · Nicistarful — \"Fast Throttle Mechanic Lever\"\n"
+"jesabat — \"Steam Hiss\" · juskiddink — \"Dogs growling\" · poots — \"deep_under\"\n"
+"(tất cả qua freesound.org)"
+
+#: ui/ui.gd:866
+msgid ""
+"Plus CC0 sounds by Kenney, MrFossy, LeMudCrab, michorvath, artisticdude and many Freesound contributors.\n"
+"Full list: audio/LICENSES.md"
+msgstr ""
+"Cùng các âm thanh CC0 của Kenney, MrFossy, LeMudCrab, michorvath, artisticdude và nhiều tác giả Freesound khác.\n"
+"Danh sách đầy đủ: audio/LICENSES.md"
+
+#: ui/ui.gd:866
+msgid ""
+"[b]Typeface[/b]\n"
+"Be Vietnam Pro by the Be Vietnam Pro Project Authors (SIL Open Font License 1.1). Full text: fonts/OFL.txt"
+msgstr ""
+"[b]Phông chữ[/b]\n"
+"Be Vietnam Pro của nhóm tác giả Be Vietnam Pro Project (SIL Open Font License 1.1). Toàn văn: fonts/OFL.txt"
+
+#: ui/ui.gd:866
+msgid "Inspired by the late-90s survival-horror genre. Story, characters and setting are original."
+msgstr "Lấy cảm hứng từ dòng game kinh dị sinh tồn cuối thập niên 90. Cốt truyện, nhân vật và bối cảnh là nguyên bản."
+
+#: ui/ui.gd:892
+msgid ""
+"[b]WASD[/b] move   ·   [b]Shift[/b] run   ·   [b]Mouse[/b] look\n"
+"[b]Right mouse[/b] aim   ·   [b]Left mouse[/b] fire (while aiming)\n"
+"[b]R[/b] reload   ·   [b]F[/b] knife   ·   [b]Q[/b] quick turn\n"
+"[b]E[/b] interact / advance dialogue   ·   [b]Tab[/b] inventory\n"
+"[b]H[/b] quick heal   ·   [b]1-4[/b] weapons   ·   [b]L[/b] flashlight\n"
+"[b]Esc[/b] pause / close menus"
+msgstr ""
+"[b]WASD[/b] di chuyển   ·   [b]Shift[/b] chạy   ·   [b]Chuột[/b] nhìn\n"
+"[b]Chuột phải[/b] ngắm   ·   [b]Chuột trái[/b] bắn (khi đang ngắm)\n"
+"[b]R[/b] nạp đạn   ·   [b]F[/b] rìu   ·   [b]Q[/b] quay nhanh\n"
+"[b]E[/b] tương tác / qua lời thoại   ·   [b]Tab[/b] túi đồ\n"
+"[b]H[/b] hồi máu nhanh   ·   [b]1-4[/b] vũ khí   ·   [b]L[/b] đèn pin\n"
+"[b]Esc[/b] tạm dừng / đóng menu"
+
+#: ui/ui.gd:892
+msgid ""
+"Hold aim without moving to tighten the reticle — a focused shot does far more damage. Headshots deal double damage and stop the dead from getting back up.\n"
+"Zombies that fall may not stay down. Ammunition is scarce: avoid fights you don't need."
+msgstr ""
+"Giữ ngắm mà không di chuyển để thu hẹp tâm ngắm — một phát bắn tập trung gây sát thương lớn hơn nhiều. Bắn trúng đầu gây sát thương gấp đôi và khiến xác sống không thể đứng dậy nữa.\n"
+"Lũ xác sống ngã xuống có thể không nằm yên. Đạn dược khan hiếm: tránh những trận đánh không cần thiết."
+
+#: ui/ui.gd:925
+msgid "YOU ARE DEAD"
+msgstr "BẠN ĐÃ CHẾT"
+
+#: ui/ui.gd:928
+msgid "Continue (retry area)"
+msgstr "Tiếp tục (chơi lại khu vực)"
+
+#: ui/ui.gd:982
+#, c-format
+msgid "Clear time %s   ·   Saves %d   ·   Deaths %d   ·   Rank %s"
+msgstr "Thời gian hoàn thành %s   ·   Lần lưu %d   ·   Số lần chết %d   ·   Hạng %s"
+
+#: ui/ui.gd:983
+msgid "Return to Title"
+msgstr "Về màn hình chính"
+
+#: ui/ui.gd:990
+msgid "[center][b]ENDING: DARK[/b][/center]"
+msgstr "[center][b]KẾT CỤC: BÓNG TỐI[/b][/center]"
+
+#: ui/ui.gd:990
+msgid "Elias pulled the last disconnect by hand. Somewhere on the lake, forty thousand servers went quiet, and the warm breath in the pipeline stopped."
+msgstr "Elias tự tay kéo cầu dao cách ly cuối cùng. Đâu đó trên mặt hồ, bốn mươi nghìn máy chủ lặng đi, và hơi thở ấm áp trong đường ống tắt hẳn."
+
+#: ui/ui.gd:990
+msgid "Down in the cavern, the hum fell an octave, and then another, until it was only the sound of the ice settling. The lattice grew dull. Whatever had worn his mother's face went still and stayed still."
+msgstr "Dưới hang, tiếng ù hạ xuống một quãng tám, rồi lại một quãng nữa, cho đến khi chỉ còn là âm thanh của băng đang lún xuống. Mạng tinh thể ảm đạm dần. Thứ từng mang gương mặt mẹ anh đã đứng im, và vẫn đứng im."
+
+#: ui/ui.gd:990
+msgid "At 7:52 the sun came up over Kettle Falls for the first time in three days. The co-op's crews found the town's feeders closed, the school lit, and eighty-one people alive in its gym."
+msgstr "Lúc 7:52, mặt trời mọc trên Kettle Falls lần đầu tiên sau ba ngày. Các đội của hợp tác xã thấy các xuất tuyến của thị trấn đã đóng, ngôi trường sáng đèn, và tám mươi mốt người còn sống trong phòng thể dục."
+
+#: ui/ui.gd:990
+msgid "Corvane Systems filed suit against Lakeshore Electric on December 28th. Elias was named personally. He kept the letter on the fridge, next to June's drawing of the substation, and never once regretted it."
+msgstr "Corvane Systems đã đệ đơn kiện Lakeshore Electric vào ngày 28 tháng Mười Hai. Elias bị nêu đích danh. Anh dán lá thư lên cửa tủ lạnh, cạnh bức vẽ trạm biến áp của June, và chưa một lần hối hận."
+
+#: ui/ui.gd:990
+msgid "[i]\"Load shed: Meridian. Priority: Kettle Falls.\"[/i]"
+msgstr "[i]\"Cắt tải: Meridian. Ưu tiên: Kettle Falls.\"[/i]"
+
+#: ui/ui.gd:1001
+msgid "[center][b]ENDING: THAW[/b][/center]"
+msgstr "[center][b]KẾT CỤC: BĂNG TAN[/b][/center]"
+
+#: ui/ui.gd:1001
+msgid "Elias opened the pipeline to full. The brine boiled. The cavern screamed in a hundred voices and one of them was his mother's, and then all of them were steam."
+msgstr "Elias mở đường ống hết công suất. Nước muối sôi sùng sục. Hang gào lên bằng hàng trăm giọng nói và một trong số đó là giọng mẹ anh, rồi tất cả chỉ còn là hơi nước."
+
+#: ui/ui.gd:1001
+msgid "By morning nothing in the Lower Kettle mine was alive, and nothing in it ever would be again. Meridian never dropped a single request."
+msgstr "Đến sáng, không còn gì sống trong mỏ Lower Kettle, và sẽ không bao giờ còn gì sống ở đó nữa. Meridian chưa từng bỏ lỡ một yêu cầu nào."
+
+#: ui/ui.gd:1001
+msgid "Corvane's statement called it \"a tragic mining accident during an extreme weather event.\" Northline's insurers paid out. The data centre doubled its capacity the following spring."
+msgstr "Tuyên bố của Corvane gọi đó là \"một tai nạn khai thác mỏ đáng tiếc trong điều kiện thời tiết cực đoan.\" Các hãng bảo hiểm của Northline đã chi trả. Trung tâm dữ liệu tăng gấp đôi công suất vào mùa xuân năm sau."
+
+#: ui/ui.gd:1001
+msgid "June doesn't talk about that night. Sometimes she leaves her radio on 146.52 and just listens to the static, as if someone down there might still answer."
+msgstr "June không nói về đêm đó. Thỉnh thoảng con bé để bộ đàm ở tần số 146,52 và chỉ lắng nghe tiếng rè, như thể ai đó dưới kia vẫn còn có thể trả lời."
+
+#: ui/ui.gd:1010
+msgid "[center][b]THE END[/b][/center]"
+msgstr "[center][b]HẾT[/b][/center]"
+
+#: ui/ui.gd:1010
+msgid "Kettle Falls is behind you. The cold is not."
+msgstr "Kettle Falls đã ở lại sau lưng. Cái lạnh thì không."

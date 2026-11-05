@@ -164,7 +164,7 @@ def classify(r, rel):
     v = r["value"]
     if not PROSE_RE.search(v):
         return None
-    if v.startswith("res://") or v.startswith("user://"):
+    if v.startswith("res://") or v.startswith("user://") or re.fullmatch(r"[a-z0-9_:.]+", v):
         return None
     # innermost call frame
     call = None
@@ -290,6 +290,29 @@ def write_pot(found):
     return path
 
 
+def write_po(found, trans, path=None):
+    """(Re)write locale/vi.po in .pot order from {msgid: msgstr}. Unknown msgids get an empty msgstr."""
+    path = path or os.path.join(ROOT, "locale/vi.po")
+    out = ['# Vietnamese (Tiếng Việt) translation for WHITEOUT: KETTLE FALLS',
+           '# Glossary and style notes: locale/GLOSSARY.md',
+           'msgid ""', 'msgstr ""',
+           '"Project-Id-Version: Whiteout Kettle Falls\\n"',
+           '"Language: vi\\n"',
+           '"MIME-Version: 1.0\\n"',
+           '"Content-Type: text/plain; charset=UTF-8\\n"',
+           '"Content-Transfer-Encoding: 8bit\\n"',
+           '"Plural-Forms: nplurals=1; plural=0;\\n"', ""]
+    for v in sorted(found, key=lambda x: (found[x][0][0], found[x][0][1])):
+        refs = " ".join("%s:%d" % (f, l) for f, l, k in found[v][:3])
+        out.append("#: " + refs)
+        if re.search(r"%[sdf0-9.]", v):
+            out.append("#, c-format")
+        out.append(po_block("msgid", v))
+        out.append(po_block("msgstr", trans.get(v, "")))
+        out.append("")
+    open(path, "w", encoding="utf-8").write("\n".join(out))
+
+
 def parse_po(path):
     """Minimal .po parser -> {msgid: msgstr}."""
     d = {}
@@ -336,6 +359,9 @@ def placeholders(s):
 def main():
     found, resid = collect(residual="--residual" in sys.argv)
     pot = write_pot(found)
+    if "--sync" in sys.argv:   # keep translations, add new msgids (empty), drop stale ones
+        write_po(found, parse_po(os.path.join(ROOT, "locale/vi.po")))
+        print("synced locale/vi.po")
     words = sum(len(v.split()) for v in found)
     print("wrote %s: %d msgids, %d English words" % (os.path.relpath(pot, ROOT), len(found), words))
     if "--residual" in sys.argv:

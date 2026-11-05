@@ -7,10 +7,12 @@ from mathutils import Vector, Matrix
 
 TEX = os.environ.get("WTEX", "")
 
+_mats = {}
+
 def reset():
+    _mats.clear()
     bpy.ops.wm.read_factory_settings(use_empty=True)
 
-_mats = {}
 def tex_mat(name, tex=None, color=None, rough=0.5, metal=0.0, uv=0.25):
     key = name
     if key in _mats: return _mats[key]

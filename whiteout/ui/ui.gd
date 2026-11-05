@@ -884,6 +884,9 @@ jesabat — "Steam Hiss" · juskiddink — "Dogs growling" · poots — "deep_un
 Plus CC0 sounds by Kenney, MrFossy, LeMudCrab, michorvath, artisticdude and many Freesound contributors.
 Full list: audio/LICENSES.md
 
+[b]Typeface[/b]
+Be Vietnam Pro by the Be Vietnam Pro Project Authors (SIL Open Font License 1.1). Full text: fonts/OFL.txt
+
 Inspired by the late-90s survival-horror genre. Story, characters and setting are original."""
 
 const CONTROLS_TEXT := """[b]WASD[/b] move   ·   [b]Shift[/b] run   ·   [b]Mouse[/b] look

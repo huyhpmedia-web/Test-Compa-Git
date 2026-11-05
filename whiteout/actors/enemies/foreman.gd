@@ -89,24 +89,27 @@ func _make_model() -> Node3D:
 	h.stretch(STRETCH)
 	h.position.y = 0.36
 	RimeLook.decorate(h, 1.1, 99)
-	var ice := RimeLook.glacial("ice")
-	var glow := RimeLook.glacial("glow")
-	# crystal joints at the (stretched) elbows / knees / shoulders and bursting from his back and chest
+	# v3: no crystals. Jointed wrong by tumorous scar growth: knotted, wet knuckles at the (stretched) joints, bone stumps
+	# punching through at the elbows / knees and a ridge of exposed vertebrae on his back.
+	var scab := RimeLook.flesh("scab")
+	var bone := RimeLook.flesh("bone")
+	var raw := Kit.mat("flesh_raw")
 	for sd in [["l", 1.0], ["r", -1.0]]:
 		var ef: Node3D = h.bone_attachment("lowerarm_" + sd[0])
 		var sh: Node3D = h.bone_attachment("upperarm_" + sd[0])
 		var kn: Node3D = h.bone_attachment("calf_" + sd[0])
 		if ef:
-			Kit.cluster(ef, Vector3.ZERO, Vector3(sd[1], 0.3, -0.5), 4, 0.22 * s, 0.026 * s, ice, rng, 0.8)
-			Kit.sphere(ef, 0.055 * s, glow, Vector3.ZERO)
+			Kit.mi(ef, Kit.blob(0.07 * s, 5 + int(sd[1] + 2), 0.25, Vector3(1, 0.8, 1), 8, 12), scab, Vector3.ZERO)
+			Kit.crystal(ef, Vector3(sd[1] * 0.04, 0.02, -0.03) * s, Vector3(sd[1], 0.1, -0.6), 0.1 * s, 0.026 * s, bone, 1)
 		if sh:
-			Kit.cluster(sh, Vector3(0, 0.05, 0), Vector3(sd[1], 1, -0.2), 4, 0.3 * s, 0.032 * s, ice, rng, 0.7)
+			Kit.mi(sh, Kit.blob(0.09 * s, 9, 0.25, Vector3(1.2, 0.9, 1.1), 8, 12), scab, Vector3(0, 0.04, 0) * s)
 		if kn:
-			Kit.cluster(kn, Vector3.ZERO, Vector3(0, 0.2, 1.0), 3, 0.22 * s, 0.026 * s, ice, rng, 0.8)
-			Kit.sphere(kn, 0.05 * s, glow, Vector3.ZERO)
+			Kit.mi(kn, Kit.blob(0.07 * s, 11 + int(sd[1] + 2), 0.25, Vector3(1, 0.8, 1), 8, 12), scab, Vector3.ZERO)
+			Kit.crystal(kn, Vector3(0, 0.02, 0.05) * s, Vector3(0, 0.1, 1.0), 0.09 * s, 0.024 * s, bone, 2)
 	var ca: Node3D = h.bone_attachment("spine_03")
-	Kit.cluster(ca, Vector3(0, 0.1, -0.1) * s, Vector3(0, 0.8, -1), 6, 0.45 * s, 0.035 * s, ice, rng, 0.7)
-	Kit.cluster(ca, Vector3(0, 0.1, 0.1) * s, Vector3(0, 0.3, 1), 2, 0.2 * s, 0.03 * s, glow, rng, 0.6)
+	for i in 5:
+		Kit.mi(ca, Kit.blob(0.035 * s, 30 + i, 0.2, Vector3(1, 1.1, 1), 6, 8), bone, Vector3(0, -0.06 + i * 0.065, -0.115) * s)
+	Kit.mi(ca, Kit.blob(0.1 * s, 41, 0.3, Vector3(1.3, 0.5, 0.7), 8, 12), raw, Vector3(0.08, 0.1, 0.1) * s)
 	# the headlamp that never went out (the hard hat is part of the body mesh)
 	var mount := Node3D.new()
 	mount.position = Vector3(0, 0.145, 0.125) * s
@@ -125,8 +128,6 @@ func _make_model() -> Node3D:
 	var pick := Node3D.new()
 	Kit.limb(pick, Vector3(0, 0.25, 0), Vector3(0, -1.25, 0), 0.025, 0.02, Kit.mat("rust"))
 	Kit.box(pick, Vector3(0.5, 0.05, 0.05), Kit.mat("iron"), Vector3(0, -1.25, 0))
-	Kit.crystal(pick, Vector3(0.25, -1.25, 0), Vector3(1, 0, 0), 0.12, 0.03, ice, 2)
-	Kit.crystal(pick, Vector3(-0.25, -1.25, 0), Vector3(-1, 0, 0), 0.12, 0.03, ice, 3)
 	pick.rotation.x = 0.35
 	h.hold(pick)
 	Kit.post(h, _pose_post)

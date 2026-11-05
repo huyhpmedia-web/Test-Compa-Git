@@ -62,13 +62,15 @@ func _make_model() -> Node3D:
 	h.pose = "zombie"
 	h.stretch({"upperarm": Vector3(1, 1.7, 1), "thigh": Vector3(1, 1.4, 1)})   # much longer limbs
 	h.position.y = 0.34
-	RimeLook.decorate(h, rime, rng.randi())
 	var s: float = clampf(h._s, 0.9, 1.4)
 	# crystalline filaments bursting from the ankles (calf bone runs along +Y toward the foot)
 	for bn in ["calf_l", "calf_r"]:
 		var ba: Node3D = h.bone_attachment(bn)
 		if ba:
-			Kit.cluster(ba, Vector3(0, 0.4, 0) * s, Vector3(0, 1, 0), 6, 0.6 * s, 0.014 * s, RimeLook.glacial("ice"), rng, 0.18)
+			for k in 6:   # v3: torn tendon / sinew ropes trailing from the ankles
+				var a := Vector3(rng.randf_range(-0.03, 0.03), 0.38, rng.randf_range(-0.03, 0.03)) * s
+				var b := a + Vector3(rng.randf_range(-0.12, 0.12), rng.randf_range(0.2, 0.6), rng.randf_range(-0.12, 0.12)) * s
+				Kit.limb(ba, a, b, 0.012 * s, 0.006 * s, RimeLook.flesh("sinew"), false, 5)
 	Kit.post(h, _pose_post)
 	return h
 
@@ -90,8 +92,8 @@ func _build_rig() -> void:
 	_rig.global_position = Vector3(global_position.x, ceiling_height, global_position.z)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = randi()
-	var m := Kit.mat("ice_deep")
-	var fm := Kit.mat("frost")
+	var m := RimeLook.flesh("sinew")   # v3: sinew ropes + a scabbed flesh mass on the ceiling
+	var fm := RimeLook.flesh("scab")
 	Kit.mi(_rig, Kit.blob(0.55, rng.randi() % 99, 0.15, Vector3(1.0, 0.3, 1.0), 8, 14), fm, Vector3(0, -0.05, 0))
 	for i in 6:
 		var a := Vector3(rng.randf_range(-0.45, 0.45), -0.05, rng.randf_range(-0.45, 0.45))
@@ -99,7 +101,9 @@ func _build_rig() -> void:
 		var mid := (a + b) * 0.5 + Vector3(rng.randf_range(-0.12, 0.12), 0, rng.randf_range(-0.12, 0.12))
 		Kit.limb(_rig, a, mid, 0.035, 0.022, m, true, 6)
 		Kit.limb(_rig, mid, b, 0.022, 0.03, m, true, 6)
-	Kit.cluster(_rig, Vector3(0, -0.1, 0), Vector3(0, -1, 0), 8, 0.3, 0.05, Kit.mat("ice"), rng, 0.9)
+	for k in 8:
+		var a2 := Vector3(rng.randf_range(-0.3, 0.3), -0.1, rng.randf_range(-0.3, 0.3))
+		Kit.limb(_rig, a2, a2 + Vector3(rng.randf_range(-0.1, 0.1), -rng.randf_range(0.2, 0.5), rng.randf_range(-0.1, 0.1)), 0.02, 0.008, m, false, 5)
 
 func _pose_post(_delta: float) -> void:
 	if model == null or model.pose == "dead":

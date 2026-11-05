@@ -134,6 +134,7 @@ func _build() -> void:
 	skeleton = _find(model_root, "Skeleton3D") as Skeleton3D
 	player = _find(model_root, "AnimationPlayer") as AnimationPlayer
 	_load_meta()
+	_load_anim_sets()
 	var base_h := _model_height(model_name)
 	if cfg.has("height"):
 		var s := float(cfg.height) / base_h
@@ -192,6 +193,73 @@ func _load_meta() -> void:
 			walk_speed = float(m.get("walk", {}).get("speed", walk_speed))
 			run_speed = float(m.get("run", {}).get("speed", run_speed))
 			zombie_speed = float(m.get("zombie_walk", {}).get("speed", zombie_speed))
+
+# ------------------------------------------------------------------ mocap animation sets (assets/anims/<set>.glb)
+## Animation-only glbs (tools/charpipe/anim_export.py) on the same rig. Their clips override the clips embedded in the character
+## glb by name and add new ones. Elias/NPCs use "elias", every Rimebound + special uses "zombie".
+const ANIM_DIR := "res://assets/anims/"
+const ZOMBIE_LIKE := ["husk", "siren", "burster", "hanger", "foreman"]
+static var _set_protos := {}     # set -> {clip: Animation} straight from the glb
+static var _set_remap := {}      # "set|prefix" -> {clip: Animation} with track paths pointing at this skeleton
+static var _set_meta = null
+
+func _anim_sets_for_model() -> Array:
+	if model_name.begins_with("rimebound_") or model_name in ZOMBIE_LIKE:
+		return ["zombie"]
+	return ["elias"]
+
+static func _proto_set(set_name: String) -> Dictionary:
+	if _set_protos.has(set_name):
+		return _set_protos[set_name]
+	var out := {}
+	var path := ANIM_DIR + set_name + ".glb"
+	if ResourceLoader.exists(path):
+		var ps = load(path)
+		if ps is PackedScene:
+			var n: Node = ps.instantiate()
+			var ap := n.find_children("*", "AnimationPlayer", true, false)
+			if ap.size() > 0:
+				for an in (ap[0] as AnimationPlayer).get_animation_list():
+					out[an] = (ap[0] as AnimationPlayer).get_animation(an)
+			n.free()
+	_set_protos[set_name] = out
+	return out
+
+func _load_anim_sets() -> void:
+	if player == null or skeleton == null:
+		return
+	var lib := player.get_animation_library("")
+	if lib == null:
+		return
+	var prefix := String(player.get_node(player.root_node).get_path_to(skeleton))
+	for set_name in _anim_sets_for_model():
+		var key: String = set_name + "|" + prefix
+		if not _set_remap.has(key):
+			var proto := _proto_set(set_name)
+			var res := {}
+			for an in proto:
+				var a: Animation = (proto[an] as Animation).duplicate()
+				for i in a.get_track_count():
+					var bn := String(a.track_get_path(i).get_concatenated_subnames())
+					a.track_set_path(i, NodePath(prefix + ":" + bn))
+				res[an] = a
+			_set_remap[key] = res
+		var set_anims: Dictionary = _set_remap[key]
+		for an in set_anims:
+			if lib.has_animation(an):
+				lib.remove_animation(an)
+			lib.add_animation(an, set_anims[an])
+
+## Debug / contact-sheet helper: pose the rig on clip `anim` at time `t` (bypasses the AnimationTree).
+func debug_pose(anim: String, t: float) -> void:
+	set_process(false)
+	if tree:
+		tree.active = false
+	if player and player.has_animation(anim):
+		player.play(anim)
+		player.seek(t, true)
+		player.pause()
+		player.advance(0.0)
 
 # ------------------------------------------------------------------ materials (cached + shared between instances)
 func _fix_materials() -> void:

@@ -44,7 +44,7 @@ def _z(name, outfit, gender, age, color, color2=None, seed=1, skin=None, hair=No
        pallor=(0.70, 0.80, 0.90), gore_cloth=None, gore_skin=None, **kw):
     d = dict(name=name, file=name + ".glb", builder="zombies.build_zombie", outfit=outfit, gender=gender, age=age, muscle=muscle, weight=weight,
              height_m=height, skin=skin or ("middleage_caucasian_male" if gender > 0.5 else "middleage_caucasian_female"), color=color,
-             color2=color2 or (0.12, 0.15, 0.22), seed=seed, hair=hair, hair_tint=hair_tint, pallor=pallor, details=[("head", "head-age", 0.3, "decr", "incr"), ("chin", "chin-jaw-drop", 0.5, "decr", "incr"), ("eyes", "l-eye-bag", 0.8, "decr", "incr"), ("eyes", "r-eye-bag", 0.8, "decr", "incr"),
+             color2=color2 or (0.12, 0.15, 0.22), seed=seed, hair=hair, hair_tint=hair_tint, pallor=pallor, details=[("head", "head-age", 0.3, "decr", "incr"), ("chin", "chin-jaw-drop", 0.9, "decr", "incr"), ("mouth", "mouth-lowerlip-height", 0.5, "decr", "incr"), ("eyes", "l-eye-bag", 0.8, "decr", "incr"), ("eyes", "r-eye-bag", 0.8, "decr", "incr"),
                     ("cheek", "l-cheek-volume", -0.7, "decr", "incr"), ("cheek", "r-cheek-volume", -0.7, "decr", "incr")])
     if gore_cloth: d["gore_cloth"] = gore_cloth
     if gore_skin: d["gore_skin"] = gore_skin
@@ -431,20 +431,22 @@ def eye_image(name, iris=(0.55, 0.36, 0.22), strength=1.0, size=512):
 
 
 def milky_eye_image(name, iris=None, size=512):
-    """clouded dead eyes: pale blue-grey iris under a milky cataract veil, faint bloodshot sclera, dim pupil."""
+    """dead eyes: sallow bloodshot sclera, a visible clouded blue-grey iris with a dark limbal ring and a dull pupil."""
     from PIL import Image
     eim = np.asarray(Image.open(os.path.join(mh.MH_DATA, "eyes/materials/brown_eye.png")).convert("RGB").resize((size, size)), dtype=np.float32) / 255.0
     lum = (eim * np.array([0.3, 0.59, 0.11])).sum(2, keepdims=True)
     sat = (eim.max(2, keepdims=True) - eim.min(2, keepdims=True))
     mask = np.clip(sat * 3.5, 0, 1)
-    pupil = np.clip((0.16 - lum) * 8, 0, 1) * (1 - mask * 0.0)
-    iris_col = (0.45 + 0.8 * lum) * np.array([0.62, 0.74, 0.80])[None, None, :]
-    out = eim * (1 - mask) + iris_col * mask
-    scl = np.array([0.78, 0.82, 0.82])[None, None, :]
-    out = out * 0.35 + (scl * (0.6 + 0.4 * lum)) * 0.65 * (1 - mask) + out * mask * 0.65 + (0.9 * np.array([0.80, 0.86, 0.88])[None, None, :]) * 0.35 * mask
-    milk = np.array([0.80, 0.85, 0.87])[None, None, :] * (0.78 + 0.22 * lum)
-    out = out * 0.5 + milk * 0.5                                  # cataract veil
-    out = out * (1 - 0.6 * pupil) + np.array([0.28, 0.31, 0.34])[None, None, :] * 0.6 * pupil
+    pupil = np.clip((0.16 - lum) * 8, 0, 1)
+    rng = np.random.RandomState(7)
+    n = np.asarray(Image.fromarray((rng.rand(size // 8, size // 8) * 255).astype(np.uint8)).resize((size, size), Image.BICUBIC), dtype=np.float32)[..., None] / 255.0
+    veins = np.clip((n - 0.62) * 5, 0, 1) * (1 - mask)
+    scl = np.array([0.56, 0.55, 0.47])[None, None, :] * (0.7 + 0.3 * lum)
+    scl = scl * (1 - veins * 0.7) + np.array([0.45, 0.1, 0.09])[None, None, :] * veins * 0.7
+    iris_col = (0.35 + 0.7 * lum) * np.array([0.42, 0.52, 0.56])[None, None, :]
+    out = scl * (1 - mask) + iris_col * mask
+    out = out * (1 - 0.8 * pupil) + np.array([0.06, 0.06, 0.07])[None, None, :] * 0.8 * pupil
+    out = out * 0.85 + np.array([0.5, 0.55, 0.55])[None, None, :] * 0.15 * mask      # faint cataract haze over the iris
     return jtex(name, np.clip(out, 0, 1), 92)
 
 

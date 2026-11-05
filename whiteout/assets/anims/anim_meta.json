@@ -1,0 +1,25 @@
+{
+ "elias": {
+  "aim_idle": {
+   "duration": 2.066666666666667
+  },
+  "death": {
+   "duration": 3.033333333333333
+  },
+  "hatchet_swing": {
+   "duration": 1.9666666666666666
+  },
+  "idle": {
+   "duration": 3.1
+  },
+  "interact": {
+   "duration": 2.533333333333333
+  },
+  "reload": {
+   "duration": 2.1333333333333333
+  },
+  "shoot": {
+   "duration": 0.8333333333333334
+  }
+ }
+}

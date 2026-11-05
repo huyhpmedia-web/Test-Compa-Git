@@ -53,20 +53,10 @@ func _make_model() -> Node3D:
 	var h := CharacterModel.new()
 	h.setup({"model": "burster"})
 	h.pose = "zombie"
-	RimeLook.decorate(h, 0.7, rng.randi())
-	var s: float = clampf(h._s, 0.9, 1.3)
-	_sac_mat = StandardMaterial3D.new()
-	_sac_mat.albedo_color = Color(0.45, 0.9, 0.95, 0.5)
-	_sac_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	_sac_mat.roughness = 0.1
-	_sac_mat.rim_enabled = true
-	_sac_mat.rim = 1.0
-	_sac_mat.rim_tint = 0.4
-	_sac_mat.emission_enabled = true
-	_sac_mat.emission = Color(0.2, 0.85, 0.9)
-	_sac_mat.emission_energy_multiplier = 1.1
-	_sac_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
-	_core_mat = Kit.glow_unique(Color(0.45, 0.95, 1.0), 2.5)
+		var s: float = clampf(h._s, 0.9, 1.3)
+	# v3: distended pus / gas boils (yellow-green, translucent, wet) instead of glowing ice sacs
+	_sac_mat = RimeLook.flesh("pus").duplicate()
+	_core_mat = Kit.glow_unique(Color(0.75, 0.7, 0.2), 1.2)
 	# [bone, bone-local pos, radius]  (torso bones: y up / z forward / x left; limb bones run along +Y)
 	var defs := [
 		["spine_01", Vector3(0, 0.12, 0.2), 0.26], ["spine_01", Vector3(0.16, 0.1, 0.14), 0.18], ["spine_01", Vector3(-0.16, 0.14, 0.13), 0.17],
@@ -86,15 +76,15 @@ func _make_model() -> Node3D:
 		Kit.mi(holder, Kit.blob(r, 70 + i, 0.09, Vector3(1, 1, 0.9), 10, 14), _sac_mat, Vector3.ZERO)
 		Kit.sphere(holder, r * 0.55, _core_mat, Vector3.ZERO, Vector3(1, 1, 1))
 		# dark veins over the sac
-		for k in 3:
+		for k in 2:
 			var dir := Vector3(rng.randf_range(-1, 1), rng.randf_range(-1, 1), rng.randf_range(0.2, 1)).normalized()
-			Kit.crystal(holder, dir * r * 0.9, dir, r * 0.4, r * 0.05, RimeLook.glacial("ice"), i + k)
+			Kit.limb(holder, dir * r * 0.5, dir * r * 1.02, r * 0.035, r * 0.02, RimeLook.flesh("sinew"), false, 5)
 		_sacs.append({"node": holder, "base": holder.scale, "ph": rng.randf() * 6.28})
 		i += 1
 	for q in [["spine_01", Vector3(0, 0.1, 0.35)], ["spine_03", Vector3(0, 0.1, -0.25)]]:
 		var l := OmniLight3D.new()
-		l.light_color = Color(0.4, 0.9, 1.0)
-		l.light_energy = 0.9
+		l.light_color = Color(0.75, 0.8, 0.3)
+		l.light_energy = 0.5
 		l.omni_range = 3.5
 		l.shadow_enabled = false
 		l.position = q[1] * s
@@ -113,9 +103,9 @@ func _pulse(_delta: float) -> void:
 		if is_instance_valid(n):
 			var k := 1.0 + sin(tt * rate + sc.ph) * (0.05 + 0.08 * _swell) + _swell * 0.3
 			n.scale = sc.base * k
-	_core_mat.emission_energy_multiplier = 2.2 + sin(tt * rate) * 0.8 + _swell * 4.0
+	_core_mat.emission_energy_multiplier = 0.9 + sin(tt * rate) * 0.35 + _swell * 2.5
 	for l in _sac_lights:
-		l.light_energy = 0.8 + _swell * 2.5 + sin(tt * rate) * 0.2
+		l.light_energy = 0.4 + _swell * 1.6 + sin(tt * rate) * 0.1
 
 func _think(delta: float) -> void:
 	if target == null:

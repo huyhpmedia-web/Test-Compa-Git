@@ -28,7 +28,7 @@ func _ready() -> void:
 	if zombie and RL.has_method("decorate"): RL.decorate(m, 1.0, 100, {})
 	var cam := Camera3D.new(); svp.add_child(cam); cam.fov = 28; cam.current = true
 	var sl := SpotLight3D.new(); svp.add_child(sl)
-	sl.light_energy = 2.2; sl.spot_range = 8.0; sl.spot_angle = 35.0; sl.light_color = Color(1.0, 0.95, 0.85); sl.shadow_enabled = true
+	sl.light_energy = 1.4; sl.spot_range = 8.0; sl.spot_angle = 35.0; sl.light_color = Color(1.0, 0.95, 0.85); sl.shadow_enabled = true
 	for i in 20: await get_tree().process_frame
 	var hp: Vector3 = m.head.global_position + Vector3(0, 0.06, 0)
 	var img := Image.create(pw * views.size(), ph, false, Image.FORMAT_RGBA8)

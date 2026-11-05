@@ -18,6 +18,7 @@ static func dress(level: Node3D) -> void:
 	_gate()
 	_ditch_truck()
 	_env()
+	_banks_and_tracks()
 
 # the frozen family car at (-1.9, -9): someone was dragged out of it into the ditch
 static func _family_car() -> void:
@@ -126,3 +127,36 @@ static func _env() -> void:
 	Props.prop(lv, "camp/crate_plastic", Vector3(24.0, 0.0, -62.0), 0.3, {"snow": 0.5, "scale": 1.5})
 	Props.stump(lv, Vector3(-9.0, 0.0, -35.0), 0.3)
 	Props.dead_log(lv, Vector3(-11.0, 0.0, 6.0), 1.2, false)
+
+
+# sculpted plough banks along both shoulders (long wind-shaped mounds with gaps), and tyre tracks printed in the road snow
+static func _banks_and_tracks() -> void:
+	var lv: Node3D = D.lv
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 7311
+	for side in [-1.0, 1.0]:
+		var z := 36.0
+		while z > -138.0:
+			var len := rng.randf_range(5.0, 9.0)
+			if rng.randf() < 0.82 and not (z < 4.0 and z > -3.0 and side < 0.0):
+				var w := rng.randf_range(1.2, 2.0)
+				Props.drift(lv, Vector3(side * (4.9 + w * 0.55 + rng.randf_range(0, 0.6)), -0.02, z - len * 0.5), w, rng.randf_range(0.5, 1.0), len * 0.5, rng.randf_range(-0.08, 0.08))
+			z -= len + rng.randf_range(0.5, 5.0)
+	var track_m := StandardMaterial3D.new()
+	track_m.albedo_color = Color(0.02, 0.02, 0.03, 0.42)
+	track_m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	track_m.roughness = 0.9
+	for lane: float in [-1.3, 1.3, 2.2]:
+		var z2 := 40.0
+		while z2 > -136.0:
+			var nx: float = lane + 0.35 * sin(z2 * 0.045 + lane)
+			var mi := MeshInstance3D.new()
+			var qm := QuadMesh.new()
+			qm.size = Vector2(0.22, 6.2)
+			mi.mesh = qm
+			mi.material_override = track_m
+			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			lv.add_child(mi)
+			mi.position = Vector3(nx, 0.052, z2 - 3.0)
+			mi.rotation = Vector3(-PI * 0.5, 0, 0.35 * 0.045 * cos(z2 * 0.045 + lane) * -1.0)
+			z2 -= 6.0

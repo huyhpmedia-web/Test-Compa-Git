@@ -56,6 +56,9 @@ func _make_model() -> Node3D:
 	var s: float = clampf(h._s, 0.9, 1.3)
 	# v3: distended pus / gas boils (yellow-green, translucent, wet) instead of glowing ice sacs
 	_sac_mat = RimeLook.flesh("pus").duplicate()
+	_sac_mat.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED   # opaque, wet, sickly boils
+	_sac_mat.albedo_color = Color(0.46, 0.4, 0.22)
+	_sac_mat.emission_enabled = false
 	_core_mat = Kit.glow_unique(Color(0.38, 0.3, 0.1), 0.12)
 	# [bone, bone-local pos, radius]  (torso bones: y up / z forward / x left; limb bones run along +Y)
 	var defs := [
@@ -74,7 +77,6 @@ func _make_model() -> Node3D:
 			continue
 		ba.add_child(holder)
 		Kit.mi(holder, Kit.blob(r, 70 + i, 0.09, Vector3(1, 1, 0.9), 10, 14), _sac_mat, Vector3.ZERO)
-		Kit.sphere(holder, r * 0.55, _core_mat, Vector3.ZERO, Vector3(1, 1, 1))
 		# dark veins over the sac
 		for k in 2:
 			var dir := Vector3(rng.randf_range(-1, 1), rng.randf_range(-1, 1), rng.randf_range(0.2, 1)).normalized()

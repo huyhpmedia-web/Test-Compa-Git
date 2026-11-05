@@ -213,6 +213,7 @@ func rails(a: Vector3, b: Vector3, gauge := 0.9) -> void:
 	var yaw := atan2(dir.x, dir.z)
 	var steel := Mats.get_mat("metal_rust", 1.0)
 	var mid := (a + b) * 0.5
+	Props.box(geo, Vector3(gauge + 0.95, 0.08, L), mid + Vector3(0, 0.04, 0), Mats.get_mat("rock_wet", 1.0), false, Vector3(0, yaw, 0))   # crushed-stone ballast
 	for s in [-1.0, 1.0]:
 		var off: Vector3 = Vector3(dir.z, 0, -dir.x) * s * gauge * 0.5
 		Props.box(geo, Vector3(0.07, 0.09, L), mid + off + Vector3(0, 0.1, 0), steel, false, Vector3(0, yaw, 0))

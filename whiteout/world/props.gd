@@ -1242,3 +1242,81 @@ static func drift(parent: Node3D, pos: Vector3, sx := 1.6, sy := 0.35, sz := 1.0
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF if sx < 1.4 else GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 	parent.add_child(mi)
 	return mi
+
+# ---- (agent C pass 2) street storytelling
+static var _tape_mat: StandardMaterial3D
+## Police / hazard tape with a sag, from a to b (world positions relative to parent).
+static func tape(parent: Node3D, a: Vector3, b: Vector3, sag := 0.18) -> Node3D:
+	if _tape_mat == null:
+		_tape_mat = Mats.color(Color(0.9, 0.75, 0.05), 0.7)
+		_tape_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	var r := _root(parent, Vector3.ZERO, 0.0, "Tape")
+	var segs := 8
+	var prev := a
+	for i in range(1, segs + 1):
+		var t := float(i) / segs
+		var p := a.lerp(b, t)
+		p.y -= sag * 4.0 * t * (1.0 - t)
+		var mid := (prev + p) * 0.5
+		var d := p - prev
+		var mi := MeshInstance3D.new()
+		var qm := QuadMesh.new()
+		qm.size = Vector2(d.length() + 0.01, 0.07)
+		mi.mesh = qm
+		mi.material_override = _tape_mat
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		r.add_child(mi)
+		mi.position = mid
+		var xa := d.normalized()
+		var za := xa.cross(Vector3.UP).normalized()
+		if za.length() < 0.01:
+			za = Vector3.FORWARD
+		mi.basis = Basis(xa, za.cross(xa).normalized(), za)
+		prev = p
+	return r
+
+## Abandoned wire shopping cart (tipped over when `tipped`).
+static func shopping_cart(parent: Node3D, pos: Vector3, yaw := 0.0, tipped := false) -> Node3D:
+	var r := _root(parent, pos, yaw, "Cart")
+	var inner := Node3D.new()
+	r.add_child(inner)
+	if tipped:
+		inner.rotation.z = 1.45
+		inner.position.y = 0.38
+	var m := Mats.get_mat("metal", 1.0)
+	var chain := StandardMaterial3D.new()
+	chain.albedo_texture = load("res://textures/env/chainlink.png")
+	chain.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+	chain.cull_mode = BaseMaterial3D.CULL_DISABLED
+	chain.metallic = 0.7
+	chain.roughness = 0.4
+	chain.uv1_scale = Vector3(4, 3, 1)
+	var basket := box(inner, Vector3(0.62, 0.42, 0.95), Vector3(0, 0.68, 0), chain, false)
+	basket.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	box(inner, Vector3(0.64, 0.03, 0.97), Vector3(0, 0.47, 0), m, false)
+	box(inner, Vector3(0.64, 0.03, 0.97), Vector3(0, 0.9, 0), m, false)
+	box(inner, Vector3(0.58, 0.03, 0.05), Vector3(0, 0.95, -0.55), m, false)
+	for sx in [-1, 1]:
+		for sz in [-1, 1]:
+			cyl(inner, 0.04, 0.05, Vector3(sx * 0.25, 0.05, sz * 0.38), Mats.get_mat("rubber"), false, -1.0, Vector3(0, 0, PI * 0.5), 8)
+			cyl(inner, 0.012, 0.4, Vector3(sx * 0.27, 0.27, sz * 0.4), m, false, -1.0, Vector3.ZERO, 5)
+	var sb := StaticBody3D.new()
+	sb.collision_layer = 1
+	var cs := CollisionShape3D.new()
+	var sh := BoxShape3D.new()
+	sh.size = Vector3(0.6, 0.9, 1.0) if not tipped else Vector3(0.95, 0.65, 0.6)
+	cs.shape = sh
+	cs.position.y = sh.size.y * 0.5
+	sb.add_child(cs)
+	r.add_child(sb)
+	return r
+
+## Sagging power line between two points (rubber tube segments).
+static func power_wire(parent: Node3D, a: Vector3, b: Vector3, sag := 0.9, segs := 8, radius := 0.012) -> void:
+	var prev := a
+	for i in range(1, segs + 1):
+		var t := float(i) / segs
+		var p := a.lerp(b, t)
+		p.y -= sag * 4.0 * t * (1.0 - t)
+		pipe(parent, prev, p, radius, "rubber")
+		prev = p

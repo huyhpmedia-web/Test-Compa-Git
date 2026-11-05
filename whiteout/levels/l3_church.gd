@@ -221,6 +221,18 @@ func _block(x0: float, z0: float, x1: float, z1: float, north_side: bool, label 
 	var out := 1.0 if north_side else -1.0
 	if not enterable:
 		box(Vector3((x0 + x1) * 0.5, 3.6, (z0 + z1) * 0.5), Vector3(x1 - x0, 7.2, z1 - z0), "brick" if (int(x0) % 2 == 0) else "brick_dark")
+		# ground floor storefront detail so no facade reads as a blank block: shopfront windows (a few dimly lit), a door and a canopy
+		var gn := maxi(2, upper_n)
+		var gspan := x1 - x0
+		for gi in gn:
+			var gx := x0 + gspan * (gi + 0.5) / float(gn)
+			if gi == gn / 2:
+				_b(Vector3(1.4, 2.4, 0.16), Vector3(gx, 1.2, zf + out * 0.06), _c(Color(0.14, 0.1, 0.08), 0.7), false)
+				_b(Vector3(1.7, 0.16, 0.3), Vector3(gx, 2.55, zf + out * 0.14), "concrete", false)
+				_b(Vector3(0.1, 0.06, 0.1), Vector3(gx + 0.45, 1.05, zf + out * 0.18), Mats.get_mat("metal"), false)
+			else:
+				Props.window(geo, Vector3(gx, 1.75, zf + out * 0.03), yaw, 1.7, 1.7, (int(abs(gx)) + gi) % 5 == 0)
+		Props.prop(geo, "facade/wall_lamp", Vector3(x0 + gspan * 0.5 + 1.2, 2.6, zf + out * 0.1), yaw, {"collide": "none", "snow": 0.2, "range": 60.0})
 	# snow cap + cornice
 	_b(Vector3(x1 - x0 + 0.5, 0.45, z1 - z0 + 0.5), Vector3((x0 + x1) * 0.5, 7.35, (z0 + z1) * 0.5), "snow", true)
 	if Props.Env.has("facade/gutter_run"):
@@ -705,6 +717,7 @@ func _build_street_props() -> void:
 		Props.conifer(geo, Vector3(tx, 0, 31.0 + 5.0 * absf(sin(i * 1.7))), 9.0 + 4.0 * absf(sin(i * 0.9)), i + 11, "fir" if i % 4 != 0 else "pine")
 	for i in 14:
 		Props.conifer(geo, Vector3(-74.0 + i * 5.2, 0, -30.0 - 4.0 * absf(sin(i * 2.1))), 9.0 + 3.0 * absf(sin(i)), i + 51, "fir")
+	_street_story()
 	# phone line sagging across, scattered newspapers, sandwich board
 	Props.papers(geo, Vector3(-44, 0.03, -3.0), 9)
 	Props.papers(geo, Vector3(20, 0.03, 2.0), 8)
@@ -724,6 +737,9 @@ func _build_street_props() -> void:
 	_candles(Vector3(37.4, 0.03, -6.8), 8, 0.7, 0.0, false)
 
 func _build_plow(p: Vector3) -> void:
+	if Props.Env.has("vehicles/snowplow"):
+		Props.prop(geo, "vehicles/snowplow", p, -PI * 0.5 + 0.12, {"name": "Snowplow", "snow": 0.45, "box_shrink": 0.95})
+		return
 	var r := Node3D.new()
 	r.position = p
 	r.rotation.y = 0.12
@@ -1440,3 +1456,36 @@ func _exclusion() -> void:
 			if foreman.has_method("fear"):
 				foreman.fear(Vector3(gp.x, 0, gp.z), 3.0)
 			return
+
+
+# ------------------------------------------------------------------ street storytelling (props only; the lanes stay clear)
+func _street_story() -> void:
+	# a sedan that left the road and hit a utility pole, still tilted against it
+	Props.utility_pole(geo, Vector3(23.5, 0, -5.9), PI * 0.5, 1, 9.0)
+	Props.car(geo, Vector3(21.8, 0, -4.1), 0.75, Color(0.3, 0.12, 0.1), true, "sedan")
+	Props.debris(geo, Vector3(24.8, 0.0, -3.6), 0.0, 5, "metal")
+	# poles with sagging mains down the north walk, one span torn down
+	var px := [-64.0, -38.0, -12.0, 14.0, 40.0, 66.0]
+	var tops: Array = []
+	for i in px.size():
+		var x: float = px[i]
+		Props.utility_pole(geo, Vector3(x, 0, -6.3), PI * 0.5, i % 3, 10.0)
+		tops.append(x)
+	for i in tops.size() - 1:
+		for dz in [-1.3, 0.0, 1.3]:
+			var sag := 1.1
+			if i == 2 and dz == 1.3:
+				sag = 6.5
+			Props.power_wire(geo, Vector3(tops[i], 9.4, -6.3 + dz), Vector3(tops[i + 1], 9.4, -6.3 + dz), sag, 8)
+	# police line across the side street
+	Props.tape(geo, Vector3(-26.0, 1.0, 5.8), Vector3(-26.0, 1.1, 1.4), 0.2)
+	Props.tape(geo, Vector3(-26.0, 0.8, 5.8), Vector3(-26.0, 0.9, 1.4), 0.2)
+	Props.barrier(geo, Vector3(-26.0, 0.0, 1.2), 1.57, 2)
+	# a cart, bags and papers
+	Props.shopping_cart(geo, Vector3(-14.5, 0, 2.6), 0.6, false)
+	Props.shopping_cart(geo, Vector3(33.0, 0, -2.4), 2.2, true)
+	Props.trash_bags(geo, Vector3(-48.0, 0, -4.9), 0.3, 4)
+	Props.trash_bags(geo, Vector3(31.0, 0, 5.0), 1.0, 3)
+	Props.papers(geo, Vector3(-6.0, 0.03, -3.8), 10)
+	Props.papers(geo, Vector3(48.0, 0.03, 1.0), 9)
+	Props.papers(geo, Vector3(-52.0, 0.03, 0.0), 8)

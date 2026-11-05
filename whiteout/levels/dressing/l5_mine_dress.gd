@@ -33,6 +33,8 @@ static func _tunnel() -> void:
 	Gore.drip_emitter(D.lv, Vector3(6.0, 2.9, -0.8), "melt", 1.3)
 	Gore.drip_emitter(D.lv, Vector3(19.0, 2.9, -0.8), "melt", 1.7)
 	Gore.steam_vent(D.lv, Vector3(14.0, 2.3, -1.15), Vector3(0, 0.3, 1), 0.8, 0.12)
+	for pp in [[3.5, 0.9], [9.5, -0.9], [13.0, 0.6], [16.5, -0.7], [22.0, 0.9], [24.5, -0.5]]:
+		D.puddle(Vector3(pp[0], 0.03, pp[1]), 1.5)
 	D.puddle(Vector3(6.0, 0.03, -0.4), 1.4)
 	D.puddle(Vector3(19.0, 0.03, -0.3), 1.2)
 	# miners frozen into the wall: blood frozen under them, hands that clawed at the rock

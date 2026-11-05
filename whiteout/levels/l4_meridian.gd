@@ -4,6 +4,7 @@ extends "res://levels/level.gd"
 ## cooling plant (armory, coolant key) -> corridor -> NOC (Dr. Hart) -> pipeline head -> L5.
 
 const T = preload("res://levels/l4_meridian_text.gd")
+const Art = preload("res://levels/dressing/l4_art.gd")
 
 const HT := 4.5                 # ceiling height of most rooms
 const BH := 9.5                 # exterior building height
@@ -55,6 +56,7 @@ func build() -> void:
 	_noc()
 	_break_room()
 	_pipeline_head()
+	Art.dress(self)
 	_flush_leds()
 	_enemies()
 	_refresh_switches()
@@ -94,11 +96,13 @@ func _process(delta: float) -> void:
 
 # =================================================================== helpers
 func W(ax: float, az: float, bx: float, bz: float, gaps: Array = [], mat: Variant = "lab_wall", h: float = HT, y0: float = 0.0) -> void:
+	if mat is String and mat == "lab_wall":
+		mat = Art.wall()
 	wall(Vector2(ax, az), Vector2(bx, bz), h, mat, y0, 0.25, gaps)
 
 func zone(x0: float, z0: float, x1: float, z1: float, h: float = HT, fmat: Variant = null, cmat: Variant = null) -> void:
-	var fm: Variant = fmat if fmat != null else Mats.get_mat("lab_floor", 0.8)
-	var cm: Variant = cmat if cmat != null else Mats.color(Color(0.55, 0.6, 0.66), 0.85)
+	var fm: Variant = fmat if fmat != null else Art.floor_conc()
+	var cm: Variant = cmat if cmat != null else Art.ceil_tile()
 	floor_rect(x0 - 0.13, z0 - 0.13, x1 + 0.13, z1 + 0.13, 0.0, fm)
 	ceiling_rect(x0 - 0.13, z0 - 0.13, x1 + 0.13, z1 + 0.13, h, cm)
 
@@ -288,7 +292,7 @@ func _near(pos: Vector3, r := 3.5) -> bool:
 
 # =================================================================== shell
 func _shell() -> void:
-	var ext := Mats.get_mat("lab_wall", 3.0)
+	var ext: Material = Art.ext()
 	wall(Vector2(-34, 12), Vector2(50, 12), BH, ext, 0.0, 0.4, [[34.0, 2.8, 2.9]])
 	wall(Vector2(-34, -98), Vector2(-34, 12), BH, ext, 0.0, 0.4)
 	wall(Vector2(50, -98), Vector2(50, 12), BH, ext, 0.0, 0.4)
@@ -332,16 +336,16 @@ func _shell() -> void:
 	W(6, -98, 6, -66, [], "lab_wall", PH_H)
 	W(30, -98, 30, -66, [], "lab_wall", PH_H)
 	# zones: floors + ceilings
-	zone(-8, -6, 8, 12)
-	zone(-16, -36, 16, -6)
-	zone(-30, -32, -16, -12)
-	zone(-16, -60, 16, -36)
-	zone(16, -60, 50, -36)
-	zone(34, -36, 50, -22)
-	zone(-30, -66, 50, -60)
-	zone(-14, -84, 2, -66)
-	zone(-30, -80, -14, -66)
-	zone(6, -98, 30, -66, PH_H)
+	zone(-8, -6, 8, 12, HT, Art.floor_lobby())
+	zone(-16, -36, 16, -6, HT, Art.floor_raised(), Art.ceil_dark())
+	zone(-30, -32, -16, -12, HT, Art.floor_conc())
+	zone(-16, -60, 16, -36, HT, Art.floor_raised(), Art.ceil_dark())
+	zone(16, -60, 50, -36, HT, Art.floor_plate(), Art.ceil_dark())
+	zone(34, -36, 50, -22, HT, Art.floor_conc())
+	zone(-30, -66, 50, -60, HT, Art.floor_carpet())
+	zone(-14, -84, 2, -66, HT, Art.floor_carpet())
+	zone(-30, -80, -14, -66, HT, Art.floor_carpet())
+	zone(6, -98, 30, -66, PH_H, Art.floor_conc(), Art.ceil_dark())
 	# facade: glowing windows, sign, entrance canopy
 	for i in range(-6, 10):
 		var x := i * 5.0 - 1.0
@@ -446,27 +450,17 @@ func _gate_greet() -> void:
 
 # =================================================================== lobby
 func _lobby() -> void:
-	for x in [-5.0, 0.0, 5.0]:
-		strip(x, 3.0, 12.0)
 	glow(Vector3(0, 3.8, 6), Color(0.78, 0.9, 1.0), 2.0, 14.0, true)
 	glow(Vector3(-5, 3.8, -1), Color(0.78, 0.9, 1.0), 1.2, 9.0)
 	glow(Vector3(5, 3.8, -1), Color(0.78, 0.9, 1.0), 1.2, 9.0)
-	# reception desk
-	Props.box(geo, Vector3(4.2, 1.05, 0.9), Vector3(-4.5, 0.525, 1.0), Mats.color(Color(0.9, 0.92, 0.95), 0.25, 0.1), true)
-	Props.box(geo, Vector3(4.2, 0.06, 1.0), Vector3(-4.5, 1.08, 1.0), Mats.color(Color(0.05, 0.06, 0.08), 0.2, 0.5), false)
-	Props.box(geo, Vector3(0.5, 0.32, 0.04), Vector3(-5.5, 1.35, 0.9), Mats.emissive(Color(0.3, 0.6, 1.0), 1.5), false)
+	# reception desk: built in levels/dressing/l4_art.gd (stone top, slatted walnut, CORVANE wall)
 	Props.chair(geo, Vector3(-4.5, 0, 2.0), 0.3, true)
 	note("l4_agreement", Vector3(-3.2, 1.115, 1.0), T.AGREEMENT_TITLE, T.AGREEMENT, 0.3)
 	# welcome wall
 	Props.box(geo, Vector3(5.5, 2.2, 0.08), Vector3(0, 2.2, -5.8), Mats.emissive(Color(0.1, 0.35, 0.65), 1.3), false)
 	label("WELCOME TO MERIDIAN\nUPTIME  99.9997%", Vector3(0, 2.6, -5.74), 0.0, 90, Color(0.85, 0.98, 1.3), 0.007)
 	label("Visitors must be escorted at all times.", Vector3(0, 1.5, -5.74), 0.0, 36, Color(0.6, 0.78, 0.95), 0.005)
-	# turnstiles and benches
-	for sx in [-1.5, 1.5]:
-		Props.box(geo, Vector3(0.2, 1.0, 1.4), Vector3(sx, 0.5, -3.5), Mats.color(Color(0.7, 0.72, 0.76), 0.3, 0.6), true)
-		em(Vector3(sx, 1.02, -3.5), Vector3(0.12, 0.03, 0.9), Color(0.2, 1.0, 0.5), 3.0)
-	Props.bench(geo, Vector3(5.2, 0, 4.0), PI * 0.5)
-	Props.bench(geo, Vector3(5.2, 0, 7.5), PI * 0.5)
+	# turnstiles and the lounge seating: levels/dressing/l4_art.gd
 	Props.debris(geo, Vector3(-3, 0, 8), 0.0, 4, "frost")
 	Props.papers(geo, Vector3(1.5, 0.01, 3.0), 7)
 	_corpse(Vector3(-6.2, 0, 6.5), 0.8, {"shirt": Color(0.2, 0.3, 0.45), "bloody": 0.3})
@@ -555,8 +549,8 @@ func _electrical() -> void:
 	glow(Vector3(-23, 3.4, -28), Color(0.85, 0.92, 1.0), 2.4, 9.0, false, true)
 	glow(Vector3(-27, 3.6, -16), Color(0.85, 0.9, 1.0), 1.8, 9.0)
 	glow(Vector3(-20, 3.6, -16), Color(0.85, 0.9, 1.0), 1.8, 9.0)
-	strip(-23, -22, 8.0, true, HT - 0.04, Color(0.85, 0.92, 1.0))
-	strip(-27, -22, 6.0, true, HT - 0.04, Color(0.85, 0.92, 1.0))
+	pass
+	pass
 	# switchboard on the north wall
 	Props.box(geo, Vector3(9.5, 3.0, 0.3), Vector3(-23, 1.7, -31.7), Mats.color(Color(0.22, 0.26, 0.28), 0.5, 0.5), true)
 	label("MANUAL FEEDER ISOLATION", Vector3(-23, 3.7, -31.5), 0.0, 52, Color(1.0, 0.85, 0.3), 0.006, true)
@@ -835,7 +829,7 @@ func _start_breach() -> void:
 func _armory() -> void:
 	glow(Vector3(42, 3.6, -29), Color(1.0, 0.82, 0.6), 1.3, 9.0, true)
 	glow(Vector3(37, 3.2, -25), Color(1.0, 0.25, 0.15), 0.5, 5.0)
-	strip(42, -29, 7.0, false, HT - 0.04, Color(1.0, 0.9, 0.8))
+	pass
 	door("l4_armory", Vector3(46, 0, -36), 0.0, {"width": 1.8, "height": 2.6, "mat": "metal_painted", "lock_item": "badge_meridian", "keep_key": true,
 		"locked_msg": "SECURITY ARMORY. Badge reader: ACCESS DENIED."})
 	label("SECURITY ARMORY", Vector3(46, 3.0, -35.78), 0.0, 36, Color(1.0, 0.4, 0.3), 0.005)
@@ -855,7 +849,7 @@ func _armory() -> void:
 # =================================================================== corridor
 func _corridor() -> void:
 	for x in range(-24, 50, 8):
-		strip(float(x), -63, 2.4, false, HT - 0.04, Color(0.78, 0.88, 1.0))
+		pass
 		glow(Vector3(x, 3.9, -63), Color(0.75, 0.88, 1.0), 1.1, 8.0, x == 8)
 	Props.box(geo, Vector3(80, 0.05, 0.7), Vector3(10, 3.4, -60.7), _m_tray, false)
 	Props.box(geo, Vector3(80, 0.1, 0.5), Vector3(10, 3.48, -60.7), Mats.color(Color(0.04, 0.04, 0.05), 0.6), false)
@@ -895,8 +889,8 @@ func _noc_glass() -> void:
 func _noc() -> void:
 	glow(Vector3(-6, 3.9, -75), Color(0.7, 0.85, 1.0), 1.5, 14.0, true)
 	glow(Vector3(-6, 2.2, -82), Color(0.3, 0.6, 1.0), 2.5, 12.0)
-	strip(-9, -74, 8.0, true, HT - 0.04, Color(0.75, 0.88, 1.0))
-	strip(-3, -74, 8.0, true, HT - 0.04, Color(0.75, 0.88, 1.0))
+	pass
+	pass
 	# video wall
 	var cols := [Color(0.1, 0.35, 0.7), Color(0.05, 0.5, 0.45), Color(0.15, 0.25, 0.6), Color(0.6, 0.35, 0.05), Color(0.05, 0.4, 0.65)]
 	for r in 2:

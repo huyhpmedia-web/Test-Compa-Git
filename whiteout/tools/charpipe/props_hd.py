@@ -31,10 +31,10 @@ SPEC = {
 }
 # extra rotation (deg about Z) after auto-alignment, filled in after looking at the probe previews
 FIX = {"sedan": 180, "police": 180, "ambulance": 180, "bucket_truck": 180, "haul_truck": 180,
-    "shotgun": 180, "magnum": 180}
+    "shotgun": 180, "magnum": 180, "van": 180, "snowplow": 180, "reception_desk": -90}
 # real-world (width x, length y, height z) for vehicles: Tripo widens/heightens single-view cars a bit
 DIMS = {"sedan": (1.86, 4.9, 1.48), "police": (2.0, 5.3, 1.72), "ambulance": (2.4, 6.6, 2.9),
-        "bucket_truck": (2.45, 7.8, 3.7), "van": (2.03, 5.9, 2.1), "snowplow": (2.6, 9.0, 3.3), "haul_truck": (6.1, 10.0, 5.0)}
+        "bucket_truck": (2.45, 7.8, 3.7), "van": (2.03, 5.9, 2.1), "snowplow": (2.6, 9.0, 3.3), "reception_desk": (3.0, 1.45, 1.15), "haul_truck": (6.1, 10.0, 5.0)}
 
 
 def load(name):

@@ -1,0 +1,1058 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Honey Farm Tycoon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  /* Single sunny look on purpose: the farm is its own world, not themed by the host. */
+  :root{
+    --honey:#f7b21b; --honey-deep:#c97606; --ink:#3b2407; --cream:#fff8e6;
+    --leaf:#3f8f35; --sky:#a9def6; --panel:rgba(59,36,7,.82); --good:#58b947; --bad:#e2493b;
+    --font:"Baloo 2",ui-rounded,"Segoe UI",system-ui,sans-serif;
+    color-scheme:light;
+  }
+  html,body{margin:0;height:100%;overflow:hidden;background:var(--sky);color:var(--ink);font-family:var(--font);
+    touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+  canvas{display:block;position:fixed;inset:0}
+  #ui{position:fixed;inset:0;pointer-events:none}
+  #top{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;
+    padding:calc(10px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 0 max(12px,env(safe-area-inset-left,0px))}
+  .pills{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+  .pill{display:flex;align-items:center;gap:8px;background:var(--panel);color:var(--cream);border-radius:999px;
+    padding:3px 14px 3px 4px;font-weight:800;font-size:20px;line-height:1.2;font-variant-numeric:tabular-nums;box-shadow:0 3px 0 rgba(0,0,0,.18)}
+  .coin{width:28px;height:28px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe58a,#f7b21b 55%,#c97606);
+    display:grid;place-items:center;color:#7a4500;font-size:16px;box-shadow:inset 0 -2px 0 rgba(0,0,0,.2)}
+  .pill.small{font-size:15px;padding:2px 12px 2px 4px}
+  .pill.small .coin{width:22px;height:22px;font-size:13px;background:radial-gradient(circle at 35% 30%,#fff3c4,#e9a21a)}
+  .pill.bump{animation:bump .25s}
+  @keyframes bump{50%{transform:scale(1.12)}}
+  #tools{display:flex;flex-direction:column;gap:6px;align-items:flex-end;pointer-events:auto}
+  #tools button{font:700 13px/1 var(--font);color:var(--ink);background:var(--cream);border:2px solid var(--honey-deep);
+    border-radius:10px;padding:7px 10px 5px;cursor:pointer;box-shadow:0 2px 0 var(--honey-deep);min-width:112px;text-align:left}
+  #tools button.on{background:var(--honey);}
+  #tools button:focus-visible{outline:3px solid #fff;outline-offset:2px}
+  #hint{position:absolute;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);
+    background:var(--panel);color:var(--cream);padding:6px 18px 4px;border-radius:14px;font-weight:700;font-size:17px;
+    white-space:nowrap;max-width:calc(100vw - 32px);overflow:hidden;text-overflow:ellipsis;transition:opacity .3s}
+  #joy{position:absolute;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;
+    background:rgba(255,255,255,.18);border:3px solid rgba(255,255,255,.55);display:none}
+  #joy i{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;
+    background:rgba(255,255,255,.85);box-shadow:0 2px 6px rgba(0,0,0,.25)}
+  #tut{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);text-align:center;color:#fff;font-weight:800;font-size:22px;
+    text-shadow:0 2px 0 rgba(0,0,0,.35);transition:opacity .4s}
+  #tut .hand{font-size:52px;display:inline-block;animation:swipe 1.6s ease-in-out infinite}
+  @keyframes swipe{0%,100%{transform:translateX(-46px) rotate(-8deg)}50%{transform:translateX(46px) rotate(8deg)}}
+  .lbl{position:absolute;left:0;top:0;will-change:transform;white-space:nowrap}
+  .pad{background:var(--cream);border:2px solid var(--honey-deep);border-radius:12px;padding:2px 10px 0;text-align:center;
+    font-weight:800;font-size:14px;line-height:1.15;box-shadow:0 3px 0 rgba(0,0,0,.18)}
+  .pad b{display:block;font-size:12px;color:var(--honey-deep)}
+  .pad.ok{border-color:var(--good)} .pad.ok b{color:var(--leaf)}
+  .bubble{background:#fff;border-radius:12px;padding:2px 8px 4px;font-weight:800;font-size:14px;text-align:center;
+    box-shadow:0 2px 0 rgba(0,0,0,.2)}
+  .bubble i{display:block;height:5px;width:46px;border-radius:3px;background:#e7dccb;overflow:hidden;margin-top:1px}
+  .bubble u{display:block;height:100%;background:var(--good)}
+  .face{font-size:26px}
+  .float{font-weight:800;font-size:22px;color:#fff;text-shadow:0 2px 0 #3d7a1f,0 0 6px rgba(0,0,0,.25)}
+  .maxtag{background:var(--bad);color:#fff;border-radius:8px;padding:1px 7px 0;font-weight:800;font-size:12px}
+  #end{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(40,24,4,.45);pointer-events:auto;
+    padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px))}
+  #end .card{background:var(--cream);border:4px solid var(--honey);border-radius:22px;padding:22px 26px 18px;text-align:center;max-width:340px;
+    box-shadow:0 8px 0 var(--honey-deep)}
+  #end h2{margin:0;font-size:30px;line-height:1.1;text-wrap:balance}
+  #end p{margin:8px 0 14px;font-size:16px}
+  #end button{font:800 18px/1 var(--font);border:0;border-radius:14px;padding:12px 22px 9px;margin:4px;cursor:pointer}
+  #end .go{background:var(--honey);color:var(--ink);box-shadow:0 4px 0 var(--honey-deep)}
+  #end .alt{background:#e9dcc0;color:var(--ink)}
+  @media (prefers-reduced-motion:reduce){#tut .hand{animation:none}}
+</style>
+</head>
+<body>
+<div id="ui">
+  <div id="top">
+    <div class="pills">
+      <div class="pill" id="moneyPill"><span class="coin">$</span><span id="money">0</span></div>
+      <div class="pill small" id="stackPill"><span class="coin" id="stackIcon">·</span><span id="stack">0/6</span></div>
+    </div>
+    <div id="tools">
+      <button id="bLayout" type="button">▦ Bố cục</button>
+      <button id="bView" type="button">◎ Toàn cảnh</button>
+      <button id="bMode" type="button">👥 Hàng dài</button>
+      <button id="bCash" type="button">+ $100 (test)</button>
+    </div>
+  </div>
+  <div id="labels"></div>
+  <div id="tut"><div class="hand">👆</div><div>Kéo để di chuyển</div></div>
+  <div id="hint">Đến tổ ong lấy hũ mật</div>
+  <div id="joy"><i></i></div>
+  <div id="end"><div class="card">
+    <h2>Trang trại hoàn chỉnh!</h2>
+    <p id="endStats"></p>
+    <button class="go" id="bKeep" type="button">Chơi tiếp</button>
+    <button class="alt" id="bRestart" type="button">Chơi lại</button>
+  </div></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.152.2/three.min.js"></script>
+<script>
+/* =====================================================================
+   HONEY FARM — template "carry-stack tycoon"
+   Everything game-specific lives in CONFIG. The engine below reads it.
+   Map convention:  WEST = resource · CENTER = processing · EAST = customers
+                    NORTH / SOUTH = scenery.   +x = East, -z = North.
+   ===================================================================== */
+const CONFIG = {
+  theme: { name: 'Honey Farm', resource: 'Hũ mật', product: 'Thùng mật', resourceIcon: '🍯', productIcon: '📦' },
+  layout: {
+    bounds: { minX: -17, maxX: 17, minZ: -10, maxZ: 10 },
+    playerArea: { minX: -16.3, maxX: 7.2, minZ: -9.3, maxZ: 9.3 },
+    zones: [
+      { id: 'west',   label: 'TÂY · NGUỒN NGUYÊN LIỆU', sub: 'Tổ ong (mỏ / chuồng / cây)', x0: -17, x1: -6, z0: -6, z1: 6, color: 0xffa000 },
+      { id: 'center', label: 'TRUNG TÂM · CHẾ BIẾN',     sub: 'Máy đóng gói + băng chuyền', x0: -6, x1: 7.6, z0: -6, z1: 6, color: 0xff5a36 },
+      { id: 'east',   label: 'ĐÔNG · KHÁCH HÀNG',        sub: 'Quầy bán + hàng chờ / đám đông', x0: 7.6, x1: 17, z0: -6, z1: 6, color: 0x2f8fe8 },
+      { id: 'north',  label: 'BẮC · CẢNH QUAN',          sub: 'Trang trí + khu mở rộng', x0: -17, x1: 17, z0: -10, z1: -6, color: 0x3fae4a },
+      { id: 'south',  label: 'NAM · CẢNH QUAN',          sub: 'Trang trí', x0: -17, x1: 17, z0: 6, z1: 10, color: 0x3fae4a },
+    ],
+  },
+  player: { speed: 5.4, capacity: 6, start: [-3, 4] },
+  resource: { slots: [[-10.5, -2.6], [-10.5, 2.6], [-14, -2.6], [-14, 2.6]], startActive: 2, interval: 2.1, trayMax: 6 },
+  processor: { pos: [0, 0], time: 0.85, outMax: 12, input: [-0.9, 2.15], output: [2.5, 0] },
+  conveyor: { x0: -8.8, x1: -1.35, z: 0, speed: 1.6, max: 12 },
+  counter: { x: 8, halfLen: 2.2, serve: [6.5, 0], serveZone: { minX: 5.4, maxX: 7.4, minZ: -2.6, maxZ: 2.6 }, cash: [5.7, -4.2] },
+  customers: { mode: 'queue', maxQueue: 7, maxCrowd: 9, patience: 40, demand: [1, 3], spawnEvery: [2.2, 4.2], price: 12, spawnX: 19.5 },
+  unlocks: [
+    { id: 'hive3',    name: 'Tổ ong #3',    icon: '🐝', price: 30,  pos: [-14, -2.6] },
+    { id: 'conveyor', name: 'Băng chuyền',  icon: '⚙️', price: 60,  pos: [-5, 1.5] },
+    { id: 'hive4',    name: 'Tổ ong #4',    icon: '🐝', price: 80,  pos: [-14, 2.6] },
+    { id: 'flowers',  name: 'Vườn hoa',     icon: '🌼', price: 100, pos: [-10.5, -6.4] },
+    { id: 'machine2', name: 'Máy nhanh x2', icon: '⚡', price: 140, pos: [2.7, 2.8] },
+  ],
+};
+
+const start = () => {
+const V3 = THREE.Vector3;
+const $ = id => document.getElementById(id);
+const rnd = (a, b) => a + Math.random() * (b - a);
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const PI = Math.PI;
+
+/* ---------------- renderer / scene ---------------- */
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.prepend(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xa9def6);
+scene.fog = new THREE.Fog(0xa9def6, 55, 130);
+const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 300);
+
+scene.add(new THREE.HemisphereLight(0xeaf7ff, 0x6f9446, 0.9));
+const sun = new THREE.DirectionalLight(0xfff0cf, 0.95);
+sun.position.set(14, 28, 14);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -30, right: 30, top: 24, bottom: -24, near: 1, far: 90 });
+sun.shadow.bias = -0.0008;
+scene.add(sun);
+
+const setSRGB = t => { if ('colorSpace' in t) t.colorSpace = THREE.SRGBColorSpace; else t.encoding = THREE.sRGBEncoding; return t; };
+const matCache = {};
+const mat = (c, extra) => {
+  const k = c + (extra ? JSON.stringify(extra) : '');
+  return matCache[k] || (matCache[k] = new THREE.MeshLambertMaterial(Object.assign({ color: c }, extra || {})));
+};
+function mk(geo, m, parent, x = 0, y = 0, z = 0, cast = true) {
+  const o = new THREE.Mesh(geo, typeof m === 'number' ? mat(m) : m);
+  o.position.set(x, y, z); o.castShadow = cast; o.receiveShadow = true;
+  if (parent) parent.add(o);
+  return o;
+}
+const BOX = (w, h, d) => new THREE.BoxGeometry(w, h, d);
+const CYL = (rt, rb, h, s = 14) => new THREE.CylinderGeometry(rt, rb, h, s);
+const SPH = (r, w = 14, h = 10) => new THREE.SphereGeometry(r, w, h);
+const CAP = (r, l) => new THREE.CapsuleGeometry(r, l, 4, 10);
+
+function canvasTex(w, h, draw) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  draw(c.getContext('2d'), w, h);
+  const t = setSRGB(new THREE.CanvasTexture(c)); t.anisotropy = 4; return t;
+}
+const FONT = '"Baloo 2", ui-rounded, system-ui, sans-serif';
+
+/* ---------------- tiny audio ---------------- */
+let actx = null;
+function beep(f, d = 0.07, type = 'sine', v = 0.05) {
+  if (!actx) return;
+  const o = actx.createOscillator(), g = actx.createGain();
+  o.type = type; o.frequency.value = f; g.gain.value = v;
+  g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + d);
+  o.connect(g).connect(actx.destination); o.start(); o.stop(actx.currentTime + d);
+}
+const unlockAudio = () => { if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } };
+addEventListener('pointerdown', unlockAudio); addEventListener('keydown', unlockAudio);
+
+/* ---------------- shared props ---------------- */
+const G = {
+  jarBody: CYL(0.13, 0.12, 0.22), jarLid: CYL(0.14, 0.14, 0.06), jarBand: CYL(0.132, 0.132, 0.07),
+  crate: BOX(0.44, 0.28, 0.36), slat: BOX(0.46, 0.04, 0.38), label: new THREE.PlaneGeometry(0.22, 0.14),
+  bill: BOX(0.34, 0.035, 0.18),
+};
+const jarMat = new THREE.MeshLambertMaterial({ color: 0xf2a007, emissive: 0x6b3a00, emissiveIntensity: 0.35 });
+const labelTex = canvasTex(64, 40, (g, w, h) => { g.fillStyle = '#ffd34a'; g.fillRect(0, 0, w, h); g.fillStyle = '#7a4500';
+  g.beginPath(); for (let i = 0; i < 6; i++) { const a = i * PI / 3; g.lineTo(32 + Math.cos(a) * 13, 20 + Math.sin(a) * 13); } g.fill(); });
+function makeJar() {
+  const g = new THREE.Group();
+  mk(G.jarBody, jarMat, g, 0, 0.11, 0); mk(G.jarBand, 0xfff3d6, g, 0, 0.12, 0, false); mk(G.jarLid, 0xd84a3a, g, 0, 0.25, 0, false);
+  g.userData.kind = 'jar'; return g;
+}
+function makeCrate() {
+  const g = new THREE.Group();
+  mk(G.crate, 0xc98b4b, g, 0, 0.14, 0); mk(G.slat, 0x9a6431, g, 0, 0.08, 0, false); mk(G.slat, 0x9a6431, g, 0, 0.22, 0, false);
+  const l = mk(G.label, new THREE.MeshBasicMaterial({ map: labelTex }), g, 0, 0.15, 0.183, false); l.receiveShadow = false;
+  g.userData.kind = 'crate'; return g;
+}
+function makeBill(v = 0) { const g = new THREE.Group(); mk(G.bill, 0x56b949, g, 0, 0.02, 0); mk(BOX(0.1, 0.037, 0.1), 0x2f7d2c, g, 0, 0.02, 0, false); g.userData.v = v; return g; }
+const ITEM_H = { jar: 0.3, crate: 0.29 };
+
+/* ---------------- flying objects ---------------- */
+const flyers = new Set();
+function cancelFly(m) { const f = m.userData.fl; if (f) { flyers.delete(f); m.userData.fl = null; } }
+function fly(m, parent, local, dur, h, cb) {
+  cancelFly(m);
+  scene.attach(m);
+  const f = { m, parent, local, dur, h, cb, t: 0, from: m.position.clone() };
+  m.userData.fl = f; flyers.add(f);
+}
+function updateFlyers(dt) {
+  for (const f of flyers) {
+    f.t += dt; const k = Math.min(1, f.t / f.dur);
+    let tgt = f.local;
+    if (f.parent) { f.parent.updateWorldMatrix(true, false); tgt = f.parent.localToWorld(f.local.clone()); }
+    f.m.position.lerpVectors(f.from, tgt, k);
+    f.m.position.y += Math.sin(k * PI) * f.h;
+    f.m.rotation.y += dt * 6;
+    if (k >= 1) {
+      flyers.delete(f); f.m.userData.fl = null;
+      if (f.parent) { f.parent.add(f.m); f.m.position.copy(f.local); f.m.rotation.set(0, 0, 0); }
+      if (f.cb) f.cb();
+    }
+  }
+}
+class Pile {
+  constructor(parent, x, y, z, o) {
+    this.g = new THREE.Group(); this.g.position.set(x, y, z); parent.add(this.g); this.items = [];
+    Object.assign(this, { cols: 1, rows: 1, dx: 0.4, dz: 0.4, dy: 0.3 }, o);
+  }
+  slot(i) {
+    const per = this.cols * this.rows, l = Math.floor(i / per), r = i % per, c = r % this.cols, w = Math.floor(r / this.cols);
+    return new V3((c - (this.cols - 1) / 2) * this.dx, l * this.dy, (w - (this.rows - 1) / 2) * this.dz);
+  }
+  get count() { return this.items.length; }
+  get type() { return this.items.length ? this.items[0].userData.kind : null; }
+  add(m, dur = 0.28, h = 1.1, cb) {
+    const i = this.items.length; this.items.push(m);
+    if (dur <= 0) { cancelFly(m); this.g.add(m); m.position.copy(this.slot(i)); m.rotation.set(0, 0, 0); if (cb) cb(); }
+    else fly(m, this.g, this.slot(i), dur, h, cb);
+  }
+  take() { const m = this.items.pop(); if (m) cancelFly(m); return m; }
+  wpos() { return this.g.getWorldPosition(new V3()); }
+}
+
+/* ---------------- pop-in + particles ---------------- */
+const pops = [];
+function popIn(obj, delay = 0) { obj.scale.setScalar(0.001); pops.push({ obj, t: -delay }); }
+function updatePops(dt) {
+  for (let i = pops.length - 1; i >= 0; i--) {
+    const p = pops[i]; p.t += dt; if (p.t < 0) continue;
+    const k = Math.min(1, p.t / 0.45);
+    const s = k < 1 ? 1 + Math.sin(k * PI * 1.5) * (1 - k) * 0.6 - (1 - k) * (1 - k) * 0.9 : 1;
+    p.obj.scale.setScalar(Math.max(0.001, s));
+    if (k >= 1) { p.obj.scale.setScalar(1); pops.splice(i, 1); }
+  }
+}
+const parts = [];
+const partGeo = BOX(0.12, 0.12, 0.03);
+function confetti(pos, n = 30) {
+  const cols = [0xffc531, 0xff6b6b, 0x5ac8fa, 0x7ed957, 0xffffff, 0xb57edc];
+  for (let i = 0; i < n; i++) {
+    const m = mk(partGeo, new THREE.MeshBasicMaterial({ color: pick(cols), side: THREE.DoubleSide }), scene, pos.x, pos.y + 0.5, pos.z, false);
+    parts.push({ m, v: new V3(rnd(-3, 3), rnd(4, 8), rnd(-3, 3)), t: 0, s: rnd(4, 10) });
+  }
+}
+function updateParts(dt) {
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const p = parts[i]; p.t += dt; p.v.y -= 14 * dt;
+    p.m.position.addScaledVector(p.v, dt); p.m.rotation.x += p.s * dt; p.m.rotation.y += p.s * dt;
+    if (p.t > 1.4 || p.m.position.y < 0) { scene.remove(p.m); p.m.material.dispose(); parts.splice(i, 1); }
+  }
+}
+
+/* ---------------- DOM labels ---------------- */
+const labelsEl = $('labels');
+const labels = new Set();
+function addLabel(html, cls, getPos, oy = 0) {
+  const el = document.createElement('div'); el.className = 'lbl ' + cls; el.innerHTML = html; labelsEl.appendChild(el);
+  const L = { el, getPos, oy, show: true }; labels.add(L); return L;
+}
+function removeLabel(L) { if (!L) return; L.el.remove(); labels.delete(L); }
+const _v = new V3();
+function updateLabels() {
+  for (const L of labels) {
+    if (!L.show) { L.el.style.display = 'none'; continue; }
+    _v.copy(L.getPos()); _v.project(camera);
+    if (_v.z > 1) { L.el.style.display = 'none'; continue; }
+    L.el.style.display = '';
+    const x = (_v.x + 1) / 2 * innerWidth, y = (1 - _v.y) / 2 * innerHeight + L.oy;
+    L.el.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) translate(-50%,-100%)`;
+  }
+}
+const floats = [];
+function floatText(txt, pos) {
+  const p = pos.clone(); const L = addLabel(txt, 'float', () => p);
+  floats.push({ L, p, t: 0 });
+}
+function updateFloats(dt) {
+  for (let i = floats.length - 1; i >= 0; i--) {
+    const f = floats[i]; f.t += dt; f.p.y += dt * 1.6; f.L.el.style.opacity = String(Math.min(1, 2.2 - f.t * 2));
+    if (f.t > 1.1) { removeLabel(f.L); floats.splice(i, 1); }
+  }
+}
+
+/* ---------------- humanoid (standard bone names = rig contract) ----------------
+   Bones: Hips > Spine > Head, LeftArm > LeftForeArm, RightArm > RightForeArm,
+          LeftUpLeg > LeftLeg, RightUpLeg > RightLeg.  Clips: idle · run · carry · attack.
+   Later this procedural body is swapped for a GLB skinned to the same skeleton. */
+function makeHumanoid(o) {
+  const root = new THREE.Group();
+  const B = {};
+  const grp = (name, parent, x, y, z) => { const g = new THREE.Group(); g.name = name; g.position.set(x, y, z); parent.add(g); B[name] = g; return g; };
+  const hips = grp('Hips', root, 0, 0.78, 0);
+  const spine = grp('Spine', hips, 0, 0, 0);
+  mk(CAP(0.25, 0.28), o.shirt, spine, 0, 0.32, 0);
+  if (o.overall) { mk(CYL(0.262, 0.255, 0.3, 14), o.overall, spine, 0, 0.17, 0); mk(BOX(0.24, 0.2, 0.06), o.overall, spine, 0, 0.36, 0.22); }
+  const head = grp('Head', spine, 0, 0.66, 0);
+  mk(SPH(0.25), o.skin, head, 0, 0.2, 0);
+  const eyeM = mat(0x2a1a0e);
+  mk(SPH(0.035, 8, 6), eyeM, head, -0.09, 0.22, 0.225, false); mk(SPH(0.035, 8, 6), eyeM, head, 0.09, 0.22, 0.225, false);
+  mk(SPH(0.04, 8, 6), 0xff9f8f, head, -0.15, 0.14, 0.2, false); mk(SPH(0.04, 8, 6), 0xff9f8f, head, 0.15, 0.14, 0.2, false);
+  const hair = mk(new THREE.SphereGeometry(0.262, 14, 10, 0, PI * 2, 0, PI * 0.52), o.hair, head, 0, 0.21, -0.02); hair.rotation.x = -0.25;
+  if (o.hat === 'straw') { mk(CYL(0.46, 0.46, 0.04, 20), 0xf0d27a, head, 0, 0.38, 0); mk(CYL(0.2, 0.25, 0.2, 16), 0xf0d27a, head, 0, 0.48, 0); mk(CYL(0.252, 0.252, 0.05, 16), 0xd84a3a, head, 0, 0.42, 0, false); }
+  if (o.hat === 'cap') { mk(new THREE.SphereGeometry(0.27, 14, 8, 0, PI * 2, 0, PI / 2), o.hatColor, head, 0, 0.26, 0); const b = mk(BOX(0.3, 0.03, 0.2), o.hatColor, head, 0, 0.27, 0.27); b.rotation.x = 0.15; }
+  if (o.hat === 'bun') mk(SPH(0.12), o.hair, head, 0, 0.47, -0.08);
+  for (const [side, sx] of [['Left', 1], ['Right', -1]]) {
+    const arm = grp(side + 'Arm', spine, sx * 0.31, 0.5, 0); arm.rotation.z = sx * 0.08;
+    mk(CAP(0.075, 0.18), o.shirt, arm, 0, -0.14, 0);
+    const fore = grp(side + 'ForeArm', arm, 0, -0.28, 0);
+    mk(CAP(0.065, 0.14), o.skin, fore, 0, -0.1, 0); mk(SPH(0.075, 10, 8), o.skin, fore, 0, -0.24, 0);
+    const up = grp(side + 'UpLeg', hips, sx * 0.13, 0, 0);
+    mk(CAP(0.095, 0.18), o.pants, up, 0, -0.17, 0);
+    const leg = grp(side + 'Leg', up, 0, -0.36, 0);
+    mk(CAP(0.085, 0.16), o.pants, leg, 0, -0.14, 0); mk(BOX(0.17, 0.09, 0.28), o.shoes || 0x5a3a22, leg, 0, -0.34, 0.05);
+  }
+  root.scale.setScalar(o.scale || 1);
+  const carry = new THREE.Group(); carry.position.set(0, 0.9, 0.46); root.add(carry);
+  return { root, B, carry, cyc: Math.random() * 10, t: Math.random() * 10 };
+}
+function animHuman(h, dt, moving, carrying, sp = 1, clip = null) {
+  h.t += dt; const B = h.B; const k = Math.min(1, dt * 14);
+  const set = (b, ax, v) => { b.rotation[ax] += (v - b.rotation[ax]) * k; };
+  let lu = 0, ru = 0, ll = 0, rl = 0, la = 0, ra = 0, lf = 0, rf = 0, hy = 0.78, sx = 0;
+  if (moving) {
+    h.cyc += dt * 11 * sp; const s = Math.sin(h.cyc), c = Math.cos(h.cyc);
+    lu = s * 0.75; ru = -s * 0.75; ll = Math.max(0, c) * 1.0; rl = Math.max(0, -c) * 1.0;
+    la = -s * 0.7; ra = s * 0.7; lf = -0.5; rf = -0.5; hy = 0.78 + Math.abs(c) * 0.05; sx = 0.12;
+  } else {
+    hy = 0.78 + Math.sin(h.t * 2.2) * 0.008; la = 0.05; ra = 0.05; lf = -0.1; rf = -0.1;
+  }
+  if (carrying) { la = ra = -1.3; lf = rf = -0.35; }
+  if (clip === 'attack') { ra = -2.4 + Math.sin(h.t * 12) * 0.9; }
+  if (clip === 'cheer') { la = ra = -2.8 + Math.sin(h.t * 16) * 0.2; }
+  set(B.LeftUpLeg, 'x', lu); set(B.RightUpLeg, 'x', ru); set(B.LeftLeg, 'x', ll); set(B.RightLeg, 'x', rl);
+  set(B.LeftArm, 'x', la); set(B.RightArm, 'x', ra); set(B.LeftForeArm, 'x', lf); set(B.RightForeArm, 'x', rf);
+  set(B.Spine, 'x', sx);
+  B.Hips.position.y += (hy - B.Hips.position.y) * k;
+}
+
+/* ---------------- world: ground, zones, decor ---------------- */
+const L = CONFIG.layout, bnd = L.bounds, PA = L.playerArea;
+const obstacles = [];
+const addCircle = (x, z, r) => { const o = { c: 1, x, z, r }; obstacles.push(o); return o; };
+const addBox = (x0, x1, z0, z1) => { const o = { c: 0, x0, x1, z0, z1 }; obstacles.push(o); return o; };
+
+const ground = mk(new THREE.PlaneGeometry(200, 200), 0x8fcf5d, scene, 0, 0, 0, false); ground.rotation.x = -PI / 2;
+function flat(w, d, c, x, z, y = 0.01) { const m = mk(new THREE.PlaneGeometry(w, d), c, scene, x, y, z, false); m.rotation.x = -PI / 2; return m; }
+flat(34, 20, 0x9ad866, 0, 0, 0.005);                 // farm lawn
+flat(10.6, 11.4, 0x7fc356, -11.6, 0, 0.012);           // hive meadow (W)
+flat(16, 9.4, 0xe8cb8f, -0.6, 0, 0.015);              // work yard (center)
+flat(9.2, 10.6, 0xdcd3c2, 12.6, 0, 0.015);            // customer plaza (E)
+flat(3.2, 200, 0x6d6f75, CONFIG.customers.spawnX, 0, 0.02); // road
+for (let z = -90; z < 90; z += 4) flat(0.18, 1.8, 0xf4f1e6, CONFIG.customers.spawnX, z, 0.025);
+flat(3.4, 2.2, 0xdcd3c2, 18.2, 0, 0.018);
+
+// fence: west, north, south edges + shop divider
+function fenceLine(x0, z0, x1, z1) {
+  const len = Math.hypot(x1 - x0, z1 - z0), n = Math.max(1, Math.round(len / 2)), ang = Math.atan2(x1 - x0, z1 - z0);
+  for (let i = 0; i <= n; i++) { const t = i / n; mk(BOX(0.16, 0.9, 0.16), 0xf6efe0, scene, x0 + (x1 - x0) * t, 0.45, z0 + (z1 - z0) * t); }
+  for (const y of [0.35, 0.7]) { const r = mk(BOX(0.07, 0.1, len), 0xf6efe0, scene, (x0 + x1) / 2, y, (z0 + z1) / 2); r.rotation.y = ang; }
+}
+fenceLine(bnd.minX, bnd.minZ, bnd.maxX, bnd.minZ);
+fenceLine(bnd.minX, bnd.maxZ, bnd.maxX, bnd.maxZ);
+fenceLine(bnd.minX, bnd.minZ, bnd.minX, bnd.maxZ);
+fenceLine(7.95, bnd.minZ, 7.95, -2.45);
+fenceLine(7.95, 2.45, 7.95, bnd.maxZ);
+
+function tree(x, z, s = 1, block = false) {
+  const g = new THREE.Group(); g.position.set(x, 0, z); g.scale.setScalar(s); scene.add(g);
+  mk(CYL(0.16, 0.22, 1.2, 8), 0x8a5a33, g, 0, 0.6, 0);
+  const c = pick([0x4fa83d, 0x5cb843, 0x46993a]);
+  mk(SPH(0.95, 12, 9), c, g, 0, 1.75, 0); mk(SPH(0.7, 12, 9), c, g, 0.45, 1.45, 0.3); mk(SPH(0.65, 12, 9), c, g, -0.45, 1.5, -0.2);
+  if (block) addCircle(x, z, 0.55 * s);
+  return g;
+}
+function bush(x, z, s = 1) { mk(SPH(0.5 * s, 10, 8), 0x58ad3f, scene, x, 0.32 * s, z); }
+function flower(x, z, col, parent = scene, s = 1) {
+  const g = new THREE.Group(); g.position.set(x, 0, z); g.scale.setScalar(s); parent.add(g);
+  mk(CYL(0.02, 0.02, 0.4, 5), 0x3c8a2c, g, 0, 0.2, 0, false);
+  const head = mk(CYL(0.13, 0.13, 0.04, 8), col, g, 0, 0.42, 0, false); head.rotation.x = 0.4;
+  mk(SPH(0.05, 6, 5), 0xffd23a, g, 0, 0.45, 0.02, false);
+  return g;
+}
+const FLOWER_COLS = [0xff6b9a, 0xffffff, 0xb57edc, 0xff8a3d, 0xffe14d, 0xff4f5e];
+// trees outside the fence + north/south strips
+for (let x = -24; x <= 26; x += 3.2) { tree(x + rnd(-0.6, 0.6), -12.5 + rnd(-1, 0.6), rnd(0.9, 1.3)); tree(x + rnd(-0.6, 0.6), 12.6 + rnd(-0.6, 1), rnd(0.9, 1.3)); }
+for (let z = -9; z <= 9; z += 3) tree(-19.5 + rnd(-0.6, 0.6), z, rnd(0.9, 1.2));
+for (let z = -14; z <= 14; z += 3.5) if (Math.abs(z) > 3) tree(23.5 + rnd(-0.5, 0.5), z, rnd(0.9, 1.2));
+[[-15.6, -8.9], [7, -8.8], [-3.5, 8.9], [6.2, 8.8], [-15.8, 8.6]].forEach(([x, z]) => tree(x, z, 1, true));
+for (let i = 0; i < 26; i++) { const x = rnd(-16.3, -7.6), z = rnd(-5.3, 5.3); if (Math.abs(z) > 1 && Math.abs(Math.abs(z) - 2.6) > 1.4) flower(x, z, pick(FLOWER_COLS), scene, rnd(0.8, 1.1)); }
+[[-6.5, -5.4], [-6.5, 5.4], [-2, 5.6], [4, -5.6], [-3, -5.6]].forEach(([x, z]) => bush(x, z, rnd(0.9, 1.3)));
+
+// NORTH: barn, windmill, truck, locked flower field
+(() => {
+  const g = new THREE.Group(); g.position.set(1.6, 0, -8.3); scene.add(g);
+  mk(BOX(4.2, 2.4, 2.6), 0xc8453a, g, 0, 1.2, 0);
+  const roof = mk(CYL(1.65, 1.65, 4.5, 3), 0x7a3b2a, g, 0, 2.75, 0); roof.rotation.z = PI / 2; roof.rotation.x = PI / 2; roof.scale.set(1, 1, 0.62);
+  mk(BOX(1.4, 1.6, 0.05), 0xf6efe0, g, 0, 0.8, 1.31); const x1 = mk(BOX(0.12, 1.9, 0.06), 0xc8453a, g, 0, 0.8, 1.34, false); x1.rotation.z = 0.72;
+  const x2 = mk(BOX(0.12, 1.9, 0.06), 0xc8453a, g, 0, 0.8, 1.34, false); x2.rotation.z = -0.72;
+  addBox(-0.6, 3.8, -9.7, -6.9);
+})();
+const windmill = (() => {
+  const g = new THREE.Group(); g.position.set(13.5, 0, -8.2); scene.add(g);
+  mk(CYL(0.55, 1.05, 4.6, 8), 0xf3ead6, g, 0, 2.3, 0); mk(new THREE.ConeGeometry(0.85, 1, 8), 0xc8453a, g, 0, 5.1, 0);
+  const hub = new THREE.Group(); hub.position.set(0, 4.5, 0.75); g.add(hub);
+  for (let i = 0; i < 4; i++) { const b = mk(BOX(0.36, 2.4, 0.05), 0xfaf5e8, hub, 0, 0, 0); b.geometry = BOX(0.36, 2.4, 0.05); b.geometry.translate(0, 1.25, 0); b.rotation.z = i * PI / 2; }
+  mk(CYL(0.16, 0.16, 0.2, 10), 0x7a3b2a, hub, 0, 0, 0).rotation.x = PI / 2;
+  return hub;
+})();
+(() => { // delivery truck
+  const g = new THREE.Group(); g.position.set(17.3, 0, -6.6); g.rotation.y = 0; scene.add(g);
+  mk(BOX(1.7, 1.3, 3.0), 0xf7b21b, g, 0, 1.0, -0.4); mk(BOX(1.7, 1.0, 1.2), 0xfff3d6, g, 0, 0.85, 1.6);
+  mk(BOX(1.5, 0.45, 0.05), 0x7fc9f0, g, 0, 1.15, 2.21, false);
+  for (const [x, z] of [[-0.85, -1.2], [0.85, -1.2], [-0.85, 1.5], [0.85, 1.5]]) { const w = mk(CYL(0.36, 0.36, 0.24, 14), 0x2c2c2c, g, x, 0.36, z); w.rotation.z = PI / 2; }
+})();
+const field = { soil: null, flowers: new THREE.Group(), rect: [-15.6, -5.6, -9.5, -7.0] };
+(() => {
+  const [x0, x1, z0, z1] = field.rect, cx = (x0 + x1) / 2, cz = (z0 + z1) / 2;
+  field.soil = flat(x1 - x0, z1 - z0, 0xa87447, cx, cz, 0.02);
+  for (let x = x0 + 0.5; x < x1; x += 0.9) flat(0.35, z1 - z0 - 0.4, 0x8d5f37, x, cz, 0.025);
+  scene.add(field.flowers);
+})();
+
+// SOUTH: pond, hay, sign, sunflowers
+(() => {
+  const p = flat(1, 1, 0x5ab6e6, -9.2, 8.0, 0.03); p.geometry = new THREE.CircleGeometry(1.9, 28);
+  const r = flat(1, 1, 0xcfe8b4, -9.2, 8.0, 0.025); r.geometry = new THREE.CircleGeometry(2.25, 28);
+  for (let i = 0; i < 4; i++) { const l = flat(1, 1, 0x4c9a3a, -9.2 + rnd(-1.2, 1.2), 8 + rnd(-0.9, 0.9), 0.04); l.geometry = new THREE.CircleGeometry(0.2, 10); }
+  for (let i = 0; i < 7; i++) { const a = rnd(0, PI * 2); mk(CYL(0.03, 0.03, 0.8, 4), 0x5d8a35, scene, -9.2 + Math.cos(a) * 2.1, 0.4, 8 + Math.sin(a) * 2.1, false); }
+  addCircle(-9.2, 8.0, 2.0);
+  for (const [x, z, y] of [[2.4, 8.2, 0], [3.7, 8.4, 0], [3.0, 8.3, 0.75]]) { const h = mk(CYL(0.55, 0.55, 0.8, 16), 0xe6c55a, scene, x, 0.4 + y, z); h.rotation.z = PI / 2; h.rotation.y = 0.2; }
+  addBox(1.7, 4.4, 7.6, 9.0);
+  for (let x = -4.5; x < 1; x += 0.7) { const f = flower(x, 9.2, 0xffd23a, scene, 1.8); f.children[1].material = mat(0xffc21a); }
+  const sign = new THREE.Group(); sign.position.set(12.3, 0, 8.2); scene.add(sign);
+  mk(BOX(0.18, 2.2, 0.18), 0x8a5a33, sign, -1.6, 1.1, 0); mk(BOX(0.18, 2.2, 0.18), 0x8a5a33, sign, 1.6, 1.1, 0);
+  const t = canvasTex(512, 160, (g, w, h) => { g.fillStyle = '#7a4500'; g.fillRect(0, 0, w, h); g.fillStyle = '#ffd34a'; g.fillRect(10, 10, w - 20, h - 20);
+    g.fillStyle = '#5a3200'; g.font = `800 78px ${FONT}`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('HONEY FARM', w / 2, h / 2 + 6); });
+  mk(BOX(3.6, 1.1, 0.12), new THREE.MeshLambertMaterial({ map: t }), sign, 0, 1.75, 0);
+})();
+
+/* ---------------- shop counter (EAST edge) ---------------- */
+(() => {
+  const C = CONFIG.counter, g = new THREE.Group(); g.position.set(C.x, 0, 0); scene.add(g);
+  mk(BOX(0.9, 1.0, C.halfLen * 2), 0xb9773f, g, 0, 0.5, 0); mk(BOX(1.05, 0.1, C.halfLen * 2 + 0.2), 0xf7b21b, g, 0, 1.05, 0);
+  for (let z = -C.halfLen + 0.3; z < C.halfLen; z += 0.55) mk(BOX(0.92, 0.85, 0.05), 0x9a6431, g, 0, 0.5, z, false);
+  for (const [x, z] of [[-0.5, -C.halfLen - 0.1], [0.5, -C.halfLen - 0.1], [-0.5, C.halfLen + 0.1], [0.5, C.halfLen + 0.1]]) mk(BOX(0.1, 2.6, 0.1), 0xf6efe0, g, x, 1.3, z);
+  // open-top stall: posts + a sign beam, so the camera always sees the counter and the front customer
+  const stripes = canvasTex(256, 32, (c, w, h) => { for (let i = 0; i < 12; i++) { c.fillStyle = i % 2 ? '#fff6e0' : '#f7b21b'; c.beginPath(); c.arc((i + 0.5) * w / 12, 0, w / 24, 0, PI); c.fill(); } });
+  for (const sx of [-0.5, 0.5]) mk(BOX(0.1, 0.12, C.halfLen * 2 + 0.3), 0xf6efe0, g, sx, 2.55, 0);
+  const sg = canvasTex(512, 128, (c, w, h) => { c.fillStyle = '#5a3200'; c.fillRect(0, 0, w, h); c.fillStyle = '#ffd34a';
+    c.font = `800 72px ${FONT}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('MẬT ONG', w / 2, h / 2 + 6); });
+  const s = mk(new THREE.PlaneGeometry(2.6, 0.6), new THREE.MeshBasicMaterial({ map: sg }), g, 0.56, 2.85, 0, false); s.rotation.y = PI / 2;
+  const s2 = mk(new THREE.PlaneGeometry(2.6, 0.6), new THREE.MeshBasicMaterial({ map: sg }), g, -0.56, 2.85, 0, false); s2.rotation.y = -PI / 2;
+  const val = mk(new THREE.PlaneGeometry(C.halfLen * 2 + 0.3, 0.22), new THREE.MeshBasicMaterial({ map: stripes, transparent: true, side: THREE.DoubleSide }), g, 0.57, 2.42, 0, false); val.rotation.y = PI / 2;
+  mk(BOX(0.45, 0.3, 0.5), 0x5a6b7a, g, 0, 1.25, 1.4); mk(BOX(0.3, 0.18, 0.04), 0x9fe3a8, g, -0.05, 1.42, 1.4, false);
+  for (let i = 0; i < 4; i++) { const j = makeJar(); j.position.set(0.1, 1.1, -1.6 + i * 0.32); g.add(j); }
+  addBox(C.x - 0.55, C.x + 0.55, -C.halfLen - 0.2, C.halfLen + 0.2);
+  const cash = flat(1.5, 1.5, 0x6fbf5a, C.cash[0], C.cash[1], 0.03);
+  const ct = canvasTex(128, 128, (c, w, h) => { c.fillStyle = '#e9f7dd'; c.fillRect(0, 0, w, h); c.strokeStyle = '#3d8a2c'; c.lineWidth = 10; c.strokeRect(8, 8, w - 16, h - 16);
+    c.fillStyle = '#3d8a2c'; c.font = `800 70px ${FONT}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('$', w / 2, h / 2 + 4); });
+  cash.material = new THREE.MeshLambertMaterial({ map: ct });
+})();
+
+/* ---------------- WEST: hives ---------------- */
+const R = CONFIG.resource;
+const hives = [];
+const ghosts = [];
+R.slots.forEach(([x, z], i) => {
+  const gh = new THREE.Group(); gh.position.set(x, 0, z); scene.add(gh);
+  mk(BOX(1.3, 0.12, 1.3), 0xb48a5e, gh, 0, 0.06, 0); ghosts[i] = gh;
+});
+function buildHive(i, anim) {
+  const [x, z] = R.slots[i]; ghosts[i].visible = false;
+  const g = new THREE.Group(); g.position.set(x, 0, z); scene.add(g);
+  for (const [lx, lz] of [[-0.45, -0.45], [0.45, -0.45], [-0.45, 0.45], [0.45, 0.45]]) mk(BOX(0.1, 0.35, 0.1), 0x7a4b28, g, lx, 0.17, lz);
+  mk(BOX(1.15, 0.08, 1.15), 0x8f5a2f, g, 0, 0.38, 0);
+  const cols = [0xfff0b8, 0xf6c445, 0xfff0b8];
+  cols.forEach((c, k) => { mk(BOX(1.0, 0.36, 1.0), c, g, 0, 0.6 + k * 0.38, 0); mk(BOX(1.04, 0.04, 1.04), 0xd99a2b, g, 0, 0.78 + k * 0.38, 0, false); });
+  mk(BOX(1.25, 0.12, 1.25), 0xb46a2c, g, 0, 1.73, 0); mk(BOX(0.9, 0.12, 0.9), 0xb46a2c, g, 0, 1.84, 0);
+  mk(BOX(0.4, 0.06, 0.04), 0x3a2410, g, 0.51, 0.5, 0, false).rotation.y = PI / 2;
+  const drip = mk(SPH(0.09, 8, 6), jarMat, g, 0.5, 1.15, 0.25, false); drip.scale.y = 1.6;
+  const pallet = mk(BOX(0.75, 0.1, 0.75), 0xc8a06a, scene, x + 1.35, 0.05, z);
+  const tray = new Pile(scene, x + 1.35, 0.1, z, { cols: 2, rows: 2, dx: 0.3, dz: 0.3, dy: ITEM_H.jar });
+  const h = { i, g, tray, pallet, timer: rnd(0, 1), pos: new V3(x, 0, z), trayPos: new V3(x + 1.35, 0, z), maxL: null };
+  h.maxL = addLabel('<span class="maxtag">ĐẦY</span>', '', () => _tmp.set(h.trayPos.x, 1.4, h.trayPos.z).clone(), 0);
+  addCircle(x, z, 0.75);
+  if (anim) { popIn(g); confetti(new V3(x, 0.5, z)); }
+  for (let b = 0; b < 5; b++) addBee(h.pos, 1.3);
+  hives.push(h);
+}
+const _tmp = new V3();
+
+// bees
+const bees = [];
+const beeBody = SPH(0.07, 8, 6), beeWing = new THREE.PlaneGeometry(0.1, 0.07);
+const beeWingMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.8, side: THREE.DoubleSide });
+function addBee(center, rad, field = false) {
+  const g = new THREE.Group();
+  const b = mk(beeBody, 0xffcf2e, g, 0, 0, 0, false); b.scale.set(1, 1, 1.4);
+  mk(beeBody, 0x2a1a0e, g, 0, 0, -0.07, false).scale.set(0.8, 0.8, 0.5);
+  const w1 = mk(beeWing, beeWingMat, g, 0.06, 0.07, 0, false), w2 = mk(beeWing, beeWingMat, g, -0.06, 0.07, 0, false);
+  scene.add(g);
+  bees.push({ g, w1, w2, c: center.clone(), rad, ph: rnd(0, 10), sp: rnd(0.8, 1.6), field });
+}
+function updateBees(t) {
+  for (const b of bees) {
+    const a = t * b.sp + b.ph;
+    const x = b.c.x + Math.cos(a) * b.rad * (b.field ? 2.4 : 1) + Math.sin(a * 2.3) * 0.3;
+    const z = b.c.z + Math.sin(a * 1.3) * b.rad * (b.field ? 0.6 : 1);
+    const y = (b.field ? 0.8 : 1.4) + Math.sin(a * 3.1) * 0.35;
+    const dx = x - b.g.position.x, dz = z - b.g.position.z;
+    b.g.position.set(x, y, z); if (Math.abs(dx) + Math.abs(dz) > 1e-4) b.g.rotation.y = Math.atan2(dx, dz);
+    const f = Math.sin(t * 60 + b.ph) * 0.6; b.w1.rotation.z = f; b.w2.rotation.z = -f;
+  }
+}
+
+/* ---------------- CENTER: packing machine + conveyor ---------------- */
+const P = CONFIG.processor;
+const machine = { pending: 0, busy: false, t: 0, time: P.time, gold: false };
+(() => {
+  const [mx, mz] = P.pos, g = new THREE.Group(); g.position.set(mx, 0, mz); scene.add(g); machine.g = g;
+  mk(BOX(2.8, 0.25, 2.4), 0x6b7a86, g, 0, 0.12, 0);
+  machine.body = mk(BOX(2.6, 1.4, 2.2), 0xffc531, g, 0, 0.95, 0);
+  mk(BOX(2.64, 0.12, 2.24), 0xd98c10, g, 0, 1.68, 0, false);
+  const hop = mk(CYL(0.65, 0.32, 0.6, 12), 0x9aa8b3, g, -0.7, 2.0, 0); hop.material = mat(0x9aa8b3);
+  machine.piston = mk(BOX(0.5, 0.6, 0.5), 0x8a97a3, g, 0.6, 2.0, 0);
+  mk(CYL(0.13, 0.13, 1.0, 8), 0x6b7a86, g, 0.95, 2.2, -0.75);
+  machine.light = mk(SPH(0.12, 10, 8), new THREE.MeshBasicMaterial({ color: 0x7ed957 }), g, 0.95, 2.75, -0.75, false);
+  const win = mk(new THREE.PlaneGeometry(1.2, 0.55), new THREE.MeshBasicMaterial({ color: 0xffe79a }), g, 0, 1.0, 1.105, false); machine.win = win;
+  machine.gear = new THREE.Group(); machine.gear.position.set(-0.85, 1.0, 1.12); g.add(machine.gear);
+  mk(CYL(0.28, 0.28, 0.08, 12), 0x6b7a86, machine.gear, 0, 0, 0, false).rotation.x = PI / 2;
+  for (let i = 0; i < 8; i++) { const t = mk(BOX(0.1, 0.12, 0.08), 0x6b7a86, machine.gear, Math.cos(i * PI / 4) * 0.32, Math.sin(i * PI / 4) * 0.32, 0, false); t.rotation.z = i * PI / 4; }
+  const chute = mk(BOX(0.9, 0.06, 0.8), 0x8a97a3, g, 1.6, 0.5, 0); chute.rotation.z = -0.35;
+  const tb = new THREE.Group(); tb.position.set(P.input[0], 0, P.input[1]); scene.add(tb);
+  mk(BOX(1.0, 0.5, 0.8), 0xb9773f, tb, 0, 0.25, 0);
+  flat(1.5, 1.5, 0xf7d77a, P.input[0], P.input[1], 0.02);
+  flat(1.6, 1.4, 0xf7d77a, P.output[0], P.output[1], 0.02);
+  addBox(mx - 1.4, mx + 1.4, mz - 1.2, mz + 1.2);
+  addBox(P.input[0] - 0.5, P.input[0] + 0.5, P.input[1] - 0.4, P.input[1] + 0.4);
+})();
+const inputPile = new Pile(scene, P.input[0], 0.5, P.input[1], { cols: 2, rows: 2, dx: 0.32, dz: 0.3, dy: ITEM_H.jar });
+const outputPile = new Pile(scene, P.output[0], 0.02, P.output[1], { cols: 2, rows: 2, dx: 0.48, dz: 0.4, dy: ITEM_H.crate });
+const HOPPER = new V3(P.pos[0] - 0.7, 2.4, P.pos[1]);
+const CHUTE = new V3(P.pos[0] + 1.5, 1.0, P.pos[1]);
+function updateMachine(dt) {
+  if (machine.pending < 2 && inputPile.count && !machine.pullCd) {
+    const j = inputPile.take(); machine.pullCd = 0.25;
+    fly(j, null, HOPPER.clone(), 0.3, 0.8, () => { scene.remove(j); machine.pending++; });
+  }
+  if (machine.pullCd) machine.pullCd = Math.max(0, machine.pullCd - dt);
+  if (!machine.busy && machine.pending > 0 && outputPile.count < P.outMax) { machine.busy = true; machine.t = 0; machine.pending--; }
+  if (machine.busy) {
+    machine.t += dt;
+    machine.piston.position.y = 2.0 - Math.abs(Math.sin(machine.t * 14)) * 0.25;
+    machine.gear.rotation.z -= dt * 6;
+    if (machine.t >= machine.time) {
+      machine.busy = false;
+      const c = makeCrate(); c.position.copy(CHUTE); scene.add(c);
+      outputPile.add(c, 0.3, 0.6); beep(520, 0.05, 'triangle', 0.03);
+    }
+  } else machine.piston.position.y += (2.0 - machine.piston.position.y) * 0.2;
+  machine.light.material.color.setHex(machine.busy ? 0x7ed957 : (outputPile.count >= P.outMax ? 0xff5a4a : 0xffd23a));
+}
+
+const CV = CONFIG.conveyor;
+const belt = { on: false, items: [], g: null, tex: null };
+function buildConveyor(anim) {
+  const len = CV.x1 - CV.x0, g = new THREE.Group(); g.position.set((CV.x0 + CV.x1) / 2, 0, CV.z); scene.add(g); belt.g = g;
+  belt.tex = canvasTex(64, 32, (c, w, h) => { c.fillStyle = '#3a3f46'; c.fillRect(0, 0, w, h); c.fillStyle = '#565c64'; c.fillRect(0, 0, 10, h); });
+  belt.tex.wrapS = THREE.RepeatWrapping; belt.tex.repeat.set(len * 2.5, 1);
+  mk(BOX(len, 0.12, 0.7), new THREE.MeshLambertMaterial({ map: belt.tex }), g, 0, 0.5, 0);
+  mk(BOX(len, 0.16, 0.08), 0xffc531, g, 0, 0.52, 0.39); mk(BOX(len, 0.16, 0.08), 0xffc531, g, 0, 0.52, -0.39);
+  for (let x = -len / 2 + 0.3; x < len / 2; x += 1.2) { mk(BOX(0.1, 0.45, 0.1), 0x6b7a86, g, x, 0.22, 0.3); mk(BOX(0.1, 0.45, 0.1), 0x6b7a86, g, x, 0.22, -0.3); }
+  addBox(CV.x0, CV.x1, CV.z - 0.45, CV.z + 0.45);
+  belt.on = true;
+  if (anim) { popIn(g); confetti(new V3(g.position.x, 0.6, CV.z)); }
+}
+function beltStartFree() { return belt.items.length < CV.max && !belt.items.some(it => it.u < 0.5); }
+function updateBelt(dt) {
+  if (!belt.on) return;
+  belt.tex.offset.x -= dt * CV.speed * 2.5;
+  const len = CV.x1 - CV.x0;
+  belt.items.sort((a, b) => b.u - a.u);
+  for (let k = 0; k < belt.items.length; k++) {
+    const it = belt.items[k]; if (!it.ready) continue;
+    const lim = k === 0 ? len : belt.items[k - 1].u - 0.42;
+    it.u = Math.min(lim, it.u + CV.speed * dt);
+    it.m.position.set(CV.x0 + it.u, 0.57, CV.z);
+  }
+  const head = belt.items[0];
+  if (head && head.ready && head.u >= len - 0.01 && machine.pending < 4) {
+    belt.items.shift();
+    fly(head.m, null, HOPPER.clone(), 0.28, 0.6, () => { scene.remove(head.m); machine.pending++; });
+  }
+}
+
+/* ---------------- hives production ---------------- */
+let hiveMult = 1;
+function updateHives(dt) {
+  for (const h of hives) {
+    h.timer += dt * hiveMult;
+    const full = h.tray.count >= R.trayMax;
+    h.maxL.show = full && !belt.on;
+    if (h.timer < R.interval) continue;
+    if (belt.on && beltStartFree()) {
+      h.timer = 0;
+      const j = makeJar(); j.position.set(h.pos.x, 1.6, h.pos.z); scene.add(j);
+      const it = { m: j, u: 0, ready: false }; belt.items.push(it);
+      fly(j, null, new V3(CV.x0, 0.57, CV.z), 0.45, 1.0, () => { it.ready = true; });
+    } else if (!full) {
+      h.timer = 0;
+      const j = makeJar(); j.position.set(h.pos.x, 1.6, h.pos.z); scene.add(j);
+      h.tray.add(j, 0.35, 0.7);
+    }
+  }
+}
+
+/* ---------------- player ---------------- */
+const PL = CONFIG.player;
+const player = makeHumanoid({ skin: 0xf3c9a0, shirt: 0xe2574c, overall: 0x3f6fb5, pants: 0x3f6fb5, hair: 0x5a3825, hat: 'straw', shoes: 0x5a3a22 });
+player.root.position.set(PL.start[0], 0, PL.start[1]); scene.add(player.root);
+const stack = new Pile(player.carry, 0, 0, 0, { dy: 0.3 });
+let money = 0, sold = 0, earned = 0;
+const vel = new V3();
+let heading = 0;
+
+/* ---------------- customers ---------------- */
+const CU = CONFIG.customers;
+let custMode = CU.mode;
+const customers = [];
+const SKINS = [0xf3c9a0, 0xe0ac7e, 0xc68a5c, 0x8d5a3b, 0xffdcb8];
+const SHIRTS = [0x5aa9e6, 0xf27059, 0x7bc950, 0xb57edc, 0xf4a259, 0x4ecdc4, 0xff8fab, 0x8d99ae];
+const HAIRS = [0x2b1d14, 0x5a3825, 0xd9a441, 0x1c1c1c, 0x8b4513, 0xb0b0b0];
+const PANTS = [0x3b4a6b, 0x4a4a4a, 0x7a5c3e, 0x2f5d50, 0x5b4b8a];
+const CROWD = [[9.3, 0], [10.4, -1.4], [10.5, 1.3], [11.6, -0.1], [11.7, -2.6], [11.9, 2.4], [12.9, -1.3], [13.0, 1.2], [13.6, -3.4], [13.8, 3.3], [14.5, 0.1]];
+function slotPos(i, c) {
+  if (custMode === 'queue') return new V3(9.3 + i * 1.1, 0, 0);
+  const p = CROWD[Math.min(i, CROWD.length - 1)], j = i ? 1 : 0;
+  return new V3(p[0] + c.jx * j, 0, p[1] + c.jz * j);
+}
+function spawnCustomer(near = false) {
+  const h = makeHumanoid({ skin: pick(SKINS), shirt: pick(SHIRTS), pants: pick(PANTS), hair: pick(HAIRS), hat: pick(['none', 'cap', 'bun', 'none']), hatColor: pick(SHIRTS), scale: rnd(0.92, 1.04) });
+  const side = Math.random() < 0.5 ? -1 : 1;
+  const c = { h, demand: Math.floor(rnd(CU.demand[0], CU.demand[1] + 1)), got: 0, patience: CU.patience, state: 'in', jx: rnd(-0.3, 0.3), jz: rnd(-0.3, 0.3), arrived: false, exitZ: side * 14 };
+  const idx = customers.filter(k => k.state !== 'out').length;
+  const sp = near ? slotPos(idx, c) : new V3(CU.spawnX, 0, side * 14);
+  h.root.position.copy(sp); scene.add(h.root);
+  c.pile = new Pile(h.carry, 0, 0, 0, { dy: 0.29 });
+  c.bub = addLabel('', '', () => _tmp.copy(h.root.position).setY(2.25 * h.root.scale.x).clone(), 0);
+  customers.push(c); renderBubble(c);
+  return c;
+}
+function renderBubble(c) {
+  if (c.state === 'out') { c.bub.el.className = 'lbl face'; c.bub.el.innerHTML = c.happy ? '😊' : '😠'; return; }
+  const pct = Math.max(0, c.patience / CU.patience * 100);
+  const col = pct > 50 ? 'var(--good)' : pct > 25 ? '#f2a218' : 'var(--bad)';
+  c.bub.el.className = 'lbl bubble';
+  c.bub.el.innerHTML = `${CONFIG.theme.productIcon} ${c.got}/${c.demand}<i><u style="width:${pct.toFixed(0)}%;background:${col}"></u></i>`;
+}
+let spawnT = 1;
+function activeCustomers() { return customers.filter(c => c.state !== 'out'); }
+function frontReady() { const a = activeCustomers(); return a.length && a[0].arrived && a[0].state === 'wait' ? a[0] : null; }
+function leave(c, happy) {
+  c.state = 'out'; c.happy = happy; c.arrived = false; renderBubble(c); c.outT = 0;
+  if (happy) { beep(880, 0.08, 'sine', 0.05); setTimeout(() => beep(1320, 0.1, 'sine', 0.04), 70); } else beep(180, 0.2, 'sawtooth', 0.03);
+}
+function updateCustomers(dt) {
+  spawnT -= dt;
+  const act = activeCustomers();
+  const max = custMode === 'queue' ? CU.maxQueue : CU.maxCrowd;
+  if (spawnT <= 0 && act.length < max) { spawnCustomer(); spawnT = rnd(CU.spawnEvery[0], CU.spawnEvery[1]); }
+  activeCustomers().forEach((c, i) => { c.idx = i; });
+  for (let k = customers.length - 1; k >= 0; k--) {
+    const c = customers[k], r = c.h.root;
+    let tgt;
+    if (c.state === 'out') { c.outT += dt; tgt = new V3(CU.spawnX, 0, c.exitZ); if (c.outT > 1.6) c.bub.show = false; }
+    else tgt = slotPos(c.idx, c);
+    const d = new V3(tgt.x - r.position.x, 0, tgt.z - r.position.z), dist = d.length();
+    const moving = dist > 0.06;
+    if (moving) {
+      const sp = c.state === 'out' ? 3.2 : 2.8;
+      d.multiplyScalar(Math.min(dist, sp * dt) / dist); r.position.add(d);
+      r.rotation.y = lerpAngle(r.rotation.y, Math.atan2(d.x, d.z), Math.min(1, dt * 10));
+    } else if (c.state !== 'out') {
+      r.rotation.y = lerpAngle(r.rotation.y, -PI / 2, Math.min(1, dt * 8));
+      if (!c.arrived) { c.arrived = true; if (c.state === 'in') c.state = 'wait'; }
+    }
+    if (c.state === 'wait' || c.state === 'in') {
+      if (c.arrived) { c.patience -= dt * (c.idx === 0 ? 1 : 0.5); if (Math.random() < dt * 4) renderBubble(c); }
+      if (c.patience <= 0) leave(c, false);
+    }
+    animHuman(c.h, dt, moving, c.pile.count > 0, 0.75, c.state === 'out' && c.happy && !moving ? 'cheer' : null);
+    if (c.state === 'out' && !moving) {
+      removeLabel(c.bub); scene.remove(r); customers.splice(k, 1);
+    }
+  }
+}
+function lerpAngle(a, b, t) { let d = b - a; while (d > PI) d -= PI * 2; while (d < -PI) d += PI * 2; return a + d * t; }
+
+/* ---------------- cash ---------------- */
+const CC = CONFIG.counter;
+const cashPile = new Pile(scene, CC.cash[0], 0.03, CC.cash[1], { cols: 2, rows: 3, dx: 0.4, dz: 0.24, dy: 0.04 });
+function pay(c) {
+  const amount = c.demand * CU.price; sold += c.demand; earned += amount;
+  const n = Math.min(8, Math.max(2, Math.ceil(amount / 6)));
+  const from = c.h.root.position.clone().setY(1.3);
+  let left = amount;
+  for (let i = 0; i < n; i++) {
+    const v = i === n - 1 ? left : Math.floor(amount / n); left -= v;
+    const b = makeBill(v); b.position.copy(from); scene.add(b);
+    setTimeout(() => cashPile.add(b, 0.45, 1.4), i * 60);
+  }
+  floatText('+$' + amount, from.clone().setY(2.4));
+}
+
+/* ---------------- unlock pads ---------------- */
+const padTex = canvasTex(128, 128, (c, w, h) => { c.strokeStyle = '#fff'; c.lineWidth = 9; c.setLineDash([16, 10]);
+  c.beginPath(); c.roundRect ? c.roundRect(8, 8, w - 16, h - 16, 18) : c.rect(8, 8, w - 16, h - 16); c.stroke(); });
+const pads = CONFIG.unlocks.map((u, i) => {
+  const g = new THREE.Group(); g.position.set(u.pos[0], 0.04, u.pos[1]); g.visible = false; scene.add(g);
+  const base = mk(new THREE.PlaneGeometry(1.7, 1.7), new THREE.MeshBasicMaterial({ color: 0x2e7d32, transparent: true, opacity: 0.35 }), g, 0, 0, 0, false); base.rotation.x = -PI / 2;
+  const fg = new THREE.PlaneGeometry(1.5, 1.5); fg.translate(0.75, 0, 0);
+  const fill = mk(fg, new THREE.MeshBasicMaterial({ color: 0x7ed957, transparent: true, opacity: 0.85 }), g, -0.75, 0.005, 0, false); fill.rotation.x = -PI / 2; fill.scale.x = 0.001;
+  const fr = mk(new THREE.PlaneGeometry(1.7, 1.7), new THREE.MeshBasicMaterial({ map: padTex, transparent: true }), g, 0, 0.01, 0, false); fr.rotation.x = -PI / 2;
+  const p = { u, i, g, fill, paid: 0, done: false, lbl: null };
+  p.lbl = addLabel('', 'pad', () => _tmp.set(u.pos[0], 0.2, u.pos[1]).clone(), -6); p.lbl.show = false;
+  return p;
+});
+function renderPad(p) {
+  const rem = p.u.price - p.paid;
+  p.lbl.el.className = 'lbl pad' + (money >= rem ? ' ok' : '');
+  p.lbl.el.innerHTML = `<b>${p.u.icon} ${p.u.name}</b>$${rem}`;
+}
+function revealPads() {
+  let firstOpen = pads.find(p => !p.done);
+  if (firstOpen && !firstOpen.g.visible) { firstOpen.g.visible = true; firstOpen.lbl.show = true; popIn(firstOpen.g); renderPad(firstOpen); }
+}
+function doUnlock(id) {
+  if (id === 'hive3') buildHive(2, true);
+  if (id === 'hive4') buildHive(3, true);
+  if (id === 'conveyor') buildConveyor(true);
+  if (id === 'flowers') {
+    hiveMult = 1.6; field.soil.material = mat(0x6fbf4a);
+    const [x0, x1, z0, z1] = field.rect;
+    for (let i = 0; i < 70; i++) { const f = flower(rnd(x0 + 0.3, x1 - 0.3), rnd(z0 + 0.3, z1 - 0.3), pick(FLOWER_COLS), field.flowers, rnd(0.9, 1.3)); popIn(f, i * 0.012); }
+    for (let i = 0; i < 8; i++) addBee(new V3((x0 + x1) / 2, 0, (z0 + z1) / 2), 1.8, true);
+    confetti(new V3((x0 + x1) / 2, 0.5, (z0 + z1) / 2), 40);
+    floatText('Tổ ong x1.6', new V3((x0 + x1) / 2, 1.5, (z0 + z1) / 2));
+  }
+  if (id === 'machine2') {
+    machine.time = P.time / 2; machine.body.material = mat(0xffd65a); machine.win.material.color.setHex(0xfff6c8);
+    mk(BOX(2.7, 0.14, 2.3), 0xffb000, machine.g, 0, 0.32, 0, false);
+    confetti(new V3(P.pos[0], 1.5, P.pos[1]), 40); floatText('Máy nhanh x2', new V3(P.pos[0], 2.8, P.pos[1]));
+  }
+}
+
+/* ---------------- layout overlay (for reviewing the map) ---------------- */
+let overlay = null;
+function buildOverlay() {
+  overlay = new THREE.Group(); scene.add(overlay);
+  const textPlane = (lines, w, col) => {
+    const h = w * 0.34, t = canvasTex(1024, 348, (c, W, H) => {
+      c.textAlign = 'center'; c.textBaseline = 'middle';
+      c.fillStyle = 'rgba(255,255,255,.88)'; c.beginPath(); c.roundRect ? c.roundRect(10, 10, W - 20, H - 20, 40) : c.rect(10, 10, W - 20, H - 20); c.fill();
+      const fit = (txt, wt, size, y) => { let s = size; do { c.font = `${wt} ${s}px ${FONT}`; s -= 4; } while (c.measureText(txt).width > W - 70 && s > 20); c.fillText(txt, W / 2, y); };
+      c.fillStyle = '#' + col.toString(16).padStart(6, '0'); fit(lines[0], 800, 92, 100);
+      c.fillStyle = '#3b2407'; fit(lines[1], 600, 64, 190);
+      fit(lines[2], 800, 70, 278);
+    });
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: t, transparent: true, depthTest: false }));
+    m.rotation.x = -PI / 2; m.renderOrder = 20; return m;
+  };
+  for (const z of L.zones) {
+    const w = z.x1 - z.x0, d = z.z1 - z.z0, cx = (z.x0 + z.x1) / 2, cz = (z.z0 + z.z1) / 2;
+    const pg = new THREE.PlaneGeometry(w - 0.12, d - 0.12);
+    const pl = new THREE.Mesh(pg, new THREE.MeshBasicMaterial({ color: z.color, transparent: true, opacity: 0.22, depthWrite: false }));
+    pl.rotation.x = -PI / 2; pl.position.set(cx, 0.07, cz); pl.renderOrder = 5; overlay.add(pl);
+    const e = new THREE.LineSegments(new THREE.EdgesGeometry(pg), new THREE.LineBasicMaterial({ color: z.color }));
+    e.rotation.x = -PI / 2; e.position.set(cx, 0.08, cz); overlay.add(e);
+    const lw = Math.min(w - 1, 8.5);
+    const tp = textPlane([z.label, z.sub, `${+w.toFixed(1)} × ${d} m`], lw, z.color);
+    const ty = z.id === 'west' ? cz + 4.1 : z.id === 'center' ? cz + 3.9 : z.id === 'east' ? cz + 3.9 : cz;
+    tp.position.set(z.id === 'north' ? 9.5 : z.id === 'south' ? 9.5 : cx, 3.2, ty); overlay.add(tp);
+  }
+  const wa = PA, ww = wa.maxX - wa.minX, wd = wa.maxZ - wa.minZ;
+  const pts = [[wa.minX, wa.minZ], [wa.maxX, wa.minZ], [wa.maxX, wa.maxZ], [wa.minX, wa.maxZ], [wa.minX, wa.minZ]].map(([x, z]) => new V3(x, 0.1, z));
+  const ln = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineDashedMaterial({ color: 0xffffff, dashSize: 0.6, gapSize: 0.35 }));
+  ln.computeLineDistances(); overlay.add(ln);
+  const wl = textPlane(['KHU NGƯỜI CHƠI', 'Vùng nhân vật được đi lại', `${ww.toFixed(1)} × ${wd.toFixed(1)} m`], 6, 0x444444);
+  wl.position.set(-4.5, 3.3, 7.8); overlay.add(wl);
+  const grid = new THREE.GridHelper(34, 34, 0xffffff, 0xffffff); grid.material.transparent = true; grid.material.opacity = 0.18;
+  grid.scale.z = 20 / 34; grid.position.y = 0.06; overlay.add(grid);
+}
+
+/* ---------------- input ---------------- */
+const keys = {};
+addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; });
+addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
+const joy = { on: false, id: null, ox: 0, oy: 0, x: 0, y: 0 }, joyEl = $('joy'), knob = joyEl.firstElementChild;
+renderer.domElement.addEventListener('pointerdown', e => {
+  joy.on = true; joy.id = e.pointerId; joy.ox = e.clientX; joy.oy = e.clientY; joy.x = joy.y = 0;
+  joyEl.style.display = 'block'; joyEl.style.left = e.clientX + 'px'; joyEl.style.top = e.clientY + 'px'; knob.style.transform = '';
+});
+addEventListener('pointermove', e => {
+  if (!joy.on || e.pointerId !== joy.id) return;
+  let dx = e.clientX - joy.ox, dy = e.clientY - joy.oy; const d = Math.hypot(dx, dy), m = 50;
+  if (d > m) { dx *= m / d; dy *= m / d; }
+  joy.x = dx / m; joy.y = dy / m; knob.style.transform = `translate(${dx}px,${dy}px)`;
+});
+const joyEnd = e => { if (e.pointerId !== joy.id) return; joy.on = false; joy.x = joy.y = 0; joyEl.style.display = 'none'; };
+addEventListener('pointerup', joyEnd); addEventListener('pointercancel', joyEnd);
+
+function moveInput() {
+  let x = 0, z = 0;
+  if (keys.a || keys.arrowleft) x -= 1; if (keys.d || keys.arrowright) x += 1;
+  if (keys.w || keys.arrowup) z -= 1; if (keys.s || keys.arrowdown) z += 1;
+  if (joy.on) { x += joy.x; z += joy.y; }
+  const l = Math.hypot(x, z); if (l > 1) { x /= l; z /= l; }
+  return { x, z, l: Math.min(1, l) };
+}
+function collide(p, r = 0.36) {
+  for (const o of obstacles) {
+    if (o.c) {
+      const dx = p.x - o.x, dz = p.z - o.z, d = Math.hypot(dx, dz), m = o.r + r;
+      if (d < m && d > 1e-5) { p.x = o.x + dx / d * m; p.z = o.z + dz / d * m; }
+    } else {
+      const cx = clamp(p.x, o.x0, o.x1), cz = clamp(p.z, o.z0, o.z1), dx = p.x - cx, dz = p.z - cz, d = Math.hypot(dx, dz);
+      if (d < r) {
+        if (d > 1e-5) { p.x = cx + dx / d * r; p.z = cz + dz / d * r; }
+        else { const a = p.x - o.x0, b = o.x1 - p.x, c = p.z - o.z0, e = o.z1 - p.z, m = Math.min(a, b, c, e);
+          if (m === a) p.x = o.x0 - r; else if (m === b) p.x = o.x1 + r; else if (m === c) p.z = o.z0 - r; else p.z = o.z1 + r; }
+      }
+    }
+  }
+  p.x = clamp(p.x, PA.minX, PA.maxX); p.z = clamp(p.z, PA.minZ, PA.maxZ);
+}
+
+/* ---------------- interactions ---------------- */
+const near = (p, x, z, r) => (p.x - x) ** 2 + (p.z - z) ** 2 < r * r;
+let actCd = 0, cashCd = 0, padCd = 0, moved = false;
+function interact(dt) {
+  const p = player.root.position, cap = PL.capacity;
+  actCd -= dt; cashCd -= dt; padCd -= dt;
+  // cash
+  if (cashCd <= 0 && cashPile.count && near(p, CC.cash[0], CC.cash[1], 1.3)) {
+    cashCd = 0.035; const b = cashPile.take();
+    fly(b, player.root, new V3(0, 1.2, 0), 0.2, 0.5, () => { player.root.remove(b); money += b.userData.v; bumpMoney(); beep(1500 + Math.random() * 300, 0.03, 'square', 0.015); });
+  }
+  // unlock pads
+  for (const pd of pads) {
+    if (pd.done || !pd.g.visible || !near(p, pd.u.pos[0], pd.u.pos[1], 0.95)) continue;
+    if (padCd <= 0 && money > 0) {
+      padCd = 0.04;
+      const amt = Math.min(money, Math.max(1, Math.ceil(pd.u.price / 20)), pd.u.price - pd.paid);
+      money -= amt; pd.paid += amt; bumpMoney();
+      const b = makeBill(); b.position.copy(p).setY(1.2); scene.add(b);
+      fly(b, null, new V3(pd.u.pos[0], 0.1, pd.u.pos[1]), 0.25, 0.8, () => scene.remove(b));
+      pd.fill.scale.x = Math.max(0.001, pd.paid / pd.u.price); renderPad(pd);
+      beep(700 + pd.paid / pd.u.price * 600, 0.03, 'triangle', 0.02);
+      if (pd.paid >= pd.u.price) {
+        pd.done = true; pd.g.visible = false; pd.lbl.show = false; removeLabel(pd.lbl);
+        doUnlock(pd.u.id); beep(660, 0.1); setTimeout(() => beep(990, 0.15), 90);
+        revealPads(); checkEnd();
+      }
+    }
+  }
+  if (actCd > 0) return;
+  const st = stack.type;
+  // drop jars at machine input
+  if (st === 'jar' && near(p, P.input[0], P.input[1], 1.5) && inputPile.count < 16) {
+    inputPile.add(stack.take(), 0.22, 0.6); actCd = 0.08; beep(600, 0.03, 'triangle', 0.02); return;
+  }
+  // serve customer
+  const f = frontReady();
+  const sz = CC.serveZone;
+  if (st === 'crate' && f && p.x > sz.minX && p.x < sz.maxX + 0.5 && p.z > sz.minZ && p.z < sz.maxZ && f.got < f.demand) {
+    const c = stack.take(); f.pile.add(c, 0.3, 0.9); f.got++; renderBubble(f); actCd = 0.16; beep(760, 0.04, 'triangle', 0.03);
+    if (f.got >= f.demand) { f.state = 'paying'; setTimeout(() => { pay(f); leave(f, true); }, 260); }
+    return;
+  }
+  if (stack.count >= cap) return;
+  // take crates
+  if ((st === null || st === 'crate') && outputPile.count && near(p, P.output[0], P.output[1], 1.45)) {
+    stack.add(outputPile.take(), 0.2, 0.6); actCd = 0.09; beep(480, 0.03, 'triangle', 0.02); return;
+  }
+  // take jars from hive trays
+  if (st === null || st === 'jar') {
+    for (const h of hives) {
+      if (h.tray.count && near(p, h.trayPos.x, h.trayPos.z, 1.35)) { stack.add(h.tray.take(), 0.2, 0.6); actCd = 0.09; beep(560, 0.03, 'triangle', 0.02); return; }
+    }
+  }
+}
+let endShown = false;
+function checkEnd() {
+  if (endShown || pads.some(p => !p.done)) return;
+  endShown = true;
+  setTimeout(() => { $('endStats').textContent = `Đã bán ${sold} thùng mật · Doanh thu $${earned}`; $('end').style.display = 'flex'; }, 1300);
+}
+$('bKeep').onclick = () => { $('end').style.display = 'none'; };
+$('bRestart').onclick = () => location.reload();
+
+/* ---------------- guide arrow + hint ---------------- */
+const arrow = new THREE.Group(); scene.add(arrow);
+const am = new THREE.MeshBasicMaterial({ color: 0xffd23a });
+mk(new THREE.ConeGeometry(0.32, 0.55, 4), am, arrow, 0, 0, 0, false).rotation.x = PI;
+mk(BOX(0.18, 0.4, 0.18), am, arrow, 0, 0.42, 0, false);
+const pointer = new THREE.Group(); scene.add(pointer);
+const pt = mk(new THREE.ConeGeometry(0.22, 0.6, 3), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 }), pointer, 0, 0.08, 1.15, false);
+pt.rotation.x = PI / 2; pt.scale.z = 0.25;
+function guide() {
+  const st = stack.type, n = stack.count, cap = PL.capacity;
+  const trayJars = hives.reduce((s, h) => s + h.tray.count, 0);
+  const bestTray = () => hives.slice().sort((a, b) => b.tray.count - a.tray.count)[0];
+  const serve = { p: new V3(CC.serve[0], 0, CC.serve[1]), t: 'Giao thùng mật cho khách ở quầy' };
+  if (st === 'jar') {
+    if (n >= cap || trayJars === 0) return { p: new V3(P.input[0], 0, P.input[1]), t: 'Mang hũ mật vào máy đóng gói' };
+    const h = bestTray(); return { p: h.trayPos, t: 'Lấy thêm hũ mật' };
+  }
+  if (st === 'crate') {
+    if (n >= cap || outputPile.count === 0) return customers.length ? serve : { p: serve.p, t: 'Chờ khách tới quầy' };
+    return { p: new V3(P.output[0], 0, P.output[1]), t: 'Lấy thêm thùng mật' };
+  }
+  if (cashPile.count) return { p: new V3(CC.cash[0], 0, CC.cash[1]), t: 'Nhặt tiền ở quầy' };
+  const pd = pads.find(p => !p.done && p.g.visible && money >= p.u.price - p.paid);
+  if (pd) return { p: new V3(pd.u.pos[0], 0, pd.u.pos[1]), t: `Đứng lên ô để mở khóa: ${pd.u.name}` };
+  if (outputPile.count) return { p: new V3(P.output[0], 0, P.output[1]), t: 'Lấy thùng mật ở đầu ra của máy' };
+  if (trayJars) { const h = bestTray(); return { p: h.trayPos, t: 'Đến tổ ong lấy hũ mật' }; }
+  if (machine.busy || machine.pending || inputPile.count || belt.items.length) return { p: new V3(P.output[0], 0, P.output[1]), t: 'Máy đang đóng gói…' };
+  return { p: bestTray().trayPos, t: 'Chờ ong làm mật…' };
+}
+let hintText = '';
+function updateGuide(t) {
+  const g = guide(), p = player.root.position;
+  if (g.t !== hintText) { hintText = g.t; $('hint').textContent = g.t; }
+  const d = Math.hypot(g.p.x - p.x, g.p.z - p.z);
+  arrow.visible = d > 1.2; pointer.visible = d > 2.2;
+  arrow.position.set(g.p.x, 2.3 + Math.sin(t * 5) * 0.2, g.p.z); arrow.rotation.y = t * 2;
+  pointer.position.set(p.x, 0.05, p.z); pointer.rotation.y = Math.atan2(g.p.x - p.x, g.p.z - p.z);
+}
+
+/* ---------------- HUD ---------------- */
+let shownMoney = -1;
+function bumpMoney() { const el = $('moneyPill'); el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
+function updateHUD() {
+  if (shownMoney !== money) {
+    shownMoney = money; $('money').textContent = money;
+    for (const p of pads) if (p.g.visible && !p.done) renderPad(p);
+  }
+  const st = stack.type;
+  $('stack').textContent = `${stack.count}/${PL.capacity}`;
+  $('stackIcon').textContent = st === 'jar' ? '🍯' : st === 'crate' ? '📦' : '·';
+}
+
+/* ---------------- tools ---------------- */
+let overview = false;
+$('bLayout').onclick = e => { if (!overlay) buildOverlay(); else overlay.visible = !overlay.visible; e.currentTarget.classList.toggle('on', overlay.visible); };
+$('bView').onclick = e => { overview = !overview; e.currentTarget.classList.toggle('on', overview); };
+$('bMode').onclick = e => { custMode = custMode === 'queue' ? 'crowd' : 'queue'; e.currentTarget.textContent = custMode === 'queue' ? '👥 Hàng dài' : '👥 Đám đông'; customers.forEach(c => { if (c.state !== 'out') c.arrived = false; }); };
+$('bCash').onclick = () => { money += 100; bumpMoney(); };
+for (const b of document.querySelectorAll('#tools button')) b.addEventListener('pointerdown', e => e.stopPropagation());
+
+/* ---------------- camera ---------------- */
+const camTgt = new V3(PL.start[0], 0, PL.start[1]);
+const camPos = new V3();
+function updateCamera(dt, snap) {
+  const a = innerWidth / innerHeight, p = player.root.position;
+  let want, look;
+  if (overview) {
+    const hf = Math.atan(Math.tan(20 * PI / 180) * a);
+    const dist = Math.max(21 / Math.tan(hf), 13 / Math.tan(20 * PI / 180)) * 1.05;
+    look = new V3(0, 0, 0.6); want = look.clone().add(new V3(0, 0.83, 0.56).normalize().multiplyScalar(dist));
+  } else {
+    // portrait: pull back and look more top-down so the stack and the next station stay on screen
+    const port = a < 1;
+    const dist = port ? clamp(6.5 / (Math.tan(20 * PI / 180) * a), 17, 46) : 17.1; // portrait: keep ~13 m of width on screen
+    camTgt.lerp(new V3(clamp(p.x, -13, 11), 0, clamp(p.z, -6.5, 6.5) - (port ? 0.8 : 0)), snap ? 1 : Math.min(1, dt * 5));
+    look = camTgt.clone(); want = look.clone().add((port ? new V3(0, 0.9, 0.44) : new V3(0, 13.5, 10.5)).normalize().multiplyScalar(dist));
+  }
+  camPos.lerp(want, snap ? 1 : Math.min(1, dt * 4)); camera.position.copy(camPos);
+  camera.lookAt(camPos.clone().sub(want).add(look));
+}
+addEventListener('resize', () => { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); });
+
+/* ---------------- boot ---------------- */
+for (let i = 0; i < R.startActive; i++) buildHive(i, false);
+hives.forEach(h => { for (let k = 0; k < 3; k++) { const j = makeJar(); h.tray.add(j, 0); } });
+spawnCustomer(true); spawnCustomer(true);
+revealPads();
+updateCamera(0, true);
+
+let last = performance.now(), T = 0;
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now; T += dt;
+  const mv = moveInput(), p = player.root.position;
+  if (mv.l > 0.05) {
+    if (!moved) { moved = true; $('tut').style.opacity = '0'; }
+    p.x += mv.x * PL.speed * dt; p.z += mv.z * PL.speed * dt;
+    heading = lerpAngle(heading, Math.atan2(mv.x, mv.z), Math.min(1, dt * 14));
+  }
+  collide(p); player.root.rotation.y = heading;
+  animHuman(player, dt, mv.l > 0.05, stack.count > 0, 0.6 + mv.l * 0.5);
+  updateHives(dt); updateBelt(dt); updateMachine(dt); updateCustomers(dt); interact(dt);
+  updateFlyers(dt); updatePops(dt); updateParts(dt); updateFloats(dt); updateBees(T);
+  windmill.rotation.z += dt * 0.9;
+  updateGuide(T); updateCamera(dt); updateHUD();
+  renderer.render(scene, camera); updateLabels();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+window.__hf = { get money() { return money; }, set money(v) { money = v; }, player, pads, customers, stack, setOverview: v => { overview = v; }, toggleLayout: () => $('bLayout').click() };
+};
+
+const fontReady = document.fonts && document.fonts.load ? document.fonts.load('800 40px "Baloo 2"') : Promise.resolve();
+Promise.race([fontReady, new Promise(r => setTimeout(r, 1500))]).then(start, start);
+</script>
+</body>
+</html>

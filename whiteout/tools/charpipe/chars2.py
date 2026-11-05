@@ -248,7 +248,7 @@ def suit_pieces(cb, rel, orig_png, pieces, trousers_cut=None, size=1024, inflate
 
 
 def finish_body(cb, spec, skin_png, del_verts, dec=0.6):
-    skin_mat = make_pbr(cb.name + "_skin", skin_png, rough=0.58, spec=0.4)
+    skin_mat = make_pbr(cb.name + "_skin", skin_png, rough=0.72, spec=0.3)
     body = cb.build_body(sorted(del_verts))
     body.data.materials.append(skin_mat)
     if dec < 1.0:

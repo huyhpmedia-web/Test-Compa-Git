@@ -15,10 +15,10 @@ const FINGERS := ["thumb", "index", "middle", "ring", "pinky"]
 ## Per-weapon handling. aim/low: model-space position of the weapon's glb origin; low_pitch: radians (negative = muzzle down).
 ## recoil: [pitch (rad), back (m), roll (rad)] peak of the critically damped spring. curl_r/curl_l: degrees for [thumb, index, middle, ring, pinky] (applied to all 3 joints, scaled 0.8/1/0.8).
 const SPECS := {
-	"handgun": {"ik": true, "aim": Vector3(-0.05, 1.405, 0.56), "low": Vector3(-0.085, 1.20, 0.42), "low_pitch": -0.78,
+	"handgun": {"ik": true, "aim": Vector3(-0.15, 1.40, 0.43), "low": Vector3(-0.085, 1.20, 0.42), "low_pitch": -0.78,
 		"recoil": [0.115, 0.034, 0.035], "move": "Slide", "travel": 0.030, "eject_delay": 0.0,
 		"curl_r": [14.0, 40.0, 80.0, 86.0, 88.0], "curl_l": [20.0, 78.0, 88.0, 92.0, 92.0]},
-	"magnum": {"ik": true, "aim": Vector3(-0.05, 1.405, 0.55), "low": Vector3(-0.085, 1.20, 0.40), "low_pitch": -0.78,
+	"magnum": {"ik": true, "aim": Vector3(-0.15, 1.40, 0.42), "low": Vector3(-0.085, 1.20, 0.40), "low_pitch": -0.78,
 		"recoil": [0.19, 0.05, 0.06], "move": "", "travel": 0.0, "eject_delay": 0.0,
 		"curl_r": [14.0, 42.0, 82.0, 88.0, 90.0], "curl_l": [20.0, 66.0, 72.0, 76.0, 78.0]},
 	"shotgun": {"ik": true, "aim": Vector3(-0.115, 1.435, 0.46), "low": Vector3(-0.13, 1.17, 0.30), "low_pitch": -0.70,

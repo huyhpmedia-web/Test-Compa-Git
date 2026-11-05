@@ -266,8 +266,8 @@ func _process(delta: float) -> void:
 	_update_kick(delta)
 	pitch_pivot.rotation.x = cam_pitch + _ck.x
 	yaw_pivot.rotation.y = cam_yaw + _ck.y
-	arm.spring_length = lerp(2.4, 0.95, aim_t)
-	arm.position = Vector3(lerp(0.45, 0.55, aim_t), lerp(0.05, 0.08, aim_t), 0)
+	arm.spring_length = lerp(2.4, 0.8, aim_t)
+	arm.position = Vector3(lerp(0.45, 0.58, aim_t), lerp(0.05, 0.1, aim_t), 0)
 	cam.fov = lerp(62.0, 44.0, aim_t) + _fovk
 	if shake > 0.0:
 		cam.h_offset = randf_range(-1, 1) * shake * 0.06

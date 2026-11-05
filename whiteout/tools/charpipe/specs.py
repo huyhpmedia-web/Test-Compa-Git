@@ -217,7 +217,7 @@ def scalp_cap(cb, p, rgb, frost=0.0):
     rel, tint = hair_info(cb)
     if not rel:
         return rgb
-    hc = hair_mean_rgb(rel, tint) * 0.62
+    hc = hair_mean_rgb(rel, tint) * 0.42
     x, y, z = p[:, 0], p[:, 1], p[:, 2]
     ax = np.abs(x)
     eye_z = cb.conv(cb.H.joint("joint-l-eye"))[2]
@@ -514,7 +514,7 @@ def assemble(cb, spec):
     n = spec["name"]
     H = cb.H
     skin_png = paint_skin(cb, spec["skin"], spec["details"], spec.get("stubble", 1.0), spec.get("weather", 1.0), spec.get("skin_tint", (0.97, 0.90, 0.85)))
-    skin_mat = make_pbr(n + "_skin", skin_png, rough=0.58, spec=0.4)
+    skin_mat = make_pbr(n + "_skin", skin_png, rough=0.72, spec=0.3)
 
     # ---------- suit proxy (casualsuit05): jacket / liner / trousers
     SUIT = A("clothes/male_casualsuit05/male_casualsuit05.mhclo")

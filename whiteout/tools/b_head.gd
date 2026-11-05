@@ -43,11 +43,13 @@ func _ready() -> void:
 			"backtop": dir = Vector3(0.0, 0.8, -0.7)
 		dir = dir.normalized()
 		var hbas: Basis = m.head.global_transform.basis.orthonormalized()
+		var tgt := hp
 		if zombie:
-			dir = hbas * Vector3(dir.x, dir.y, dir.z)
-			dir.y = clampf(dir.y, -0.2, 1.0)
-		cam.look_at_from_position(hp + dir * distm, hp, Vector3.UP if v != "top" else Vector3(0, 0, -1))
-		sl.look_at_from_position(cam.position + Vector3(0.15, 0.1, 0), hp, Vector3.UP)
+			tgt = m.head.global_position + hbas * Vector3(0, 0.0, 0.07)   # centre of the (bowed) face
+			if v == "top":
+				dir = Vector3(0.0, 0.7, 0.7).normalized()
+		cam.look_at_from_position(tgt + dir * distm, tgt, Vector3.UP if v != "top" else Vector3(0, 0, -1))
+		sl.look_at_from_position(cam.position + Vector3(0.15, 0.1, 0), tgt, Vector3.UP)
 		for i in 6: await get_tree().process_frame
 		var im := svp.get_texture().get_image(); im.convert(Image.FORMAT_RGBA8)
 		img.blit_rect(im, Rect2i(0, 0, pw, ph), Vector2i(k * pw, 0)); k += 1

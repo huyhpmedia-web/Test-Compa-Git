@@ -139,12 +139,16 @@ def fields(p, nrm, seed, anchors, cfg):
                 st = pt.smoothstep(0.02, 0.0, np.abs(p[:, 0] - cx - (fbm(p, 14, seed + 81 + k) - 0.5) * 0.05)) * pt.smoothstep(0.0, 0.1, dz) * pt.smoothstep(0.6 + 0.2 * k, 0.2, dz) * fwd
                 blood = np.maximum(blood, st * soak * 0.55 * pt.smoothstep(0.35, 0.65, fbm(p, 60, seed + 84 + k)))
                 soakf = np.maximum(soakf, st * soak * 0.9)
+    if soak > 0 and mo is not None:   # soaked collar / shoulders
+        collar = pt.smoothstep(0.05, 0.0, np.abs(p[:, 2] - (mo[2] - 0.13))) * pt.smoothstep(0.3, 0.1, np.abs(p[:, 0])) * (0.5 + 0.6 * fbm(p, 24, seed + 140))
+        soakf = np.maximum(soakf, np.clip(collar * soak * 1.3, 0, 1))
+        blood = np.maximum(blood, np.clip(collar * soak * 0.6 * pt.smoothstep(0.4, 0.7, fbm(p, 50, seed + 141)), 0, 1))
     hands = cfg.get("hands", 0.0)
     for c in (anchors.get("wrists", []) if hands > 0 else []):
         c = np.array(c)
         dd = np.linalg.norm(p - c, axis=1)
         blood = np.maximum(blood, pt.smoothstep(0.11, 0.02, dd) * pt.smoothstep(0.3, 0.65, fbm(p, 50, seed + 86)) * hands)
-        soakf = np.maximum(soakf, pt.smoothstep(0.22, 0.04, dd) * hands)
+        soakf = np.maximum(soakf, pt.smoothstep(0.4, 0.04, dd) * hands)
     hem = cfg.get('hem', 0.0)
     if hem > 0:
         lowz = anchors.get('hem_z')

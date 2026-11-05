@@ -416,6 +416,10 @@ def hair_png(cb, label, src, size=1024, tint=None, frost=0.0):
         _reg[..., 3] = np.where(_m, 255, _reg[..., 3])
         _a[_y0:, _x0:] = _reg
         im = Image.fromarray(np.clip(_a, 0, 255).astype(np.uint8))
+    if size >= 1024:   # feather the card edges so the hairline / fringe has no alpha stair-steps (works with alpha-to-coverage)
+        from PIL import ImageFilter
+        _al = im.getchannel("A").filter(ImageFilter.GaussianBlur(2.2))
+        im.putalpha(_al)
     if tint is not None or frost > 0:
         a = np.asarray(im, dtype=np.float32) / 255.0
         if tint is not None:
@@ -729,6 +733,21 @@ SPECS["rimebound_cop"]["eye_missing"] = "l"
 SPECS["rimebound_tee_m"].update(open_mouth=True, details=[("head", "head-age", 0.5, "decr", "incr"), ("chin", "chin-jaw-drop", 1.0, "decr", "incr"), ("mouth", "mouth-scale-vert", 1.0, "decr", "incr"),
     ("mouth", "mouth-lowerlip-height", 1.0, "decr", "incr"), ("eyes", "l-eye-bag", 1.0, "decr", "incr"), ("eyes", "r-eye-bag", 1.0, "decr", "incr"), ("cheek", "l-cheek-volume", -1.0, "decr", "incr"), ("cheek", "r-cheek-volume", -1.0, "decr", "incr")])
 SPECS["rimebound_tee_m"]["gore_skin"]["mouth"] = 1.0
+
+# v3b: push blood / soak on most variants (a few stay lighter for contrast)
+for _n, _sp in list(SPECS.items()):
+    if not _n.startswith("rimebound_") and _n not in ("husk", "siren", "burster", "hanger", "foreman"):
+        continue
+    if _n in ("rimebound_parka_m", "rimebound_patient", "rimebound_cop"):
+        continue
+    _c = _sp.get("gore_cloth"); _k = _sp.get("gore_skin")
+    if _c:
+        _c["soak"] = max(_c.get("soak", 0), 0.6); _c["mouth"] = max(_c.get("mouth", 0), 0.85); _c["hem"] = max(_c.get("hem", 0), 0.3); _c["hands"] = max(_c.get("hands", 0), 0.7); _c["wounds"] = max(_c.get("wounds", 0), 2)
+    if _k:
+        _k["mouth"] = max(_k.get("mouth", 0), 0.9); _k["neck"] = max(_k.get("neck", 0), 0.75); _k["hands"] = max(_k.get("hands", 0), 0.7)
+SPECS["husk"]["flay"] = True
+SPECS["burster"]["rupture"] = True
+SPECS["rimebound_tee_m"]["gore_cloth"].update(soak=0.85, wounds=3, splat=0.25)
 
 # poly budget (<= ~13k tris incl. lashes)
 for _n, _d in (("rimebound_tee_f", 0.3), ("rimebound_cop", 0.34), ("rimebound_parka_f", 0.34), ("rimebound_miner", 0.36)):

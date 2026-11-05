@@ -142,17 +142,17 @@ def zombie_skin(cb, spec, size=1024):
     m2 = gore.fbm(p, 55, seed + 4)
     ice = pt.smoothstep(0.64, 0.82, m2)
     # --- veins: strongest on forearms, hands, neck, temples
-    vm = np.clip(0.28 + 0.9 * ext + 0.8 * r["wn"][:, 0], 0, 1)
+    vm = np.clip(0.5 + 0.9 * ext + 0.9 * r["wn"][:, 0], 0, 1)
     temple = np.exp(-(((ax - 0.07) / 0.03) ** 2 + ((z - (eye_z + 0.01)) / 0.035) ** 2)) * fwd
     vein = vein_net(p, seed + 20, 38.0, 0.03) * np.clip(vm + temple * 0.8, 0, 1)
     fine = vein_net(p, seed + 40, 95.0, 0.04) * 0.5 * (0.3 + 0.7 * vm)
     vv = np.clip(np.maximum(vein, fine * (1 - ext * 0.3)), 0, 1) * spec.get("veins", 1.0)
-    col = col * (1 - 0.62 * vv[:, None]) + np.array([0.20, 0.24, 0.42])[None] * 0.62 * vv[:, None]
+    col = col * (1 - 0.8 * vv[:, None]) + np.array([0.13, 0.12, 0.30])[None] * 0.8 * vv[:, None]
     # --- frostbite: nose / ears / cheeks go bluish-black
     nose = np.exp(-(((x) / 0.016) ** 2 + ((z - (eye_z - 0.043)) / 0.02) ** 2)) * fwd
     cheek = np.exp(-(((ax - 0.062) / 0.028) ** 2 + ((z - (eye_z - 0.05)) / 0.028) ** 2)) * fwd
     ear = np.exp(-(((ax - 0.088) / 0.014) ** 2 + ((z - (eye_z - 0.03)) / 0.03) ** 2))
-    fbk = spec.get("frostbite", 1.0)
+    fbk = spec.get("frostbite", 1.0) * 1.25
     col = col * (1 - np.clip(cheek * 0.5 * fbk, 0, 0.6)[:, None]) + np.array([0.33, 0.26, 0.40])[None] * np.clip(cheek * 0.5 * fbk, 0, 0.6)[:, None]
     nb = np.clip(nose * 1.2 * (0.7 + 0.5 * gore.fbm(p, 120, seed + 9)), 0, 0.95) * fbk
     eb = np.clip(ear * 1.0 * (0.6 + 0.6 * gore.fbm(p, 120, seed + 10)), 0, 0.92) * fbk
@@ -163,7 +163,8 @@ def zombie_skin(cb, spec, size=1024):
     col = col * (1 - 0.7 * eyes[:, None]) + np.array([0.12, 0.09, 0.17])[None] * 0.7 * eyes[:, None]
     sock = np.exp(-(((ax - 0.036) / 0.026) ** 2 + ((z - (eye_z + 0.002)) / 0.02) ** 2)) * fwd
     hh0 = -sock * 1.2 * spec.get('sunken', 1.0)
-    col = col * (1 - 0.35 * sock[:, None]) + np.array([0.16, 0.09, 0.14])[None] * 0.35 * sock[:, None]
+    sk2 = np.clip(sock * 1.5, 0, 0.9)
+    col = col * (1 - sk2[:, None]) + np.array([0.045, 0.03, 0.05])[None] * sk2[:, None]      # near-black ring
     em = spec.get("eye_missing")
     eye_blood = np.zeros(len(p))
     if em:
@@ -235,7 +236,8 @@ def zombie_skin(cb, spec, size=1024):
         col = col * (1 - 0.18 * belly[:, None])
     # --- desaturate toward dead grey, grime, scabs, micro skin relief
     gr_ = col.mean(1, keepdims=True)
-    col = gr_ * 0.5 + col * 0.5
+    col = gr_ * 0.64 + col * 0.36
+    col = col * np.array([0.93, 1.0, 0.92])[None]
     grime = np.clip(pt.smoothstep(0.55, 0.8, gore.fbm(p, 9, seed + 70)) * 0.45 + 0.25 * gore.fbm(p, 60, seed + 71), 0, 0.7)
     col = col * (1 - grime[:, None] * 0.45) + np.array([0.10, 0.08, 0.06])[None] * grime[:, None] * 0.25
     scab = pt.smoothstep(0.7, 0.78, gore.fbm(p, 46, seed + 72)) * (0.5 + 0.5 * (nn[:, 2] > 0.2)) * spec.get("scabs", 0.8)
@@ -258,6 +260,9 @@ def zombie_skin(cb, spec, size=1024):
     f["h"] = f["h"] + hh + hh0 + micro
     rg = np.full(len(p), 0.62) - 0.2 * ice - 0.1 * vv
     col, rg = gore.shade(col, rg, f, p, seed)
+    fm_ = np.clip(f["flesh"], 0, 1)
+    fib = 0.5 + 0.5 * np.sin(p[:, 0] * 260 + gore.fbm(p, 30, seed + 90) * 10 + p[:, 2] * 40)
+    col = col * (1 - 0.4 * fm_[:, None] * fib[:, None]) + np.array([0.55, 0.32, 0.3])[None] * 0.25 * (fm_ * fib ** 6)[:, None]
     # unhinged jaw: dark open-mouth cavity
     if spec.get("open_mouth"):
         cav = np.exp(-(((ax) / 0.04) ** 2 + ((z - (mouth_z - 0.03)) / 0.05) ** 2)) * fwd
@@ -282,6 +287,13 @@ def tear_spots(cb, spec):
     zs = {"torso": (0.95, 1.4), "arm": (1.0, 1.45), "thigh": (0.65, 1.0)}
     groups = [("spine_01", "spine_02", "spine_03"), ("upperarm_l", "upperarm_r", "lowerarm_l", "lowerarm_r"), ("thigh_l", "thigh_r")]
     out = []
+    zmid = cb.conv(H.joint("joint-spine-2"))[2]
+    for kind, sign, rad in (("flay", 1.0, 0.17), ("rupture", -1.0, 0.16)):
+        if spec.get(kind):
+            mm = np.where((np.abs(bp[:, 0]) < 0.04) & (np.abs(bp[:, 2] - zmid) < 0.03))[0]
+            if len(mm):
+                j = mm[np.argmax(sign * bp[mm, 1])]
+                out.append((tuple(bp[j]), rad, kind == "flay"))
     for i in range(n):
         g = groups[[0, 0, 1, 2][rng.randint(0, 4)]]
         w = cb.W[:, [names.index(b) for b in g]].sum(1)
@@ -305,7 +317,13 @@ def mouth_parts(cb, spec):
         except Exception as e:
             print("[warn] mouth part", nm, e); continue
         pos = cb.conv(Pp.fit(H.v, H.base_v))
-        cb.add_mesh(nm, pos, [f[0] for f in Pp.faces], [f[1] for f in Pp.faces], Pp.uv, bone="head", mat=solid_mat(f"{cb.name}_{nm}", col, 0.25 if nm == "teeth" else 0.35))
+        ob_ = cb.add_mesh(nm, pos, [f[0] for f in Pp.faces], [f[1] for f in Pp.faces], Pp.uv, bone="head", mat=solid_mat(f"{cb.name}_{nm}", col, 0.25 if nm == "teeth" else 0.35))
+        cb.decimate(ob_, 0.16 if nm == "teeth" else 0.3)
+        if nm == "teeth":
+            cen = pos.mean(0)
+    # dark mouth cavity behind the teeth so an opening jaw never shows an empty skull
+    V, F = sphere_mesh(cen + np.array([0.0, 0.028, 0.0]), 0.03, 10, 6, (1.15, 0.8, 0.75))
+    cb.add_mesh("mouth_cavity", V, [f[::-1] for f in F], bone="head", mat=solid_mat(f"{cb.name}_cavity", (0.05, 0.008, 0.01), 0.3))
 
 
 def zombie_face(cb, spec, hair, hair_tint, brow="eyebrows/eyebrow001/eyebrow001"):
@@ -512,6 +530,8 @@ def build_zombie(cb, spec):
                       lashes=spec.get("gender", 1) < 0.5, eye_tint=(0.8, 0.85, 1.0), decim_hair=1.0, subdiv=True)
     else:
         zombie_face(cb, spec, spec.get("hair"), spec.get("hair_tint", (0.3, 0.3, 0.32)))
+    if not spec.get("clean"):
+        mouth_parts(cb, spec)
     for ex in spec.get("extras", []):
         globals()["extra_" + ex](cb, spec)
     if o == "miner":

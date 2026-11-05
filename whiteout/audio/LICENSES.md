@@ -111,3 +111,7 @@ Caveat: licence information is as recorded by those mirrors for the original upl
 | Sound | Source | Licence |
 |---|---|---|
 | `gore_hit_[a-c]`, `gore_splat_[a-c]`, `gore_pop`, `gore_tear_[a-b]` | PROCEDURAL (numpy synthesis: filtered noise, bubble modulation, pitch-dropped thumps); no third-party material | CC0 (own work) |
+
+## Shooting-feel layers (added by the weapons upgrade) - all PROCEDURAL (tools/gen_shot_audio.py, numpy, no third-party material)
+`crack_*`, `mech_slide`, `mech_pump`, `casing_*`, `casing_snow_*`, `shell_*`, `shell_snow_*`, `impact_snow`, `impact_concrete_*`, `impact_wood`, `impact_ice`,
+`ricochet`, `hitmark`, `killmark`, `tail_outdoor`, `tail_indoor`. They layer on top of the existing recorded `shot_*` samples.

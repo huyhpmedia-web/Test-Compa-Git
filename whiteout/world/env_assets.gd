@@ -172,7 +172,11 @@ static func spawn(parent: Node3D, rel: String, pos := Vector3.ZERO, yaw := 0.0, 
 	var inst := ps.instantiate() as Node3D
 	root.add_child(inst)
 	var sc = opts.get("scale", 1.0)
-	if opts.has("fit_h") or opts.has("fit_len"):
+	if opts.has("fit_box"):
+		var nb := local_aabb(inst)
+		var fb: Vector3 = opts.fit_box
+		sc = Vector3(fb.x / max(nb.size.x, 0.01), fb.y / max(nb.size.y, 0.01), fb.z / max(nb.size.z, 0.01))
+	elif opts.has("fit_h") or opts.has("fit_len"):
 		var nat := local_aabb(inst)
 		if opts.has("fit_h") and nat.size.y > 0.001:
 			sc = float(opts.fit_h) / nat.size.y

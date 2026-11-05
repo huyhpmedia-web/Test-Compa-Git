@@ -1,12 +1,10 @@
 extends RefCounted
-## The Rimebound look, layered on top of any humanoid body:
-##   RimeLook.decorate(model, intensity)           (0.3 faint .. 1 normal .. 1.6 heavy)
-## Works on actors/humanoid.gd-style models (pivots head, chest, spine, arm_l/r, fore_l/r,
-## hand_l/r, scale var `_s`) and, as a fallback, on any model containing a Skeleton3D
-## (crystals are parented via BoneAttachment3D; bones are found by substring:
-## "head", "spine_03"/"chest", "spine_01", "upperarm_l", "lowerarm_l", "hand_l"...).
-## Adds: frost-white skin tint, black frostbitten fingers, frost crust, ice crystals bursting
-## from mouth / eyes / crown / back / shoulders / forearms. Returns the nodes it added.
+## The Rimebound (infected) look. v3: NO ice crystals / frost prisms on the infected.
+##   RimeLook.decorate(model, intensity)  -> no-op kept for API compatibility (callers: zombie, npc, specials).
+##   RimeLook.flesh(kind)                 -> organic materials for the specials ("scab", "sinew", "pus", "pus_core", "gland", "bone", "tooth").
+##   RimeLook.glacial(kind)               -> glassy ice material, still used by the (approved) boss scripts only.
+## The zombie look (grey-green necrotic skin, livor mortis, lacerations / bites with normal + wet roughness, bared teeth,
+## clouded eyes, torn bloody clothes) is baked into assets/characters/*.glb by tools/charpipe (zombies.py, gore.py).
 
 const Kit = preload("res://actors/kit.gd")
 

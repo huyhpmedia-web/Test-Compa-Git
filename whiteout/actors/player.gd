@@ -4,6 +4,8 @@ extends CharacterBody3D
 const CharacterModel = preload("res://actors/character_model.gd")
 const Mats = preload("res://core/mats.gd")
 const FX = preload("res://world/fx.gd")
+const ShotFX = preload("res://world/shot_fx.gd")
+const Hitmarker = preload("res://ui/hitmarker.gd")
 
 const WALK := 2.3
 const RUN := 4.6
@@ -35,6 +37,20 @@ var input_locked := false   # cutscenes
 var focused_interact: Node = null
 var _recoil := 0.0
 var _kick := Vector2.ZERO
+var _ck := Vector2.ZERO          # camera kick spring (pitch, yaw) radians
+var _ckv := Vector2.ZERO
+var _fovk := 0.0                 # FOV punch spring (degrees)
+var _fovv := 0.0
+var _flash_t := 0.0
+var _held_id := "?"
+var _shots_burst := 0
+var _burst_t := 0.0
+const KICK := {   # camera kick peak (deg pitch, deg yaw), FOV punch (deg), rumble (weak, strong, s), hit-stop scale
+	"handgun": [1.3, 0.35, 1.2, 0.25, 0.55, 0.07],
+	"magnum": [3.4, 0.9, 2.4, 0.35, 0.9, 0.12],
+	"shotgun": [3.8, 0.8, 2.6, 0.45, 1.0, 0.14],
+	"launcher": [3.2, 0.6, 2.2, 0.5, 0.8, 0.16],
+}
 
 func _ready() -> void:
 	add_to_group("player")
@@ -97,6 +113,7 @@ func _ready() -> void:
 	model.rotation.y = 0.0
 	_update_weapon_model()
 	Game.inventory_changed.connect(_update_weapon_model)
+	Hitmarker.install(self)
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 ## Spawn helper: face direction yaw (radians, 0 = +Z).
@@ -129,7 +146,12 @@ func _physics_process(delta: float) -> void:
 	invuln = max(0.0, invuln - delta)
 	stun = max(0.0, stun - delta)
 	shake = max(0.0, shake - delta * 3.0)
-	muzzle_light.light_energy = max(0.0, muzzle_light.light_energy - delta * 60.0)
+	_flash_t = max(0.0, _flash_t - delta)
+	if _flash_t <= 0.0:
+		muzzle_light.light_energy = 0.0
+	_burst_t = max(0.0, _burst_t - delta)
+	if _burst_t <= 0.0:
+		_shots_burst = 0
 	_recoil = max(0.0, _recoil - delta * 4.0)
 
 	var blocked := UI.is_blocking() or input_locked or stun > 0.0
@@ -234,10 +256,12 @@ func _process(delta: float) -> void:
 	# camera rig follows smoothly
 	yaw_pivot.global_position = yaw_pivot.global_position.lerp(global_position, clamp(delta * 14.0, 0.0, 1.0))
 	yaw_pivot.rotation.y = cam_yaw
-	pitch_pivot.rotation.x = cam_pitch + _recoil * 0.06
+	_update_kick(delta)
+	pitch_pivot.rotation.x = cam_pitch + _ck.x
+	yaw_pivot.rotation.y = cam_yaw + _ck.y
 	arm.spring_length = lerp(2.4, 1.15, aim_t)
 	arm.position = Vector3(lerp(0.45, 0.55, aim_t), lerp(0.05, 0.08, aim_t), 0)
-	cam.fov = lerp(62.0, 48.0, aim_t)
+	cam.fov = lerp(62.0, 48.0, aim_t) + _fovk
 	if shake > 0.0:
 		cam.h_offset = randf_range(-1, 1) * shake * 0.06
 		cam.v_offset = randf_range(-1, 1) * shake * 0.06
@@ -249,6 +273,41 @@ func _process(delta: float) -> void:
 	flashlight.global_position = global_position + Vector3(0, 1.45, 0) + model.global_transform.basis.x * -0.15 + model.global_transform.basis.z * 0.2
 	flashlight.look_at(flashlight.global_position + fwd * 10.0 + Vector3(0, -0.4, 0), Vector3.UP)
 	UI.set_reticle(aim_t > 0.6, focus)
+	# the held weapon converges on whatever the camera ray hits
+	if aiming:
+		var q := PhysicsRayQueryParameters3D.create(cam.global_position + fwd * (arm.get_hit_length() + 0.3), cam.global_position + fwd * 60.0, 1 | 4)
+		q.exclude = [get_rid()]
+		var hit := get_world_3d().direct_space_state.intersect_ray(q)
+		model.aim_point = hit.position if hit else cam.global_position + fwd * 40.0
+	else:
+		model.aim_point = Vector3.ZERO
+
+## Critically damped springs for the camera kick and FOV punch (80% of a kick is auto-recovered, 20% stays as real pitch the player corrects).
+func _update_kick(delta: float) -> void:
+	var steps := int(ceil(minf(delta, 0.1) / 0.008))
+	var dt: float = minf(delta, 0.1) / maxf(steps, 1)
+	var w := 19.0
+	var wf := 28.0
+	for i in steps:
+		var a := -w * w * _ck - 2.0 * w * _ckv
+		_ckv += a * dt
+		_ck += _ckv * dt
+		var af := -wf * wf * _fovk - 2.0 * wf * _fovv
+		_fovv += af * dt
+		_fovk += _fovv * dt
+	_fovk = clampf(_fovk, -6.0, 6.0)
+
+func _camera_kick(id: String, power := 1.0) -> void:
+	var k: Array = KICK.get(id, KICK.handgun)
+	var pk: float = deg_to_rad(k[0]) * power * randf_range(0.85, 1.15)
+	var yk: float = deg_to_rad(k[1]) * randf_range(-1.0, 1.0) * power
+	if aim_t < 0.5:
+		pk *= 0.6
+	_ckv += Vector2(pk, yk) * 19.0 * 2.718 * 0.8
+	cam_pitch = clamp(cam_pitch + pk * 0.2, -1.2, 0.9)
+	_fovv += -float(k[2]) * 28.0 * 2.718 * power
+	if Input.get_connected_joypads().size() > 0:
+		Input.start_joy_vibration(0, k[3], k[4], k[5])
 
 # ---------------------------------------------------------------- weapons
 func _equipped_is_gun() -> bool:
@@ -266,7 +325,13 @@ func _quick_weapon(i: int) -> void:
 func _update_weapon_model() -> void:
 	if model == null:
 		return
-	model.hold(FX.weapon_mesh(Game.equipped) if Game.equipped != "" else null)
+	if Game.equipped != _held_id:
+		_held_id = Game.equipped
+		model.hold(FX.weapon_mesh(Game.equipped) if Game.equipped != "" else null)
+		if model.weapon_ik != null:
+			model.weapon_ik.eject_cb = _on_eject
+	if model.weapon_ik != null and Game.equipped == "handgun":
+		model.weapon_ik.set_slide_locked(Game.ammo_loaded("handgun") <= 0)
 
 func _try_fire() -> void:
 	if fire_cd > 0.0 or reload_t > 0.0:
@@ -283,13 +348,26 @@ func _try_fire() -> void:
 	Game.set_ammo_loaded(id, loaded - 1)
 	Game.inventory_changed.emit()
 	fire_cd = d.get("rate", 0.3)
-	model.play("shoot")
-	muzzle_light.global_position = model.held.global_position + (-cam.global_transform.basis.z) * 0.4
-	muzzle_light.light_energy = 6.0
-	Sfx.play_at("shot_" + id, global_position, 0.0, randf_range(0.95, 1.05))
+	var wik = model.weapon_ik
+	var mxf: Transform3D = wik.muzzle_xf() if wik != null else model.global_transform
+	var mfwd: Vector3 = -wik.weapon_basis().z if wik != null else model.global_transform.basis.z
+	if wik != null:
+		wik.kick(1.0)
+		ShotFX.muzzle_flash(wik.wmodel, wik.muzzle, id)
+	else:
+		model.play("shoot")
+	ShotFX.muzzle_smoke(get_tree().current_scene, mxf.origin + mfwd * 0.03, mfwd, 1.0 + (0.8 if id == "shotgun" else 0.0))
+	_shots_burst += 1
+	_burst_t = 1.4
+	if _shots_burst >= 4:   # barrel wisp after rapid fire
+		ShotFX.muzzle_smoke(get_tree().current_scene, mxf.origin, Vector3.UP, 0.3)
+	muzzle_light.global_position = mxf.origin + mfwd * 0.15
+	muzzle_light.light_energy = 9.0
+	_flash_t = 0.035
+	_play_shot_audio(id)
 	Sfx.alert_noise(global_position, 25.0)
-	shake = max(shake, {"handgun": 0.25, "shotgun": 0.8, "magnum": 1.0, "launcher": 0.6}.get(id, 0.3))
-	_recoil = {"handgun": 0.5, "shotgun": 1.4, "magnum": 1.8, "launcher": 1.0}.get(id, 0.5)
+	shake = max(shake, {"handgun": 0.12, "shotgun": 0.4, "magnum": 0.5, "launcher": 0.35}.get(id, 0.2))
+	_camera_kick(id)
 	var pellets: int = d.get("pellets", 1)
 	var spread: float = deg_to_rad(d.get("spread", 1.0)) * lerp(2.5, 0.35, focus)
 	var dmg: float = d.get("damage", 20)
@@ -299,6 +377,7 @@ func _try_fire() -> void:
 	# start the ray at the player's shoulder depth so it doesn't hit things behind her
 	origin += fwd * (arm.get_hit_length() + 0.2)
 	var space := get_world_3d().direct_space_state
+	var best := ""   # strongest confirmation of this volley: hit < head < kill
 	for p in pellets:
 		var dir := fwd.rotated(cam.global_transform.basis.x, randf_range(-spread, spread)).rotated(cam.global_transform.basis.y, randf_range(-spread, spread))
 		var q := PhysicsRayQueryParameters3D.create(origin, origin + dir * rng, 1 | 4)
@@ -317,13 +396,39 @@ func _try_fire() -> void:
 						head = col.is_headshot(hit.position)
 					col.take_hit(dmg * (2.0 if head else 1.0), hit.position, dir, head)
 					FX.blood_burst(get_tree().current_scene, hit.position, hit.normal)
+					var hp = col.get("hp")
+					var dead: bool = (hp != null and float(hp) <= 0.0) or col.get("state") == "dead"
+					var kind := "kill" if dead else ("head" if head else "hit")
+					if best == "" or kind == "kill" or (kind == "head" and best == "hit"):
+						best = kind
 				else:
-					FX.impact(get_tree().current_scene, hit.position, hit.normal)
-		FX.tracer(get_tree().current_scene, model.held.global_position + fwd * 0.3, end)
+					ShotFX.impact(get_tree().current_scene, hit.position, hit.normal, ShotFX.surface_of(col, hit.normal))
+		if pellets <= 3 or p % 3 == 0:
+			FX.tracer(get_tree().current_scene, mxf.origin + mfwd * 0.1, end)
+	if best != "":
+		Hitmarker.ping(best)
+		if best != "hit":
+			ShotFX.hit_stop(get_tree(), 45.0 if best == "kill" else 35.0)
 	focus = max(0.0, focus - 0.45)
 	if Game.ammo_loaded(id) <= 0 and Game.count_item(d.get("ammo", "")) > 0:
 		await get_tree().create_timer(0.3).timeout
 		_start_reload()
+
+## Layered shot: crack (transient) + body (existing sample) + mechanical + tail (room reverb indoors, flat slap outdoors).
+func _play_shot_audio(id: String) -> void:
+	var pitch := randf_range(0.96, 1.04)
+	Sfx.play_at("crack_" + id, global_position, -2.0, pitch)
+	Sfx.play_at("shot_" + id, global_position, -1.0, pitch)
+	var indoor := Sfx.amb_name in ["amb_interior", "amb_mine", "amb_cavern", "amb_datacenter"]
+	get_tree().create_timer(0.05).timeout.connect(func():
+		Sfx.play("tail_indoor" if indoor else "tail_outdoor", -9.0 if indoor else -12.0, randf_range(0.95, 1.05)))
+	if id == "handgun":
+		get_tree().create_timer(0.05).timeout.connect(func(): Sfx.play_at("mech_slide", global_position, -12.0, randf_range(0.95, 1.1)))
+	elif id == "shotgun":
+		get_tree().create_timer(0.42).timeout.connect(func(): Sfx.play_at("mech_pump", global_position, -4.0, randf_range(0.95, 1.05)))
+
+func _on_eject(pos: Vector3, wbasis: Basis) -> void:
+	ShotFX.spawn_casing(get_tree().current_scene, Game.equipped, pos, wbasis, velocity, ShotFX.level_surface())
 
 func _start_reload() -> void:
 	if reload_t > 0.0 or not _equipped_is_gun():
@@ -351,18 +456,29 @@ func _knife() -> void:
 	if knife_cd > 0.0 or not Game.has_item("knife"):
 		return
 	knife_cd = 0.55
-	model.play("knife")
+	model.play("hatchet" if Game.equipped == "knife" else "knife")
 	Sfx.play("knife_swing")
 	var fwd := model.global_transform.basis.z
+	ShotFX.swing_trail(get_tree().current_scene, Transform3D(model.global_transform.basis, global_position), -1.0 if randf() < 0.5 else 1.0)
+	var any := false
 	for e in get_tree().get_nodes_in_group("enemy"):
 		if not is_instance_valid(e) or not e.has_method("take_hit"):
 			continue
 		var to: Vector3 = e.global_position - global_position
 		to.y = 0
 		if to.length() < 1.7 and fwd.dot(to.normalized()) > 0.4:
+			any = true
 			e.take_hit(12.0, e.global_position + Vector3(0, 1.2, 0), to.normalized(), false)
 			Sfx.play("knife_hit")
 			FX.blood_burst(get_tree().current_scene, e.global_position + Vector3(0, 1.2, 0), -to.normalized())
+			var hp = e.get("hp")
+			var dead: bool = (hp != null and float(hp) <= 0.0) or e.get("state") == "dead"
+			Hitmarker.ping("kill" if dead else "hit")
+			ShotFX.hit_stop(get_tree(), 40.0 if dead else 25.0)
+	if any:
+		shake = max(shake, 0.35)
+		if Input.get_connected_joypads().size() > 0:
+			Input.start_joy_vibration(0, 0.5, 0.8, 0.12)
 
 func _quick_heal() -> void:
 	for id in ["gel", "gel_mix", "spray"]:

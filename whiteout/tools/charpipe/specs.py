@@ -44,7 +44,7 @@ def _z(name, outfit, gender, age, color, color2=None, seed=1, skin=None, hair=No
        pallor=(0.70, 0.80, 0.90), gore_cloth=None, gore_skin=None, **kw):
     d = dict(name=name, file=name + ".glb", builder="zombies.build_zombie", outfit=outfit, gender=gender, age=age, muscle=muscle, weight=weight,
              height_m=height, skin=skin or ("middleage_caucasian_male" if gender > 0.5 else "middleage_caucasian_female"), color=color,
-             color2=color2 or (0.12, 0.15, 0.22), seed=seed, hair=hair, hair_tint=hair_tint, pallor=pallor, details=[("head", "head-age", 0.3, "decr", "incr"), ("chin", "chin-jaw-drop", 0.9, "decr", "incr"), ("mouth", "mouth-lowerlip-height", 0.5, "decr", "incr"), ("eyes", "l-eye-bag", 0.8, "decr", "incr"), ("eyes", "r-eye-bag", 0.8, "decr", "incr"),
+             color2=color2 or (0.12, 0.15, 0.22), seed=seed, hair=hair, hair_tint=hair_tint, pallor=pallor, details=[("head", "head-age", 0.3, "decr", "incr"), ("chin", "chin-jaw-drop", 0.6, "decr", "incr"), ("mouth", "mouth-lowerlip-height", 0.3, "decr", "incr"), ("eyes", "l-eye-bag", 0.8, "decr", "incr"), ("eyes", "r-eye-bag", 0.8, "decr", "incr"),
                     ("cheek", "l-cheek-volume", -0.7, "decr", "incr"), ("cheek", "r-cheek-volume", -0.7, "decr", "incr")])
     if gore_cloth: d["gore_cloth"] = gore_cloth
     if gore_skin: d["gore_skin"] = gore_skin

@@ -159,8 +159,8 @@
    "speed": 3.529247187380002
   },
   "zombie_walk": {
-   "duration": 0.9,
-   "speed": 0.55
+   "duration": 1.6,
+   "speed": 0.41055744461731314
   },
   "zombie_walk_b": {
    "duration": 0.9,

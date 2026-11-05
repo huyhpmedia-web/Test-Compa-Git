@@ -22,6 +22,7 @@ static func dress(level: Node3D) -> void:
 	_lower()
 	_drift()
 	_refuge()
+	_env()
 
 static func _frozen(p: Vector3, size: float) -> void:
 	if D._ok():
@@ -146,3 +147,23 @@ static func _refuge() -> void:
 	D.old_pool(Vector3(112.0, LY + 0.02, -27.2), 1.4)
 	D.hands(Vector3(103.86, LY + 1.0, -29.0), Vector3(103.86, LY + 1.4, -30.0), Vector3(1, 0, 0), 2, 0.2)
 	D.hands(Vector3(109.2, LY + 1.0, -26.14), Vector3(110.8, LY + 1.5, -26.14), Vector3(0, 0, 1), 3, 0.2)
+
+
+# real set dressing along the hoist-hall walls (clear of the shaft pit, the tunnel mouth and the lamp-room door)
+static func _env() -> void:
+	var P := Props
+	var lv: Node3D = D.lv
+	P.prop(lv, "mine/tool_cart", Vector3(29.0, 0.0, -8.8), 0.1, {"snow": 0.0})
+	P.prop(lv, "mine/hand_truck", Vector3(31.2, 0.0, -9.0), 0.3, {"snow": 0.0})
+	P.prop(lv, "camp/crate_wood_01", Vector3(43.6, 0.0, -9.0), 0.2, {"snow": 0.0, "scale": 1.5})
+	P.prop(lv, "camp/crate_wood_01", Vector3(44.9, 0.0, -9.0), -0.1, {"snow": 0.0, "scale": 1.5})
+	P.prop(lv, "camp/crate_wood_02", Vector3(45.0, 0.0, -8.0), 1.2, {"snow": 0.0, "scale": 1.3})
+	P.prop(lv, "mine/wooden_ladder", Vector3(30.5, 0.0, 9.3), PI, {"snow": 0.0, "scale": 1.5})
+	P.prop(lv, "mine/ladder", Vector3(33.0, 0.0, 9.55), PI, {"snow": 0.0, "rot": Vector3(-0.22, 0, 0)})
+	P.prop(lv, "mine/tool_chest", Vector3(46.4, 0.0, 8.8), 0.0, {"snow": 0.0, "scale": 1.3})
+	P.prop(lv, "camp/generator", Vector3(41.0, 0.0, 9.0), PI, {"snow": 0.0, "scale": 1.3})
+	P.prop(lv, "camp/barrel", Vector3(28.5, 0.0, 8.6), 0.0, {"snow": 0.0, "tint": Color(0.7, 0.55, 0.45)})
+	P.prop(lv, "camp/barrel", Vector3(29.3, 0.0, 9.0), 0.0, {"snow": 0.0, "tint": Color(0.5, 0.58, 0.62)})
+	P.prop(lv, "camp/jerrycan", Vector3(41.0, 0.0, 8.2), 0.4, {"snow": 0.0, "scale": 1.2})
+	P.prop(lv, "camp/propane", Vector3(42.3, 0.0, 8.8), 0.0, {"snow": 0.0})
+	P.prop(lv, "interior/extinguisher", Vector3(27.0, 1.2, -8.0), 0.0, {"collide": "none", "snow": 0.0, "rot": Vector3(0, 0, 0)})

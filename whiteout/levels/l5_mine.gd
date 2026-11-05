@@ -82,7 +82,9 @@ func _rmat(name: String) -> Material:
 
 func _timber() -> StandardMaterial3D:
 	if _timber_mat == null:
-		_timber_mat = Mats.color(Color(0.2, 0.135, 0.08), 0.92)
+		var wm := Mats.get_mat("wood", 1.0).duplicate() as StandardMaterial3D
+		wm.albedo_color = Color(0.5, 0.4, 0.34)
+		_timber_mat = wm
 	return _timber_mat
 
 func _rime() -> StandardMaterial3D:
@@ -104,6 +106,14 @@ func rk(a: float, b: float) -> float:
 ## One irregular rock lump.
 func rock_chunk(pos: Vector3, size: Vector3, yaw: float, solid := true) -> void:
 	var m: Material = _rmat(_rock_names[_rng.randi() % _rock_names.size()])
+	var rel := "mine/rock_lo_%d" % (1 + _rng.randi() % 3)
+	if Props.Env.has(rel):
+		# real rock mesh for the look (snow-free, wet), the old box stays as the (invisible) collider
+		var rr := Props.prop(geo, rel, pos - Vector3(0, size.y * 0.5, 0), yaw, {"fit_box": size * Vector3(1.12, 1.18, 1.12), "collide": "none", "snow": 0.0, "range": 90.0, "shadow": false, "rot": Vector3(rk(-0.05, 0.05), 0, rk(-0.05, 0.05))})
+		if rr:
+			var hb := Props.box(geo, size, pos, m, solid, Vector3(0, yaw, 0))
+			hb.visible = false
+			return
 	Props.box(geo, size, pos, m, solid, Vector3(rk(-0.07, 0.07), yaw, rk(-0.07, 0.07)))
 
 ## Irregular rock wall from many rotated boxes. `inward` is the unit normal pointing into the open space.
@@ -181,17 +191,25 @@ func tunnel(a: Vector2, b: Vector2, width := 3.6, h := 3.4, y := 0.0, gl: Array 
 
 ## Timber set (two posts + cap beam) spanning a tunnel. c = floor point on the tunnel axis.
 func timber_set(c: Vector3, along_x: bool, width: float, height: float) -> void:
+	# hewn mine timbers: round posts with a bearing cap, diagonal knee braces, wedges and a bolt plate
 	var m := _timber()
 	var half := width * 0.5 - 0.1
 	for s in [-1.0, 1.0]:
+		var pp: Vector3 = Vector3(c.x, c.y + height * 0.5, c.z + s * half) if along_x else Vector3(c.x + s * half, c.y + height * 0.5, c.z)
+		Props.cyl(geo, 0.17, height, pp, m, false, 0.15, Vector3((0.03 * s) if not along_x else 0.0, 0, (0.03 * s) if along_x else 0.0), 9)
+		# knee brace up to the cap
+		var bp: Vector3 = pp + Vector3(0, height * 0.42, 0) + (Vector3(0, 0, -s * 0.38) if along_x else Vector3(-s * 0.38, 0, 0))
+		var brace := Props.box(geo, Vector3(0.14, 0.9, 0.14), bp, m, false, Vector3(0, 0, 0))
 		if along_x:
-			Props.box(geo, Vector3(0.28, height, 0.28), Vector3(c.x, c.y + height * 0.5, c.z + s * half), m, false, Vector3(0, 0, s * 0.03))
+			brace.rotation.x = -s * 0.7
 		else:
-			Props.box(geo, Vector3(0.28, height, 0.28), Vector3(c.x + s * half, c.y + height * 0.5, c.z), m, false, Vector3(s * 0.03, 0, 0))
+			brace.rotation.z = s * 0.7
+		var plate: Vector3 = pp + Vector3(0, height * 0.25, 0) + (Vector3(0.17, 0, 0) if along_x else Vector3(0, 0, 0.17))
+		Props.box(geo, Vector3(0.04, 0.22, 0.22), plate, Mats.get_mat("metal_rust", 1.0), false)
 	if along_x:
-		Props.box(geo, Vector3(0.32, 0.3, width + 0.5), Vector3(c.x, c.y + height + 0.1, c.z), m, false, Vector3(rk(-0.02, 0.02), 0, rk(-0.02, 0.02)))
+		Props.cyl(geo, 0.17, width + 0.5, Vector3(c.x, c.y + height + 0.12, c.z), m, false, 0.16, Vector3(PI * 0.5, 0, rk(-0.02, 0.02)), 9)
 	else:
-		Props.box(geo, Vector3(width + 0.5, 0.3, 0.32), Vector3(c.x, c.y + height + 0.1, c.z), m, false, Vector3(rk(-0.02, 0.02), 0, rk(-0.02, 0.02)))
+		Props.cyl(geo, 0.17, width + 0.5, Vector3(c.x, c.y + height + 0.12, c.z), m, false, 0.16, Vector3(rk(-0.02, 0.02), 0, PI * 0.5), 9)
 
 ## Rail track (along x or z). Sleepers + two rails.
 func rails(a: Vector3, b: Vector3, gauge := 0.9) -> void:
@@ -259,12 +277,16 @@ func icicle(pos: Vector3, length := 0.5) -> void:
 func work_light(p: Vector3, on := true, col := Color(1.0, 0.82, 0.55), energy := 1.8, flick := false, up := 0.9) -> void:
 	Props.cyl(geo, 0.012, up, p + Vector3(0, up * 0.5 + 0.15, 0), Mats.get_mat("rubber"), false, -1.0, Vector3.ZERO, 5)
 	var bulb: Material = Mats.emissive(col, 3.0) if on else Mats.color(Color(0.25, 0.25, 0.22), 0.4, 0.2)
-	Props.sphere(geo, 0.07, p, bulb)
-	var cm := Mats.get_mat("metal", 1.0)
-	for s in [[-1, -1], [1, -1], [-1, 1], [1, 1]]:
-		Props.cyl(geo, 0.008, 0.28, p + Vector3(s[0] * 0.1, 0.0, s[1] * 0.1), cm, false, -1.0, Vector3.ZERO, 4)
-	Props.cyl(geo, 0.12, 0.012, p + Vector3(0, 0.14, 0), cm, false, -1.0, Vector3.ZERO, 8)
-	Props.cyl(geo, 0.12, 0.012, p + Vector3(0, -0.14, 0), cm, false, -1.0, Vector3.ZERO, 8)
+	var hl: Node3D = Props.prop(geo, "mine/hanging_lamp", p + Vector3(0, 1.0, 0), _rng.randf() * TAU, {"collide": "none", "snow": 0.0, "scale": 0.8, "range": 60.0, "shadow": false, "emissive": {"hanging_industrial_lamp_glass": [col, 3.0]} if on else {}})
+	if hl == null:
+		Props.sphere(geo, 0.07, p, bulb)
+		var cm := Mats.get_mat("metal", 1.0)
+		for s in [[-1, -1], [1, -1], [-1, 1], [1, 1]]:
+			Props.cyl(geo, 0.008, 0.28, p + Vector3(s[0] * 0.1, 0.0, s[1] * 0.1), cm, false, -1.0, Vector3.ZERO, 4)
+		Props.cyl(geo, 0.12, 0.012, p + Vector3(0, 0.14, 0), cm, false, -1.0, Vector3.ZERO, 8)
+		Props.cyl(geo, 0.12, 0.012, p + Vector3(0, -0.14, 0), cm, false, -1.0, Vector3.ZERO, 8)
+	else:
+		Props.sphere(geo, 0.05, p + Vector3(0, 0.02, 0), bulb)
 	if on:
 		light(p + Vector3(0, -0.1, 0), col, energy, 7.5, false, flick)
 
@@ -404,6 +426,8 @@ func _build_hoist_hall() -> void:
 		Props.box(geo, Vector3(0.25, 0.25, 21), Vector3(x + 1, hh - 1.5, 0), Mats.get_mat("metal_rust", 1.5), false, Vector3(0.0, 0.0, 0.0))
 	for z in [-8, -4, 0, 4, 8]:
 		Props.box(geo, Vector3(22, 0.4, 0.4), Vector3(37, hh - 0.6, z), Mats.get_mat("metal_painted", 1.5), false)
+	# overhead gantry crane on the runway above the shaft
+	Props.prop(geo, "mine/crane", Vector3(37.0, hh - 1.6, 0.0), PI * 0.5, {"collide": "none", "snow": 0.0, "range": 80.0})
 	# moonlight through the broken roof above the shaft
 	var sp := spot(Vector3(36.5, hh - 0.2, 0.0), Vector3(36.5, 0, 0.0), Color(0.55, 0.7, 1.0), 9.0, 14.0, 26.0, true)
 	sp.light_volumetric_fog_energy = 2.5
@@ -1090,18 +1114,18 @@ func _haul_truck(pos: Vector3, yaw: float) -> void:
 	r.position = pos
 	r.rotation.y = yaw
 	geo.add_child(r)
-	var body := Mats.get_mat("metal_rust", 2.0)
-	var yel := Mats.color(Color(0.55, 0.42, 0.08), 0.6, 0.4)
-	Props.box(r, Vector3(9.0, 1.2, 3.8), Vector3(0, 1.8, 0), yel, true)
-	Props.box(r, Vector3(2.6, 2.2, 3.4), Vector3(-3.6, 3.5, 0), yel, true)
-	Props.box(r, Vector3(0.05, 1.0, 2.6), Vector3(-4.95, 3.8, 0), Mats.color(Color(0.05, 0.07, 0.08, 0.6), 0.1, 0.6), false)
-	# tilted dump bed
-	Props.box(r, Vector3(6.4, 0.3, 3.6), Vector3(1.4, 3.6, 0), body, true, Vector3(0, 0, 0.28))
-	Props.box(r, Vector3(6.4, 1.6, 0.3), Vector3(1.4, 4.4, -1.8), body, false, Vector3(0, 0, 0.28))
-	Props.box(r, Vector3(6.4, 1.6, 0.3), Vector3(1.4, 4.4, 1.8), body, false, Vector3(0, 0, 0.28))
-	for sx in [-3.2, 3.2]:
-		for sz in [-2.0, 2.0]:
-			Props.cyl(r, 1.3, 0.9, Vector3(sx, 1.3, sz), Mats.color(Color(0.05, 0.05, 0.05), 0.9), true, -1.0, Vector3(PI * 0.5, 0, 0), 18)
+	if Props.prop(r, "vehicles/haul_truck", Vector3.ZERO, -PI * 0.5, {"name": "HaulTruck", "snow": 0.0, "box_shrink": 0.9}) == null:
+		var body := Mats.get_mat("metal_rust", 2.0)
+		var yel := Mats.color(Color(0.55, 0.42, 0.08), 0.6, 0.4)
+		Props.box(r, Vector3(9.0, 1.2, 3.8), Vector3(0, 1.8, 0), yel, true)
+		Props.box(r, Vector3(2.6, 2.2, 3.4), Vector3(-3.6, 3.5, 0), yel, true)
+		Props.box(r, Vector3(0.05, 1.0, 2.6), Vector3(-4.95, 3.8, 0), Mats.color(Color(0.05, 0.07, 0.08, 0.6), 0.1, 0.6), false)
+		Props.box(r, Vector3(6.4, 0.3, 3.6), Vector3(1.4, 3.6, 0), body, true, Vector3(0, 0, 0.28))
+		Props.box(r, Vector3(6.4, 1.6, 0.3), Vector3(1.4, 4.4, -1.8), body, false, Vector3(0, 0, 0.28))
+		Props.box(r, Vector3(6.4, 1.6, 0.3), Vector3(1.4, 4.4, 1.8), body, false, Vector3(0, 0, 0.28))
+		for sx in [-3.2, 3.2]:
+			for sz in [-2.0, 2.0]:
+				Props.cyl(r, 1.3, 0.9, Vector3(sx, 1.3, sz), Mats.color(Color(0.05, 0.05, 0.05), 0.9), true, -1.0, Vector3(PI * 0.5, 0, 0), 18)
 	# frozen miners fused into the bed and the cab: Rime clumps and bodies
 	rime(pos + Vector3(0, 5.0, 0), Vector3.UP, 14, 1.4, true)
 	rime(pos + Vector3(-0.3, 4.6, 1.0), Vector3(0, 0.5, 1), 8, 0.9)

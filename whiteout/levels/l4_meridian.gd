@@ -186,8 +186,18 @@ func _rack_row(x: float, z0: float, z1: float, face: int, seed_v: int = 1, warm 
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed_v
 	var n := int((z1 - z0) / 0.84)
-	for i in n:
+	var glb := Props.Env.has("props/server_rack")
+	var i := 0
+	while i < n:
+		# generated rack models (open door, real LEDs) every second slot; the boxy racks fill the rest
+		if glb and i % 4 == 0 and i + 1 < n:
+			var rk := Props.server_rack(geo, Vector3(x, 0, z0 + 0.84 + i * 0.84), PI * 0.5 * face)
+			if rk:
+				rk.scale = Vector3(0.86, 0.86, 0.86)
+				i += 2
+				continue
 		_rack(Vector3(x, 0, z0 + 0.42 + i * 0.84), PI * 0.5 * face, rng, warm)
+		i += 1
 
 func _tray(x: float, z0: float, z1: float, y: float, w := 0.7) -> void:
 	var len := absf(z1 - z0)

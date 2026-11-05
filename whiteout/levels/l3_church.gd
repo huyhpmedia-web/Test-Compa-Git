@@ -65,7 +65,10 @@ func _icicles(a: Vector3, b: Vector3, n: int, maxlen := 0.7) -> void:
 		_cy(0.0, l, p - Vector3(0, l * 0.5, 0), "ice", false, rng.randf_range(0.03, 0.05), Vector3.ZERO, 6)
 
 func _drift(pos: Vector3, size: Vector3, yaw := 0.0) -> void:
-	_b(size, pos + Vector3(0, size.y * 0.5 - 0.05, 0), "snow", true, Vector3(0, yaw, 0.0))
+	# sculpted wind drift (visual) + a smaller invisible solid so it still blocks like before
+	Props.drift(geo, pos + Vector3(0, -0.05, 0), size.x * 0.58, size.y * 0.95, size.z * 0.58, yaw)
+	var blk := _b(Vector3(size.x * 0.62, size.y * 0.8, size.z * 0.62), pos + Vector3(0, size.y * 0.4 - 0.05, 0), "snow", true, Vector3(0, yaw, 0.0))
+	blk.visible = false
 
 func _fire_barrel(pos: Vector3, shadows := false) -> void:
 	Props.barrel(geo, pos, 0.0, true)
@@ -220,7 +223,24 @@ func _block(x0: float, z0: float, x1: float, z1: float, north_side: bool, label 
 		box(Vector3((x0 + x1) * 0.5, 3.6, (z0 + z1) * 0.5), Vector3(x1 - x0, 7.2, z1 - z0), "brick" if (int(x0) % 2 == 0) else "brick_dark")
 	# snow cap + cornice
 	_b(Vector3(x1 - x0 + 0.5, 0.45, z1 - z0 + 0.5), Vector3((x0 + x1) * 0.5, 7.35, (z0 + z1) * 0.5), "snow", true)
-	_b(Vector3(x1 - x0 + 0.3, 0.3, 0.35), Vector3((x0 + x1) * 0.5, 6.9, zf + out * 0.15), "concrete")
+	if Props.Env.has("facade/gutter_run"):
+		Props.cornice(geo, x0, x1, 6.9, zf, out)
+		# brick pilasters at the party walls + a string course between the storeys
+		for px in [x0 + 0.15, x1 - 0.15]:
+			_b(Vector3(0.5, 7.2, 0.3), Vector3(px, 3.6, zf + out * 0.12), "brick_dark" if (int(x0) % 2 == 0) else "brick")
+		_b(Vector3(x1 - x0, 0.2, 0.2), Vector3((x0 + x1) * 0.5, 3.75, zf + out * 0.08), "concrete")
+		# downpipe at one end + gutter under the parapet
+		Props.gutter(geo, Vector3(x0 + 0.25, 6.55, zf + out * 0.25), Vector3(x1 - 0.25, 6.55, zf + out * 0.25), 0.0)
+		Props.gutter(geo, Vector3(x1 - 0.55, 6.55, zf + out * 0.25), Vector3(x1 - 0.55, 6.55, zf + out * 0.25 + 0.01), 6.4)
+		# a fire escape on every third block (stairs to the first-floor platform + ladder to the roof)
+		if int(abs(x0)) % 3 == 0:
+			var fx := (x0 + x1) * 0.5
+			Props.prop(geo, "facade/fire_escape_platform", Vector3(fx, 3.95, zf + out * 0.75), yaw, {"collide": "none", "snow": 0.8})
+			Props.prop(geo, "facade/fire_escape_railing", Vector3(fx, 4.7, zf + out * 0.75), yaw, {"collide": "none", "snow": 0.4})
+			Props.prop(geo, "facade/fire_escape_stairs", Vector3(fx + 0.9, 0.0, zf + out * 0.75), yaw, {"collide": "none", "snow": 0.6})
+			Props.prop(geo, "facade/fire_escape_ladder", Vector3(fx - 1.9, 4.75, zf + out * 0.15), yaw, {"collide": "none"})
+	else:
+		_b(Vector3(x1 - x0 + 0.3, 0.3, 0.35), Vector3((x0 + x1) * 0.5, 6.9, zf + out * 0.15), "concrete")
 	# upper-storey windows (dark)
 	var span := x1 - x0
 	for i in upper_n:
@@ -669,6 +689,24 @@ func _build_street_props() -> void:
 		Props.lamp_post(geo, Vector3(x, 0, 5.8), PI, false)
 	for x in [-53.0, -39.0, -5.0, 36.0, 64.0]:
 		Props.lamp_post(geo, Vector3(x, 0, -5.8), 0.0, false)
+	# street furniture: hydrants, utility cabinets, barriers, bins
+	for x in [-58.0, -24.0, 8.0, 44.0]:
+		Props.hydrant(geo, Vector3(x, 0, 5.2), 0.0)
+	Props.utility_box(geo, Vector3(-44.5, 0, 6.2), PI, true)
+	Props.utility_box(geo, Vector3(24.0, 0, -6.4), 0.0)
+	Props.power_box(geo, Vector3(-3.5, 0, 6.4), PI)
+	Props.barrier(geo, Vector3(-10.5, 0, -2.5), 0.5, 1)
+	Props.barrier(geo, Vector3(-11.8, 0, 3.2), -0.2, 2)
+	Props.barrier(geo, Vector3(54.0, 0, 1.0), 1.5707, 1)
+	Props.trash_can(geo, Vector3(-34.5, 0, 6.3), 0.2)
+	Props.trash_can(geo, Vector3(14.5, 0, -6.3), 0.8)
+	Props.trash_can(geo, Vector3(41.0, 0, 6.2), 2.0)
+	# conifer tree line behind the snowbanks, left and right of the street
+	for i in 34:
+		var tx := -76.0 + i * 4.6 + sin(i * 2.3) * 1.5
+		Props.conifer(geo, Vector3(tx, 0, 31.0 + 5.0 * absf(sin(i * 1.7))), 9.0 + 4.0 * absf(sin(i * 0.9)), i + 11, "fir" if i % 4 != 0 else "pine")
+	for i in 14:
+		Props.conifer(geo, Vector3(-74.0 + i * 5.2, 0, -30.0 - 4.0 * absf(sin(i * 2.1))), 9.0 + 3.0 * absf(sin(i)), i + 51, "fir")
 	# phone line sagging across, scattered newspapers, sandwich board
 	Props.papers(geo, Vector3(-44, 0.03, -3.0), 9)
 	Props.papers(geo, Vector3(20, 0.03, 2.0), 8)

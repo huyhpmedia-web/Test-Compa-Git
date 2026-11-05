@@ -173,6 +173,28 @@ def zombie_skin(cb, spec, size=1024):
     col = col * (1 - 0.85 * lips[:, None]) + np.array([0.27, 0.13, 0.21])[None] * 0.85 * lips[:, None]
     crack = pt.smoothstep(0.6, 0.7, gore.n3(p * np.array([220.0, 20.0, 12.0]) / 20.0, 1.0, seed + 12)) * lips
     col = col * (1 - 0.85 * crack[:, None]) + np.array([0.10, 0.015, 0.02])[None] * 0.85 * crack[:, None]
+    # --- bared teeth + receded gums painted on the lip band (grimace): ivory teeth rows, dark slit, dirty gums, relief
+    tb = spec.get("teeth", 1.0 if seed % 2 == 0 else 0.0) + (0.0 if not spec.get("open_mouth") else 1.0)
+    if tb > 0:
+        mc = mouth_z - 0.002
+        band = pt.smoothstep(0.036, 0.031, ax) * fwd * min(tb, 1.0)
+        up_r = band * pt.smoothstep(0.0090, 0.0068, np.abs(z - (mc + 0.0062)))
+        lo_r = band * pt.smoothstep(0.0090, 0.0068, np.abs(z - (mc - 0.0068)))
+        gum = band * pt.smoothstep(0.0045, 0.0030, np.abs(z - (mc + 0.0145))) + band * pt.smoothstep(0.004, 0.0025, np.abs(z - (mc - 0.0155))) * 0.7
+        slit = band * pt.smoothstep(0.0016, 0.0004, np.abs(z - mc))
+        per = 0.0046
+        phx = x / per + 0.3 * np.sin(z * 90)
+        frx = phx - np.floor(phx)
+        gx = pt.smoothstep(0.14, 0.02, np.minimum(frx, 1 - frx))
+        tn = gore.fbm(p, 600, seed + 80)
+        tooth = np.clip(np.maximum(up_r, lo_r) * (1 - gx * 0.9), 0, 1)
+        tcol = np.array([0.60, 0.55, 0.42])[None] * (0.7 + 0.5 * tn)[:, None]
+        tcol = tcol * (1 - 0.35 * pt.smoothstep(0.0, 0.01, np.abs(z - mc))[:, None])         # darker at the gum line
+        col = col * (1 - gum[:, None] * 0.85) + np.array([0.34, 0.11, 0.12])[None] * gum[:, None] * 0.85
+        col = col * (1 - np.maximum(up_r, lo_r)[:, None]) + np.array([0.05, 0.012, 0.014])[None] * np.maximum(up_r, lo_r)[:, None]
+        col = col * (1 - tooth[:, None]) + tcol * tooth[:, None]
+        col = col * (1 - slit[:, None]) + np.array([0.03, 0.006, 0.008])[None] * slit[:, None]
+        hh0 = hh0 + tooth * 1.1 - np.maximum(up_r, lo_r) * (1 - tooth) * 1.0 - slit * 1.5
     # --- blackened fingers (tips worst) and darkened hands
     fing = np.clip(r["wf"][:, 0] * 1.5, 0, 1)
     hand = np.clip(r["wh"][:, 0] * 0.8, 0, 1)
@@ -486,8 +508,6 @@ def build_zombie(cb, spec):
                       lashes=spec.get("gender", 1) < 0.5, eye_tint=(0.8, 0.85, 1.0), decim_hair=1.0, subdiv=True)
     else:
         zombie_face(cb, spec, spec.get("hair"), spec.get("hair_tint", (0.3, 0.3, 0.32)))
-    if not spec.get("clean"):
-        mouth_parts(cb, spec)
     for ex in spec.get("extras", []):
         globals()["extra_" + ex](cb, spec)
     if o == "miner":

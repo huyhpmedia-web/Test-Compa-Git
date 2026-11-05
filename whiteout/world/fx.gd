@@ -3,6 +3,7 @@ extends RefCounted
 
 const Mats = preload("res://core/mats.gd")
 const Gore = preload("res://world/gore.gd")
+const ShotFX = preload("res://world/shot_fx.gd")
 
 static func _mi(mesh: Mesh, mat: Material, pos := Vector3.ZERO) -> MeshInstance3D:
 	var m := MeshInstance3D.new()
@@ -107,10 +108,10 @@ static func tracer(parent: Node, from: Vector3, to: Vector3) -> void:
 	if len < 0.5:
 		return
 	var cyl := CylinderMesh.new()
-	cyl.top_radius = 0.006
-	cyl.bottom_radius = 0.006
+	cyl.top_radius = 0.004
+	cyl.bottom_radius = 0.004
 	cyl.height = len
-	var mi := _mi(cyl, Mats.emissive(Color(1.0, 0.85, 0.5), 4.0))
+	var mi := _mi(cyl, Mats.emissive(Color(1.0, 0.85, 0.55), 2.5))
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	parent.add_child(mi)
 	mi.global_position = (from + to) * 0.5
@@ -118,7 +119,7 @@ static func tracer(parent: Node, from: Vector3, to: Vector3) -> void:
 	var side := up.cross(Vector3.UP if abs(up.y) < 0.99 else Vector3.RIGHT).normalized()
 	mi.global_transform.basis = Basis(side, up, side.cross(up))
 	var tw := mi.create_tween()
-	tw.tween_interval(0.04)
+	tw.tween_interval(0.05)
 	tw.tween_callback(mi.queue_free)
 
 static func _particles(parent: Node, pos: Vector3, color: Color, amount: int, speed: float, size: float, life: float, gravity := 9.8) -> void:
@@ -155,9 +156,7 @@ static func _particles(parent: Node, pos: Vector3, color: Color, amount: int, sp
 	tw.tween_callback(p.queue_free)
 
 static func impact(parent: Node, pos: Vector3, normal: Vector3) -> void:
-	_particles(parent, pos + normal * 0.02, Color(1.0, 0.8, 0.4), 8, 4.0, 0.02, 0.25)
-	_particles(parent, pos + normal * 0.02, Color(0.45, 0.42, 0.38), 10, 1.5, 0.04, 0.6, 3.0)
-	decal(parent, pos, normal, Color(0.05, 0.05, 0.05, 0.9), 0.06)
+	ShotFX.impact(parent, pos, normal, ShotFX.surface_of(null, normal))
 
 ## Flesh hit at a bullet impact. Enemies running Enemy.take_hit already did the full gore hook
 ## (Gore.on_enemy_hit); this covers anything else that was shot (bosses, props, NPCs).

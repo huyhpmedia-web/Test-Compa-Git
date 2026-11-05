@@ -13,6 +13,7 @@ func _ready() -> void:
 	var k := DirectionalLight3D.new(); k.rotation_degrees = Vector3(-35, 150, 0); k.light_energy = 1.6; add_child(k)
 	var r := DirectionalLight3D.new(); r.rotation_degrees = Vector3(-20, 30, 0); r.light_energy = 0.8; add_child(r)
 	var f := MeshInstance3D.new(); var pm := PlaneMesh.new(); pm.size = Vector2(20, 20); f.mesh = pm; add_child(f)
+	var sb := StaticBody3D.new(); var cs := CollisionShape3D.new(); var bs := BoxShape3D.new(); bs.size = Vector3(20, 1, 20); cs.shape = bs; sb.add_child(cs); sb.position.y = -0.5; add_child(sb)
 	var CM = load("res://actors/character_model.gd")
 	var h: Node3D = CM.new()
 	h.setup({"model": "elias"})
@@ -33,7 +34,13 @@ func _ready() -> void:
 	var kick_at := int(a.get("kick", -1))
 	var shots: PackedStringArray = String(a.get("shots", "")).split(",", false)   # frame numbers to save extra images: out_<n>.png
 	for i in frames:
-		if i == kick_at and h.weapon_ik: h.weapon_ik.kick(1.0)
+		if i == kick_at and h.weapon_ik:
+			var SF = load("res://world/shot_fx.gd")
+			var w = h.weapon_ik
+			w.eject_cb = func(pos, b): SF.spawn_casing(self, a.get("hold", "handgun"), pos, b, Vector3.ZERO, "concrete")
+			w.kick(1.0)
+			SF.muzzle_flash(w.wmodel, w.muzzle, a.get("hold", "handgun"))
+			SF.muzzle_smoke(self, w.muzzle_xf().origin, -w.weapon_basis().z)
 		await get_tree().process_frame
 		if str(i) in shots:
 			get_viewport().get_texture().get_image().save_png(a.out.replace(".png", "_%d.png" % i))

@@ -206,7 +206,21 @@ def build_elias(ctx, only=None):
         fr, t = bvh_frames(ctx, "19_05", 0.2, 3.4, xy="zero")
         ctx.put("struggle", fr, False)
     add_hits(ctx)
+    legacy(ctx)
     return ctx.meta
+
+
+def legacy(ctx):
+    """clips of the old pipeline (clips.py: CMU walk/run + hand-keyed idle/sit/hang/death/...) that the new sets do not replace, so the
+    anim glb alone fully drives a mesh-only character glb (the character glbs no longer need embedded clips)."""
+    import clips as old
+    out, meta = old.build_clips(ctx.rig, True)
+    loops = ("idle", "aim_idle", "walk", "run", "zombie_idle", "zombie_walk", "crawl", "sit", "hang")
+    for name, (qs, locs) in out.items():
+        if name in ctx.meta: continue
+        A.write_action(ctx.rig, name, qs, locs, loop=name in loops)
+        ctx.meta[name] = dict(meta.get(name, {}), duration=len(qs) / FPS, legacy=True)
+        print("[legacy] %s" % name)
 
 
 def zombify(arms=50.0, hunch=14.0, head=14.0, claw=30.0):
@@ -220,7 +234,7 @@ def zombify(arms=50.0, hunch=14.0, head=14.0, claw=30.0):
 def build_zombie(ctx, only=None):
     ctx.only = set(only) if only else None
     W = ctx.want
-    walks = [("zombie_walk", "120_22", (0.9, 1.8), None, (0, 12), dict(arms=0, hunch=4, head=8, claw=40)),
+    walks = [("zombie_walk", "137_33", (0.9, 1.8), None, (3, 24), dict(arms=45, hunch=14, head=16, claw=40)),
              ("zombie_walk_b", "137_16", (0.9, 1.8), None, (1, 11), dict(arms=55, hunch=14, head=16)),
              ("zombie_walk_c", "139_19", (0.9, 1.8), None, (0.5, 8), dict(arms=40, hunch=18, head=18)),
              ("zombie_walk_d", "142_12", (0.9, 1.8), None, (2, 38), dict(arms=60, hunch=10, head=12)),
@@ -233,11 +247,11 @@ def build_zombie(ctx, only=None):
                 fr, sp, tv = loco(ctx, cid, lo, hi, region)
             except Exception as e:
                 print("FAIL", nm, e); continue
-            sp = {"zombie_walk": 0.55, "zombie_walk_b": 0.6, "zombie_walk_f": 0.6}.get(nm, sp)
+            sp = {"zombie_walk_b": 0.6, "zombie_walk_f": 0.6}.get(nm, sp)
             ctx.put(nm, fr, True, zombify(**zk), speed=sp)
     if W("zombie_run"):
         fr, sp, tv = loco(ctx, "09_01", 0.45, 0.9)
-        ctx.put("zombie_run", fr, True, zombify(arms=70, hunch=26, head=20, claw=45), speed=sp)
+        ctx.put("zombie_run", fr, True, zombify(arms=28, hunch=22, head=14, claw=45), speed=sp)
     for nm, cid, t0, t1 in (("zombie_idle", "137_15", 2.0, 8.0), ("zombie_idle_b", "137_32", 3.0, 9.0), ("zombie_idle_c", "140_06", 4.0, 10.0)):
         if W(nm):
             fr = slice_loop(ctx, cid, t0, t1, blend=24, xy="zero")
@@ -265,4 +279,5 @@ def build_zombie(ctx, only=None):
         fr, sp, tv = loco(ctx, "133_01", 1.0, 2.2)
         ctx.put("crawl", fr, True, speed=sp)
     add_hits(ctx)
+    legacy(ctx)
     return ctx.meta

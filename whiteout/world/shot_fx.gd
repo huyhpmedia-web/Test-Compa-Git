@@ -46,7 +46,7 @@ static func _puff(seed_v := 3) -> ImageTexture:
 		for x in size:
 			var d := Vector2(x + 0.5 - 32.0, y + 0.5 - 32.0).length() / 32.0
 			var a := clampf(1.0 - d, 0.0, 1.0)
-			a = pow(a, 1.4) * (0.65 + 0.35 * (n.get_noise_2d(x, y) + 1.0) * 0.5)
+			a = pow(a, 2.2) * (0.65 + 0.35 * (n.get_noise_2d(x, y) + 1.0) * 0.5)
 			img.set_pixel(x, y, Color(1, 1, 1, clampf(a, 0.0, 1.0)))
 	var t := ImageTexture.create_from_image(img)
 	_tex[key] = t
@@ -75,7 +75,7 @@ static func _hole_tex(kind: String) -> Array:
 				col = Color(0.02, 0.02, 0.02, 0.95)
 			elif d < halo:
 				var t := (d - core) / (halo - core)
-				var base := {"snow": Color(0.45, 0.5, 0.58), "concrete": Color(0.12, 0.12, 0.12), "wood": Color(0.1, 0.06, 0.03), "metal": Color(0.08, 0.08, 0.09), "ice": Color(0.55, 0.7, 0.8)}.get(kind, Color(0.1, 0.1, 0.1))
+				var base: Color = {"snow": Color(0.45, 0.5, 0.58), "concrete": Color(0.12, 0.12, 0.12), "wood": Color(0.1, 0.06, 0.03), "metal": Color(0.08, 0.08, 0.09), "ice": Color(0.55, 0.7, 0.8)}.get(kind, Color(0.1, 0.1, 0.1))
 				col = Color(base.r, base.g, base.b, (1.0 - t) * (0.9 if kind == "snow" else 0.7))
 			img.set_pixel(x, y, col)
 			# normal: raised rim around the hole, dark pit inside
@@ -120,7 +120,7 @@ static func muzzle_flash(wmodel: Node3D, muzzle: Node3D, id: String) -> void:
 	var seed_v := randi() % 3
 	var core := MeshInstance3D.new()
 	var qm := QuadMesh.new()
-	qm.size = Vector2.ONE * 0.26 * k[0] * randf_range(0.8, 1.25)
+	qm.size = Vector2.ONE * 0.17 * k[0] * randf_range(0.8, 1.25)
 	core.mesh = qm
 	core.material_override = _quad_mat(_radial(64, 1.3, 5 + seed_v * 2, 0.9, seed_v + 1), Color(1.0, 0.82, 0.5, 1.0), true)
 	core.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -151,9 +151,14 @@ static func muzzle_flash(wmodel: Node3D, muzzle: Node3D, id: String) -> void:
 			sp.rotation = Vector3(0, 0, 0)
 			sp.position = Vector3(sgn * 0.07 * k[0], 0, 0.02)
 			root.add_child(sp)
-	var tw := root.create_tween()
-	tw.tween_interval(0.035)
-	tw.tween_callback(root.queue_free)
+	_free_after_frames(root, 2)
+
+static func _free_after_frames(n: Node, frames: int) -> void:
+	var tree := n.get_tree()
+	for i in frames:
+		await tree.process_frame
+	if is_instance_valid(n):
+		n.queue_free()
 
 ## Barrel smoke: soft billboard puffs that linger 1-2 s and drift (world space so they stay behind when the gun moves).
 static func muzzle_smoke(parent: Node, pos: Vector3, dir: Vector3, heavy := 1.0) -> void:
@@ -173,14 +178,14 @@ static func muzzle_smoke(parent: Node, pos: Vector3, dir: Vector3, heavy := 1.0)
 	p.gravity = Vector3(0.12, 0.28, 0.05)
 	p.damping_min = 0.8
 	p.damping_max = 1.6
-	p.scale_amount_min = 0.12
-	p.scale_amount_max = 0.24
+	p.scale_amount_min = 0.2
+	p.scale_amount_max = 0.36
 	var curve := Curve.new()
 	curve.add_point(Vector2(0, 0.4)); curve.add_point(Vector2(1, 2.6))
 	p.scale_amount_curve = curve
 	var g := Gradient.new()
 	g.offsets = PackedFloat32Array([0.0, 0.12, 1.0])
-	g.colors = PackedColorArray([Color(0.75, 0.72, 0.7, 0.0), Color(0.72, 0.72, 0.74, 0.32), Color(0.5, 0.52, 0.56, 0.0)])
+	g.colors = PackedColorArray([Color(0.75, 0.72, 0.7, 0.0), Color(0.7, 0.7, 0.72, 0.2), Color(0.5, 0.52, 0.56, 0.0)])
 	p.color_ramp = g
 	var qm := QuadMesh.new()
 	qm.size = Vector2.ONE

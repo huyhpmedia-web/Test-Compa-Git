@@ -260,8 +260,7 @@ func _snow_box(pos: Vector3, size: Vector3) -> void:
 	_deco(pos, size, "snow")
 
 func _mound(pos: Vector3, r: float, hs := 0.4, stretch := 1.0) -> void:
-	var mi := Props.sphere(geo, r, pos, Mats.get_mat("snow"), Vector3(1.0 * stretch, hs, 1.0))
-	mi.rotation.y = randf() * TAU
+	Props.drift(geo, pos, r * stretch, r * hs, r, randf() * TAU)
 
 func _icicles(a: Vector3, b: Vector3, n: int, maxlen := 0.5) -> void:
 	var m: Material = Mats.get_mat("ice")
@@ -519,7 +518,10 @@ func _build_courtyard() -> void:
 			1: p = Vector3(rng.randf_range(32, 48), 0, rng.randf_range(-30, 30))
 			2: p = Vector3(-rng.randf_range(32, 48), 0, rng.randf_range(-30, 30))
 			3: p = Vector3(rng.randf_range(-26, 26), 0, -rng.randf_range(42, 60))
-		Props.tree(geo, p, rng.randf_range(9, 14), rng.randi())
+		if i % 3 != 0:
+			Props.conifer(geo, p, rng.randf_range(9, 14), rng.randi(), "fir" if i % 5 != 0 else "pine")
+		else:
+			Props.tree(geo, p, rng.randf_range(9, 14), rng.randi())
 	# shed (reference art): corrugated, white panelled door
 	var shed_pos := Vector3(16.5, 0, -5.0)
 	Props.shed(geo, shed_pos, 0.2)
@@ -570,25 +572,9 @@ func _build_courtyard() -> void:
 	_bulb(Vector3(-18.5, FY + 3.0, -8.7), 2.0, 6.5, false, "weak", Color(1.0, 0.72, 0.42), 0.25)
 
 func _fire_barrel(pos: Vector3) -> void:
-	Props.cyl(geo, 0.32, 0.95, pos + Vector3(0, 0.475, 0), Mats.get_mat("metal_rust", 0.6), true, 0.34)
-	# burning contents
-	var p := CPUParticles3D.new()
-	p.amount = 36
-	p.lifetime = 1.0
-	p.direction = Vector3.UP
-	p.spread = 12.0
-	p.initial_velocity_min = 0.8
-	p.initial_velocity_max = 1.8
-	p.gravity = Vector3(0, 0.8, 0)
-	p.scale_amount_min = 0.05
-	p.scale_amount_max = 0.18
-	var sm := SphereMesh.new()
-	sm.radius = 0.5
-	sm.height = 1.0
-	p.mesh = sm
-	p.material_override = Mats.emissive(Color(1.0, 0.45, 0.12), 4.0)
-	p.position = pos + Vector3(0, 1.0, 0)
-	add_child(p)
+	if Props.barrel(geo, pos, 0.0, true) == null:
+		Props.cyl(geo, 0.32, 0.95, pos + Vector3(0, 0.475, 0), Mats.get_mat("metal_rust", 0.6), true, 0.34)
+	Props.FireFX.burn(self, pos + Vector3(0, 0.93, 0), 1.0, {"light": false})
 	var l := OmniLight3D.new()
 	l.light_color = Color(1.0, 0.5, 0.2)
 	l.light_energy = 2.4

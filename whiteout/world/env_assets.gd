@@ -218,7 +218,7 @@ static func spawn(parent: Node3D, rel: String, pos := Vector3.ZERO, yaw := 0.0, 
 			m.visibility_range_begin = float(opts.range_begin)
 			m.visibility_range_begin_margin = float(opts.range_begin) * 0.08
 	var aabb := local_aabb(inst)
-	aabb = Transform3D(Basis(), inst.position) * aabb
+	aabb = Transform3D(Basis.from_scale(inst.scale), inst.position) * aabb
 	if opts.get("center", false):
 		inst.position -= Vector3(aabb.get_center().x, 0.0, aabb.get_center().z)
 		aabb.position -= Vector3(aabb.get_center().x, 0.0, aabb.get_center().z)

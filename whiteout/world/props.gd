@@ -1182,7 +1182,7 @@ static func transformer(parent: Node3D, pos: Vector3, yaw := 0.0) -> Node3D:
 	return Env.spawn(parent, "props/transformer", pos, yaw, {"snow": 0.55, "range": 400.0})
 
 static func steeple(parent: Node3D, pos: Vector3, yaw := 0.0) -> Node3D:
-	return Env.spawn(parent, "props/steeple", pos, yaw, {"snow": 0.6, "range": 500.0})
+	return Env.spawn(parent, "props/steeple", pos, yaw, {"snow": 0.6, "range": 500.0, "collide": "none"})
 
 static func server_rack(parent: Node3D, pos: Vector3, yaw := 0.0) -> Node3D:
 	return Env.spawn(parent, "props/server_rack", pos, yaw, {"snow": 0.0, "range": 60.0})

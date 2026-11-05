@@ -215,6 +215,9 @@ func take_hit(dmg: float, pos: Vector3, dir: Vector3, headshot: bool) -> void:
 	awake = true
 	if not invulnerable:
 		hp -= dmg
+	if model and model.get("hit_dir") != null:
+		model.hit_dir = dir                       # CharacterModel: ragdoll impulse / hit react direction
+		model.hit_power = dmg
 	Gore.on_enemy_hit(self, dmg, pos, dir, headshot, _hit_src)
 	_stagger_acc += dmg
 	velocity += Vector3(dir.x, 0, dir.z).normalized() * min(dmg * 0.04, 2.5)
@@ -228,6 +231,8 @@ func take_hit(dmg: float, pos: Vector3, dir: Vector3, headshot: bool) -> void:
 		_set_state("stagger")
 		if model and model.has_method("play"):
 			model.play("stagger")
+	elif model and model.has_method("hit_react"):
+		model.hit_react(dir, dmg, headshot)       # directional additive react scaled by damage
 	elif model and model.has_method("play"):
 		model.play("hurt")
 	if state in ["idle", "wander"]:
@@ -242,6 +247,8 @@ func _die(headshot: bool) -> void:
 		_revived = true
 		_set_state("down")
 		if model:
+			if model.get("allow_ragdoll") != null:
+				model.allow_ragdoll = false       # fake death: get back up from the clip, no ragdoll
 			model.pose = "dead"
 		Sfx.play_at(_sound("death"), global_position)
 		return
@@ -308,12 +315,21 @@ func _physics_process(delta: float) -> void:
 			_think(delta)
 	_apply_separation(delta)
 	move_and_slide()
+	_update_look()
 	if model:
 		model.move_speed = Vector2(velocity.x, velocity.z).length()
 	_groan -= delta
 	if _groan <= 0.0 and state != "dead" and state != "dormant":
 		_groan = randf_range(4.0, 10.0)
 		Sfx.play_at(_sound("groan"), global_position, -6.0, randf_range(0.85, 1.1))
+
+## Zombies track the player with their head (LookAtModifier3D on the CharacterModel).
+func _update_look() -> void:
+	if model == null or not model.has_method("set_look_target"):
+		return
+	var want: bool = state in ["chase", "attack", "stagger"] and target != null and is_instance_valid(target) \
+			and global_position.distance_to(target.global_position) < 14.0
+	model.set_look_target(target if want else null)
 
 ## Separation steering: nudge away from nearby enemies so groups do not stack.
 func _apply_separation(delta: float) -> void:

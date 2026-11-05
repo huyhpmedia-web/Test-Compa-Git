@@ -101,9 +101,9 @@ static func flesh(kind := "scab") -> StandardMaterial3D:
 		"sinew":  # wet red-grey tendon ropes
 			m.albedo_color = Color(0.42, 0.14, 0.14); m.roughness = 0.28; m.rim_enabled = true; m.rim = 0.3
 		"pus":    # distended sac: yellow-green, translucent, wet
-			m.albedo_color = Color(0.62, 0.68, 0.3, 0.82); m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			m.albedo_color = Color(0.5, 0.52, 0.3, 0.85); m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 			m.roughness = 0.12; m.cull_mode = BaseMaterial3D.CULL_DISABLED
-			m.emission_enabled = true; m.emission = Color(0.45, 0.5, 0.12); m.emission_energy_multiplier = 0.35
+			m.emission_enabled = true; m.emission = Color(0.35, 0.4, 0.1); m.emission_energy_multiplier = 0.12
 		"pus_core":
 			m.albedo_color = Color(0.7, 0.62, 0.15); m.roughness = 0.3
 			m.emission_enabled = true; m.emission = Color(0.8, 0.7, 0.15); m.emission_energy_multiplier = 1.2

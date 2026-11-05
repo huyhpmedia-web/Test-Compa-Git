@@ -629,7 +629,7 @@ func _process(delta: float) -> void:
 	var now := Time.get_ticks_msec() / 1000.0
 	for i in _valves.size():
 		var rem: float = _vent_ready[i] - now
-		_valves[i].prompt = "Vent steam valve" if rem <= 0.0 else tr("Valve cooling (%d s)") % int(ceil(rem))
+		_valves[i].prompt = "Vent steam valve" if rem <= 0.0 else "Valve cooling (%d s)" % int(ceil(rem))
 
 func _dim_lattice(f: float) -> void:
 	for c in _crystal_lights:

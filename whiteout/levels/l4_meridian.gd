@@ -598,7 +598,7 @@ func _build_switch(id: String, x: float, title: String) -> void:
 	_sw_lever[id] = lever
 	_sw_lamp[id] = lamp
 	_sw_text[id] = [t, title, kw, k]
-	interact(Vector3(x, 1.3, -30.6), tr("Toggle %s (%d kW)") % [title.get_slice("\n", 0), kw], func(_p): _toggle_switch(id), 1.4)
+	interact(Vector3(x, 1.3, -30.6), "Toggle %s (%d kW)" % [title.get_slice("\n", 0), kw], func(_p): _toggle_switch(id), 1.4)
 
 func _toggle_switch(id: String) -> void:
 	var off := Game.has_flag(id)

@@ -17,6 +17,7 @@ static func dress(level: Node3D) -> void:
 	_control_house_door()
 	_gate()
 	_ditch_truck()
+	_env()
 
 # the frozen family car at (-1.9, -9): someone was dragged out of it into the ditch
 static func _family_car() -> void:
@@ -103,3 +104,25 @@ static func _ditch_truck() -> void:
 
 static func level_ref() -> Node3D:
 	return D.lv
+
+
+# real set dressing: street furniture on the shoulders (never on the 8 m road) and yard clutter
+static func _env() -> void:
+	var lv: Node3D = D.lv
+	Props.utility_box(lv, Vector3(7.2, 0.0, -3.0), PI * 0.5, true)
+	Props.power_box(lv, Vector3(-6.4, 0.0, -21.0), -PI * 0.5)
+	Props.hydrant(lv, Vector3(5.8, 0.0, -59.0), PI)
+	Props.hydrant(lv, Vector3(-5.8, 0.0, -108.0), 0.0)
+	Props.barrier(lv, Vector3(5.3, 0.0, -117.0), 0.1, 1)
+	Props.barrier(lv, Vector3(5.4, 0.0, -118.5), -0.1, 2)
+	Props.barrier(lv, Vector3(-5.3, 0.0, -125.0), 0.2, 1)
+	Props.trash_can(lv, Vector3(14.0, 0.0, -45.8), 0.4)
+	# yard: a portable generator + fuel cans by the control house, a searchlight by the fence
+	Props.generator(lv, Vector3(30.0, 0.0, -62.6), 0.2)
+	Props.prop(lv, "camp/jerrycan", Vector3(31.0, 0.0, -62.4), 0.8, {"snow": 0.4, "scale": 1.2})
+	Props.prop(lv, "camp/jerrycan", Vector3(31.4, 0.0, -62.9), 1.9, {"snow": 0.4, "scale": 1.2})
+	Props.prop(lv, "camp/propane", Vector3(28.8, 0.0, -62.4), 0.0, {"snow": 0.4})
+	Props.prop(lv, "camp/searchlight", Vector3(46.0, 0.0, -61.0), 2.8, {"snow": 0.3, "scale": 2.2})
+	Props.prop(lv, "camp/crate_plastic", Vector3(24.0, 0.0, -62.0), 0.3, {"snow": 0.5, "scale": 1.5})
+	Props.stump(lv, Vector3(-9.0, 0.0, -35.0), 0.3)
+	Props.dead_log(lv, Vector3(-11.0, 0.0, 6.0), 1.2, false)

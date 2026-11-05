@@ -32,7 +32,7 @@ WORLD_HELPERS = {"sign", "_sign", "_block", "_dx", "_dz", "_containment", "label
 
 SKIP_FILES = ("tools/",)
 # strings produced at runtime from non-literals (Game.health_state() etc.)
-EXTRA = ["FINE", "CAUTION", "DANGER"]
+EXTRA = ["FINE", "CAUTION", "DANGER", "Talk to %s", "Examine %s"]
 PROSE_RE = re.compile(r"[A-Za-z]{3,}")
 
 

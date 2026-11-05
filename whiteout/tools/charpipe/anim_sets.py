@@ -174,7 +174,7 @@ def build_elias(ctx, only=None):
         tv = np.linalg.norm(t.loc[-1][:2] - t.loc[0][:2]) * (t.n + 1) / t.n / (t.n / t.fps)
         ctx.put("sprint", ual_frames(ctx, "Sprint_Loop", xy="drift", drop_last=True), True, speed=5.4)
     if W("run_stop"):
-        fr, t = bvh_frames(ctx, "143_02", 0.0, 1.75, xy="zero")
+        fr, t = bvh_frames(ctx, "143_02", 0.0, 1.2, xy="zero")
         ctx.put("run_stop", fr, False)
     for nm, cid, mir in (("walk_back", "143_39", False), ("walk_side", "143_40", False)):
         if W(nm) or W("walk_left") or W("walk_right"):
@@ -257,16 +257,15 @@ def build_zombie(ctx, only=None):
             fr = slice_loop(ctx, cid, t0, t1, blend=24, xy="zero")
             ctx.put(nm, fr, True, zombify(arms=30, hunch=14, head=12, claw=35))
     if W("attack"):
-        ctx.put("attack", ual_frames(ctx, "Punch_Cross", speed=0.85), False, zombify(arms=25, hunch=16, head=10, claw=60))
-        ctx.put("zombie_attack", ual_frames(ctx, "Punch_Cross", speed=0.85), False, zombify(arms=25, hunch=16, head=10, claw=60))
+        ctx.put("attack", ual_frames(ctx, "Punch_Jab", speed=0.8), False, zombify(arms=8, hunch=16, head=10, claw=60))
+        ctx.put("zombie_attack", ual_frames(ctx, "Punch_Jab", speed=0.8), False, zombify(arms=8, hunch=16, head=10, claw=60))
     if W("attack_b"):
-        ctx.put("attack_b", ual_frames(ctx, "Punch_Jab", mirror=True, speed=0.8), False, zombify(arms=25, hunch=16, head=10, claw=60))
-    if W("lunge"):
+        ctx.put("attack_b", ual_frames(ctx, "Punch_Cross", mirror=True, speed=0.85), False, zombify(arms=8, hunch=16, head=10, claw=60))
+    if W("lunge") or W("grab"):
         fr, t = bvh_frames(ctx, "144_17", 0.0, 1.8, xy="keep")
         ctx.put("lunge", fr, False, zombify(arms=70, hunch=20, head=22, claw=60))
-    if W("grab"):
-        fr, t = bvh_frames(ctx, "18_05", 0.2, 3.4, xy="zero")
-        ctx.put("grab", fr, False, zombify(arms=80, hunch=18, head=20, claw=70))
+        fr, t = bvh_frames(ctx, "144_17", 0.0, 1.3, xy="zero", speed=1.1)
+        ctx.put("grab", fr, False, zombify(arms=80, hunch=20, head=22, claw=70))
     if W("stagger"):
         fr, t = bvh_frames(ctx, "22_12", 0.0, 2.4, xy="zero")
         ctx.put("stagger", fr, False)

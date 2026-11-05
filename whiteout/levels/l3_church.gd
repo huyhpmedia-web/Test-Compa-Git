@@ -844,14 +844,21 @@ func _build_church() -> void:
 	for s in [[Vector3(51.5, 9.0, ZF), Vector3(5.0, 4.0, 0.4)], [Vector3(51.5, 9.0, ZA), Vector3(5.0, 4.0, 0.4)], [Vector3(X1, 9.0, -13.0), Vector3(0.4, 4.0, 10.0)]]:
 		box(s[0], s[1], "wood_panel", false)
 	ceiling_rect(49.0, ZA, X1, ZF, 10.8, "wood_panel")
-	_cy(4.0, 3.6, Vector3(51.5, 13.6, -13.0), "metal_rust", false, 0.1, Vector3(0, PI * 0.25, 0), 4)
-	_cy(0.05, 2.2, Vector3(51.5, 16.4, -13.0), "metal", false)
-	_b(Vector3(0.9, 0.08, 0.08), Vector3(51.5, 16.9, -13.0), "metal", false)
-	_b(Vector3(0.08, 1.4, 0.08), Vector3(51.5, 16.7, -13.0), "metal", false)
+	if Props.steeple(geo, Vector3(51.5, 10.9, -13.0), 0.0) != null:
+		var st: Node3D = geo.get_child(geo.get_child_count() - 1)
+		st.scale = Vector3(1.35, 1.35, 1.35)
+	else:
+		_cy(4.0, 3.6, Vector3(51.5, 13.6, -13.0), "metal_rust", false, 0.1, Vector3(0, PI * 0.25, 0), 4)
+		_cy(0.05, 2.2, Vector3(51.5, 16.4, -13.0), "metal", false)
+		_b(Vector3(0.9, 0.08, 0.08), Vector3(51.5, 16.9, -13.0), "metal", false)
+		_b(Vector3(0.08, 1.4, 0.08), Vector3(51.5, 16.7, -13.0), "metal", false)
 	_b(Vector3(5.2, 0.4, 10.4), Vector3(51.5, 11.0, -13.0), "snow", false)
 	# belfry louvres: dark slats in the shaft walls
 	for i in 5:
 		_b(Vector3(0.06, 0.12, 1.4), Vector3(53.74, 8.2 + i * 0.35, -13.0), "wood", false, Vector3(0.4, 0, 0))
+	# wrought-iron chandeliers hanging in the nave
+	for cz in [-23.5, -30.0, -36.5]:
+		Props.prop(geo, "church/chandelier", Vector3(46.0, 8.0, cz), 0.3 * cz, {"scale": 2.6, "collide": "none", "snow": 0.0, "range": 40.0})
 	# nave: pitched timber roof (z -42..-18), gables, tie beams
 	var ang := atan2(3.5, 8.0)
 	var rlen := sqrt(8.0 * 8.0 + 3.5 * 3.5) + 0.6

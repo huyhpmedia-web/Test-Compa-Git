@@ -363,7 +363,7 @@ func _try_fire() -> void:
 		ShotFX.muzzle_smoke(get_tree().current_scene, mxf.origin, Vector3.UP, 0.3)
 	muzzle_light.global_position = mxf.origin + mfwd * 0.45
 	muzzle_light.omni_range = 7.0
-	muzzle_light.light_energy = 4.5 if id == "handgun" else 6.5
+	muzzle_light.light_energy = 2.6 if id == "handgun" else 4.2
 	_flash_t = 0.035
 	_play_shot_audio(id)
 	Sfx.alert_noise(global_position, 25.0)

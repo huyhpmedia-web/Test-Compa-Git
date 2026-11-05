@@ -393,7 +393,7 @@ func pickup(uid: String, item: String, count: int, pos: Vector3) -> Node3D:
 	glint.position.y = 0.3
 	root.add_child(glint)
 	var it := Interactable.new()
-	it.prompt = tr("Pick up %s") % d.name
+	it.prompt = "Pick up %s" % d.name
 	it.radius = 1.5
 	it.set_meta("uid", uid)       # lets tools/playtest.gd find pickups by uid
 	it.set_meta("item", item)
@@ -573,7 +573,7 @@ func note(uid: String, pos: Vector3, title: String, body: String, yaw := 0.0) ->
 	Props.box(root, Vector3(0.22, 0.004, 0.3), Vector3(0, 0.003, 0), Mats.get_mat("paper"), false, Vector3(0, 0.2, 0))
 	Props.box(root, Vector3(0.22, 0.004, 0.3), Vector3(0.03, 0.007, 0.02), Mats.get_mat("paper"), false, Vector3(0, -0.1, 0))
 	var it := Interactable.new()
-	it.prompt = tr("Read: %s") % tr(title)
+	it.prompt = "Read: %s" % title
 	it.radius = 1.5
 	it.set_meta("uid", uid)
 	root.add_child(it)

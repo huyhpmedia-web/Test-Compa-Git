@@ -67,7 +67,7 @@ func _ready() -> void:
 	root.add_child(fade)
 	Game.health_changed.connect(func(_a, _b): _refresh_hud())
 	Game.inventory_changed.connect(_refresh_hud)
-	Game.objective_changed.connect(func(t): objective_label.text = tr(t))
+	Game.objective_changed.connect(func(t): objective_label.text = tr_fmt(t))
 	show_hud(false)
 
 # ================================================================= language
@@ -96,6 +96,7 @@ func set_language(lang: String, persist := true) -> void:
 	if not known:
 		lang = "en"
 	language = lang
+	_fmt_cache.clear()
 	TranslationServer.set_locale(lang)
 	if persist:
 		var cfg := ConfigFile.new()
@@ -107,6 +108,79 @@ func set_language(lang: String, persist := true) -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_TRANSLATION_CHANGED and hud != null:
 		_refresh_hud()
+
+## Translate a string that may be an already-formatted English template, e.g. the stored prompt
+## "Operate DS-2B (hot stick)" (msgid "Operate %s (hot stick)"). Stored game data (prompts, objectives,
+## notes) stays English so tools/playtest.gd and saves are locale-independent; the display layer
+## translates. Plain msgids hit tr() directly; formatted ones are matched against the %s/%d msgids.
+var _fmt_rules: Array = []
+var _fmt_ready := false
+var _fmt_cache := {}
+
+func tr_fmt(text: String) -> String:
+	if text == "" or language == "en":
+		return text
+	var t := tr(text)
+	if t != text:
+		return t
+	if _fmt_cache.has(text):
+		return _fmt_cache[text]
+	if not _fmt_ready:
+		_build_fmt_rules()
+	for r in _fmt_rules:
+		var m: RegExMatch = r.rx.search(text)
+		if m:
+			var args := []
+			for i in r.kinds.size():
+				var g := m.get_string(i + 1)
+				match r.kinds[i]:
+					"d": args.append(int(g))
+					"f": args.append(float(g))
+					_: args.append(tr_fmt(g))
+			t = tr(r.id) % args
+			break
+	_fmt_cache[text] = t
+	return t
+
+func _build_fmt_rules() -> void:
+	_fmt_ready = true
+	_fmt_rules.clear()
+	var tl: Translation = TranslationServer.get_translation_object("vi")
+	if tl == null and ResourceLoader.exists("res://locale/vi.po"):
+		tl = load("res://locale/vi.po")
+	if tl == null:
+		return
+	var ph := RegEx.new()
+	ph.compile("%[-+0-9.]*[sdf]|%%")
+	for id in tl.get_message_list():
+		if "%s%s" in id or ph.search(id) == null:
+			continue
+		var pattern := "^"
+		var kinds := []
+		var pos := 0
+		for m in ph.search_all(id):
+			pattern += _rx_escape(id.substr(pos, m.get_start() - pos))
+			var tok := m.get_string()
+			if tok == "%%":
+				pattern += "%"
+			else:
+				pattern += "(.+?)"
+				kinds.append(tok.substr(tok.length() - 1))
+			pos = m.get_end()
+		pattern += _rx_escape(id.substr(pos)) + "$"
+		if kinds.is_empty():
+			continue
+		var rx := RegEx.new()
+		if rx.compile(pattern) == OK:
+			_fmt_rules.append({"rx": rx, "id": id, "kinds": kinds})
+
+func _rx_escape(s: String) -> String:
+	var out := ""
+	for c in s:
+		if "\\^$.|?*+()[]{}".contains(c):
+			out += "\\"
+		out += c
+	return out
 
 ## Translate a block paragraph by paragraph (so appending a credit line never breaks the rest).
 func tr_paras(text: String) -> String:
@@ -270,7 +344,7 @@ func _refresh_hud() -> void:
 	else:
 		weapon_label.text = Game.item_def(eq).name if eq != "" else ""
 		ammo_label.text = ""
-	objective_label.text = tr(Game.objective)
+	objective_label.text = tr_fmt(Game.objective)
 	if vignette.material:
 		var s := 0.0
 		if st == "CAUTION":
@@ -325,12 +399,12 @@ func _draw_reticle() -> void:
 	reticle.draw_circle(Vector2.ZERO, 1.6, c)
 
 func set_prompt(text: String) -> void:
-	var shown := "[E]  " + tr(text) if text != "" else ""
+	var shown := "[E]  " + tr_fmt(text) if text != "" else ""
 	if prompt_label.text != shown:
 		prompt_label.text = shown
 
 func toast(text: String, dur := 3.0) -> void:
-	var l := _label(tr(text), 17)
+	var l := _label(tr_fmt(text), 17)
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	l.custom_minimum_size = Vector2(600, 0)
 	toast_box.add_child(l)
@@ -362,11 +436,11 @@ func title_card(title: String, sub := "") -> void:
 	box.offset_left = -500; box.offset_right = 500
 	box.alignment = BoxContainer.ALIGNMENT_CENTER
 	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var t := _label(tr(title), 44, Color(0.92, 0.92, 0.9))
+	var t := _label(tr_fmt(title), 44, Color(0.92, 0.92, 0.9))
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	box.add_child(t)
 	if sub != "":
-		var s := _label(tr(sub), 18, C_DIM)
+		var s := _label(tr_fmt(sub), 18, C_DIM)
 		s.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		box.add_child(s)
 	box.modulate.a = 0.0
@@ -403,10 +477,10 @@ func dialogue(lines: Array) -> void:
 		var who := ""
 		var txt := ""
 		if ln is Array:
-			who = tr(ln[0])
-			txt = tr(ln[1])
+			who = tr_fmt(ln[0])
+			txt = tr_fmt(ln[1])
 		else:
-			txt = tr(str(ln))
+			txt = tr_fmt(str(ln))
 		dlg_name.text = who
 		dlg_name.visible = who != ""
 		dlg_text.text = txt
@@ -491,7 +565,7 @@ func show_note(title: String, body: String) -> void:
 	bg.name = "Note"
 	var v := VBoxContainer.new()
 	p.add_child(v)
-	var t := _label(tr(title), 24, Color(0.95, 0.92, 0.85))
+	var t := _label(tr_fmt(title), 24, Color(0.95, 0.92, 0.85))
 	t.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	v.add_child(t)
 	var sc := ScrollContainer.new()
@@ -556,7 +630,7 @@ func _build_inventory(tab := "items") -> void:
 	_button("ITEMS", func(): _rebuild_inv("items"), tabs)
 	_button("FILES", func(): _rebuild_inv("files"), tabs)
 	if Game.objective != "":
-		var ol := _label(tr("Objective: %s") % tr(Game.objective), 15, C_DIM)
+		var ol := _label(tr("Objective: %s") % tr_fmt(Game.objective), 15, C_DIM)
 		ol.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		ol.custom_minimum_size = Vector2(620, 0)
 		tabs.add_child(ol)

@@ -106,7 +106,7 @@
    "speed": 3.7480389323847034
   },
   "run_stop": {
-   "duration": 1.7666666666666666
+   "duration": 1.2333333333333334
   },
   "shoot": {
    "duration": 0.8333333333333334
@@ -168,10 +168,10 @@
    "legacy": true
   },
   "attack": {
-   "duration": 1.5
+   "duration": 1.4
   },
   "attack_b": {
-   "duration": 1.4
+   "duration": 1.5
   },
   "crawl": {
    "duration": 1.1333333333333333,
@@ -206,7 +206,7 @@
    "duration": 6.533333333333333
   },
   "grab": {
-   "duration": 3.2333333333333334
+   "duration": 1.2
   },
   "hang": {
    "duration": 3.033333333333333,
@@ -280,7 +280,7 @@
    "speed": 1.2298405865518545
   },
   "zombie_attack": {
-   "duration": 1.5
+   "duration": 1.4
   },
   "zombie_idle": {
    "duration": 5.233333333333333

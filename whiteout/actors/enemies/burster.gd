@@ -56,7 +56,7 @@ func _make_model() -> Node3D:
 	var s: float = clampf(h._s, 0.9, 1.3)
 	# v3: distended pus / gas boils (yellow-green, translucent, wet) instead of glowing ice sacs
 	_sac_mat = RimeLook.flesh("pus").duplicate()
-	_core_mat = Kit.glow_unique(Color(0.75, 0.7, 0.2), 1.2)
+	_core_mat = Kit.glow_unique(Color(0.55, 0.5, 0.18), 0.5)
 	# [bone, bone-local pos, radius]  (torso bones: y up / z forward / x left; limb bones run along +Y)
 	var defs := [
 		["spine_01", Vector3(0, 0.12, 0.2), 0.26], ["spine_01", Vector3(0.16, 0.1, 0.14), 0.18], ["spine_01", Vector3(-0.16, 0.14, 0.13), 0.17],
@@ -103,7 +103,7 @@ func _pulse(_delta: float) -> void:
 		if is_instance_valid(n):
 			var k := 1.0 + sin(tt * rate + sc.ph) * (0.05 + 0.08 * _swell) + _swell * 0.3
 			n.scale = sc.base * k
-	_core_mat.emission_energy_multiplier = 0.9 + sin(tt * rate) * 0.35 + _swell * 2.5
+	_core_mat.emission_energy_multiplier = 0.35 + sin(tt * rate) * 0.15 + _swell * 1.6
 	for l in _sac_lights:
 		l.light_energy = 0.4 + _swell * 1.6 + sin(tt * rate) * 0.1
 

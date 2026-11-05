@@ -31,6 +31,8 @@ WORLD_FN = {"sign"}
 WORLD_HELPERS = {"sign", "_sign", "_block", "_dx", "_dz", "_containment", "label", "_label", "_lbl", "_disconnect"}
 
 SKIP_FILES = ("tools/",)
+# strings produced at runtime from non-literals (Game.health_state() etc.)
+EXTRA = ["FINE", "CAUTION", "DANGER"]
 PROSE_RE = re.compile(r"[A-Za-z]{3,}")
 
 
@@ -194,7 +196,7 @@ def classify(r, rel):
     if ASSIGN_RE.search(r["stmt"] + "") or re.search(r"\.(text|prompt|objective)\s*=", r["stmt"].split("\n")[-1] if "\n" in r["stmt"] else r["stmt"]):
         return ("world" if rel.startswith("levels/") else "ui", "assign")
     # fallback: lowercase prose in gameplay scripts (objective strings held in variables etc.)
-    if (rel.startswith("levels/") or rel.startswith("actors/npc")) and re.search(r"[a-z]{3,} [a-z]{2,}", v) and len(v) > 8 \
+    if (rel.startswith(("levels/", "ui/", "core/")) or rel.startswith("actors/npc")) and re.search(r"[a-z]{3,} [a-z]{2,}", v) and len(v) > 8 \
             and not v.startswith("shader_type") and not any(f["fn"] in ("push_warning", "print", "push_error", "assert") for f in st):
         return ("ui", "prose")
     if rel == "actors/npc.gd" and v in ("Talk to", "Frozen miner", "Examine"):
@@ -235,11 +237,16 @@ def collect(residual=False):
         for r in scan(src):
             c = classify(r, rel)
             if c:
-                found.setdefault(r["value"], []).append((rel, r["line"], c[0] + ":" + c[1]))
+                vals = r["value"].split("\n\n") if (rel == "ui/ui.gd" and c[1] == "prose") else [r["value"]]
+                for vv in vals:
+                    if vv.strip() and PROSE_RE.search(vv):
+                        found.setdefault(vv, []).append((rel, r["line"], c[0] + ":" + c[1]))
             elif residual:
                 v = r["value"]
                 if len(v) > 8 and " " in v and re.search(r"[a-z]{3,} [a-z]{2,}", v) and not v.startswith("res://"):
                     resid.append((rel, r["line"], v))
+    for v in EXTRA:
+        found.setdefault(v, []).append(("core/game.gd", 1, "extra"))
     for v, f, l, k in items_strings():
         if v:
             found.setdefault(v, []).append((f, l, k))

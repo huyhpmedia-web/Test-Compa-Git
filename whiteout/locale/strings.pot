@@ -87,8 +87,17 @@ msgstr ""
 msgid "A miner. Frozen where he lay down to rest. A crystal grows from his open mouth."
 msgstr ""
 
+#: core/game.gd:1
+msgid "CAUTION"
+msgstr ""
+
+#: core/game.gd:1
+msgid "DANGER"
+msgstr ""
+
 #: core/game.gd:150
-msgid "OBJECTIVE: "
+#, c-format
+msgid "OBJECTIVE: %s"
 msgstr ""
 
 #: core/game.gd:248
@@ -117,7 +126,8 @@ msgid "These can't be combined."
 msgstr ""
 
 #: core/game.gd:289
-msgid "Created: "
+#, c-format
+msgid "Created: %s"
 msgstr ""
 
 #: core/game.gd:308
@@ -2114,6 +2124,24 @@ msgstr ""
 msgid "MANUAL FEEDER ISOLATION"
 msgstr ""
 
+#: levels/l4_meridian.gd:553
+msgid ""
+"PDU-7\n"
+"RACK ROW 7"
+msgstr ""
+
+#: levels/l4_meridian.gd:553
+msgid ""
+"PDU-9\n"
+"RACK ROW 9"
+msgstr ""
+
+#: levels/l4_meridian.gd:553
+msgid ""
+"CH-3\n"
+"REDUNDANT CHILLER"
+msgstr ""
+
 #: levels/l4_meridian.gd:556
 msgid "LOAD REDUCTION: 0 kW"
 msgstr ""
@@ -2162,6 +2190,14 @@ msgstr ""
 #: levels/l4_meridian.gd:636
 #, c-format
 msgid "LOAD REDUCTION: %d kW"
+msgstr ""
+
+#: levels/l4_meridian.gd:650
+msgid "Hall C"
+msgstr ""
+
+#: levels/l4_meridian.gd:650
+msgid "the Network Operations Centre"
 msgstr ""
 
 #: levels/l4_meridian.gd:652
@@ -3681,7 +3717,8 @@ msgid "The brine boils. The colony, and everyone it took, is gone for good. Meri
 msgstr ""
 
 #: levels/level.gd:396
-msgid "Pick up "
+#, c-format
+msgid "Pick up %s"
 msgstr ""
 
 #: levels/level.gd:411
@@ -3712,8 +3749,14 @@ msgstr ""
 msgid "Used %s."
 msgstr ""
 
+#: levels/level.gd:554
+#, c-format
+msgid "It's locked. It needs %s."
+msgstr ""
+
 #: levels/level.gd:576
-msgid "Read: "
+#, c-format
+msgid "Read: %s"
 msgstr ""
 
 #: levels/level.gd:607
@@ -3761,180 +3804,340 @@ msgstr ""
 msgid "New Game"
 msgstr ""
 
-#: ui/main_menu.gd:41 ui/ui.gd:733 ui/ui.gd:807
+#: ui/main_menu.gd:41 ui/ui.gd:851 ui/ui.gd:928
 msgid "Load Game"
 msgstr ""
 
-#: ui/main_menu.gd:43 ui/main_menu.gd:43 ui/ui.gd:736
+#: ui/main_menu.gd:43 ui/main_menu.gd:43 ui/ui.gd:854
 msgid "Controls"
 msgstr ""
 
-#: ui/main_menu.gd:44 ui/main_menu.gd:44
+#: ui/main_menu.gd:44 ui/ui.gd:857
+msgid "Options"
+msgstr ""
+
+#: ui/main_menu.gd:45 ui/main_menu.gd:45
 msgid "Credits"
 msgstr ""
 
-#: ui/main_menu.gd:45
+#: ui/main_menu.gd:46
 msgid "Quit"
 msgstr ""
 
-#: ui/main_menu.gd:47
+#: ui/main_menu.gd:48
 msgid "A fan-made survival horror homage. Built with Godot."
 msgstr ""
 
-#: ui/main_menu.gd:58
+#: ui/main_menu.gd:97
 msgid "Select difficulty"
 msgstr ""
 
-#: ui/main_menu.gd:59
+#: ui/main_menu.gd:98
 msgid "Assisted — more ammo forgiveness, weaker dead"
 msgstr ""
 
-#: ui/main_menu.gd:60
+#: ui/main_menu.gd:99
 msgid "Standard — the intended experience"
 msgstr ""
 
-#: ui/main_menu.gd:61
+#: ui/main_menu.gd:100
 msgid "Hardcore — every bullet counts"
 msgstr ""
 
-#: ui/ui.gd:159
+#: ui/ui.gd:227 core/game.gd:1
 msgid "FINE"
 msgstr ""
 
-#: ui/ui.gd:201
+#: ui/ui.gd:269
 msgid "ammo"
 msgstr ""
 
-#: ui/ui.gd:437 ui/ui.gd:669
+#: ui/ui.gd:510 ui/ui.gd:749
 msgid "Close"
 msgstr ""
 
-#: ui/ui.gd:448
+#: ui/ui.gd:521
 msgid "OBTAINED"
 msgstr ""
 
-#: ui/ui.gd:477
-msgid "ELIAS KADE   ·   "
+#: ui/ui.gd:550
+msgid "ELIAS KADE"
 msgstr ""
 
-#: ui/ui.gd:482
+#: ui/ui.gd:556
 msgid "ITEMS"
 msgstr ""
 
-#: ui/ui.gd:483
+#: ui/ui.gd:557
 msgid "FILES"
 msgstr ""
 
-#: ui/ui.gd:485
-msgid "     Objective: "
+#: ui/ui.gd:559
+#, c-format
+msgid "Objective: %s"
 msgstr ""
 
-#: ui/ui.gd:538
+#: ui/ui.gd:615
 #, c-format
 msgid "Combine %s with...?"
 msgstr ""
 
-#: ui/ui.gd:539 ui/ui.gd:719
+#: ui/ui.gd:616 ui/ui.gd:799
 msgid "Cancel"
 msgstr ""
 
-#: ui/ui.gd:554
+#: ui/ui.gd:631
 msgid "Equip"
 msgstr ""
 
-#: ui/ui.gd:554
+#: ui/ui.gd:631
 msgid "Equipped"
 msgstr ""
 
-#: ui/ui.gd:558 ui/ui.gd:563
+#: ui/ui.gd:635 ui/ui.gd:640
 msgid "Use"
 msgstr ""
 
-#: ui/ui.gd:567
+#: ui/ui.gd:644
 msgid "Combine"
 msgstr ""
 
-#: ui/ui.gd:571
+#: ui/ui.gd:648
 msgid "Discard"
 msgstr ""
 
-#: ui/ui.gd:576
+#: ui/ui.gd:653
 msgid "Select an item."
 msgstr ""
 
-#: ui/ui.gd:577
+#: ui/ui.gd:654
 #, c-format
 msgid "Inventory: %d / %d slots"
 msgstr ""
 
-#: ui/ui.gd:578
-msgid ""
-"\n"
-"[Tab/Esc] Close"
+#: ui/ui.gd:655
+msgid "[Tab/Esc] Close"
 msgstr ""
 
-#: ui/ui.gd:589
+#: ui/ui.gd:669
 msgid "Need two of these."
 msgstr ""
 
-#: ui/ui.gd:612
+#: ui/ui.gd:692
 msgid "No files collected."
 msgstr ""
 
-#: ui/ui.gd:625
+#: ui/ui.gd:705
 msgid "SUPPLY CRATE — click to move items"
 msgstr ""
 
-#: ui/ui.gd:635
+#: ui/ui.gd:715
 #, c-format
 msgid "Inventory (%d/%d)"
 msgstr ""
 
-#: ui/ui.gd:636
+#: ui/ui.gd:716
 msgid "Box"
 msgstr ""
 
-#: ui/ui.gd:660
+#: ui/ui.gd:740
 msgid "Inventory full."
 msgstr ""
 
-#: ui/ui.gd:666
+#: ui/ui.gd:746
 msgid "weapon"
 msgstr ""
 
-#: ui/ui.gd:699
+#: ui/ui.gd:779
 msgid "RECORD PROGRESS"
 msgstr ""
 
-#: ui/ui.gd:699
+#: ui/ui.gd:779
 msgid "LOAD"
 msgstr ""
 
-#: ui/ui.gd:731
+#: ui/ui.gd:783
+#, c-format
+msgid "Slot %d — empty"
+msgstr ""
+
+#: ui/ui.gd:785
+#, c-format
+msgid "Slot %d — %s · %s · %s"
+msgstr ""
+
+#: ui/ui.gd:806
+msgid "L1 SUBSTATION"
+msgstr ""
+
+#: ui/ui.gd:807
+msgid "L2 SCHOOL"
+msgstr ""
+
+#: ui/ui.gd:808
+msgid "L3 CHURCH"
+msgstr ""
+
+#: ui/ui.gd:809
+msgid "L4 MERIDIAN"
+msgstr ""
+
+#: ui/ui.gd:810
+msgid "L5 MINE"
+msgstr ""
+
+#: ui/ui.gd:811
+msgid "L6 HEART"
+msgstr ""
+
+#: ui/ui.gd:822
+msgid "OPTIONS"
+msgstr ""
+
+#: ui/ui.gd:823
+msgid "Language"
+msgstr ""
+
+#: ui/ui.gd:834
+msgid "Back"
+msgstr ""
+
+#: ui/ui.gd:849
 msgid "PAUSED"
 msgstr ""
 
-#: ui/ui.gd:732
+#: ui/ui.gd:850
 msgid "Resume"
 msgstr ""
 
-#: ui/ui.gd:739 ui/ui.gd:810
+#: ui/ui.gd:860 ui/ui.gd:931
 msgid "Quit to Title"
 msgstr ""
 
-#: ui/ui.gd:801
+#: ui/ui.gd:866
+msgid ""
+"[center][b]WHITEOUT: KETTLE FALLS[/b]\n"
+"A fan-made survival-horror game built with Godot Engine 4.5 (MIT).[/center]"
+msgstr ""
+
+#: ui/ui.gd:866
+msgid ""
+"[b]Characters[/b]\n"
+"Human models built from MakeHuman / MPFB assets (CC0), assembled in Blender."
+msgstr ""
+
+#: ui/ui.gd:866
+msgid ""
+"[b]Textures[/b]\n"
+"ambientCG (CC0) and Poly Haven (CC0) materials. Full list: textures/LICENSES.md"
+msgstr ""
+
+#: ui/ui.gd:866
+msgid ""
+"[b]Music[/b] — CC BY-SA 4.0\n"
+"\"Decoherence\", \"Helios\", \"Primal Carnage\" by Scott Buckley — www.scottbuckley.com.au\n"
+"Other music and ambience: CC0 sources (see audio/LICENSES.md)."
+msgstr ""
+
+#: ui/ui.gd:866
+msgid ""
+"[b]Sound effects[/b] — CC BY 3.0 (attribution required)\n"
+"ermfilm — \"Rossi-Revolver\" · steveygos93 — \"Explosion2\" · Nicistarful — \"Fast Throttle Mechanic Lever\"\n"
+"jesabat — \"Steam Hiss\" · juskiddink — \"Dogs growling\" · poots — \"deep_under\"\n"
+"(all via freesound.org)"
+msgstr ""
+
+#: ui/ui.gd:866
+msgid ""
+"Plus CC0 sounds by Kenney, MrFossy, LeMudCrab, michorvath, artisticdude and many Freesound contributors.\n"
+"Full list: audio/LICENSES.md"
+msgstr ""
+
+#: ui/ui.gd:866
+msgid "Inspired by the late-90s survival-horror genre. Story, characters and setting are original."
+msgstr ""
+
+#: ui/ui.gd:889
+msgid ""
+"[b]WASD[/b] move   ·   [b]Shift[/b] run   ·   [b]Mouse[/b] look\n"
+"[b]Right mouse[/b] aim   ·   [b]Left mouse[/b] fire (while aiming)\n"
+"[b]R[/b] reload   ·   [b]F[/b] knife   ·   [b]Q[/b] quick turn\n"
+"[b]E[/b] interact / advance dialogue   ·   [b]Tab[/b] inventory\n"
+"[b]H[/b] quick heal   ·   [b]1-4[/b] weapons   ·   [b]L[/b] flashlight\n"
+"[b]Esc[/b] pause / close menus"
+msgstr ""
+
+#: ui/ui.gd:889
+msgid ""
+"Hold aim without moving to tighten the reticle — a focused shot does far more damage. Headshots deal double damage and stop the dead from getting back up.\n"
+"Zombies that fall may not stay down. Ammunition is scarce: avoid fights you don't need."
+msgstr ""
+
+#: ui/ui.gd:922
 msgid "YOU ARE DEAD"
 msgstr ""
 
-#: ui/ui.gd:804
+#: ui/ui.gd:925
 msgid "Continue (retry area)"
 msgstr ""
 
-#: ui/ui.gd:858
+#: ui/ui.gd:979
 #, c-format
 msgid "Clear time %s   ·   Saves %d   ·   Deaths %d   ·   Rank %s"
 msgstr ""
 
-#: ui/ui.gd:859
+#: ui/ui.gd:980
 msgid "Return to Title"
+msgstr ""
+
+#: ui/ui.gd:987
+msgid "[center][b]ENDING: DARK[/b][/center]"
+msgstr ""
+
+#: ui/ui.gd:987
+msgid "Elias pulled the last disconnect by hand. Somewhere on the lake, forty thousand servers went quiet, and the warm breath in the pipeline stopped."
+msgstr ""
+
+#: ui/ui.gd:987
+msgid "Down in the cavern, the hum fell an octave, and then another, until it was only the sound of the ice settling. The lattice grew dull. Whatever had worn his mother's face went still and stayed still."
+msgstr ""
+
+#: ui/ui.gd:987
+msgid "At 7:52 the sun came up over Kettle Falls for the first time in three days. The co-op's crews found the town's feeders closed, the school lit, and eighty-one people alive in its gym."
+msgstr ""
+
+#: ui/ui.gd:987
+msgid "Corvane Systems filed suit against Lakeshore Electric on December 28th. Elias was named personally. He kept the letter on the fridge, next to June's drawing of the substation, and never once regretted it."
+msgstr ""
+
+#: ui/ui.gd:987
+msgid "[i]\"Load shed: Meridian. Priority: Kettle Falls.\"[/i]"
+msgstr ""
+
+#: ui/ui.gd:998
+msgid "[center][b]ENDING: THAW[/b][/center]"
+msgstr ""
+
+#: ui/ui.gd:998
+msgid "Elias opened the pipeline to full. The brine boiled. The cavern screamed in a hundred voices and one of them was his mother's, and then all of them were steam."
+msgstr ""
+
+#: ui/ui.gd:998
+msgid "By morning nothing in the Lower Kettle mine was alive, and nothing in it ever would be again. Meridian never dropped a single request."
+msgstr ""
+
+#: ui/ui.gd:998
+msgid "Corvane's statement called it \"a tragic mining accident during an extreme weather event.\" Northline's insurers paid out. The data centre doubled its capacity the following spring."
+msgstr ""
+
+#: ui/ui.gd:998
+msgid "June doesn't talk about that night. Sometimes she leaves her radio on 146.52 and just listens to the static, as if someone down there might still answer."
+msgstr ""
+
+#: ui/ui.gd:1007
+msgid "[center][b]THE END[/b][/center]"
+msgstr ""
+
+#: ui/ui.gd:1007
+msgid "Kettle Falls is behind you. The cold is not."
 msgstr ""

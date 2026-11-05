@@ -25,6 +25,15 @@ window/stretch/aspect="expand"
 
 common/physics_ticks_per_second=60
 
+[gui]
+
+theme/custom_font="res://fonts/BeVietnamPro-Regular.ttf"
+
+[internationalization]
+
+locale/fallback="en"
+locale/translations=PackedStringArray("res://locale/vi.po")
+
 [layer_names]
 
 3d_physics/layer_1="world"

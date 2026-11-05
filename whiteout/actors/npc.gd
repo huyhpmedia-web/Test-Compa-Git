@@ -127,7 +127,7 @@ func _build(c: Dictionary) -> void:
 		interact_node.position = Vector3(0, 1.0, 0)
 		interact_node.action = func(_p): _talk()
 		add_child(interact_node)
-	interact_node.prompt = "%s %s" % [prompt_verb, display_name]
+	interact_node.prompt = tr(prompt_verb) + " " + tr(display_name)
 	var mp: String = c.get("model", "res://actors/humanoid.gd")
 	model = load(mp).new()
 	var look: Dictionary = c.get("look", {})
@@ -314,7 +314,7 @@ func _talk() -> void:
 		if ln is Array:
 			lines.append(ln)
 		else:
-			lines.append([display_name.to_upper(), str(ln)])
+			lines.append([tr(display_name).to_upper(), str(ln)])
 	if lines.is_empty():
 		return
 	await UI.dialogue(lines)

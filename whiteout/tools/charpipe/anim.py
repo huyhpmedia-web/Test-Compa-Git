@@ -366,8 +366,10 @@ def pose_frame(rig, base_Rw, base_loc, spec, curl_default=(12.0, 12.0)):
         c = np.atleast_1d(spec.get(("curl", s), np.array(curl_default[0])))
         k = float(c[0]) if len(c) else curl_default[0]
         kt = float(c[1]) if len(c) > 1 else k * 0.6
+        has_curl = ("curl", s) in spec
         for f in FINGERS:
             if not f.endswith("_" + s): continue
+            if f in base_Rw and not has_curl: continue      # mocap-driven fingers stay as retargeted
             part = f.split("_")[0]; i = int(f.split("_")[1])
             kk = kt if part == "thumb" else k
             Bf[f] = rot_axis(0, kk * (0.6, 1.0, 0.8)[i - 1])

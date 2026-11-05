@@ -52,6 +52,11 @@ const RECIPES := [
 static func get_def(id: String) -> Dictionary:
 	var d: Dictionary = DEFS.get(id, {"name": id, "kind": "key", "desc": "", "color": Color.WHITE}).duplicate()
 	d["id"] = id
+	# English is the msgid; locale/vi.po supplies the translation (looked up at call time so a
+	# live language switch is reflected immediately).
+	d["name"] = TranslationServer.translate(d.get("name", id))
+	if d.get("desc", "") != "":
+		d["desc"] = TranslationServer.translate(d["desc"])
 	if not d.has("stack"):
 		d["stack"] = 1
 	if id == "ammo_9mm" and not d.has("yield"):

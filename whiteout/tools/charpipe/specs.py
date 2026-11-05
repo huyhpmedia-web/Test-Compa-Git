@@ -44,10 +44,13 @@ def _z(name, outfit, gender, age, color, color2=None, seed=1, skin=None, hair=No
        pallor=(0.70, 0.80, 0.90), gore_cloth=None, gore_skin=None, **kw):
     d = dict(name=name, file=name + ".glb", builder="zombies.build_zombie", outfit=outfit, gender=gender, age=age, muscle=muscle, weight=weight,
              height_m=height, skin=skin or ("middleage_caucasian_male" if gender > 0.5 else "middleage_caucasian_female"), color=color,
-             color2=color2 or (0.12, 0.15, 0.22), seed=seed, hair=hair, hair_tint=hair_tint, pallor=pallor, details=[("head", "head-age", 0.3, "decr", "incr")])
+             color2=color2 or (0.12, 0.15, 0.22), seed=seed, hair=hair, hair_tint=hair_tint, pallor=pallor, details=[("head", "head-age", 0.3, "decr", "incr"), ("chin", "chin-jaw-drop", 0.5, "decr", "incr"), ("eyes", "l-eye-bag", 0.8, "decr", "incr"), ("eyes", "r-eye-bag", 0.8, "decr", "incr"),
+                    ("cheek", "l-cheek-volume", -0.7, "decr", "incr"), ("cheek", "r-cheek-volume", -0.7, "decr", "incr")])
     if gore_cloth: d["gore_cloth"] = gore_cloth
     if gore_skin: d["gore_skin"] = gore_skin
     d.update(kw)
+    if kw.get('clean') and 'details' not in kw:
+        d['details'] = [("head", "head-age", 0.3, "decr", "incr")]
     SPECS[name] = d
 
 _z("rimebound_parka_m", "parka", 1.0, 44, (0.10, 0.2, 0.17), (0.12, 0.12, 0.14), 11, hair="hair/short03", hair_tint=(0.4, 0.4, 0.42), height=1.80, weight=0.55,
@@ -181,6 +184,59 @@ def solid_mat(name, color, rough=0.8, metal=0.0):
     return make_pbr(name, None, rough=rough, metal=metal, color=tuple(c))
 
 
+
+HAIR_OF = {"june": ("hair/ponytail01", (0.36, 0.2, 0.1)), "ruth": ("hair/bob02", (0.82, 0.82, 0.85)),
+           "elias": ("hair/short02", (0.2, 0.17, 0.15))}
+
+
+def hair_info(cb):
+    sp = cb.spec
+    if sp.get("hair"):
+        return sp["hair"], sp.get("hair_tint")
+    h = HAIR_OF.get(sp["name"])
+    if h:
+        return h[0], sp.get("hair_tint", h[1])
+    return None, None
+
+
+def hair_mean_rgb(rel, tint):
+    from PIL import Image
+    d = A(rel)
+    png = [f for f in os.listdir(d) if f.endswith(".png")][0]
+    a = np.asarray(Image.open(os.path.join(d, png)).convert("RGBA").resize((128, 128)), dtype=np.float32) / 255.0
+    w = a[..., 3:4]
+    m = (a[..., :3] * w).sum((0, 1)) / max(float(w.sum()), 1e-3)
+    if tint is not None:
+        m = m * np.array(tint)
+    return np.clip(m, 0, 1)
+
+
+def scalp_cap(cb, p, rgb, frost=0.0):
+    """paint a hair-coloured scalp under the hair proxy (crown, back, sides above the ears, ragged hairline)
+    so any gap between hair cards shows hair colour instead of bald skin."""
+    rel, tint = hair_info(cb)
+    if not rel:
+        return rgb
+    hc = hair_mean_rgb(rel, tint) * 0.62
+    x, y, z = p[:, 0], p[:, 1], p[:, 2]
+    ax = np.abs(x)
+    eye_z = cb.conv(cb.H.joint("joint-l-eye"))[2]
+    longh = rel.split("/")[-1] in ("long01", "bob01", "bob02", "ponytail01", "braid01", "afro01")
+    front = pt.smoothstep(-0.045, -0.085, y)
+    n = pt.hash_noise((x * 900).astype(np.int64), (z * 900).astype(np.int64), 5)
+    n2 = np.sin(x * 160 + 1.3) * np.sin(z * 140) * 0.5 + 0.5
+    jag = (0.5 * n + 0.5 * n2 - 0.5) * 0.012
+    line = eye_z + 0.022 + 0.058 * front + jag
+    temple = pt.smoothstep(0.05, 0.085, ax) * front
+    line = line - 0.026 * temple
+    ear = pt.smoothstep(0.075, 0.092, ax) * pt.smoothstep(eye_z + 0.03, eye_z - 0.02, z) * (1 - front * 0.5)
+    back_low = (eye_z - 0.065) if longh else (eye_z - 0.03)
+    line = np.where(y > -0.02, np.minimum(line, back_low + 0.03 * pt.smoothstep(0.0, 0.07, ax) + jag), line)
+    m = pt.smoothstep(line - 0.004, line + 0.007, z) * (1 - ear)
+    stub = np.clip(m, 0, 1) * (0.84 + 0.16 * n)
+    cap = hc[None, :] * (0.75 + 0.5 * n2[:, None])
+    return rgb * (1 - stub[:, None]) + cap * stub[:, None]
+
 # ------------------------------------------------------------------ skin
 def paint_skin(cb, skin_name, details, stubble=1.0, weather=1.0, tint=(0.97, 0.90, 0.85)):
     """Bake stubble/weathering into a copy of the MakeHuman skin texture."""
@@ -228,6 +284,7 @@ def paint_skin(cb, skin_name, details, stubble=1.0, weather=1.0, tint=(0.97, 0.9
         rgb = rgb * (1 - 0.10 * weather * line[:, None])
     # tone: slightly deeper / less pale
     rgb = rgb * np.array(tint)
+    rgb = scalp_cap(cb, p, rgb)
     cov = np.zeros((size, size), dtype=bool); cov[py_, px_] = True
     out = base.copy() * np.array(tint)
     out[py_, px_] = np.clip(rgb, 0, 1)

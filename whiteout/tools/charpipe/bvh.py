@@ -84,3 +84,14 @@ class BVH:
         for j, p in enumerate(self.parent):
             P[j] = self.offset[j] + (P[p] if p >= 0 else 0)
         return P
+
+    def world_pos(self):
+        """joint world positions, shape (joints, frames, 3) (BVH units)."""
+        W = self.world_rots(); n = self.nframes
+        P = np.zeros((len(self.names), n, 3))
+        for j, p in enumerate(self.parent):
+            if p < 0:
+                P[j] = self.pos if self.pos is not None else 0
+            else:
+                P[j] = P[p] + np.einsum('nij,j->ni', W[p], np.array(self.offset[j]))
+        return P

@@ -1329,7 +1329,7 @@ func _ring_bell(_p) -> void:
 		Sfx.play("deny")
 		return
 	if _bell_cd > 0.0:
-		UI.toast("The bell is still swaying. (%d s)" % int(ceil(_bell_cd)), 2.0)
+		UI.toast(tr("The bell is still swaying. (%d s)") % int(ceil(_bell_cd)), 2.0)
 		return
 	_bell_cd = 20.0
 	Sfx.play("metal_impact", 3.0, 0.35)

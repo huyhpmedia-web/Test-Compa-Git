@@ -550,7 +550,7 @@ func _electrical() -> void:
 	# switchboard on the north wall
 	Props.box(geo, Vector3(9.5, 3.0, 0.3), Vector3(-23, 1.7, -31.7), Mats.color(Color(0.22, 0.26, 0.28), 0.5, 0.5), true)
 	label("MANUAL FEEDER ISOLATION", Vector3(-23, 3.7, -31.5), 0.0, 52, Color(1.0, 0.85, 0.3), 0.006, true)
-	var defs := [["l4_sw_pdu7", -26.5, "PDU-7\nRACK ROW 7"], ["l4_sw_pdu9", -23.0, "PDU-9\nRACK ROW 9"], ["l4_sw_ch3", -19.5, "CH-3\nREDUNDANT CHILLER"]]
+	var defs := [["l4_sw_pdu7", -26.5, tr("PDU-7\nRACK ROW 7")], ["l4_sw_pdu9", -23.0, tr("PDU-9\nRACK ROW 9")], ["l4_sw_ch3", -19.5, tr("CH-3\nREDUNDANT CHILLER")]]
 	for d in defs:
 		_build_switch(d[0], d[1], d[2])
 	_total_label = label("LOAD REDUCTION: 0 kW", Vector3(-23, 3.1, -31.5), 0.0, 56, Color(0.5, 1.0, 0.6), 0.008)
@@ -588,7 +588,7 @@ func _build_switch(id: String, x: float, title: String) -> void:
 	_sw_lever[id] = lever
 	_sw_lamp[id] = lamp
 	_sw_text[id] = [t, title, kw, k]
-	interact(Vector3(x, 1.3, -30.6), "Toggle %s (%d kW)" % [title.get_slice("\n", 0), kw], func(_p): _toggle_switch(id), 1.4)
+	interact(Vector3(x, 1.3, -30.6), tr("Toggle %s (%d kW)") % [title.get_slice("\n", 0), kw], func(_p): _toggle_switch(id), 1.4)
 
 func _toggle_switch(id: String) -> void:
 	var off := Game.has_flag(id)
@@ -603,7 +603,7 @@ func _toggle_switch(id: String) -> void:
 	var tw := red.create_tween()
 	tw.tween_property(red, "light_energy", 0.0, 0.5)
 	tw.tween_callback(red.queue_free)
-	UI.toast("%s: %s. Board total %d kW." % [_sw_text[id][1].get_slice("\n", 0), "ISOLATED" if not off else "RESTORED", _reduction()])
+	UI.toast(tr("%s: %s. Board total %d kW.") % [_sw_text[id][1].get_slice("\n", 0), tr("ISOLATED") if not off else tr("RESTORED"), _reduction()])
 	if not _toggled_once:
 		_toggled_once = true
 		await get_tree().create_timer(1.2).timeout
@@ -629,11 +629,11 @@ func _refresh_switches() -> void:
 			lamp.emission = c
 		var tx: Array = _sw_text.get(id, [])
 		if tx.size() > 0:
-			(tx[0] as Label3D).text = "%s\n[%s]" % [tx[1], "SHED" if off else "ONLINE"]
+			(tx[0] as Label3D).text = "%s\n[%s]" % [tx[1], tr("SHED") if off else tr("ONLINE")]
 			(tx[3] as Label3D).modulate = Color(1.0, 0.3, 0.2) if off else Color(1.0, 0.85, 0.3)
 	if _total_label:
 		var tot := _reduction()
-		_total_label.text = "LOAD REDUCTION: %d kW" % tot
+		_total_label.text = tr("LOAD REDUCTION: %d kW") % tot
 		var hit := tot == int(REQ.hallc) or tot == int(REQ.noc)
 		_total_label.modulate = Color(1.0, 0.85, 0.2) if hit else Color(0.5, 1.0, 0.6)
 	if _ch3_lamp:
@@ -647,14 +647,14 @@ func _refresh_switches() -> void:
 func _request(stage: String) -> void:
 	var flag := "l4_grant_" + stage
 	var need: int = int(REQ[stage])
-	var where := "Hall C" if stage == "hallc" else "the Network Operations Centre"
+	var where := tr("Hall C") if stage == "hallc" else tr("the Network Operations Centre")
 	if Game.has_flag(flag):
-		await say([["MERIDIAN", "Access to %s is already granted. Thank you for your cooperation." % where]])
+		await say([["MERIDIAN", tr("Access to %s is already granted. Thank you for your cooperation.") % where]])
 		return
 	var cur := _reduction()
 	if cur == need:
-		await say([["MERIDIAN", "Current reduction: %d kW. Request satisfied." % cur],
-			["MERIDIAN", "Uptime impact: 0.0003%%. Acceptable. Releasing the lock on %s." % where]])
+		await say([["MERIDIAN", tr("Current reduction: %d kW. Request satisfied.") % cur],
+			["MERIDIAN", tr("Uptime impact: 0.0003%%. Acceptable. Releasing the lock on %s.") % where]])
 		Game.set_flag(flag)
 		Sfx.play("unlock")
 		if _panel_lbl.has(stage):
@@ -666,11 +666,11 @@ func _request(stage: String) -> void:
 		else:
 			Game.set_objective("Enter the NOC. Talk to Dr. Hart.")
 	elif cur < need:
-		await say([["MERIDIAN", "To grant access to %s, I require %d kW of load reduction." % [where, need]],
-			["MERIDIAN", "Current reduction: %d kW. Shortfall: %d kW. Please reduce load elsewhere." % [cur, need - cur]]])
+		await say([["MERIDIAN", tr("To grant access to %s, I require %d kW of load reduction.") % [where, need]],
+			["MERIDIAN", tr("Current reduction: %d kW. Shortfall: %d kW. Please reduce load elsewhere.") % [cur, need - cur]]])
 	else:
-		await say([["MERIDIAN", "Current reduction: %d kW. This exceeds the request by %d kW." % [cur, cur - need]],
-			["MERIDIAN", "Excess reduction suggests a thermal event. I cannot open doors during a thermal event. Please restore %d kW." % (cur - need)]])
+		await say([["MERIDIAN", tr("Current reduction: %d kW. This exceeds the request by %d kW.") % [cur, cur - need]],
+			["MERIDIAN", tr("Excess reduction suggests a thermal event. I cannot open doors during a thermal event. Please restore %d kW.") % (cur - need)]])
 
 # =================================================================== hall C
 func _hall_c() -> void:

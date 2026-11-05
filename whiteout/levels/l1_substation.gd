@@ -682,7 +682,7 @@ func _disconnect(id: String, title: String, p: Vector3, warn := false) -> void:
 		st.modulate = Color(1.0, 0.35, 0.25)
 	else:
 		pivot.rotation.z = 1.2
-	interact(p + Vector3(0, 1.0, 1.5), "Operate %s (hot stick)" % title, func(_pl): _operate(id), 2.0)
+	interact(p + Vector3(0, 1.0, 1.5), tr("Operate %s (hot stick)") % title, func(_pl): _operate(id), 2.0)
 	_icicles(p + Vector3(xa, 2.2, 0), p + Vector3(xb, 2.2, 0), 6, 0.3)
 
 func _breaker(p: Vector3) -> void:
@@ -1133,7 +1133,7 @@ func _operate(id: String) -> void:
 		if _step >= 3:
 			_close_feeder_sequence()
 		else:
-			UI.toast("%s closed." % _sw_title(id), 2.0)
+			UI.toast(tr("%s closed.") % _sw_title(id), 2.0)
 	else:
 		_arc_flash(id)
 

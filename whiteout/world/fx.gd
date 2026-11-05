@@ -16,9 +16,31 @@ static func _box(size: Vector3, mat: Material, pos := Vector3.ZERO) -> MeshInsta
 	b.size = size
 	return _mi(b, mat, pos)
 
+## Weapon model. If res://assets/weapons/<id>/<id>.glb exists it is used (Poly Haven service_pistol / hatchet, Blender hard-surface
+## guns, or a later AI-generated replacement). Authoring contract for those glbs: forward = -Z (muzzle), up = +Y, and Node3D markers named
+## Grip_R, Support_L (optional), Muzzle, Eject (optional) whose frame is the HAND BONE frame (X thumb/pinky axis, Y along the fingers, Z palm normal),
+## origin = palm contact point. Optional movable parts: Slide / Pump / Hammer / Cylinder / Trigger (see actors/weapon_ik.gd, SPECS).
+## The returned wrapper keeps the old "barrel along -Y" convention so pickups lying on the ground still work; meta "weapon_id" + "model"
+## (the glb root, forward -Z) are read by actors/weapon_ik.gd.
+static func weapon_mesh(id: String) -> Node3D:
+	var path := "res://assets/weapons/%s/%s.glb" % [id, id]
+	if not ResourceLoader.exists(path):
+		return _legacy_weapon_mesh(id)
+	var wrap := Node3D.new()
+	wrap.name = "Weapon_" + id
+	var model: Node3D = (load(path) as PackedScene).instantiate()
+	model.name = "Model"
+	model.rotation = Vector3(-PI * 0.5, 0, 0)
+	wrap.add_child(model)
+	wrap.set_meta("weapon_id", id)
+	wrap.set_meta("model", model)
+	for mi in model.find_children("*", "MeshInstance3D", true, false):
+		(mi as MeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	return wrap
+
 ## Weapon model held in the right hand. Hand space: -Y is down the fingers, +Z forward
 ## once the aim pose rotates the hand; barrel points along -Y in hand space.
-static func weapon_mesh(id: String) -> Node3D:
+static func _legacy_weapon_mesh(id: String) -> Node3D:
 	var root := Node3D.new()
 	var steel := Mats.color(Color(0.13, 0.13, 0.14), 0.35, 0.85)
 	var grip := Mats.color(Color(0.06, 0.06, 0.06), 0.7)

@@ -81,6 +81,33 @@ def fields(p, nrm, seed, anchors, cfg):
         blood = np.maximum(blood, np.clip(rim * 0.95 + drip(p, c, rng.uniform(0.12, 0.35), r * 0.55, seed + i), 0, 1))
         h = h - core * 1.0 + rim * 0.55
         soakf = np.maximum(soakf, pt.smoothstep(2.6, 1.0, np.linalg.norm(p - c, axis=1) / r) * 0.8)
+    bone = np.zeros(N)
+    # --- lacerations: long ragged cuts with raised lips
+    ng = cfg.get("gashes", 0)
+    for i in range(min(ng, len(pts))):
+        c = np.array(pts[-1 - i]); a = rng.uniform(0, 3.14159)
+        d = np.array([np.cos(a), 0.0, np.sin(a)]) if rng.rand() < 0.5 else np.array([0.2, 0.0, 1.0])
+        d = d / np.linalg.norm(d); ln = rng.uniform(0.09, 0.2)
+        t = np.clip(((p - c) @ d) / ln, -0.5, 0.5)
+        q = c + t[:, None] * ln * d[None]
+        dist = np.linalg.norm(p - q, axis=1)
+        wid = 0.0045 * (1 - (2 * np.abs(t)) ** 2 * 0.8) * (0.7 + 0.8 * fbm(p, 140, seed + 150 + i))
+        core = pt.smoothstep(wid, wid * 0.35, dist) * (np.abs(t) < 0.5)
+        rim = pt.smoothstep(wid * 3.2, wid, dist) * (1 - core) * (np.abs(t) < 0.5)
+        flesh = np.maximum(flesh, core)
+        blood = np.maximum(blood, np.clip(core * 0.6 + rim * 0.9 + drip(p, c, 0.2, 0.004, seed + 160 + i) * 0.7, 0, 1))
+        h = h - core * 1.6 + rim * 0.6
+    # --- tears: ragged open wounds (bite / rip) with a bruised halo and sometimes exposed bone
+    for k, (tc, tr, tb) in enumerate(anchors.get("tears", [])):
+        c = np.array(tc)
+        core, rim = wound(p, c, tr, seed + 200 + k, nz=0.8)
+        flesh = np.maximum(flesh, core)
+        blood = np.maximum(blood, np.clip(rim * 0.95 + core * 0.4 + drip(p, c, rng.uniform(0.15, 0.4), tr * 0.5, seed + 210 + k), 0, 1))
+        h = h - core * 1.5 + rim * 0.6
+        dark = np.maximum(dark, rim)
+        if tb:
+            bn, _ = wound(p, c + np.array([0.0, 0.0, 0.0]), tr * 0.45, seed + 220 + k, nz=0.5)
+            bone = np.maximum(bone, bn * pt.smoothstep(0.3, 0.6, fbm(p, 60, seed + 230 + k)))
     # larger torn patches of exposed flesh (cloth only uses these)
     nt = cfg.get("torn", 0)
     for i in range(min(nt, max(0, len(pts) - nw))):
@@ -132,7 +159,7 @@ def fields(p, nrm, seed, anchors, cfg):
         fm = pt.smoothstep(0.55, 0.8, fbm(p, 45.0, seed + 90))
         shoulder = pt.smoothstep(0.1, 0.35, p[:, 2] - (anchors.get('hem_z', 0.0) + 0.9)) if anchors.get('hem_z') is not None else 0.0
         frost = np.clip((up * (0.55 + 0.5 * shoulder) + fm * 0.12 * up + fm * 0.1) * fr * (0.55 + 0.7 * fbm(p, 160, seed + 91)), 0, 1)
-    return dict(blood=blood, flesh=flesh, frost=frost, h=h, dark=dark, soak=soakf)
+    return dict(blood=blood, flesh=flesh, frost=frost, h=h, dark=dark, soak=soakf, bone=bone)
 
 
 BLOOD_FRESH = np.array([0.29, 0.024, 0.024])      # #4a0606  wet, glossy
@@ -164,6 +191,11 @@ def shade(col, rough, f, p, seed):
     fat = (fbm(p, 220, seed + 103) > 0.72)[:, None] * FAT[None] * 0.5
     fc = fc * (1 - fat * 0.5) + fat * 0.5
     col = col * (1 - fl[:, None]) + fc * fl[:, None]
+    bn = f.get("bone")
+    if bn is not None and bn.any():
+        bcol = np.array([0.62, 0.55, 0.42])[None] * (0.7 + 0.5 * fbm(p, 150, seed + 125))[:, None]
+        col = col * (1 - bn[:, None]) + bcol * bn[:, None]
+        rough = rough * (1 - bn) + 0.35 * bn
     fr = f["frost"]
     if fr.any():
         spark = pt.smoothstep(0.55, 0.9, n3(p, 520, seed + 120))

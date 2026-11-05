@@ -381,7 +381,7 @@ func _build_pipeline() -> void:
 		Props.cyl(geo, 0.4, 0.06, vp + Vector3(0, 1.4, 0), Mats.color(Color(0.7, 0.1, 0.08), 0.5, 0.5), false, -1.0, Vector3.ZERO, 16)
 		Props.box(geo, Vector3(0.9, 0.06, 0.06), vp + Vector3(0, 1.4, 0), Mats.color(Color(0.7, 0.1, 0.08), 0.5, 0.5), false)
 		Props.box(geo, Vector3(0.06, 0.06, 0.9), vp + Vector3(0, 1.4, 0), Mats.color(Color(0.7, 0.1, 0.08), 0.5, 0.5), false)
-		Props.sign(geo, vp + Vector3(0.0, 0.7, -0.38 if i == 0 else 0.38), 0.0 if i == 1 else PI, "STEAM RELIEF %d" % (i + 1), 20, Color(1.0, 0.75, 0.3))
+		Props.sign(geo, vp + Vector3(0.0, 0.7, -0.38 if i == 0 else 0.38), 0.0 if i == 1 else PI, tr("STEAM RELIEF %d") % (i + 1), 20, Color(1.0, 0.75, 0.3))
 		light(vp + Vector3(0, 2.0, 0.6), Color(1.0, 0.55, 0.25), 1.0, 5.0, false)
 		var it := interact(vp + Vector3(0, 1.0, 0), "Vent steam valve", func(_p): _vent(i), 2.2)
 		_valves.append(it)
@@ -629,7 +629,7 @@ func _process(delta: float) -> void:
 	var now := Time.get_ticks_msec() / 1000.0
 	for i in _valves.size():
 		var rem: float = _vent_ready[i] - now
-		_valves[i].prompt = "Vent steam valve" if rem <= 0.0 else "Valve cooling (%d s)" % int(ceil(rem))
+		_valves[i].prompt = "Vent steam valve" if rem <= 0.0 else tr("Valve cooling (%d s)") % int(ceil(rem))
 
 func _dim_lattice(f: float) -> void:
 	for c in _crystal_lights:
@@ -794,7 +794,7 @@ func _vent(i: int) -> void:
 		return
 	var now := Time.get_ticks_msec() / 1000.0
 	if now < _vent_ready[i]:
-		UI.toast("Pressure is still building (%d s)." % int(ceil(_vent_ready[i] - now)))
+		UI.toast(tr("Pressure is still building (%d s).") % int(ceil(_vent_ready[i] - now)))
 		Sfx.play("deny")
 		return
 	_vent_ready[i] = now + 28.0

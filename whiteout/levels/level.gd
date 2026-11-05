@@ -393,7 +393,7 @@ func pickup(uid: String, item: String, count: int, pos: Vector3) -> Node3D:
 	glint.position.y = 0.3
 	root.add_child(glint)
 	var it := Interactable.new()
-	it.prompt = "Pick up " + d.name
+	it.prompt = tr("Pick up %s") % d.name
 	it.radius = 1.5
 	it.set_meta("uid", uid)       # lets tools/playtest.gd find pickups by uid
 	it.set_meta("item", item)
@@ -408,14 +408,14 @@ func pickup(uid: String, item: String, count: int, pos: Vector3) -> Node3D:
 			return
 		Sfx.play("pickup")
 		if left > 0:
-			UI.toast("Picked up %s (%d). %d left behind." % [d.name, count - left, left])
+			UI.toast(tr("Picked up %s (%d). %d left behind.") % [d.name, count - left, left])
 			count = left
 			return
 		Game.set_flag("got:" + uid)
 		if d.kind == "key" or d.kind == "weapon" or d.kind == "upgrade":
 			UI.show_item_get(item)
 		else:
-			UI.toast("Picked up %s%s." % [d.name, (" x%d" % count) if count > 1 else ""])
+			UI.toast(tr("Picked up %s%s.") % [d.name, (" x%d" % count) if count > 1 else ""])
 		root.queue_free()
 		on_pickup(item, uid)
 	return root
@@ -441,7 +441,7 @@ func make_room_for_key(item: String) -> bool:
 		if not merged:
 			Game.item_box.append({"id": id, "count": slot.count})
 		Game.inventory_changed.emit()
-		UI.toast("Pack full: stashed %s in the supply crate." % Game.item_def(id).name, 3.0)
+		UI.toast(tr("Pack full: stashed %s in the supply crate.") % Game.item_def(id).name, 3.0)
 		if Game.can_add(item, 1):
 			return true
 	return Game.can_add(item, 1)
@@ -548,10 +548,10 @@ func door(uid: String, pos: Vector3, yaw: float, opts := {}) -> Node3D:
 					Game.remove_item(key, 1)
 				Game.set_flag("unlocked:" + uid)
 				Sfx.play("unlock")
-				UI.toast("Used %s." % Game.item_def(key).name)
+				UI.toast(tr("Used %s.") % Game.item_def(key).name)
 				await get_tree().create_timer(0.6).timeout
 			else:
-				UI.toast(opts.get("locked_msg", "It's locked. It needs %s." % Game.item_def(key).name))
+				UI.toast(opts.get("locked_msg", tr("It's locked. It needs %s.") % Game.item_def(key).name))
 				Sfx.play("door_locked")
 				return
 		if opts.has("to_level"):
@@ -573,7 +573,7 @@ func note(uid: String, pos: Vector3, title: String, body: String, yaw := 0.0) ->
 	Props.box(root, Vector3(0.22, 0.004, 0.3), Vector3(0, 0.003, 0), Mats.get_mat("paper"), false, Vector3(0, 0.2, 0))
 	Props.box(root, Vector3(0.22, 0.004, 0.3), Vector3(0.03, 0.007, 0.02), Mats.get_mat("paper"), false, Vector3(0, -0.1, 0))
 	var it := Interactable.new()
-	it.prompt = "Read: " + title
+	it.prompt = tr("Read: %s") % tr(title)
 	it.radius = 1.5
 	it.set_meta("uid", uid)
 	root.add_child(it)

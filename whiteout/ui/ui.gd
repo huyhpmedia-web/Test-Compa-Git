@@ -3,6 +3,14 @@ extends CanvasLayer
 
 signal dialogue_done
 signal modal_closed
+signal language_changed
+
+const SETTINGS_PATH := "user://settings.cfg"
+## [locale, native name]. Native names are never translated.
+const LANGS := [["en", "English"], ["vi", "Tiếng Việt"]]
+const FONT_REGULAR := "res://fonts/BeVietnamPro-Regular.ttf"
+const FONT_BOLD := "res://fonts/BeVietnamPro-Bold.ttf"
+const FONT_ITALIC := "res://fonts/BeVietnamPro-Italic.ttf"
 
 const Items = preload("res://core/items.gd")
 const BloodScreen = preload("res://ui/blood_screen.gd")
@@ -38,10 +46,12 @@ var _reticle_on := false
 var _reticle_focus := 0.0
 var _ecg_t := 0.0
 var theme_res: Theme
+var language := "en"
 
 func _ready() -> void:
 	layer = 10
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	_init_language()
 	theme_res = _make_theme()
 	root = Control.new()
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -57,18 +67,67 @@ func _ready() -> void:
 	root.add_child(fade)
 	Game.health_changed.connect(func(_a, _b): _refresh_hud())
 	Game.inventory_changed.connect(_refresh_hud)
-	Game.objective_changed.connect(func(t): objective_label.text = t)
+	Game.objective_changed.connect(func(t): objective_label.text = tr(t))
 	show_hud(false)
+
+# ================================================================= language
+## Order of precedence: WHITEOUT_LANG env, `lang=xx` user arg, user://settings.cfg, OS locale (vi -> Vietnamese).
+func _init_language() -> void:
+	var lang := ""
+	var cfg := ConfigFile.new()
+	if cfg.load(SETTINGS_PATH) == OK:
+		lang = str(cfg.get_value("game", "language", ""))
+	var forced := OS.get_environment("WHITEOUT_LANG")
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("lang="):
+			forced = a.substr(5)
+	if forced != "":
+		set_language(forced, false)
+		return
+	if lang == "":
+		lang = "vi" if OS.get_locale_language() == "vi" else "en"
+	set_language(lang, false)
+
+func set_language(lang: String, persist := true) -> void:
+	var known := false
+	for l in LANGS:
+		if l[0] == lang:
+			known = true
+	if not known:
+		lang = "en"
+	language = lang
+	TranslationServer.set_locale(lang)
+	if persist:
+		var cfg := ConfigFile.new()
+		cfg.load(SETTINGS_PATH)
+		cfg.set_value("game", "language", lang)
+		cfg.save(SETTINGS_PATH)
+	language_changed.emit()
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_TRANSLATION_CHANGED and hud != null:
+		_refresh_hud()
+
+## Translate a block paragraph by paragraph (so appending a credit line never breaks the rest).
+func tr_paras(text: String) -> String:
+	var out := PackedStringArray()
+	for para in text.split("\n\n"):
+		out.append(tr(para))
+	return "\n\n".join(out)
 
 func _make_theme() -> Theme:
 	var t := Theme.new()
 	t.default_font_size = 18
-	var font := SystemFont.new()
-	font.font_names = PackedStringArray(["DejaVu Sans", "Noto Sans", "Arial", "Helvetica"])
-	if ResourceLoader.exists("res://ui/font.ttf"):
-		t.default_font = load("res://ui/font.ttf")
-	else:
-		t.default_font = font
+	# Be Vietnam Pro (OFL): full Vietnamese coverage incl. stacked diacritics (ệ ở ữ). The system
+	# font is only a glyph fallback for symbols the font lacks.
+	var sysf := SystemFont.new()
+	sysf.font_names = PackedStringArray(["Noto Sans", "DejaVu Sans", "Arial", "Helvetica"])
+	var regular := _ui_font(FONT_REGULAR, sysf)
+	t.default_font = regular
+	t.set_font("bold_font", "RichTextLabel", _ui_font(FONT_BOLD, sysf))
+	t.set_font("bold_italics_font", "RichTextLabel", _ui_font(FONT_BOLD, sysf))
+	t.set_font("italics_font", "RichTextLabel", _ui_font(FONT_ITALIC, sysf))
+	t.set_font("normal_font", "RichTextLabel", regular)
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = C_PANEL
 	sb.border_color = Color(0.35, 0.38, 0.4, 0.8)
@@ -95,6 +154,15 @@ func _make_theme() -> Theme:
 	t.set_color("font_color", "Label", C_TEXT)
 	t.set_color("default_color", "RichTextLabel", C_TEXT)
 	return t
+
+func _ui_font(path: String, fallback: Font) -> Font:
+	var fv := FontVariation.new()
+	if ResourceLoader.exists(path):
+		fv.base_font = load(path)
+		fv.fallbacks = [fallback]
+	else:
+		fv.base_font = fallback
+	return fv
 
 func _label(text: String, size := 18, color := C_TEXT) -> Label:
 	var l := Label.new()
@@ -192,7 +260,7 @@ func _refresh_hud() -> void:
 	if hp_label == null:
 		return
 	var st := Game.health_state()
-	hp_label.text = st
+	hp_label.text = tr(st)
 	hp_label.add_theme_color_override("font_color", {"FINE": Color(0.45, 0.9, 0.5), "CAUTION": Color(0.95, 0.75, 0.25), "DANGER": Color(0.95, 0.25, 0.2)}[st])
 	var eq := Game.equipped
 	if eq != "" and eq != "knife":
@@ -202,7 +270,7 @@ func _refresh_hud() -> void:
 	else:
 		weapon_label.text = Game.item_def(eq).name if eq != "" else ""
 		ammo_label.text = ""
-	objective_label.text = Game.objective
+	objective_label.text = tr(Game.objective)
 	if vignette.material:
 		var s := 0.0
 		if st == "CAUTION":
@@ -257,11 +325,12 @@ func _draw_reticle() -> void:
 	reticle.draw_circle(Vector2.ZERO, 1.6, c)
 
 func set_prompt(text: String) -> void:
-	if prompt_label.text != ("[E]  " + text if text != "" else ""):
-		prompt_label.text = "[E]  " + text if text != "" else ""
+	var shown := "[E]  " + tr(text) if text != "" else ""
+	if prompt_label.text != shown:
+		prompt_label.text = shown
 
 func toast(text: String, dur := 3.0) -> void:
-	var l := _label(text, 17)
+	var l := _label(tr(text), 17)
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	l.custom_minimum_size = Vector2(600, 0)
 	toast_box.add_child(l)
@@ -293,11 +362,11 @@ func title_card(title: String, sub := "") -> void:
 	box.offset_left = -500; box.offset_right = 500
 	box.alignment = BoxContainer.ALIGNMENT_CENTER
 	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var t := _label(title, 44, Color(0.92, 0.92, 0.9))
+	var t := _label(tr(title), 44, Color(0.92, 0.92, 0.9))
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	box.add_child(t)
 	if sub != "":
-		var s := _label(sub, 18, C_DIM)
+		var s := _label(tr(sub), 18, C_DIM)
 		s.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		box.add_child(s)
 	box.modulate.a = 0.0
@@ -334,10 +403,10 @@ func dialogue(lines: Array) -> void:
 		var who := ""
 		var txt := ""
 		if ln is Array:
-			who = ln[0]
-			txt = ln[1]
+			who = tr(ln[0])
+			txt = tr(ln[1])
 		else:
-			txt = str(ln)
+			txt = tr(str(ln))
 		dlg_name.text = who
 		dlg_name.visible = who != ""
 		dlg_text.text = txt
@@ -422,14 +491,18 @@ func show_note(title: String, body: String) -> void:
 	bg.name = "Note"
 	var v := VBoxContainer.new()
 	p.add_child(v)
-	var t := _label(title, 24, Color(0.95, 0.92, 0.85))
+	var t := _label(tr(title), 24, Color(0.95, 0.92, 0.85))
+	t.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	v.add_child(t)
 	var sc := ScrollContainer.new()
 	sc.custom_minimum_size = Vector2(720, 430)
 	v.add_child(sc)
 	var rt := RichTextLabel.new()
 	rt.bbcode_enabled = true
-	rt.text = body
+	var tb := tr(body)
+	if tb == body:
+		tb = tr_paras(body)
+	rt.text = tb
 	rt.fit_content = true
 	rt.custom_minimum_size = Vector2(700, 0)
 	rt.add_theme_font_size_override("normal_font_size", 17)
@@ -474,15 +547,19 @@ func _build_inventory(tab := "items") -> void:
 	var top := HBoxContainer.new()
 	v.add_child(top)
 	var st := Game.health_state()
-	top.add_child(_label("ELIAS KADE   ·   ", 18, C_DIM))
-	top.add_child(_label(st, 18, {"FINE": Color(0.45, 0.9, 0.5), "CAUTION": Color(0.95, 0.75, 0.25), "DANGER": Color(0.95, 0.25, 0.2)}[st]))
+	top.add_child(_label("ELIAS KADE", 18, C_DIM))
+	top.add_child(_label("   ·   ", 18, C_DIM))
+	top.add_child(_label(tr(st), 18, {"FINE": Color(0.45, 0.9, 0.5), "CAUTION": Color(0.95, 0.75, 0.25), "DANGER": Color(0.95, 0.25, 0.2)}[st]))
 	top.add_child(_label("   ·   " + Game.format_time(Game.play_time), 18, C_DIM))
 	var tabs := HBoxContainer.new()
 	v.add_child(tabs)
 	_button("ITEMS", func(): _rebuild_inv("items"), tabs)
 	_button("FILES", func(): _rebuild_inv("files"), tabs)
 	if Game.objective != "":
-		tabs.add_child(_label("     Objective: " + Game.objective, 15, C_DIM))
+		var ol := _label(tr("Objective: %s") % tr(Game.objective), 15, C_DIM)
+		ol.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		ol.custom_minimum_size = Vector2(620, 0)
+		tabs.add_child(ol)
 	if tab == "files":
 		_files_view(v)
 	else:
@@ -535,7 +612,7 @@ func _items_view(v: VBoxContainer) -> void:
 	info.custom_minimum_size = Vector2(440, 0)
 	hb.add_child(info)
 	if _combine_from != "":
-		info.add_child(_label("Combine %s with...?" % Items.get_def(_combine_from).name, 18, C_ACCENT))
+		info.add_child(_label(tr("Combine %s with...?") % Items.get_def(_combine_from).name, 18, C_ACCENT))
 		_button("Cancel", func():
 			_combine_from = ""
 			_rebuild_inv("items"), info)
@@ -551,7 +628,7 @@ func _items_view(v: VBoxContainer) -> void:
 		info.add_child(acts)
 		match d.kind:
 			"weapon":
-				_button("Equip" if s.id != Game.equipped else "Equipped", func():
+				_button(tr("Equip") if s.id != Game.equipped else tr("Equipped"), func():
 					Game.use_item(s.id)
 					_rebuild_inv("items"), acts)
 			"heal", "upgrade":
@@ -574,8 +651,11 @@ func _items_view(v: VBoxContainer) -> void:
 				_rebuild_inv("items"), acts)
 	else:
 		info.add_child(_label("Select an item.", 16, C_DIM))
-		info.add_child(_label("Inventory: %d / %d slots" % [Game.slots_used(), Game.inv_slots], 15, C_DIM))
-	info.add_child(_label("\n[Tab/Esc] Close", 14, C_DIM))
+		info.add_child(_label(tr("Inventory: %d / %d slots") % [Game.slots_used(), Game.inv_slots], 15, C_DIM))
+	var hint := _label("[Tab/Esc] Close", 14, C_DIM)
+	hint.custom_minimum_size = Vector2(0, 40)
+	hint.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+	info.add_child(hint)
 	if first:
 		first.call_deferred("grab_focus")
 
@@ -613,7 +693,7 @@ func _files_view(v: VBoxContainer) -> void:
 	for f in files:
 		var fd = Game.get_flag("file:" + f, {})
 		if fd is Dictionary and fd.has("title"):
-			_button(fd.title, func(): view.text = "[b]%s[/b]\n\n%s" % [fd.title, fd.body], list)
+			_button(tr(fd.title), func(): view.text = "[b]%s[/b]\n\n%s" % [tr(fd.title), tr(fd.body)], list)
 
 # ================================================================= item box
 func open_item_box() -> void:
@@ -632,7 +712,7 @@ func open_item_box() -> void:
 	right.custom_minimum_size = Vector2(400, 420)
 	hb.add_child(left)
 	hb.add_child(right)
-	left.add_child(_label("Inventory (%d/%d)" % [Game.slots_used(), Game.inv_slots], 16, C_DIM))
+	left.add_child(_label(tr("Inventory (%d/%d)") % [Game.slots_used(), Game.inv_slots], 16, C_DIM))
 	right.add_child(_label("Box", 16, C_DIM))
 	for i in Game.inventory.size():
 		var s = Game.inventory[i]
@@ -700,9 +780,9 @@ func _slots_menu(saving: bool) -> void:
 	var first: Button = null
 	for slot in 3:
 		var info := Game.save_info(slot)
-		var txt := "Slot %d — empty" % (slot + 1)
+		var txt := tr("Slot %d — empty") % (slot + 1)
 		if not info.is_empty():
-			txt = "Slot %d — %s · %s · %s" % [slot + 1, str(info.get("level_id", "")).replace("_", " ").to_upper(), Game.format_time(float(info.get("play_time", 0))), info.get("stamp", "")]
+			txt = tr("Slot %d — %s · %s · %s") % [slot + 1, _level_title(str(info.get("level_id", ""))), Game.format_time(float(info.get("play_time", 0))), info.get("stamp", "")]
 		var s := slot
 		var b := _button(txt, func():
 			if saving:
@@ -721,8 +801,46 @@ func _slots_menu(saving: bool) -> void:
 	if first:
 		first.grab_focus()
 
+func _level_title(id: String) -> String:
+	match id:
+		"l1_substation": return tr("L1 SUBSTATION")
+		"l2_school": return tr("L2 SCHOOL")
+		"l3_church": return tr("L3 CHURCH")
+		"l4_meridian": return tr("L4 MERIDIAN")
+		"l5_mine": return tr("L5 MINE")
+		"l6_heart": return tr("L6 HEART")
+	return id.replace("_", " ").to_upper()
+
+# ---- options (language)
+func open_options(back := Callable()) -> void:
+	var p := _panel(520, 330)
+	var bg: Control = p.get_meta("bg")
+	bg.name = "Options"
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 10)
+	p.add_child(v)
+	v.add_child(_label("OPTIONS", 26, C_ACCENT))
+	v.add_child(_label("Language", 16, C_DIM))
+	var first: Button = null
+	for l in LANGS:
+		var code: String = l[0]
+		var b := _button(("•  " if language == code else "    ") + str(l[1]), func():
+			set_language(code)
+			close_modal()
+			open_options(back), v)
+		b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+		if language == code:
+			first = b
+	_button("Back", func():
+		close_modal()
+		if back.is_valid():
+			back.call(), v)
+	_open_modal(bg)
+	if first:
+		first.grab_focus()
+
 func open_pause() -> void:
-	var p := _panel(420, 380)
+	var p := _panel(420, 430)
 	var bg: Control = p.get_meta("bg")
 	bg.name = "Pause"
 	var v := VBoxContainer.new()
@@ -736,6 +854,9 @@ func open_pause() -> void:
 	_button("Controls", func():
 		close_modal()
 		show_note("Controls", CONTROLS_TEXT), v)
+	_button("Options", func():
+		close_modal()
+		open_options(open_pause), v)
 	_button("Quit to Title", func():
 		close_modal()
 		quit_to_title(), v)
@@ -846,7 +967,7 @@ func show_ending(ending: String) -> void:
 	v.offset_left = -420; v.offset_right = 420; v.offset_top = -260; v.offset_bottom = 260
 	v.add_theme_constant_override("separation", 12)
 	bg.add_child(v)
-	var text: String = ENDINGS.get(ending, ENDINGS["default"])
+	var text: String = tr_paras(ENDINGS.get(ending, ENDINGS["default"]))
 	var rt := RichTextLabel.new()
 	rt.bbcode_enabled = true
 	rt.fit_content = true
@@ -855,7 +976,7 @@ func show_ending(ending: String) -> void:
 	rt.add_theme_font_size_override("normal_font_size", 18)
 	v.add_child(rt)
 	var rank := "S" if Game.play_time < 3600 and Game.saves_used <= 3 else ("A" if Game.play_time < 5400 else "B")
-	v.add_child(_label("Clear time %s   ·   Saves %d   ·   Deaths %d   ·   Rank %s" % [Game.format_time(Game.play_time), Game.saves_used, Game.deaths, rank], 16, C_DIM))
+	v.add_child(_label(tr("Clear time %s   ·   Saves %d   ·   Deaths %d   ·   Rank %s") % [Game.format_time(Game.play_time), Game.saves_used, Game.deaths, rank], 16, C_DIM))
 	var b := _button("Return to Title", func():
 		close_modal()
 		quit_to_title(), v)

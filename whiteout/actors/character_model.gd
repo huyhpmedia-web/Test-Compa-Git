@@ -210,9 +210,22 @@ func _fixed(src: StandardMaterial3D) -> StandardMaterial3D:
 	var sm := src.duplicate() as StandardMaterial3D
 	var n := String(sm.resource_name).to_lower()
 	if n.contains("hair") or n.contains("brow") or n.contains("lash"):
+		# scissor + alpha-to-coverage: no sorting artefacts, soft strand edges under MSAA; the scalp under the hair is painted hair-coloured
 		sm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
-		sm.alpha_scissor_threshold = 0.45
+		sm.alpha_scissor_threshold = 0.38
+		sm.alpha_antialiasing_mode = BaseMaterial3D.ALPHA_ANTIALIASING_ALPHA_TO_COVERAGE
 		sm.cull_mode = BaseMaterial3D.CULL_DISABLED
+		sm.roughness = 0.82
+		sm.metallic_specular = 0.22
+		sm.anisotropy_enabled = false
+		sm.backlight_enabled = false
+	elif n.ends_with("_skin"):
+		# subsurface-ish skin: SSS blur + warm backlight (ears, fingers, nose against the flashlight)
+		sm.subsurf_scatter_enabled = true
+		sm.subsurf_scatter_strength = 0.22
+		sm.subsurf_scatter_skin_mode = true
+		sm.backlight_enabled = true
+		sm.backlight = Color(0.32, 0.12, 0.09) if not n.contains("rimebound") else Color(0.16, 0.12, 0.14)
 	elif n.contains("_sac_core") or n.contains("_saccore"):
 		sm.emission_enabled = true
 		sm.emission = Color(0.6, 1.0, 1.0)
@@ -244,7 +257,11 @@ func _fixed(src: StandardMaterial3D) -> StandardMaterial3D:
 		sm.emission = Color(1.0, 0.92, 0.7)
 		sm.emission_energy_multiplier = 3.0
 	elif n.contains("eyes"):
-		sm.roughness = 0.1
+		sm.roughness = 0.06
+		sm.metallic_specular = 1.0
+		sm.clearcoat_enabled = true
+		sm.clearcoat = 1.0
+		sm.clearcoat_roughness = 0.03
 	return sm
 
 ## All (shared) materials whose name contains `substr` (e.g. "sac" for the Burster).

@@ -147,7 +147,7 @@ func get_flag(key: String, default = null):
 func set_objective(text: String) -> void:
 	objective = text
 	objective_changed.emit(text)
-	UI.toast("OBJECTIVE: " + text, 4.0)
+	UI.toast(tr("OBJECTIVE: %s") % tr(text), 4.0)
 
 # ---------------------------------------------------------------- health
 func damage(amount: int) -> void:
@@ -260,7 +260,7 @@ func use_item(id: String) -> bool:
 			if id == "pouch":
 				inv_slots += 2
 				remove_item(id, 1)
-				UI.toast("Inventory expanded to %d slots." % inv_slots)
+				UI.toast(tr("Inventory expanded to %d slots.") % inv_slots)
 				return true
 		"resource":
 			if id == "flare" and player != null and is_instance_valid(player):
@@ -286,7 +286,7 @@ func combine(a: String, b: String) -> bool:
 	remove_item(b, 1)
 	add_item(res, Items.get_def(res).get("yield", 1))
 	Sfx.play("combine")
-	UI.toast("Created: " + Items.get_def(res).name)
+	UI.toast(tr("Created: %s") % Items.get_def(res).name)
 	return true
 
 func ammo_for(weapon: String) -> String:

@@ -197,8 +197,17 @@ static func spawn(parent: Node3D, rel: String, pos := Vector3.ZERO, yaw := 0.0, 
 		for s in m.mesh.get_surface_count():
 			var src: Material = m.get_active_material(s)
 			var nm := src.resource_name if src else ""
-			if opts.has("mats_ice") and (nm.to_lower().contains("ice") or nm.to_lower().contains("crystal")):
-				m.set_surface_override_material(s, opts.mats_ice)
+			if opts.get("ice_tex", false) and src is BaseMaterial3D:
+				var bm := src as BaseMaterial3D
+				var im := ShaderMaterial.new()
+				im.shader = load("res://world/shaders/env_ice_tex.gdshader")
+				im.set_shader_parameter("albedo_tex", bm.albedo_texture)
+				if bm.normal_texture:
+					im.set_shader_parameter("normal_tex", bm.normal_texture)
+				var ot: Texture2D = bm.roughness_texture if bm.roughness_texture else bm.metallic_texture
+				if ot:
+					im.set_shader_parameter("orm_tex", ot)
+				m.set_surface_override_material(s, im)
 			elif overrides.has(nm):
 				m.set_surface_override_material(s, overrides[nm])
 			else:

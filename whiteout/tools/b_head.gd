@@ -42,6 +42,10 @@ func _ready() -> void:
 			"top": dir = Vector3(0.05, 1.0, 0.45)
 			"backtop": dir = Vector3(0.0, 0.8, -0.7)
 		dir = dir.normalized()
+		var hbas: Basis = m.head.global_transform.basis.orthonormalized()
+		if zombie:
+			dir = hbas * Vector3(dir.x, dir.y, dir.z)
+			dir.y = clampf(dir.y, -0.2, 1.0)
 		cam.look_at_from_position(hp + dir * distm, hp, Vector3.UP if v != "top" else Vector3(0, 0, -1))
 		sl.look_at_from_position(cam.position + Vector3(0.15, 0.1, 0), hp, Vector3.UP)
 		for i in 6: await get_tree().process_frame

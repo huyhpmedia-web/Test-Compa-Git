@@ -42,19 +42,19 @@ func _ready() -> void:
 			add_child(m)
 		"hud":
 			Game.set_objective("Reach the school. Gran's shelter. Follow Highway 53 north.")
-			UI.toast("Picked up Road Flare x3.")
+			UI.toast(tr("Picked up %s%s.") % [Game.item_def("flare").name, " x3"])
 			UI.set_prompt("Open control house")
 		"inventory":
 			Game.set_objective("Re-close feeder KF-2. Find the hot stick and a 60A fuse, then follow the switching order.")
 			UI.open_inventory()
 		"files":
 			Game.set_flag("files", ["f1"])
-			Game.set_flag("file:f1", {"title": "Operator's switching order and log", "body": "[b]SWITCHING ORDER - RESTORE KF-2[/b]\n(copy from the manual, for my own sake)\n\n1. Verify BKR-KF2 OPEN.\n2. CLOSE DS-2A (bus side)."})
+			Game.set_flag("file:f1", {"title": _msg("Operator's switching order"), "body": _msg("[b]SWITCHING ORDER - RESTORE KF-2[/b]")})
 			UI._build_inventory("files")
 		"dialogue":
 			UI.dialogue([["JUNE (radio)", "Dad! Dad, the school just lit up. The gym, the hall, everything. Gran's shelter is there."], ["ELIAS", "Hold on, June. I'm coming. Stay inside, stay warm."]])
 		"note":
-			UI.show_note("Letter: T. Kade to Ruth, March 2011", "[b]Ruth,[/b]\n\nI started this three times at the kitchen table and you kept coming in to top up my coffee, so I'm finishing it here in the lamp room where nobody watches me think.\n\nThe top level has been making noises I don't like. I told Gil. Gil told the office. The office told Gil to stop telling them. You know how it goes. I'll be fine. Twenty-two years down here and the mountain and I have an understanding.\n\nHere's what I never manage at supper. I'm proud of you. I'm proud of how you sit with people when it's bad. And I'm proud of Eli, even when he looks at me like I'm the thing he's trying to get away from. He's got my hands and your head. He'll leave this town. Let him. Just don't let him leave angry.")
+			UI.show_note(_msg("Letter: T. Kade"), _msg("[b]Ruth,[/b]\n\nI started this three times"))
 		"ending":
 			UI.show_ending(str(args.get("ending", "thaw")))
 		"options":
@@ -75,3 +75,26 @@ func _ready() -> void:
 		get_viewport().get_texture().get_image().save_png(args.out)
 		print("SHOT_SAVED ", args.out)
 	get_tree().quit()
+
+## Full English msgid starting with `prefix` (read from locale/strings.pot).
+func _msg(prefix: String) -> String:
+	var f := FileAccess.open("res://locale/strings.pot", FileAccess.READ)
+	var cur := ""
+	var in_id := false
+	while not f.eof_reached():
+		var ln := f.get_line()
+		if ln.begins_with("msgid "):
+			cur = _unq(ln.substr(6))
+			in_id = true
+		elif ln.begins_with("msgstr"):
+			if in_id and cur.begins_with(prefix):
+				return cur
+			in_id = false
+		elif in_id and ln.begins_with("\""):
+			cur += _unq(ln)
+	return prefix
+
+func _unq(s: String) -> String:
+	s = s.strip_edges()
+	s = s.substr(1, s.length() - 2)
+	return s.replace("\\n", "\n").replace("\\\"", "\"").replace("\\\\", "\\")

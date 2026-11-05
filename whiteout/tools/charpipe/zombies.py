@@ -207,6 +207,14 @@ def zombie_skin(cb, spec, size=1024):
         # hollow belly under the ribs + thin limbs shading
         belly = np.exp(-(((ax) / 0.12) ** 2 + ((z - (zs1 - 0.06)) / 0.08) ** 2)) * fwd
         col = col * (1 - 0.18 * belly[:, None])
+    # --- desaturate toward dead grey, grime, scabs, micro skin relief
+    gr_ = col.mean(1, keepdims=True)
+    col = gr_ * 0.5 + col * 0.5
+    grime = np.clip(pt.smoothstep(0.55, 0.8, gore.fbm(p, 9, seed + 70)) * 0.45 + 0.25 * gore.fbm(p, 60, seed + 71), 0, 0.7)
+    col = col * (1 - grime[:, None] * 0.45) + np.array([0.10, 0.08, 0.06])[None] * grime[:, None] * 0.25
+    scab = pt.smoothstep(0.7, 0.78, gore.fbm(p, 46, seed + 72)) * (0.5 + 0.5 * (nn[:, 2] > 0.2)) * spec.get("scabs", 0.8)
+    col = col * (1 - scab[:, None] * 0.8) + np.array([0.19, 0.07, 0.05])[None] * scab[:, None] * 0.8
+    micro = 0.3 * (gore.fbm(p, 420, seed + 73) - 0.5) + 0.35 * (gore.fbm(p, 150, seed + 74) - 0.5) + scab * 0.9
     # --- gore
     vmk = (cb.W[:, [names.index(b) for b in ("neck_01", "lowerarm_l", "lowerarm_r", "upperarm_l", "upperarm_r")]].sum(1) > 0.6) & (pos[:, 2] < eye_z - 0.06)
     pts = pick_points(pos, vmk, 60, seed)                                      # neck / arms
@@ -221,7 +229,7 @@ def zombie_skin(cb, spec, size=1024):
     tear = (pt.smoothstep(0.006, 0.0, np.abs(ax - 0.04 - 0.02 * pt.smoothstep(0.0, 0.06, eye_z - z))) * pt.smoothstep(0.0, 0.006, eye_z - z) * pt.smoothstep(0.075, 0.03, eye_z - z) * fwd
             * pt.smoothstep(0.3, 0.6, gore.fbm(p, 90, seed + 35))) * gcfg.get("tears", 0.0)
     f["blood"] = np.clip(np.maximum(f["blood"], np.maximum(np.maximum(hb, nk * 0.9), np.maximum(tear * 0.9, eye_blood))), 0, 1)
-    f["h"] = f["h"] + hh + hh0
+    f["h"] = f["h"] + hh + hh0 + micro
     rg = np.full(len(p), 0.62) - 0.2 * ice - 0.1 * vv
     col, rg = gore.shade(col, rg, f, p, seed)
     # unhinged jaw: dark open-mouth cavity

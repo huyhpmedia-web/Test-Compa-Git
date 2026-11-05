@@ -457,19 +457,88 @@ static func pipe(parent: Node3D, a: Vector3, b: Vector3, radius := 0.08, mat := 
 	mi.basis = Basis(side, up, side.cross(up)).orthonormalized()
 	return r
 
+static var _win_mats := {}
+static func _wm(key: String) -> StandardMaterial3D:
+	if not _win_mats.has(key):
+		var m: StandardMaterial3D
+		match key:
+			"trim":
+				m = Mats.color(Color(0.62, 0.6, 0.55), 0.75)
+			"trim_dark":
+				m = Mats.color(Color(0.16, 0.15, 0.15), 0.6, 0.2)
+			"stone":
+				m = Mats.get_mat("concrete", 1.0)
+			"glass":
+				m = Mats.color(Color(0.02, 0.03, 0.045), 0.04, 0.6)
+			"curtain":
+				m = Mats.color(Color(0.1, 0.08, 0.07), 0.95)
+			"frost":
+				m = Mats.color(Color(0.82, 0.88, 0.94, 0.55), 0.4)
+				m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			_:
+				m = Mats.get_mat("snow")
+		_win_mats[key] = m
+	return _win_mats[key]
+
 static func window(parent: Node3D, pos: Vector3, yaw := 0.0, w := 1.4, h := 1.8, lit := false) -> Node3D:
-	## Window decal for building facades: frame + mullions + dark glass. Not solid.
+	## Window unit for building facades: proud casing, stone sill + lintel, glazing bars, frosted lower pane, curtain, snow on the sill.
+	## Local +Z points out of the wall. Not solid.
 	var r := _root(parent, pos, yaw, "Window")
-	var frame := Mats.color(Color(0.75, 0.75, 0.72), 0.6)
-	var glass := Mats.emissive(Color(0.9, 0.7, 0.4), 0.8) if lit else Mats.color(Color(0.03, 0.04, 0.05), 0.05, 0.5)
-	box(r, Vector3(w, h, 0.04), Vector3(0, 0, 0), glass, false)
-	box(r, Vector3(w + 0.14, 0.1, 0.12), Vector3(0, h * 0.5, 0.02), frame, false)
-	box(r, Vector3(w + 0.2, 0.1, 0.2), Vector3(0, -h * 0.5, 0.06), frame, false)
-	for sx in [-1, 1]:
-		box(r, Vector3(0.08, h, 0.1), Vector3(sx * w * 0.5, 0, 0.02), frame, false)
-	for i in range(1, 3):
-		box(r, Vector3(0.035, h, 0.05), Vector3(-w * 0.5 + w * i / 3.0, 0, 0.03), frame, false)
-		box(r, Vector3(w, 0.035, 0.05), Vector3(0, -h * 0.5 + h * i / 3.0, 0.03), frame, false)
+	var glass: Material = Mats.emissive(Color(0.95, 0.68, 0.32), 0.9) if lit else _wm("glass")
+	var trim := _wm("trim")
+	box(r, Vector3(w, h, 0.03), Vector3(0, 0, 0.0), glass, false)
+	if not lit:
+		box(r, Vector3(w * 0.94, h * 0.92, 0.01), Vector3(0, 0, -0.01), _wm("curtain"), false)
+	# casing: four boards standing 14 cm proud
+	box(r, Vector3(0.09, h + 0.1, 0.14), Vector3(-w * 0.5 - 0.02, 0, 0.06), trim, false)
+	box(r, Vector3(0.09, h + 0.1, 0.14), Vector3(w * 0.5 + 0.02, 0, 0.06), trim, false)
+	box(r, Vector3(w + 0.2, 0.09, 0.14), Vector3(0, h * 0.5 + 0.03, 0.06), trim, false)
+	box(r, Vector3(w + 0.2, 0.08, 0.1), Vector3(0, -h * 0.5 - 0.02, 0.05), trim, false)
+	# transom bar + muntins
+	box(r, Vector3(w, 0.06, 0.1), Vector3(0, h * 0.18, 0.04), trim, false)
+	box(r, Vector3(0.05, h, 0.09), Vector3(0, 0, 0.04), trim, false)
+	if w > 1.2:
+		for sx in [-1, 1]:
+			box(r, Vector3(0.025, h, 0.07), Vector3(sx * w * 0.25, 0, 0.03), trim, false)
+	# frost creeping up the lower pane
+	box(r, Vector3(w * 0.96, h * 0.28, 0.02), Vector3(0, -h * 0.34, 0.03), _wm("frost"), false)
+	# stone sill (projects 22 cm) + lintel
+	box(r, Vector3(w + 0.34, 0.08, 0.26), Vector3(0, -h * 0.5 - 0.1, 0.12), _wm("stone"), false)
+	box(r, Vector3(w + 0.26, 0.07, 0.2), Vector3(0, -h * 0.5 - 0.17, 0.08), _wm("stone"), false)
+	box(r, Vector3(w + 0.36, 0.16, 0.2), Vector3(0, h * 0.5 + 0.17, 0.1), _wm("stone"), false)
+	# snow loaded on the sill
+	var sn := box(r, Vector3(w + 0.2, 0.07, 0.2), Vector3(0, -h * 0.5 - 0.03, 0.13), _wm("snow"), false)
+	sn.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	for c in r.get_children():
+		if c is GeometryInstance3D:
+			(c as GeometryInstance3D).visibility_range_end = 90.0
+	return r
+
+## Projecting cornice band with a snow cap, running along x from x0..x1 at height y on a wall whose outward normal is `out` (+1/-1 on z).
+static func cornice(parent: Node3D, x0: float, x1: float, y: float, zf: float, out := 1.0, depth := 0.45, mat := "concrete") -> Node3D:
+	var r := _root(parent, Vector3((x0 + x1) * 0.5, y, zf), 0.0, "Cornice")
+	var w := x1 - x0
+	var m := Mats.get_mat(mat, 1.5)
+	box(r, Vector3(w + 0.3, 0.22, 0.2), Vector3(0, 0, out * 0.1), m, false)
+	box(r, Vector3(w + 0.4, 0.12, depth * 0.8), Vector3(0, 0.17, out * depth * 0.4), m, false)
+	box(r, Vector3(w + 0.5, 0.1, depth), Vector3(0, 0.28, out * depth * 0.5), m, false)
+	# dentils
+	var n := int(w / 0.5)
+	for i in n:
+		box(r, Vector3(0.18, 0.14, 0.14), Vector3(-w * 0.5 + (i + 0.5) * w / n, -0.16, out * 0.22), m, false)
+	var sn := box(r, Vector3(w + 0.55, 0.09, depth * 1.02), Vector3(0, 0.37, out * depth * 0.5), _wm("snow"), false)
+	sn.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	return r
+
+## Gutter + downpipe along a wall edge (Poly Haven gutter pieces scaled) - simple tube version.
+static func gutter(parent: Node3D, a: Vector3, b: Vector3, drop := 0.0) -> Node3D:
+	var r := _root(parent, (a + b) * 0.5, atan2(b.x - a.x, b.z - a.z), "Gutter")
+	var len := Vector2(b.x - a.x, b.z - a.z).length()
+	var m := Mats.get_mat("metal_painted", 1.0)
+	var g := box(r, Vector3(0.1, 0.1, len), Vector3(0, 0, 0), m, false)
+	g.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	if drop > 0.0:
+		cyl(r, 0.04, drop, Vector3(0, -drop * 0.5, len * 0.5 - 0.1), m, false, -1.0, Vector3.ZERO, 8)
 	return r
 
 # ================================================================== GORE / HORROR PROPS
@@ -925,4 +994,244 @@ static func glass_blood(parent: Node3D, pos: Vector3, yaw := 0.0, kind := "hand"
 	parent.add_child(mi)
 	mi.position = pos
 	mi.rotation = Vector3(0, yaw, roll)
+	return mi
+
+# ================================================================== REAL 3D ASSETS (assets/env/**.glb via world/env_assets.gd)
+const BARE_H := [11.79, 13.91, 9.08, 13.19, 10.91]
+const CONIFER_H := [13.78, 11.78, 15.78]
+const PINE_H := [16.25, 16.06]
+
+## Generic: instance any assets/env glb (null if the file is missing).
+static func prop(parent: Node3D, rel: String, pos := Vector3.ZERO, yaw := 0.0, opts := {}) -> Node3D:
+	return Env.spawn(parent, rel, pos, yaw, opts)
+
+static func _trunk_col(r: Node3D, radius: float, h: float) -> void:
+	var sb := StaticBody3D.new()
+	sb.collision_layer = 1
+	var cs := CollisionShape3D.new()
+	var sh := CylinderShape3D.new()
+	sh.radius = radius
+	sh.height = h
+	cs.shape = sh
+	cs.position.y = h * 0.5
+	sb.add_child(cs)
+	r.add_child(sb)
+
+static func _glb_bare_tree(parent: Node3D, pos: Vector3, h: float, seed: int) -> Node3D:
+	var k := int(abs(seed if seed != 0 else int(pos.x * 97 + pos.z * 53)))
+	var i := k % 5
+	var rel := "trees/bare_%d" % (i + 1)
+	if not Env.has(rel):
+		return null
+	var sc: float = h / BARE_H[i]
+	var yaw := float(k % 628) / 100.0
+	var r := _root(parent, pos, yaw, "Tree")
+	Env.spawn(r, rel, Vector3.ZERO, 0.0, {"scale": sc, "collide": "none", "snow": 0.7, "range": 60.0, "name": "Hi"})
+	if Env.has(rel + "_lod"):
+		Env.spawn(r, rel + "_lod", Vector3.ZERO, 0.0, {"scale": sc, "collide": "none", "snow": 0.7, "range": 260.0, "range_begin": 60.0, "shadow": false, "name": "Lod"})
+	_trunk_col(r, 0.3 * sc, 4.0)
+	return r
+
+## Needle conifers / pines (generated cards, snow settles on the upper faces). kind: "fir" | "pine" | "small"
+static func conifer(parent: Node3D, pos: Vector3, h := 11.0, seed := 0, kind := "fir") -> Node3D:
+	var k := int(abs(seed if seed != 0 else int(pos.x * 97 + pos.z * 53)))
+	var rel := ""
+	var nat := 10.0
+	if kind == "small":
+		rel = "trees/conifer_small"; nat = 5.36
+	elif kind == "pine":
+		var j := k % 2
+		rel = "trees/pine_%d" % (j + 1); nat = PINE_H[j]
+	else:
+		var j2 := k % 3
+		rel = "trees/conifer_%d" % (j2 + 1); nat = CONIFER_H[j2]
+	var r := _root(parent, pos, float(k % 628) / 100.0, "Conifer")
+	if Env.spawn(r, rel, Vector3.ZERO, 0.0, {"scale": h / nat * (0.9 + 0.2 * float(k % 7) / 7.0), "collide": "none", "range": 220.0, "snow": 0.85}) == null:
+		r.queue_free()
+		return null
+	_trunk_col(r, 0.28 * h / 12.0 + 0.1, 3.0)
+	return r
+
+static func stump(parent: Node3D, pos: Vector3, yaw := 0.0) -> Node3D:
+	return Env.spawn(parent, "trees/stump_0%d" % (1 + int(abs(pos.x + pos.z)) % 2), pos, yaw, {"collide": "cyl", "snow": 0.7})
+
+static func dead_log(parent: Node3D, pos: Vector3, yaw := 0.0, big := false) -> Node3D:
+	return Env.spawn(parent, "trees/dead_trunk_02" if big else "trees/dead_trunk_01", pos, yaw, {"collide": "box", "snow": 0.8})
+
+static func _glb_car(parent: Node3D, pos: Vector3, yaw: float, color: Color, wrecked: bool, kind: String) -> Node3D:
+	var h := int(abs(hash(Vector2(pos.x, pos.z))))
+	var rel: String = "vehicles/" + kind
+	var tint := Color.WHITE
+	if kind == "sedan":
+		if wrecked and h % 3 == 0 and Env.has("vehicles/covered_car"):
+			rel = "vehicles/covered_car"
+		else:
+			tint = Color.WHITE.lerp(Color(min(color.r * 2.2 + 0.25, 1.4), min(color.g * 2.2 + 0.25, 1.4), min(color.b * 2.2 + 0.25, 1.4)), 0.5)
+	if not Env.has(rel):
+		return null
+	var r := Env.spawn(parent, rel, pos, yaw, {"name": "Car", "tint": tint, "snow": 0.75 if wrecked else 0.45, "box_shrink": 0.95})
+	if r and wrecked:
+		r.rotation.z = (float(h % 100) / 100.0 - 0.5) * 0.1
+	return r
+
+static func _glb_lamp(parent: Node3D, pos: Vector3, yaw: float, on: bool, color: Color) -> Node3D:
+	var r := Env.spawn(parent, "street/lamp_01", pos, yaw, {"name": "LampPost", "fit_h": 5.4, "collide": "cyl", "cyl_r": 0.15, "cyl_h": 5.4, "snow": 0.5})
+	if r == null:
+		return null
+	if on:
+		var l := SpotLight3D.new()
+		l.light_color = color
+		l.light_energy = 6.0
+		l.spot_range = 14.0
+		l.spot_angle = 55.0
+		l.shadow_enabled = true
+		l.light_volumetric_fog_energy = 1.5
+		l.position = Vector3(0, 5.15, 0.0)
+		l.rotation.x = -PI * 0.5
+		r.add_child(l)
+		var glow := MeshInstance3D.new()
+		var sm := SphereMesh.new()
+		sm.radius = 0.12
+		sm.height = 0.12
+		glow.mesh = sm
+		glow.material_override = Mats.emissive(color, 5.0)
+		glow.position = Vector3(0, 5.08, 0.0)
+		glow.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		r.add_child(glow)
+	return r
+
+static var _chain_mat: StandardMaterial3D
+
+static func _glb_fence(parent: Node3D, a: Vector3, b: Vector3, h: float) -> Node3D:
+	var r := _root(parent, a, 0.0, "Fence")
+	var d := b - a
+	var len := Vector2(d.x, d.z).length()
+	r.rotation.y = atan2(d.x, d.z)
+	var n := maxi(1, int(ceil(len / 3.0)))
+	for i in n + 1:
+		Env.spawn(r, "street/fence_post", Vector3(0, 0, i * len / n), 0.0, {"fit_h": h + 0.1, "collide": "none", "snow": 0.4, "name": "Post"})
+	if _chain_mat == null:
+		_chain_mat = StandardMaterial3D.new()
+		_chain_mat.albedo_texture = load("res://textures/env/chainlink.png")
+		_chain_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+		_chain_mat.alpha_scissor_threshold = 0.4
+		_chain_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+		_chain_mat.metallic = 0.7
+		_chain_mat.roughness = 0.45
+		_chain_mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+	var mi := MeshInstance3D.new()
+	var qm := QuadMesh.new()
+	qm.size = Vector2(len, h - 0.15)
+	qm.orientation = PlaneMesh.FACE_Z
+	mi.mesh = qm
+	var mm := _chain_mat.duplicate() as StandardMaterial3D
+	mm.uv1_scale = Vector3(len / 1.0, (h - 0.15) / 1.0, 1)
+	mm.uv1_triplanar = false
+	mi.material_override = mm
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.rotation.y = PI * 0.5
+	mi.position = Vector3(0, (h - 0.15) * 0.5 + 0.1, len * 0.5)
+	r.add_child(mi)
+	# top rail
+	var rail := cyl(r, 0.025, len, Vector3(0, h, len * 0.5), Mats.get_mat("metal", 1.0), false, -1.0, Vector3(PI * 0.5, 0, 0), 6)
+	rail.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	# invisible solid wall so the player and the nav bake respect the fence
+	var sb := StaticBody3D.new()
+	sb.collision_layer = 1
+	var cs := CollisionShape3D.new()
+	var sh := BoxShape3D.new()
+	sh.size = Vector3(0.1, h, len)
+	cs.shape = sh
+	cs.position = Vector3(0, h * 0.5, len * 0.5)
+	sb.add_child(cs)
+	r.add_child(sb)
+	return r
+
+# ---- street furniture
+static func hydrant(parent: Node3D, pos: Vector3, yaw := 0.0) -> Node3D:
+	var r := Env.spawn(parent, "street/hydrant", pos, yaw, {"fit_h": 0.85, "collide": "cyl", "cyl_r": 0.2, "snow": 0.6, "tint": Color(1.0, 0.75, 0.7)})
+	if r == null:
+		r = cyl(_root(parent, pos, yaw, "Hydrant"), 0.16, 0.8, Vector3(0, 0.4, 0), Mats.color(Color(0.6, 0.1, 0.08), 0.5), true).get_parent()
+	return r
+
+static func utility_box(parent: Node3D, pos: Vector3, yaw := 0.0, big := false) -> Node3D:
+	return Env.spawn(parent, "street/utility_box_02" if big else "street/utility_box_01", pos, yaw, {"snow": 0.65})
+
+static func power_box(parent: Node3D, pos: Vector3, yaw := 0.0) -> Node3D:
+	return Env.spawn(parent, "street/power_box", pos, yaw, {"snow": 0.6})
+
+static func barrier(parent: Node3D, pos: Vector3, yaw := 0.0, kind := 1) -> Node3D:
+	return Env.spawn(parent, "street/barrier_0%d" % kind, pos, yaw, {"snow": 0.8, "box_shrink": 1.0})
+
+## Wooden utility pole with crossarms / insulators / transformer (generated kit). kind 0..2
+static func utility_pole(parent: Node3D, pos: Vector3, yaw := 0.0, kind := 0, h := 9.0) -> Node3D:
+	var rel: String = "street/pole_" + ["a", "b", "c"][kind % 3]
+	return Env.spawn(parent, rel, pos, yaw, {"fit_h": h, "collide": "cyl", "cyl_r": 0.18, "snow": 0.4, "range": 300.0, "shadow": true})
+
+static func barrel_stove(parent: Node3D, pos: Vector3, yaw := 0.0) -> Node3D:
+	return Env.spawn(parent, "camp/barrel_stove", pos, yaw, {"collide": "cyl", "cyl_r": 0.3, "snow": 0.2})
+
+static func generator(parent: Node3D, pos: Vector3, yaw := 0.0) -> Node3D:
+	return Env.spawn(parent, "camp/generator", pos, yaw, {"snow": 0.4})
+
+static func trash_can(parent: Node3D, pos: Vector3, yaw := 0.0) -> Node3D:
+	return Env.spawn(parent, "camp/trash_can", pos, yaw, {"snow": 0.5, "scale": 0.5, "collide": "cyl", "cyl_r": 0.3, "cyl_h": 0.9})
+
+## Hero meshes generated for the project (Higgsfield/Tripo): substation transformer, 9 m steeple, data-centre rack.
+static func transformer(parent: Node3D, pos: Vector3, yaw := 0.0) -> Node3D:
+	return Env.spawn(parent, "props/transformer", pos, yaw, {"snow": 0.55, "range": 400.0})
+
+static func steeple(parent: Node3D, pos: Vector3, yaw := 0.0) -> Node3D:
+	return Env.spawn(parent, "props/steeple", pos, yaw, {"snow": 0.6, "range": 500.0})
+
+static func server_rack(parent: Node3D, pos: Vector3, yaw := 0.0) -> Node3D:
+	return Env.spawn(parent, "props/server_rack", pos, yaw, {"snow": 0.0, "range": 60.0})
+
+# ---- sculpted snow drift (replaces the flat discs): a heightfield mound with a wind lee tail, edges sink into the ground
+static var _drift_mesh := {}
+static func _drift_mesh_for(v: int) -> ArrayMesh:
+	if _drift_mesh.has(v):
+		return _drift_mesh[v]
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 9100 + v
+	var N := 22
+	var ph := [rng.randf() * TAU, rng.randf() * TAU, rng.randf() * TAU]
+	var lee := rng.randf_range(0.2, 0.55)
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var hs := []
+	for j in N + 1:
+		for i in N + 1:
+			var u := (float(i) / N) * 2.0 - 1.0
+			var w := (float(j) / N) * 2.0 - 1.0
+			var r2 := u * u * 0.85 + w * w * 1.15
+			var base: float = pow(max(0.0, 1.0 - r2), 1.35)
+			base *= clampf(1.0 + lee * u * 1.2, 0.3, 1.8)
+			var rip := 0.05 * sin(u * 9.0 + w * 3.0 + ph[0]) + 0.04 * sin(w * 11.0 - u * 4.0 + ph[1])
+			var hh: float = base * (1.0 + rip * 2.0) + (rip * 0.4 * base)
+			hs.append(Vector3(u, max(hh, 0.0) - 0.04 * (1.0 if base < 0.01 else 0.0), w))
+	for j in N:
+		for i in N:
+			var a: Vector3 = hs[j * (N + 1) + i]
+			var b: Vector3 = hs[j * (N + 1) + i + 1]
+			var c: Vector3 = hs[(j + 1) * (N + 1) + i]
+			var d: Vector3 = hs[(j + 1) * (N + 1) + i + 1]
+			for p in [a, b, c, b, d, c]:
+				st.set_uv(Vector2(p.x, p.z) * 0.5)
+				st.add_vertex(p)
+	st.generate_normals()
+	var m := st.commit()
+	_drift_mesh[v] = m
+	return m
+
+## Half-extents sx (x), sy (peak height), sz (z), like the old sphere discs.
+static func drift(parent: Node3D, pos: Vector3, sx := 1.6, sy := 0.35, sz := 1.0, yaw := 0.0) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	mi.mesh = _drift_mesh_for(int(abs(pos.x * 13.0 + pos.z * 7.0)) % 6)
+	mi.material_override = Mats.get_mat("snow")
+	mi.scale = Vector3(sx, sy * 1.35, sz)
+	mi.position = pos
+	mi.rotation.y = yaw
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF if sx < 1.4 else GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	parent.add_child(mi)
 	return mi

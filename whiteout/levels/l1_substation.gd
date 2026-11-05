@@ -1,4 +1,5 @@
 extends "res://levels/level.gd"
+const FireFX = preload("res://world/fire_fx.gd")
 ## L1 — HIGHWAY 53 / KETTLE FALLS SUBSTATION. Dec 21 2026, 22:14, -40 degrees.
 ## Critical path:
 ##   start (ditch, bucket truck) -> tutorial + June's first radio call -> walk Highway 53 north
@@ -104,8 +105,7 @@ func _mat(c: Color, r := 0.7, m := 0.0) -> StandardMaterial3D:
 	return Mats.color(c, r, m)
 
 func _drift(p: Vector3, sx := 1.6, sy := 0.35, sz := 1.0, yaw := 0.0) -> void:
-	var mi := Props.sphere(geo, 1.0, p, Mats.get_mat("snow"), Vector3(sx, sy, sz))
-	mi.rotation.y = yaw
+	Props.drift(geo, p, sx, sy, sz, yaw)
 
 func _icicles(a: Vector3, b: Vector3, n: int, length := 0.35) -> void:
 	var ice := Mats.get_mat("ice")
@@ -153,24 +153,7 @@ func _fence_run(a: Vector3, b: Vector3, razor := true) -> void:
 
 func _barrel_fire(p: Vector3, shadows := false) -> void:
 	Props.barrel(geo, p, 0.0, true)
-	var fl := CPUParticles3D.new()
-	fl.amount = 28
-	fl.lifetime = 0.9
-	fl.direction = Vector3.UP
-	fl.spread = 12.0
-	fl.initial_velocity_min = 0.8
-	fl.initial_velocity_max = 1.8
-	fl.gravity = Vector3(0, 1.2, 0)
-	fl.scale_amount_min = 0.05
-	fl.scale_amount_max = 0.16
-	var sm := SphereMesh.new()
-	sm.radius = 0.5
-	sm.height = 1.0
-	fl.mesh = sm
-	fl.material_override = Mats.emissive(Color(1.0, 0.45, 0.12), 5.0)
-	fl.position = p + Vector3(0, 0.95, 0)
-	add_child(fl)
-	Props.cyl(geo, 0.26, 0.04, p + Vector3(0, 0.88, 0), Mats.emissive(Color(1.0, 0.4, 0.1), 3.0), false)
+	FireFX.burn(self, p + Vector3(0, 0.93, 0), 1.0, {"light": false})
 	light(p + Vector3(0, 1.5, 0), Color(1.0, 0.55, 0.2), 4.5, 12.0, shadows, true)
 	_fires.append(p)
 
@@ -253,49 +236,52 @@ func _bucket_truck() -> void:
 	var glass := _mat(Color(0.03, 0.05, 0.07, 0.92), 0.05, 0.3)
 	var frost := _mat(Color(0.85, 0.9, 0.95, 0.55), 0.4)
 	var tire := Mats.get_mat("rubber")
-	# chassis, hood, cab, utility body
-	Props.box(t, Vector3(1.1, 0.4, 7.4), Vector3(0, 0.95, 0), dark)
-	Props.box(t, Vector3(2.3, 0.95, 1.4), Vector3(0, 1.75, 3.7), white)       # hood
-	Props.box(t, Vector3(2.4, 1.85, 1.9), Vector3(0, 2.2, 2.05), white)       # cab
-	Props.box(t, Vector3(2.42, 0.78, 1.5), Vector3(0, 2.55, 2.05), glass, false)  # side windows
-	Props.box(t, Vector3(2.0, 0.8, 0.06), Vector3(0, 2.55, 3.02), glass, false)   # windshield
-	Props.box(t, Vector3(2.0, 0.78, 0.04), Vector3(0, 2.56, 3.06), frost, false)
-	Props.box(t, Vector3(2.55, 1.35, 4.6), Vector3(0, 1.75, -1.65), white)    # utility body
-	Props.box(t, Vector3(2.6, 0.24, 4.64), Vector3(0, 1.5, -1.65), orange, false)   # co-op stripe
-	Props.box(t, Vector3(2.46, 0.2, 1.92), Vector3(0, 1.62, 2.05), orange, false)
-	Props.box(t, Vector3(2.32, 0.2, 1.42), Vector3(0, 1.45, 3.7), orange, false)
-	for i in 4:
-		Props.box(t, Vector3(2.62, 0.9, 0.03), Vector3(0, 1.85, -3.4 + i * 1.15), dark, false)
-	Props.box(t, Vector3(2.7, 0.12, 4.7), Vector3(0, 1.1, -1.65), _mat(Color(0.2, 0.2, 0.22), 0.5, 0.6), false)
-	# snow on cab roof and body
-	Props.box(t, Vector3(2.3, 0.12, 1.8), Vector3(0, 3.18, 2.05), Mats.get_mat("snow"), false)
-	Props.box(t, Vector3(2.4, 0.14, 4.4), Vector3(0, 2.5, -1.65), Mats.get_mat("snow"), false)
-	Props.sign(t, Vector3(1.28, 2.0, -1.6), PI * 0.5, "LAKESHORE ELECTRIC CO-OP", 22, Color(0.1, 0.1, 0.12), false)
-	Props.sign(t, Vector3(-1.28, 2.0, -1.6), -PI * 0.5, "LAKESHORE ELECTRIC CO-OP", 22, Color(0.1, 0.1, 0.12), false)
-	Props.sign(t, Vector3(1.22, 2.3, 2.0), PI * 0.5, "UNIT 14", 26, Color(0.1, 0.1, 0.12), false)
-	# wheels
-	for sx in [-1, 1]:
-		for zz in [3.5, -2.1, -3.3]:
-			Props.cyl(t, 0.56, 0.42, Vector3(sx * 1.2, 0.56, zz), tire, false, -1.0, Vector3(0, 0, PI * 0.5))
-			Props.cyl(t, 0.3, 0.44, Vector3(sx * 1.2, 0.56, zz), _mat(Color(0.5, 0.5, 0.52), 0.4, 0.8), false, -1.0, Vector3(0, 0, PI * 0.5), 10)
-	# aerial boom: pedestal, lower boom stowed forward over the cab, upper boom, bucket
-	Props.cyl(t, 0.38, 0.8, Vector3(0, 2.9, -2.7), dark, false)
-	Props.box(t, Vector3(0.5, 0.5, 4.3), Vector3(0, 3.55, -0.5), orange, false, Vector3(-0.26, 0, 0))
-	Props.box(t, Vector3(0.36, 0.4, 3.4), Vector3(0, 4.15, 3.1), white, false, Vector3(-0.05, 0, 0))
-	Props.pipe(t, Vector3(0.0, 2.95, -0.3), Vector3(0.0, 3.6, 0.8), 0.07, "metal")
-	var bk := Vector3(0, 3.35, 4.9)
-	Props.box(t, Vector3(1.0, 0.1, 1.0), bk + Vector3(0, -0.5, 0), white, false)
-	for sx in [-1, 1]:
-		Props.box(t, Vector3(0.06, 0.95, 1.0), bk + Vector3(sx * 0.5, 0.0, 0), white, false)
-		Props.box(t, Vector3(1.0, 0.95, 0.06), bk + Vector3(0, 0.0, sx * 0.5), white, false)
-	Props.box(t, Vector3(1.02, 0.14, 1.02), bk + Vector3(0, 0.45, 0), orange, false)
-	Props.pipe(t, Vector3(0, 4.05, 4.3), bk + Vector3(0, 0.2, -0.45), 0.08, "metal")
+	var used := Props.prop(t, "vehicles/bucket_truck", Vector3(0, 0, 0.0), 0.0, {"name": "BucketTruck", "snow": 0.7, "collide": "none"}) != null
+	if not used:
+		# chassis, hood, cab, utility body
+		Props.box(t, Vector3(1.1, 0.4, 7.4), Vector3(0, 0.95, 0), dark)
+		Props.box(t, Vector3(2.3, 0.95, 1.4), Vector3(0, 1.75, 3.7), white)       # hood
+		Props.box(t, Vector3(2.4, 1.85, 1.9), Vector3(0, 2.2, 2.05), white)       # cab
+		Props.box(t, Vector3(2.42, 0.78, 1.5), Vector3(0, 2.55, 2.05), glass, false)  # side windows
+		Props.box(t, Vector3(2.0, 0.8, 0.06), Vector3(0, 2.55, 3.02), glass, false)   # windshield
+		Props.box(t, Vector3(2.0, 0.78, 0.04), Vector3(0, 2.56, 3.06), frost, false)
+		Props.box(t, Vector3(2.55, 1.35, 4.6), Vector3(0, 1.75, -1.65), white)    # utility body
+		Props.box(t, Vector3(2.6, 0.24, 4.64), Vector3(0, 1.5, -1.65), orange, false)   # co-op stripe
+		Props.box(t, Vector3(2.46, 0.2, 1.92), Vector3(0, 1.62, 2.05), orange, false)
+		Props.box(t, Vector3(2.32, 0.2, 1.42), Vector3(0, 1.45, 3.7), orange, false)
+		for i in 4:
+			Props.box(t, Vector3(2.62, 0.9, 0.03), Vector3(0, 1.85, -3.4 + i * 1.15), dark, false)
+		Props.box(t, Vector3(2.7, 0.12, 4.7), Vector3(0, 1.1, -1.65), _mat(Color(0.2, 0.2, 0.22), 0.5, 0.6), false)
+		# snow on cab roof and body
+		Props.box(t, Vector3(2.3, 0.12, 1.8), Vector3(0, 3.18, 2.05), Mats.get_mat("snow"), false)
+		Props.box(t, Vector3(2.4, 0.14, 4.4), Vector3(0, 2.5, -1.65), Mats.get_mat("snow"), false)
+		Props.sign(t, Vector3(1.28, 2.0, -1.6), PI * 0.5, "LAKESHORE ELECTRIC CO-OP", 22, Color(0.1, 0.1, 0.12), false)
+		Props.sign(t, Vector3(-1.28, 2.0, -1.6), -PI * 0.5, "LAKESHORE ELECTRIC CO-OP", 22, Color(0.1, 0.1, 0.12), false)
+		Props.sign(t, Vector3(1.22, 2.3, 2.0), PI * 0.5, "UNIT 14", 26, Color(0.1, 0.1, 0.12), false)
+		# wheels
+		for sx in [-1, 1]:
+			for zz in [3.5, -2.1, -3.3]:
+				Props.cyl(t, 0.56, 0.42, Vector3(sx * 1.2, 0.56, zz), tire, false, -1.0, Vector3(0, 0, PI * 0.5))
+				Props.cyl(t, 0.3, 0.44, Vector3(sx * 1.2, 0.56, zz), _mat(Color(0.5, 0.5, 0.52), 0.4, 0.8), false, -1.0, Vector3(0, 0, PI * 0.5), 10)
+		# aerial boom: pedestal, lower boom stowed forward over the cab, upper boom, bucket
+		Props.cyl(t, 0.38, 0.8, Vector3(0, 2.9, -2.7), dark, false)
+		Props.box(t, Vector3(0.5, 0.5, 4.3), Vector3(0, 3.55, -0.5), orange, false, Vector3(-0.26, 0, 0))
+		Props.box(t, Vector3(0.36, 0.4, 3.4), Vector3(0, 4.15, 3.1), white, false, Vector3(-0.05, 0, 0))
+		Props.pipe(t, Vector3(0.0, 2.95, -0.3), Vector3(0.0, 3.6, 0.8), 0.07, "metal")
+		var bk := Vector3(0, 3.35, 4.9)
+		Props.box(t, Vector3(1.0, 0.1, 1.0), bk + Vector3(0, -0.5, 0), white, false)
+		for sx in [-1, 1]:
+			Props.box(t, Vector3(0.06, 0.95, 1.0), bk + Vector3(sx * 0.5, 0.0, 0), white, false)
+			Props.box(t, Vector3(1.0, 0.95, 0.06), bk + Vector3(0, 0.0, sx * 0.5), white, false)
+		Props.box(t, Vector3(1.02, 0.14, 1.02), bk + Vector3(0, 0.45, 0), orange, false)
+		Props.pipe(t, Vector3(0, 4.05, 4.3), bk + Vector3(0, 0.2, -0.45), 0.08, "metal")
 	# amber roof beacons (flashing)
 	for i in 2:
 		var sx := -0.7 if i == 0 else 0.7
-		Props.box(t, Vector3(0.5, 0.06, 0.3), Vector3(sx, 3.28, 1.7), dark, false)
 		var am := Mats.emissive(Color(1.0, 0.6, 0.05), 0.2)
-		Props.cyl(t, 0.14, 0.16, Vector3(sx, 3.4, 1.7), am, false, 0.1, Vector3.ZERO, 10)
+		if not used:
+			Props.box(t, Vector3(0.5, 0.06, 0.3), Vector3(sx, 3.28, 1.7), dark, false)
+			Props.cyl(t, 0.14, 0.16, Vector3(sx, 3.4, 1.7), am, false, 0.1, Vector3.ZERO, 10)
 		var l := OmniLight3D.new()
 		l.light_color = Color(1.0, 0.58, 0.1)
 		l.omni_range = 12.0
@@ -338,10 +324,11 @@ func _frost_car(p: Vector3, yaw: float, col: Color, kind := "sedan") -> void:
 	r.position = p
 	r.rotation.y = yaw
 	geo.add_child(r)
-	if kind == "van":
-		Props.box(r, Vector3(1.74, 0.85, 4.12), Vector3(0, 0.35 + 0.75 + 0.55, -0.25), frost, false)
-	else:
-		Props.box(r, Vector3(1.74, 0.43, 2.1), Vector3(0, 1.37, -0.2), frost, false)
+	if not Props.Env.has("vehicles/" + kind):
+		if kind == "van":
+			Props.box(r, Vector3(1.74, 0.85, 4.12), Vector3(0, 0.35 + 0.75 + 0.55, -0.25), frost, false)
+		else:
+			Props.box(r, Vector3(1.74, 0.43, 2.1), Vector3(0, 1.37, -0.2), frost, false)
 	_drift(p + Basis(Vector3.UP, yaw) * Vector3(1.0, 0.0, 1.6), 1.3, 0.45, 0.8, yaw)
 	_drift(p + Basis(Vector3.UP, yaw) * Vector3(-1.0, 0.0, -1.7), 1.2, 0.4, 0.8, yaw + 0.5)
 	for sx in [-1, 1]:
@@ -417,14 +404,19 @@ func _powerline() -> void:
 	var px := -13.0
 	var pole_m := Mats.get_mat("bark", 1.0)
 	var tops: Array = []
+	var kk := 0
 	for z in zs:
-		Props.cyl(geo, 0.2, 10.0, Vector3(px, 5.0, z), pole_m, true, 0.16, Vector3.ZERO, 10)
-		Props.box(geo, Vector3(0.14, 0.14, 3.0), Vector3(px, 9.2, z), pole_m, false)
-		Props.box(geo, Vector3(0.1, 0.1, 2.2), Vector3(px, 8.3, z), pole_m, false)
-		Props.cyl(geo, 0.32, 0.5, Vector3(px + 0.5, 7.4, z), _mat(Color(0.35, 0.37, 0.4), 0.5, 0.6), false)   # pole transformer pot
+		var real := Props.utility_pole(geo, Vector3(px, 0.0, z), PI * 0.5, kk, 10.0) != null
+		kk += 1
+		if not real:
+			Props.cyl(geo, 0.2, 10.0, Vector3(px, 5.0, z), pole_m, true, 0.16, Vector3.ZERO, 10)
+			Props.box(geo, Vector3(0.14, 0.14, 3.0), Vector3(px, 9.2, z), pole_m, false)
+			Props.box(geo, Vector3(0.1, 0.1, 2.2), Vector3(px, 8.3, z), pole_m, false)
+			Props.cyl(geo, 0.32, 0.5, Vector3(px + 0.5, 7.4, z), _mat(Color(0.35, 0.37, 0.4), 0.5, 0.6), false)
 		var phases: Array = []
 		for dz in [-1.3, 0.0, 1.3]:
-			Props.cyl(geo, 0.05, 0.22, Vector3(px, 9.4, z + dz), _mat(Color(0.5, 0.42, 0.34), 0.3), false)
+			if not real:
+				Props.cyl(geo, 0.05, 0.22, Vector3(px, 9.4, z + dz), _mat(Color(0.5, 0.42, 0.34), 0.3), false)
 			phases.append(Vector3(px, 9.55, z + dz))
 		tops.append(phases)
 		_drift(Vector3(px, 0.0, z), 1.4, 0.4, 1.4)
@@ -537,6 +529,12 @@ func _transformer(p: Vector3, yaw := 0.0, label := "T1") -> void:
 	r.position = p
 	r.rotation.y = yaw
 	geo.add_child(r)
+	if Props.Env.has("props/transformer"):
+		Props.box(r, Vector3(3.2, 0.3, 4.0), Vector3(0, 0.15, 0), Mats.get_mat("concrete"), false)
+		Props.transformer(r, Vector3(0, 0.3, 0), PI * 0.5)
+		Props.sign(r, Vector3(0, 1.3, 1.9), 0.0, "KETTLE FALLS  " + label + "   69/12.47 kV", 18, Color(0.85, 0.85, 0.8), false)
+		_icicles(r.position + Vector3(-1.1, 3.1, 1.75), r.position + Vector3(1.1, 3.1, 1.75), 7, 0.4)
+		return
 	var grey := _mat(Color(0.38, 0.4, 0.42), 0.55, 0.45)
 	var grey2 := _mat(Color(0.3, 0.32, 0.34), 0.6, 0.4)
 	var porc := _mat(Color(0.5, 0.42, 0.34), 0.28, 0.1)
@@ -627,7 +625,7 @@ func _transformers_and_towers() -> void:
 		for i in 2:
 			_wire(Vector3(xs[i], tops[i], -78.0 + dz), Vector3(xs[i + 1], tops[i + 1], -78.0 + dz), 1.2, 7)
 	for i in 3:
-		_wire(Vector3(xs[i], tops[i], -78.0), Vector3(xs[i], 4.9, tz + 0.35), 2.0, 7)
+		_wire(Vector3(xs[i], tops[i], -78.0), Vector3(xs[i], 3.5 if Props.Env.has("props/transformer") else 4.9, tz + 0.35), 2.0, 7)
 	# the dead conductors drooping off the west end of the gantry
 	_wire(Vector3(xs[0], tops[0], -75.0), Vector3(YARD_X0 + 1.0, 0.1, -76.0), 3.5, 8)
 	# cold light pooled at the transformer bank (a dropped work lantern)
@@ -1082,15 +1080,13 @@ func _exit_gate_and_school() -> void:
 func _pines() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 42
-	var dark := _mat(Color(0.05, 0.1, 0.08), 0.95)
-	var tip := _mat(Color(0.7, 0.75, 0.8), 0.9)
 	var made := 0
 	var tries := 0
-	while made < 70 and tries < 400:
+	while made < 80 and tries < 500:
 		tries += 1
-		var x := rng.randf_range(-70.0, 75.0)
+		var x := rng.randf_range(-75.0, 80.0)
 		var z := rng.randf_range(-150.0, 38.0)
-		if abs(x) < 15.0:
+		if abs(x) < 14.0:
 			continue
 		if x > 10.0 and x < 56.0 and z < -52.0 and z > -104.0:
 			continue
@@ -1098,10 +1094,27 @@ func _pines() -> void:
 			continue
 		if x > 0.0 and x < 20.0 and z < -52.0 and z > -70.0:
 			continue
-		var h := rng.randf_range(5.0, 9.5)
-		Props.cyl(geo, rng.randf_range(1.2, 1.9), h, Vector3(x, h * 0.5, z), dark, false, 0.05, Vector3.ZERO, 7)
-		Props.cyl(geo, 0.9, h * 0.4, Vector3(x, h * 0.8, z), tip, false, 0.05, Vector3.ZERO, 7)
+		var r := rng.randf()
+		var h := rng.randf_range(8.0, 13.0)
+		if r < 0.18:
+			Props.conifer(geo, Vector3(x, 0.0, z), rng.randf_range(11.0, 14.0), made + 7, "pine")
+		elif r < 0.3:
+			Props.conifer(geo, Vector3(x, 0.0, z), rng.randf_range(3.0, 5.0), made + 3, "small")
+		elif r < 0.4:
+			Props.tree(geo, Vector3(x, 0.0, z), rng.randf_range(8.0, 11.0), 800 + made)
+		else:
+			Props.conifer(geo, Vector3(x, 0.0, z), h, made + 1, "fir")
 		made += 1
+	# stumps, fallen logs and roots along the tree line
+	for i in 14:
+		var sx := rng.randf_range(-45.0, 50.0)
+		var sz := rng.randf_range(-140.0, 30.0)
+		if abs(sx) < 10.0 or (sx > 10.0 and sx < 56.0 and sz < -52.0 and sz > -104.0):
+			continue
+		if i % 3 == 0:
+			Props.dead_log(geo, Vector3(sx, 0.0, sz), rng.randf() * TAU, i % 2 == 0)
+		else:
+			Props.stump(geo, Vector3(sx, 0.0, sz), rng.randf() * TAU)
 
 # =================================================================== switching puzzle
 func _is_feeder_closed() -> bool:

@@ -211,7 +211,7 @@ void fragment(){
 	# bottom-right status block
 	var status := VBoxContainer.new()
 	status.anchor_left = 1.0; status.anchor_right = 1.0; status.anchor_top = 1.0; status.anchor_bottom = 1.0
-	status.offset_left = -300; status.offset_right = -24; status.offset_top = -120; status.offset_bottom = -20
+	status.offset_left = -300; status.offset_right = -24; status.offset_top = -150; status.offset_bottom = -14
 	status.alignment = BoxContainer.ALIGNMENT_END
 	hud.add_child(status)
 	weapon_label = _label("", 16, C_DIM)

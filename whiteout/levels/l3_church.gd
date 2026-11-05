@@ -1,4 +1,5 @@
 extends "res://levels/level.gd"
+const FireFX = preload("res://world/fire_fx.gd")
 ## L3 — MAIN STREET / ST. BRENDAN'S.
 ## West -> east along Main Street (x from -70 to +72). Pharmacy (key) and diner on the north side,
 ## the boarded Northline office + billboard, the abandoned plow, Lindqvist Hardware (shotgun,
@@ -68,24 +69,7 @@ func _drift(pos: Vector3, size: Vector3, yaw := 0.0) -> void:
 
 func _fire_barrel(pos: Vector3, shadows := false) -> void:
 	Props.barrel(geo, pos, 0.0, true)
-	_cy(0.27, 0.04, pos + Vector3(0, 0.9, 0), _em(Color(1.0, 0.45, 0.1), 3.0), false)
-	var p := CPUParticles3D.new()
-	p.amount = 26
-	p.lifetime = 0.9
-	p.direction = Vector3.UP
-	p.spread = 14.0
-	p.initial_velocity_min = 0.7
-	p.initial_velocity_max = 1.7
-	p.gravity = Vector3(0, 0.9, 0)
-	p.scale_amount_min = 0.05
-	p.scale_amount_max = 0.16
-	var sm := SphereMesh.new()
-	sm.radius = 0.5
-	sm.height = 1.0
-	p.mesh = sm
-	p.material_override = _em(Color(1.0, 0.5, 0.15), 4.5)
-	p.position = pos + Vector3(0, 0.95, 0)
-	add_child(p)
+	FireFX.burn(self, pos + Vector3(0, 0.93, 0), 1.0, {"light": false})
 	var l := light(pos + Vector3(0, 1.5, 0), Color(1.0, 0.55, 0.22), 3.4, 13.0, shadows)
 	_fires.append([pos, l, 3.4, randf() * 10.0])
 

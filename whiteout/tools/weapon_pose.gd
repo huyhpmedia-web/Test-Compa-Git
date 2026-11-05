@@ -24,14 +24,14 @@ func _ready() -> void:
 	h.aim_pitch = float(a.get("pitch", 0))
 	h.move_speed = float(a.get("speed", 0))
 	var c := Camera3D.new(); add_child(c)
-	var cp := a.get("cam", "0.9,1.5,-1.2").split(",")
-	var lp := a.get("look", "0,1.4,0.5").split(",")
+	var cp: PackedStringArray = String(a.get("cam", "0.9,1.5,-1.2")).split(",")
+	var lp: PackedStringArray = String(a.get("look", "0,1.4,0.5")).split(",")
 	c.position = Vector3(float(cp[0]), float(cp[1]), float(cp[2]))
 	c.look_at(Vector3(float(lp[0]), float(lp[1]), float(lp[2])))
 	c.fov = float(a.get("fov", 40)); c.current = true
 	var frames := int(a.get("frames", 40))
 	var kick_at := int(a.get("kick", -1))
-	var shots := a.get("shots", "").split(",", false)   # frame numbers to save extra images: out_<n>.png
+	var shots: PackedStringArray = String(a.get("shots", "")).split(",", false)   # frame numbers to save extra images: out_<n>.png
 	for i in frames:
 		if i == kick_at and h.weapon_ik: h.weapon_ik.kick(1.0)
 		await get_tree().process_frame

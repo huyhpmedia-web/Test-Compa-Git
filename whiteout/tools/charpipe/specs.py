@@ -71,7 +71,7 @@ _z("rimebound_nurse", "nurse", 0.0, 41, (0.62, 0.7, 0.72), (0.55, 0.62, 0.64), 1
 _z("rimebound_miner", "miner", 1.0, 52, (0.13, 0.16, 0.22), (0.38, 0.1, 0.08), 18, hair="hair/short04", hair_tint=(0.2, 0.18, 0.16), height=1.78, weight=0.6, muscle=0.6,
    gloves=(0.3, 0.27, 0.22), gore_cloth=dict(mouth=0.7, soak=0.25, wounds=3, torn=2, splat=0.20, frost=0.5), gore_skin=dict(mouth=0.7, wounds=3, splat=0.15, frost=0.5),
    boots=("shoes02", (0.08, 0.07, 0.06), 0.2))
-_z("rimebound_cop", "cop", 1.0, 40, (0.07, 0.1, 0.2), (0.1, 0.1, 0.12), 19, hair="hair/short03", hair_tint=(0.15, 0.13, 0.12), height=1.82, weight=0.55, muscle=0.55, pants=(0.07, 0.09, 0.16),
+_z("rimebound_cop", "cop", 1.0, 40, (0.07, 0.1, 0.2), (0.1, 0.1, 0.12), 19, hair=None, hair_tint=(0.15, 0.13, 0.12), height=1.82, weight=0.55, muscle=0.55, pants=(0.07, 0.09, 0.16),
    gore_cloth=dict(mouth=0.8, soak=0.30, wounds=2, torn=2, splat=0.20, frost=0.5), gore_skin=dict(mouth=0.8, wounds=2, splat=0.15, frost=0.4))
 _z("rimebound_patient", "patient", 1.0, 58, (0.55, 0.68, 0.72), (0.5, 0.62, 0.68), 20, hair="hair/short03", hair_tint=(0.5, 0.5, 0.52), height=1.72, weight=0.5, pallor=(0.8, 0.86, 0.92),
    gore_cloth=dict(mouth=0.9, soak=0.50, wounds=2, torn=2, splat=0.30, frost=0.6), gore_skin=dict(mouth=0.9, wounds=2, splat=0.25, frost=0.6), boots=None)

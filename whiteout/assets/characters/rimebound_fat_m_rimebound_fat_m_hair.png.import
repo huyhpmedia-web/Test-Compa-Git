@@ -2,16 +2,19 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cvg5cp3ald3r1"
-path="res://.godot/imported/D_zombie_idle_attack.jpg-a78d17c2ee166648b3adf2bf5fac7f4b.ctex"
+uid="uid://dp4x8b2gawlmy"
+path="res://.godot/imported/rimebound_fat_m_rimebound_fat_m_hair.png-6fd856611d725ff4152f87d5805ff2be.ctex"
 metadata={
 "vram_texture": false
+}
+generator_parameters={
+"md5": "dd63153d91e37c63d2963c7923d21eb3"
 }
 
 [deps]
 
-source_file="res://docs/progress/D_zombie_idle_attack.jpg"
-dest_files=["res://.godot/imported/D_zombie_idle_attack.jpg-a78d17c2ee166648b3adf2bf5fac7f4b.ctex"]
+source_file="res://assets/characters/rimebound_fat_m_rimebound_fat_m_hair.png"
+dest_files=["res://.godot/imported/rimebound_fat_m_rimebound_fat_m_hair.png-6fd856611d725ff4152f87d5805ff2be.ctex"]
 
 [params]
 
@@ -23,7 +26,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=false
+mipmaps/generate=true
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

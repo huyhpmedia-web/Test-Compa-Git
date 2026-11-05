@@ -949,19 +949,23 @@ static func car_gore(parent: Node3D, pos: Vector3, yaw := 0.0, color := Color(0.
 ## Frozen-crystal impalement: a body skewered on an ice spike (mine / cavern).
 static func crystal_impale(parent: Node3D, pos: Vector3, yaw := 0.0, h := 2.3) -> Node3D:
 	var r := _root(parent, pos, yaw, "Impaled")
-	var ice := StandardMaterial3D.new()
-	ice.albedo_color = Color(0.55, 0.8, 0.95, 0.72)
-	ice.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	ice.roughness = 0.06
-	ice.metallic_specular = 1.0
-	ice.emission_enabled = true
-	ice.emission = Color(0.2, 0.55, 0.8)
-	ice.emission_energy_multiplier = 0.5
-	var spike := _cylm(0.0, 0.14, h + 0.6, 7)
-	_mi(r, spike, ice, Vector3(0, (h + 0.6) * 0.5 - 0.1, 0), Vector3(0.06, 0, -0.04))
-	for i in 3:
-		var s2 := _cylm(0.0, 0.07, 1.0 + i * 0.3, 6)
-		_mi(r, s2, ice, Vector3(0.22 * cos(i * 2.1), 0.45 + i * 0.1, 0.22 * sin(i * 2.1)), Vector3(0.4 * sin(i * 2.1), 0, 0.4 * cos(i * 2.1)))
+	var ice := ShaderMaterial.new()
+	ice.shader = load("res://world/shaders/env_ice.gdshader")
+	# organic ice column: stacked, lumpy, slightly offset blobs (no cone), with a frost skirt at the base
+	var rng := RandomNumberGenerator.new()
+	rng.seed = int(pos.x * 31 + pos.z * 17)
+	var segs := 7
+	for i in segs:
+		var t := float(i) / (segs - 1)
+		var rad := 0.2 * (1.0 - 0.72 * t) + rng.randf_range(-0.02, 0.03)
+		var y := (h + 0.5) * t
+		var m := _mi(r, SphereMesh.new(), ice, Vector3(rng.randf_range(-0.05, 0.05) + 0.05 * t, y, rng.randf_range(-0.05, 0.05)), Vector3.ZERO, Vector3(rad * 2.0, (h + 0.5) / segs * 1.5, rad * 2.0))
+		m.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	for i in 4:
+		var a2 := i * 1.57 + rng.randf()
+		var rr := rng.randf_range(0.12, 0.22)
+		var m2 := _mi(r, SphereMesh.new(), ice, Vector3(0.3 * cos(a2), rr * 0.6, 0.3 * sin(a2)), Vector3.ZERO, Vector3(rr * 2.2, rr * 1.4, rr * 1.8))
+		m2.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var c := corpse_pose(r, Vector3(0.04, h - 1.5, 0.0), randf() * TAU, {"model": "rimebound_miner"}, "normal", false)
 	c.rotation.x = 0.18
 	frost_overlay(c, 0.3)

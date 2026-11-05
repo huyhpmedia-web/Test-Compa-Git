@@ -252,7 +252,6 @@ func rime(pos: Vector3, normal := Vector3.UP, n := 5, size := 0.5, lit := false)
 	if Props.Env.has("props/ice_cluster"):
 		var ic := Props.prop(geo, "props/ice_cluster", pos, rk(0, TAU), {"scale": size * rk(0.9, 1.7), "collide": "none", "snow": 0.0, "shadow": false, "range": 70.0, "mats_ice": _rime()})
 		if ic:
-			ic.basis = bq * Basis(Vector3.UP, rk(0, TAU)) * Basis.from_scale(Vector3.ONE * size * rk(0.9, 1.7)) if false else ic.basis
 			ic.position = pos - nrm * size * 0.1
 			ic.quaternion = q * Quaternion(Vector3.UP, rk(0, TAU))
 			if lit:

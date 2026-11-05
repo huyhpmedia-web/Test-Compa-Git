@@ -28,3 +28,13 @@ Branch: `claude/tender-clarke-ld6xjw`. Work is autosaved (commit + push) every ~
 ## Next
 - Verify boss fights in real arenas with the HD models; screenshots per level.
 - Full chain playtest + balance; export playable builds (Linux/Windows/Web) and a project zip.
+
+## Upgrade round (Nov 5 2026) — owner approved all phases, lead approves assets
+Agents A weapons, B hair+zombies, C environment, D mocap, E Vietnamese. Critic re-score after.
+Higgsfield 3D jobs (tripo_h3_1 detailed, raw GLBs -> scratchpad/tripo_raw2, NOT git):
+sedan b985439c-797e-478d-9d43-eb2534db567f, police 5a9d6cbb-22aa-499c-b73f-5a4b1e92ef88,
+ambulance 5b1f95ef-3426-4a48-b485-22326c3c2d2d, bucket_truck eb167532-a307-4abb-ae9a-207e95df708e,
+haul_truck 7d382b5b-3668-4c1a-9183-a07db5ac87b6, shotgun 7be88136-e736-419a-91a6-2ea6a922a48f,
+revolver 3adead7b-7a64-411e-bcbb-05cb5600ebbb, flaregun fbb9237c-e3ec-47fc-b739-5315eb084cf7,
+transformer e903bc3a-a972-44e6-bc23-11e78ff9072d, server_rack e18f37a2-70f4-461e-984c-2c8ce845940b,
+steeple 6c9c2b1e-e879-4ffc-830b-29bb5a6955ca

@@ -401,6 +401,21 @@ def hair_png(cb, label, src, size=1024, tint=None, frost=0.0):
     """hair / brow / lash strand atlas, tinted; frost>0 dusts it with hoarfrost (clumpy white-blue crystals)."""
     from PIL import Image
     im = Image.open(src).convert("RGBA").resize((size, size), Image.LANCZOS)
+    # the MakeHuman "www.makehuman.org" watermark sits in the bottom-right corner of the hair atlases and some hair cards map onto
+    # it (grey ellipses on the crown): repaint it with the hair's own colour.
+    _a = np.asarray(im, dtype=np.float32).copy()
+    _x0, _y0 = int(size * 0.74), int(size * 0.90)
+    _reg = _a[_y0:, _x0:]
+    _m = _reg[..., 3] > 8
+    if _m.any():
+        _hair = _a[..., :3][_a[..., 3] > 250]
+        _mean = _hair[:: max(1, len(_hair) // 5000)].mean(0) if len(_hair) else np.array([60, 50, 40.0])
+        _rng = np.random.RandomState(3)
+        _n = (0.75 + 0.5 * _rng.rand(*_reg.shape[:2]))[..., None]
+        _reg[..., :3] = np.where(_m[..., None], _mean[None, None, :] * _n, _reg[..., :3])
+        _reg[..., 3] = np.where(_m, 255, _reg[..., 3])
+        _a[_y0:, _x0:] = _reg
+        im = Image.fromarray(np.clip(_a, 0, 255).astype(np.uint8))
     if tint is not None or frost > 0:
         a = np.asarray(im, dtype=np.float32) / 255.0
         if tint is not None:

@@ -112,8 +112,8 @@ def dome(cb, label, color, rim_front, rim_back, extra=0.012, nu=28, nv=14, rough
     return ob, d
 
 
-def knit_dome(cb, label, color, rim_front, rim_back, cuff=0.045, pom=False):
-    ob, d = dome(cb, label, color, rim_front, rim_back, extra=0.014, cuff=cuff)
+def knit_dome(cb, label, color, rim_front, rim_back, cuff=0.045, pom=False, extra=0.014):
+    ob, d = dome(cb, label, color, rim_front, rim_back, extra=extra, cuff=cuff)
     # knit texture via UVs would need a texture; use colour + subtle noise vertex-less (kept simple)
     if pom:
         bpy.ops.mesh.primitive_uv_sphere_add(radius=0.035, location=(0, 0, 0), segments=12, ring_count=8)
@@ -330,7 +330,7 @@ def build_june(cb, spec):
     finish_body(cb, spec, skin_png, dv, 0.65)
     d = head_dims(cb)
     face_parts(cb, spec, hair="hair/ponytail01", hair_tint=(0.36, 0.2, 0.1), brow="eyebrows/eyebrow002/eyebrow002", brow_tint=(0.5, 0.35, 0.28), eye_tint=(0.7, 0.85, 1.0))
-    knit_dome(cb, "beanie", (0.78, 0.52, 0.1), d["eye_z"] + 0.055, d["eye_z"] - 0.03, cuff=0.05, pom=True)
+    knit_dome(cb, "beanie", (0.78, 0.52, 0.1), d["eye_z"] + 0.055, d["eye_z"] - 0.03, cuff=0.05, pom=True, extra=0.034)
     headphones(cb, (0.07, 0.07, 0.08))
 
 

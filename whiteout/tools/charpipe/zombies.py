@@ -511,7 +511,7 @@ def build_zombie(cb, spec):
     for ex in spec.get("extras", []):
         globals()["extra_" + ex](cb, spec)
     if o == "miner":
-        c2.dome(cb, "hardhat", (0.55, 0.4, 0.03), d["eye_z"] + 0.065, d["eye_z"], extra=0.02, rough=0.45)
+        c2.dome(cb, "hardhat", (0.55, 0.4, 0.03), d["eye_z"] + 0.065, d["eye_z"], extra=0.032, rough=0.45)
         V, F = c2.cylinder([0.0, d["ymin"] - 0.015, d["eye_z"] + 0.1], 0.022, 0.035, axis=1, n=10)
         cb.add_mesh("lamp", V, F, bone="head", mat=solid_mat(n + "_lamp", (0.3, 0.3, 0.3), 0.4))
     if o == "cop":
@@ -623,7 +623,7 @@ def extra_sacs(cb, spec):
 def extra_foreman_hat(cb, spec):
     d = c2.head_dims(cb)
     n = cb.name
-    c2.dome(cb, "hardhat", (0.7, 0.5, 0.04), d["eye_z"] + 0.065, d["eye_z"], extra=0.02, rough=0.45)
+    c2.dome(cb, "hardhat", (0.7, 0.5, 0.04), d["eye_z"] + 0.065, d["eye_z"], extra=0.032, rough=0.45)
     V, F = c2.cylinder([0.0, d["ymin"] - 0.018, d["eye_z"] + 0.1], 0.026, 0.04, axis=1, n=10)
     lm = make_pbr(n + "_lamp", None, rough=0.3, color=(1.0, 0.95, 0.8, 1.0))
     lm.node_tree.nodes["Principled BSDF"].inputs["Emission Color"].default_value = (1.0, 0.92, 0.7, 1.0)

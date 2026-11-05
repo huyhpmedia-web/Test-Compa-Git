@@ -690,13 +690,11 @@ func _build_street_props() -> void:
 	for x in [-53.0, -39.0, -5.0, 36.0, 64.0]:
 		Props.lamp_post(geo, Vector3(x, 0, -5.8), 0.0, false)
 	# street furniture: hydrants, utility cabinets, barriers, bins
-	for x in [-58.0, -24.0, 8.0, 44.0]:
+	for x in [-58.0, -24.0, 19.0, 44.0]:
 		Props.hydrant(geo, Vector3(x, 0, 5.2), 0.0)
 	Props.utility_box(geo, Vector3(-44.5, 0, 6.2), PI, true)
 	Props.utility_box(geo, Vector3(24.0, 0, -6.4), 0.0)
 	Props.power_box(geo, Vector3(-3.5, 0, 6.4), PI)
-	Props.barrier(geo, Vector3(-10.5, 0, -2.5), 0.5, 1)
-	Props.barrier(geo, Vector3(-11.8, 0, 3.2), -0.2, 2)
 	Props.barrier(geo, Vector3(54.0, 0, 1.0), 1.5707, 1)
 	Props.trash_can(geo, Vector3(-34.5, 0, 6.3), 0.2)
 	Props.trash_can(geo, Vector3(14.5, 0, -6.3), 0.8)

@@ -436,36 +436,64 @@ func title_card(title: String, sub := "") -> void:
 	box.offset_left = -500; box.offset_right = 500
 	box.alignment = BoxContainer.ALIGNMENT_CENTER
 	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var t := _label(tr_fmt(title), 44, Color(0.92, 0.92, 0.9))
+	var t := _label(tr_fmt(title), 44, Color(0.96, 0.96, 0.94))
+	t.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+	t.add_theme_constant_override("outline_size", 8)
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	box.add_child(t)
 	if sub != "":
-		var s := _label(tr_fmt(sub), 18, C_DIM)
+		var s := _label(tr_fmt(sub), 18, Color(0.82, 0.84, 0.84))
+		s.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+		s.add_theme_constant_override("outline_size", 5)
 		s.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		box.add_child(s)
-	box.modulate.a = 0.0
-	root.add_child(box)
-	var tw := box.create_tween()
-	tw.tween_property(box, "modulate:a", 1.0, 1.2)
+	# soft dark radial gradient behind the text so it reads over bright snow
+	var holder := Control.new()
+	holder.set_anchors_preset(Control.PRESET_FULL_RECT)
+	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var grad := Gradient.new()
+	grad.set_color(0, Color(0, 0, 0, 0.62))
+	grad.set_color(1, Color(0, 0, 0, 0.0))
+	var gt := GradientTexture2D.new()
+	gt.gradient = grad
+	gt.fill = GradientTexture2D.FILL_RADIAL
+	gt.fill_from = Vector2(0.5, 0.5)
+	gt.fill_to = Vector2(1.0, 0.5)
+	gt.width = 256
+	gt.height = 256
+	var shade := TextureRect.new()
+	shade.texture = gt
+	shade.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	shade.stretch_mode = TextureRect.STRETCH_SCALE
+	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	shade.anchor_left = 0.5; shade.anchor_right = 0.5; shade.anchor_top = 0.38; shade.anchor_bottom = 0.38
+	shade.offset_left = -560; shade.offset_right = 560; shade.offset_top = -170; shade.offset_bottom = 170
+	holder.add_child(shade)
+	holder.add_child(box)
+	holder.modulate.a = 0.0
+	root.add_child(holder)
+	var tw := holder.create_tween()
+	tw.tween_property(holder, "modulate:a", 1.0, 1.2)
 	tw.tween_interval(2.5)
-	tw.tween_property(box, "modulate:a", 0.0, 1.5)
-	tw.tween_callback(box.queue_free)
+	tw.tween_property(holder, "modulate:a", 0.0, 1.5)
+	tw.tween_callback(holder.queue_free)
 
 # ================================================================= dialogue
 func _build_dialogue() -> void:
 	dlg_panel = PanelContainer.new()
 	dlg_panel.anchor_left = 0.5; dlg_panel.anchor_right = 0.5; dlg_panel.anchor_top = 1.0; dlg_panel.anchor_bottom = 1.0
-	dlg_panel.offset_left = -480; dlg_panel.offset_right = 480; dlg_panel.offset_top = -150; dlg_panel.offset_bottom = -24
+	dlg_panel.offset_left = -330; dlg_panel.offset_right = 330; dlg_panel.offset_top = -150; dlg_panel.offset_bottom = -24
 	var v := VBoxContainer.new()
 	dlg_panel.add_child(v)
-	dlg_name = _label("", 16, C_ACCENT)
+	dlg_name = _label("", 17, Color(0.95, 0.78, 0.45))
 	v.add_child(dlg_name)
 	dlg_text = RichTextLabel.new()
 	dlg_text.bbcode_enabled = true
 	dlg_text.fit_content = true
-	dlg_text.custom_minimum_size = Vector2(900, 60)
+	dlg_text.custom_minimum_size = Vector2(620, 60)
 	dlg_text.add_theme_font_size_override("normal_font_size", 19)
 	v.add_child(dlg_text)
+	dlg_panel.self_modulate = Color(1, 1, 1, 0.82)
 	dlg_panel.visible = false
 	root.add_child(dlg_panel)
 

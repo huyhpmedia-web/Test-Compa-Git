@@ -38,3 +38,6 @@ haul_truck 7d382b5b-3668-4c1a-9183-a07db5ac87b6, shotgun 7be88136-e736-419a-91a6
 revolver 3adead7b-7a64-411e-bcbb-05cb5600ebbb, flaregun fbb9237c-e3ec-47fc-b739-5315eb084cf7,
 transformer e903bc3a-a972-44e6-bc23-11e78ff9072d, server_rack e18f37a2-70f4-461e-984c-2c8ce845940b,
 steeple 6c9c2b1e-e879-4ffc-830b-29bb5a6955ca
+Batch 2 (tripo): van 6c119b6d-299c-4d9a-9f8c-e2baf64a25a9, snowplow 83181eb4-1e8a-48b8-b00e-83fa25613344,
+ice_cluster 838d85db-5cc6-493e-abbe-427e0d4630f1, ore_cart 9432913f-fcf1-4242-9cef-938b3277d911,
+reception_desk 6ee68acf-44a6-4f13-be8f-2e2a0d47a9be. Agent F = L4/L6 environment pass.

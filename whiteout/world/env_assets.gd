@@ -197,7 +197,9 @@ static func spawn(parent: Node3D, rel: String, pos := Vector3.ZERO, yaw := 0.0, 
 		for s in m.mesh.get_surface_count():
 			var src: Material = m.get_active_material(s)
 			var nm := src.resource_name if src else ""
-			if overrides.has(nm):
+			if opts.has("mats_ice") and (nm.to_lower().contains("ice") or nm.to_lower().contains("crystal")):
+				m.set_surface_override_material(s, opts.mats_ice)
+			elif overrides.has(nm):
 				m.set_surface_override_material(s, overrides[nm])
 			else:
 				var mat := snowify(src, snow, tint, emis.get(nm, []))

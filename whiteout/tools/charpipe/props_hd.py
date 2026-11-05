@@ -20,16 +20,21 @@ SPEC = {
     "transformer":  ("assets/env/props/transformer.glb", 3.0, "h", 2048, 35000),
     "server_rack":  ("assets/env/props/server_rack.glb", 2.0, "h", 1024, 20000),
     "steeple":      ("assets/env/props/steeple.glb", 9.0, "h", 2048, 30000),
+    "van":          ("assets/env/vehicles/van.glb", 5.9, "len", 2048, 40000),
+    "snowplow":     ("assets/env/vehicles/snowplow.glb", 9.0, "len", 2048, 45000),
+    "ice_cluster":  ("assets/env/props/ice_cluster.glb", 2.2, "h", 2048, 30000),
+    "ore_cart":     ("assets/env/props/ore_cart.glb", 1.6, "len", 1024, 20000),
+    "reception_desk": ("assets/env/props/reception_desk.glb", 3.0, "len", 1024, 20000),
     "shotgun":      ("assets/weapons/shotgun/shotgun.glb", 1.0, "len", 2048, 20000),
     "magnum":       ("assets/weapons/magnum/magnum.glb", 0.30, "len", 2048, 15000),
     "launcher":     ("assets/weapons/launcher/launcher.glb", 0.24, "len", 2048, 10000),
 }
 # extra rotation (deg about Z) after auto-alignment, filled in after looking at the probe previews
 FIX = {"sedan": 180, "police": 180, "ambulance": 180, "bucket_truck": 180, "haul_truck": 180,
-       "shotgun": 180, "magnum": 180}
+    "shotgun": 180, "magnum": 180}
 # real-world (width x, length y, height z) for vehicles: Tripo widens/heightens single-view cars a bit
 DIMS = {"sedan": (1.86, 4.9, 1.48), "police": (2.0, 5.3, 1.72), "ambulance": (2.4, 6.6, 2.9),
-        "bucket_truck": (2.45, 7.8, 3.7), "haul_truck": (6.1, 10.0, 5.0)}
+        "bucket_truck": (2.45, 7.8, 3.7), "van": (2.03, 5.9, 2.1), "snowplow": (2.6, 9.0, 3.3), "haul_truck": (6.1, 10.0, 5.0)}
 
 
 def load(name):

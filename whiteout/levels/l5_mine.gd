@@ -15,7 +15,7 @@ const Humanoid = preload("res://actors/humanoid.gd")
 const CAGE_POS := Vector3(36.5, 0.0, 0.0)
 
 var _rng := RandomNumberGenerator.new()
-var _rime_mat: StandardMaterial3D
+var _rime_mat: Material
 var _timber_mat: StandardMaterial3D
 var _rock_names := ["rock", "rock", "rock", "dirt", "rock_wet", "sewer"]
 var _ghosts: Array = []
@@ -36,7 +36,7 @@ func build() -> void:
 	footstep = "concrete"
 	env_interior(0.05, 0.022, Color(0.38, 0.48, 0.68))
 	Sfx.ambience("amb_mine")
-	add_spawn("start", Vector3(2.2, 0.05, 0.0), PI * 0.5)
+	add_spawn("start", Vector3(4.6, 0.05, 0.4), PI * 0.5)
 	add_spawn("lower", Vector3(60.0, LY + 0.05, 0.0), PI * 0.5)
 	add_spawn("cavern", Vector3(88.0, LY + 0.05, 0.0), PI * 0.5)
 	add_spawn("refuge", Vector3(110.0, LY + 0.05, -20.0), 0.0)
@@ -87,16 +87,10 @@ func _timber() -> StandardMaterial3D:
 		_timber_mat = wm
 	return _timber_mat
 
-func _rime() -> StandardMaterial3D:
+func _rime() -> Material:
 	if _rime_mat == null:
-		var m := StandardMaterial3D.new()
-		m.albedo_color = Color(0.45, 0.85, 1.0, 0.55)
-		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		m.emission_enabled = true
-		m.emission = Color(0.15, 0.7, 1.0)
-		m.emission_energy_multiplier = 1.4
-		m.roughness = 0.08
-		m.metallic_specular = 0.9
+		var m := ShaderMaterial.new()
+		m.shader = load("res://world/shaders/env_ice.gdshader")
 		_rime_mat = m
 	return _rime_mat
 
@@ -228,6 +222,10 @@ func rails(a: Vector3, b: Vector3, gauge := 0.9) -> void:
 		Props.box(geo, Vector3(gauge + 0.5, 0.08, 0.16), p + Vector3(0, 0.04, 0), _timber(), false, Vector3(0, yaw, 0))
 
 func ore_cart(pos: Vector3, yaw := 0.0, full := true) -> void:
+	if Props.Env.has("props/ore_cart"):
+		var oc := Props.prop(geo, "props/ore_cart", pos, yaw, {"fit_len": 1.9, "snow": 0.0, "collide": Vector3(1.8, 1.0, 1.0)})
+		if oc:
+			return
 	var r := Node3D.new()
 	r.position = pos
 	r.rotation.y = yaw
@@ -247,18 +245,27 @@ func ore_cart(pos: Vector3, yaw := 0.0, full := true) -> void:
 
 ## Cluster of glowing Rime crystals on a surface.
 func rime(pos: Vector3, normal := Vector3.UP, n := 5, size := 0.5, lit := false) -> void:
+	# organic ice: a frost skin plus a few rounded, translucent lumps (or the generated ice_cluster model), never spikes
 	var nrm := normal.normalized()
 	var q := Quaternion(Vector3.UP, nrm) if nrm.dot(Vector3.UP) > -0.99 else Quaternion(Vector3.RIGHT, PI)
 	var bq := Basis(q)
-	Props.sphere(geo, size * 0.3, pos, _rime(), Vector3(1, 0.2, 1)).basis = bq * Basis.from_scale(Vector3(1, 0.2, 1))
-	for i in n:
-		var hgt := size * rk(0.5, 1.5)
-		var r := hgt * rk(0.07, 0.14)
-		var off := bq * Vector3(rk(-1, 1), 0, rk(-1, 1)) * size * 0.5
-		var jq := Quaternion(Vector3(rk(-1, 1), 0.001, rk(-1, 1)).normalized(), rk(0.0, 0.5))
-		var mi := Props.cyl(geo, r, hgt, Vector3.ZERO, _rime(), false, 0.0, Vector3.ZERO, 6)
-		mi.basis = Basis(q * jq)
-		mi.position = pos + off + (q * jq) * Vector3(0, hgt * 0.5, 0)
+	if Props.Env.has("props/ice_cluster"):
+		var ic := Props.prop(geo, "props/ice_cluster", pos, rk(0, TAU), {"scale": size * rk(0.9, 1.7), "collide": "none", "snow": 0.0, "shadow": false, "range": 70.0, "mats_ice": _rime()})
+		if ic:
+			ic.basis = bq * Basis(Vector3.UP, rk(0, TAU)) * Basis.from_scale(Vector3.ONE * size * rk(0.9, 1.7)) if false else ic.basis
+			ic.position = pos - nrm * size * 0.1
+			ic.quaternion = q * Quaternion(Vector3.UP, rk(0, TAU))
+			if lit:
+				light(pos + nrm * 0.5, Color(0.25, 0.8, 1.0), 0.7 + size, 3.6, false)
+			return
+	var skin := Props.sphere(geo, size * 0.55, pos, _rime(), Vector3(1.3, 0.12, 1.0))
+	skin.basis = bq * Basis(Vector3.UP, rk(0, TAU)) * Basis.from_scale(Vector3(1.3, 0.12, 1.0) * size * 0.55)
+	skin.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	for i in maxi(2, n / 2):
+		var rr := size * rk(0.12, 0.26)
+		var off := bq * Vector3(rk(-1, 1), 0, rk(-1, 1)) * size * 0.45
+		var lump := Props.sphere(geo, rr, pos + off + nrm * rr * 0.3, _rime(), Vector3(rk(0.8, 1.4), rk(0.5, 1.0), rk(0.8, 1.3)))
+		lump.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	if lit:
 		light(pos + nrm * 0.5, Color(0.25, 0.8, 1.0), 0.7 + size, 3.6, false)
 
@@ -359,14 +366,14 @@ func _build_pipeline_tunnel() -> void:
 	Props.sign(geo, Vector3(0.1, 2.45, 0), PI * 0.5, "PIPELINE SERVICE TUNNEL\nMERIDIAN SITE - NO ACCESS", 36, Color(0.9, 0.75, 0.2))
 	box(Vector3(0.08, 1.1, 0), Vector3(0.1, 2.2, 1.5), "metal_painted", false)
 	# the heat pipeline: warm, with orange glow at the flanges, rime creeping along it
-	Props.pipe(geo, Vector3(0.1, 2.55, -1.15), Vector3(26.0, 2.55, -1.15), 0.42, "metal_painted")
+	Props.pipe(geo, Vector3(0.1, 2.85, -1.42), Vector3(26.0, 2.85, -1.42), 0.3, "metal_painted")
 	for x in range(2, 26, 4):
-		Props.cyl(geo, 0.5, 0.18, Vector3(x, 2.55, -1.15), Mats.emissive(Color(1.0, 0.45, 0.1), 0.9), false, -1.0, Vector3(0, 0, PI * 0.5), 14).rotation = Vector3(0, 0, PI * 0.5)
-		Props.box(geo, Vector3(0.12, 0.7, 0.12), Vector3(x + 1.0, 3.0, -1.15), Mats.get_mat("metal", 1.0), false)
+		Props.cyl(geo, 0.38, 0.14, Vector3(x, 2.85, -1.42), Mats.emissive(Color(1.0, 0.45, 0.1), 0.9), false, -1.0, Vector3(0, 0, PI * 0.5), 14).rotation = Vector3(0, 0, PI * 0.5)
+		Props.box(geo, Vector3(0.1, 0.5, 0.1), Vector3(x + 1.0, 3.1, -1.42), Mats.get_mat("metal", 1.0), false)
 	light(Vector3(8, 2.4, -0.8), Color(1.0, 0.5, 0.2), 0.8, 5.0, false)
 	light(Vector3(21, 2.4, -0.8), Color(1.0, 0.5, 0.2), 0.8, 5.0, false)
 	for x in range(5, 25, 4):
-		rime(Vector3(x, 2.97, -1.15), Vector3.UP, 5, 0.35, x % 8 == 5)
+		rime(Vector3(x, 3.17, -1.42), Vector3.UP, 4, 0.3, x % 8 == 5)
 	rime_run(Vector3(2, 2.2, -1.5), Vector3(25, 2.2, -1.5), Vector3(0, -0.5, 1), 12, 0.35)
 	# wall rime + floor
 	rime_run(Vector3(1, 0.1, 1.5), Vector3(25, 0.1, 1.5), Vector3(0, 0.6, -1), 10, 0.45, 1.8, 3)

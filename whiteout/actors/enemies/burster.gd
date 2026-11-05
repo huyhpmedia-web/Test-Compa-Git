@@ -56,7 +56,7 @@ func _make_model() -> Node3D:
 	var s: float = clampf(h._s, 0.9, 1.3)
 	# v3: distended pus / gas boils (yellow-green, translucent, wet) instead of glowing ice sacs
 	_sac_mat = RimeLook.flesh("pus").duplicate()
-	_core_mat = Kit.glow_unique(Color(0.55, 0.5, 0.18), 0.5)
+	_core_mat = Kit.glow_unique(Color(0.38, 0.3, 0.1), 0.12)
 	# [bone, bone-local pos, radius]  (torso bones: y up / z forward / x left; limb bones run along +Y)
 	var defs := [
 		["spine_01", Vector3(0, 0.12, 0.2), 0.26], ["spine_01", Vector3(0.16, 0.1, 0.14), 0.18], ["spine_01", Vector3(-0.16, 0.14, 0.13), 0.17],

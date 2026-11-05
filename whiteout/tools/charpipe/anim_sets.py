@@ -271,7 +271,7 @@ def build_zombie(ctx, only=None):
         ctx.put("stagger", fr, False)
     for nm, cid, t0, t1 in (("getup_back", "140_08", 0.0, 6.0), ("getup_front", "140_01", 0.0, 5.5), ("getup_side", "140_03", 0.0, 6.5)):
         if W(nm):
-            fr, t = bvh_frames(ctx, cid, t0, t1, xy="zero")
+            fr, t = bvh_frames(ctx, cid, t0, t1, xy="zero", speed=1.7)
             ctx.put(nm, fr, False)
     if W("death"): ctx.put("death", ual_frames(ctx, "Death01"), False)
     if W("crawl"):

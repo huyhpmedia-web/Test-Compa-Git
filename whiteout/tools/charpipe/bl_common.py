@@ -134,3 +134,50 @@ def parent_to_armature(ob, arm_ob):
     ob.parent = arm_ob
     mod = ob.modifiers.new("Armature", 'ARMATURE')
     mod.object = arm_ob
+
+
+def fill_small_holes(ob, max_extent=0.06):
+    """close small boundary loops (holes between hair cards / crown gaps) with ngons that reuse a neighbouring face's UV,
+    so no scalp shows through. Loops bigger than max_extent (hairline, neck opening) are left alone."""
+    import bmesh
+    me = ob.data
+    bm = bmesh.new(); bm.from_mesh(me)
+    uvl = bm.loops.layers.uv.active
+    bm.edges.ensure_lookup_table()
+    bnd = [e for e in bm.edges if e.is_boundary]
+    seen = set(); made = 0
+    for e0 in bnd:
+        if e0.index in seen:
+            continue
+        # walk the loop
+        loop_edges = []; stack = [e0]
+        while stack:
+            e = stack.pop()
+            if e.index in seen:
+                continue
+            seen.add(e.index); loop_edges.append(e)
+            for v in e.verts:
+                for e2 in v.link_edges:
+                    if e2.is_boundary and e2.index not in seen:
+                        stack.append(e2)
+        verts = list({v for e in loop_edges for v in e.verts})
+        if len(verts) < 3 or len(verts) > 40:
+            continue
+        co = np.array([v.co[:] for v in verts])
+        if (co.max(0) - co.min(0)).max() > max_extent:
+            continue
+        try:
+            res = bmesh.ops.holes_fill(bm, edges=loop_edges, sides=len(verts))
+        except Exception:
+            continue
+        for f in res["faces"]:
+            for l in f.loops:
+                # borrow the uv of an adjacent real face at this vertex
+                for lf in l.vert.link_loops:
+                    if lf.face is not f:
+                        l[uvl].uv = lf[uvl].uv
+                        break
+            f.smooth = True
+        made += len(res["faces"])
+    bm.to_mesh(me); bm.free(); me.update()
+    print(f"[hair] filled {made} hole faces in {ob.name}")

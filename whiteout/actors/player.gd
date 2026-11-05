@@ -45,6 +45,7 @@ var _flash_t := 0.0
 var _held_id := "?"
 var _shots_burst := 0
 var _burst_t := 0.0
+const PLAYER_LAYER := 1 << 19
 const KICK := {   # camera kick peak (deg pitch, deg yaw), FOV punch (deg), rumble (weak, strong, s), hit-stop scale
 	"handgun": [1.3, 0.35, 1.2, 0.25, 0.55, 0.07],
 	"magnum": [3.4, 0.9, 2.4, 0.35, 0.9, 0.12],
@@ -107,11 +108,14 @@ func _ready() -> void:
 	muzzle_light.light_color = Color(1.0, 0.75, 0.4)
 	muzzle_light.omni_range = 6.0
 	muzzle_light.light_energy = 0.0
+	muzzle_light.light_cull_mask = 0xFFFFF & ~PLAYER_LAYER   # the muzzle flash never lights Elias himself
+	muzzle_light.shadow_enabled = false
 	add_child(muzzle_light)
 
 	cam_yaw = rotation.y + PI
 	model.rotation.y = 0.0
 	_update_weapon_model()
+	_tag_player_layers()
 	Game.inventory_changed.connect(_update_weapon_model)
 	Hitmarker.install(self)
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -262,9 +266,9 @@ func _process(delta: float) -> void:
 	_update_kick(delta)
 	pitch_pivot.rotation.x = cam_pitch + _ck.x
 	yaw_pivot.rotation.y = cam_yaw + _ck.y
-	arm.spring_length = lerp(2.4, 1.15, aim_t)
+	arm.spring_length = lerp(2.4, 0.95, aim_t)
 	arm.position = Vector3(lerp(0.45, 0.55, aim_t), lerp(0.05, 0.08, aim_t), 0)
-	cam.fov = lerp(62.0, 48.0, aim_t) + _fovk
+	cam.fov = lerp(62.0, 44.0, aim_t) + _fovk
 	if shake > 0.0:
 		cam.h_offset = randf_range(-1, 1) * shake * 0.06
 		cam.v_offset = randf_range(-1, 1) * shake * 0.06
@@ -325,6 +329,11 @@ func _quick_weapon(i: int) -> void:
 		Sfx.play("equip")
 		_update_weapon_model()
 
+## Put Elias (and his weapon) on a render layer the muzzle light ignores.
+func _tag_player_layers() -> void:
+	for mi in model.find_children("*", "VisualInstance3D", true, false):
+		(mi as VisualInstance3D).layers = PLAYER_LAYER
+
 func _update_weapon_model() -> void:
 	if model == null:
 		return
@@ -333,6 +342,7 @@ func _update_weapon_model() -> void:
 		model.hold(FX.weapon_mesh(Game.equipped) if Game.equipped != "" else null)
 		if model.weapon_ik != null:
 			model.weapon_ik.eject_cb = _on_eject
+		_tag_player_layers()
 	if model.weapon_ik != null and Game.equipped == "handgun":
 		model.weapon_ik.set_slide_locked(Game.ammo_loaded("handgun") <= 0)
 
@@ -364,9 +374,10 @@ func _try_fire() -> void:
 	_burst_t = 1.4
 	if _shots_burst >= 4:   # barrel wisp after rapid fire
 		ShotFX.muzzle_smoke(get_tree().current_scene, mxf.origin, Vector3.UP, 0.3)
-	muzzle_light.global_position = mxf.origin + mfwd * 0.45
-	muzzle_light.omni_range = 7.0
-	muzzle_light.light_energy = 2.6 if id == "handgun" else 4.2
+	muzzle_light.global_position = mxf.origin + mfwd * 0.7
+	muzzle_light.omni_range = 4.0
+	muzzle_light.light_color = Color(1.0, 0.86, 0.5)
+	muzzle_light.light_energy = 1.6 if id == "handgun" else 2.6
 	_flash_t = 0.035
 	_play_shot_audio(id)
 	Sfx.alert_noise(global_position, 25.0)

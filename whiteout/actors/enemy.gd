@@ -95,7 +95,8 @@ func wake() -> void:
 		if model:
 			model.pose = "crawl" if get("crawler") == true else "zombie"
 		Sfx.play_at(_sound("groan"), global_position)
-		_set_state("chase")
+		_set_state("stagger")
+		_stun_len = 2.6
 
 func _is_dead_for_good() -> bool:
 	return hp <= 0.0
@@ -297,7 +298,8 @@ func _physics_process(delta: float) -> void:
 				if model:
 					model.pose = "zombie"
 				Sfx.play_at(_sound("groan"), global_position)
-				_set_state("chase")
+				_set_state("stagger")      # hold still while the mocap get-up plays, then chase
+				_stun_len = 2.6
 		"stagger":
 			velocity.x = move_toward(velocity.x, 0, delta * 6)
 			velocity.z = move_toward(velocity.z, 0, delta * 6)

@@ -534,32 +534,41 @@ func _prepare_hit(lib: AnimationLibrary, an: String) -> void:
 		return
 	var a: Animation = lib.get_animation(an)
 	if not a.has_meta("additive"):
+		# Godot's additive blending adds (value - rest). So a delta clip is stored as rest * (first-frame^-1 * frame).
 		for i in a.get_track_count():
 			var tt := a.track_get_type(i)
 			var n := a.track_get_key_count(i)
 			if n == 0:
 				continue
+			var bi := skeleton.find_bone(String(a.track_get_path(i).get_concatenated_subnames()))
+			if bi < 0:
+				continue
+			var rest := skeleton.get_bone_rest(bi)
 			if tt == Animation.TYPE_ROTATION_3D:
 				var q0: Quaternion = a.track_get_key_value(i, 0)
+				var rq := rest.basis.get_rotation_quaternion()
 				for k in n:
 					var q: Quaternion = a.track_get_key_value(i, k)
-					a.track_set_key_value(i, k, q0.inverse() * q)
+					a.track_set_key_value(i, k, rq * (q0.inverse() * q))
 			elif tt == Animation.TYPE_POSITION_3D:
 				var p0: Vector3 = a.track_get_key_value(i, 0)
 				for k in n:
-					a.track_set_key_value(i, k, (a.track_get_key_value(i, k) as Vector3) - p0)
-		# scale tracks make no sense for a delta (they would be added: 1+1 = 2x body): drop them
+					a.track_set_key_value(i, k, rest.origin + ((a.track_get_key_value(i, k) as Vector3) - p0))
 		for i in range(a.get_track_count() - 1, -1, -1):
 			if a.track_get_type(i) == Animation.TYPE_SCALE_3D:
 				a.remove_track(i)
 		var z := a.duplicate() as Animation
 		for i in z.get_track_count():
 			var tt := z.track_get_type(i)
+			var bi := skeleton.find_bone(String(z.track_get_path(i).get_concatenated_subnames()))
+			if bi < 0:
+				continue
+			var rest := skeleton.get_bone_rest(bi)
 			for k in z.track_get_key_count(i):
 				if tt == Animation.TYPE_ROTATION_3D:
-					z.track_set_key_value(i, k, Quaternion.IDENTITY)
+					z.track_set_key_value(i, k, rest.basis.get_rotation_quaternion())
 				elif tt == Animation.TYPE_POSITION_3D:
-					z.track_set_key_value(i, k, Vector3.ZERO)
+					z.track_set_key_value(i, k, rest.origin)
 		a.set_meta("additive", true)
 		a.set_meta("zero", z)
 	if not lib.has_animation(an + "_zero"):
@@ -724,7 +733,7 @@ func _setup_animation() -> void:
 		if not have.call(gu):
 			continue
 		var g := AnimationNodeOneShot.new()
-		g.fadein_time = 0.25
+		g.fadein_time = 0.04
 		g.fadeout_time = 0.3
 		bt.add_node("os_" + gu, g, Vector2(x, 100))
 		bt.add_node("an_" + gu, fn.call(gu), Vector2(x, -150))

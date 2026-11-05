@@ -7,6 +7,7 @@ const Mats = preload("res://core/mats.gd")
 static var _tex := {}
 static var _decals: Array = []
 static var _stopping := false
+static var trail_life := 0.16
 
 # ------------------------------------------------------------------ procedural textures
 static func _radial(size: int, power: float, spikes := 0, spike_amt := 0.0, seed_v := 1) -> ImageTexture:
@@ -384,7 +385,7 @@ static func _burst(parent: Node, pos: Vector3, normal: Vector3, amount: int, spe
 static func hole(parent: Node, pos: Vector3, normal: Vector3, kind: String, size: float) -> void:
 	var d := Decal.new()
 	var t: Array = _hole_tex(kind)
-	d.size = Vector3(size, 0.25, size)
+	d.size = Vector3(size * 1.7, 0.25, size * 1.7)
 	d.texture_albedo = t[0]
 	d.texture_normal = t[1]
 	d.normal_fade = 0.2
@@ -409,18 +410,18 @@ static func impact(parent: Node, pos: Vector3, normal: Vector3, surface: String)
 	match surface:
 		"snow":
 			_burst(parent, p, n, 14, 2.4, 0.2, 1.1, Color(0.92, 0.95, 1.0, 0.7), "puff", 1.5, 70.0)
-			_burst(parent, p, n, 6, 3.0, 0.015, 0.6, Color(0.95, 0.97, 1.0), "chip", 6.0, 60.0)
+			_burst(parent, p, n, 8, 3.0, 0.025, 0.6, Color(0.95, 0.97, 1.0), "chip", 6.0, 60.0)
 			hole(parent, pos, n, "snow", 0.14)
 			Sfx.play_at("impact_snow", pos, -4.0, randf_range(0.9, 1.15))
 		"metal":
-			_burst(parent, p, n, 12, 7.0, 0.012, 0.35, Color(1.0, 0.75, 0.35), "spark", 9.8, 50.0)
+			_burst(parent, p, n, 16, 7.0, 0.02, 0.35, Color(1.0, 0.75, 0.35), "spark", 9.8, 50.0)
 			_burst(parent, p, n, 3, 1.5, 0.12, 0.5, Color(0.5, 0.5, 0.52, 0.35), "puff", 0.0, 40.0)
 			hole(parent, pos, n, "metal", 0.09)
 			Sfx.play_at("metal_impact", pos, -3.0, randf_range(0.95, 1.25))
 			Sfx.play_at("ricochet", pos, -8.0, randf_range(0.9, 1.2))
 			_spark_light(parent, p)
 		"wood":
-			_burst(parent, p, n, 9, 3.8, 0.018, 0.7, Color(0.62, 0.44, 0.25), "splinter", 9.8, 50.0)
+			_burst(parent, p, n, 12, 3.8, 0.03, 0.7, Color(0.62, 0.44, 0.25), "splinter", 9.8, 50.0)
 			_burst(parent, p, n, 5, 1.2, 0.12, 0.7, Color(0.6, 0.5, 0.38, 0.3), "puff", 0.0, 50.0)
 			hole(parent, pos, n, "wood", 0.1)
 			Sfx.play_at("impact_wood", pos, -3.0, randf_range(0.9, 1.1))
@@ -430,8 +431,8 @@ static func impact(parent: Node, pos: Vector3, normal: Vector3, surface: String)
 			hole(parent, pos, n, "ice", 0.12)
 			Sfx.play_at("impact_ice", pos, -4.0, randf_range(0.9, 1.15))
 		_:
-			_burst(parent, p, n, 9, 2.0, 0.22, 1.0, Color(0.62, 0.6, 0.57, 0.55), "puff", 0.0, 55.0)
-			_burst(parent, p, n, 8, 4.5, 0.02, 0.7, Color(0.3, 0.29, 0.28), "chip", 9.8, 60.0)
+			_burst(parent, p, n, 9, 2.0, 0.3, 1.0, Color(0.62, 0.6, 0.57, 0.55), "puff", 0.0, 55.0)
+			_burst(parent, p, n, 10, 4.5, 0.035, 0.7, Color(0.3, 0.29, 0.28), "chip", 9.8, 60.0)
 			_burst(parent, p, n, 4, 5.0, 0.01, 0.3, Color(1.0, 0.85, 0.55), "spark", 9.8, 40.0)
 			hole(parent, pos, n, "concrete", 0.12)
 			Sfx.play_at("impact_concrete", pos, -3.0, randf_range(0.9, 1.15))
@@ -502,7 +503,7 @@ static func swing_trail(parent: Node, xf: Transform3D, side := 1.0) -> void:
 	parent.add_child(mi)
 	mi.global_transform = xf
 	var tw := mi.create_tween()
-	tw.tween_property(m, "albedo_color:a", 0.0, 0.16)
+	tw.tween_property(m, "albedo_color:a", 0.0, trail_life)
 	tw.tween_callback(mi.queue_free)
 
 static func melee_spark(parent: Node, pos: Vector3, dir: Vector3) -> void:

@@ -92,7 +92,7 @@ static func flesh(kind := "scab") -> StandardMaterial3D:
 		return _flesh[kind]
 	var m := StandardMaterial3D.new()
 	m.resource_name = "flesh_" + kind
-	m.subsurf_scatter_enabled = kind != "bone"
+	m.subsurf_scatter_enabled = kind in ["scab", "sinew", "gland"]
 	m.subsurf_scatter_strength = 0.3
 	match kind:
 		"scab":   # dried blood crust / necrotic hide plates
@@ -101,7 +101,7 @@ static func flesh(kind := "scab") -> StandardMaterial3D:
 		"sinew":  # wet red-grey tendon ropes
 			m.albedo_color = Color(0.42, 0.14, 0.14); m.roughness = 0.28; m.rim_enabled = true; m.rim = 0.3
 		"pus":    # distended sac: yellow-green, translucent, wet
-			m.albedo_color = Color(0.5, 0.52, 0.3, 0.85); m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			m.albedo_color = Color(0.5, 0.46, 0.27, 0.94); m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 			m.roughness = 0.12; m.cull_mode = BaseMaterial3D.CULL_DISABLED
 			m.emission_enabled = true; m.emission = Color(0.35, 0.4, 0.1); m.emission_energy_multiplier = 0.12
 		"pus_core":

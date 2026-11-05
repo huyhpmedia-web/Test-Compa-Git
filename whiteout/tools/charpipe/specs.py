@@ -666,7 +666,8 @@ def assemble(cb, spec):
     Ph = mh.Proxy(A("hair/short02/short02.mhclo"))
     hm = make_pbr(n + "_hair", hair_png(cb, "hair", A("hair/short02/short02_diffuse.png"), 1024, tint=spec.get("hair_tint", (0.2, 0.17, 0.15))), rough=0.7, alpha=True)
     hp = messy(cb.conv(Ph.fit(H.v, H.base_v)), Ph.faces, 0.007)
-    cb.add_mesh("hair", hp, [f[0] for f in Ph.faces], [f[1] for f in Ph.faces], Ph.uv, W=Ph.skin_weights(cb.Wfull), mat=hm)
+    ho_ = cb.add_mesh("hair", hp, [f[0] for f in Ph.faces], [f[1] for f in Ph.faces], Ph.uv, W=Ph.skin_weights(cb.Wfull), mat=hm)
+    bc.fill_small_holes(ho_)
 
 
 # ---- v3 body / head variety (heavy, thin, old, young, hi-vis worker, missing eye / jaw)

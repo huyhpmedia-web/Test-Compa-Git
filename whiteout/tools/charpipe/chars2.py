@@ -43,6 +43,7 @@ def face_parts(cb, spec, hair=None, hair_tint=None, brow="eyebrows/eyebrow002/ey
         hm = make_pbr(n + "_hair", hair_png(cb, "hair", os.path.join(A(hair), png), 1024, tint=hair_tint, frost=frost_hair), rough=0.7, alpha=True)
         ho = cb.add_mesh("hair", cb.conv(Ph.fit(H.v, H.base_v)), [f[0] for f in Ph.faces], [f[1] for f in Ph.faces], Ph.uv,
                          W=Ph.skin_weights(cb.Wfull), mat=hm)
+        bc.fill_small_holes(ho)
         if decim_hair < 1.0:
             cb.decimate(ho, decim_hair)
 

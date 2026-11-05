@@ -46,7 +46,7 @@ func _ready() -> void:
 		if play_a.size() == 2 and i == int(play_a[1]):
 			h.play(play_a[0])
 			if a.get("trail", "0") == "1":
-				load("res://world/shot_fx.gd").swing_trail(self, Transform3D(h.global_transform.basis, h.global_position), 1.0)
+				var SFx = load("res://world/shot_fx.gd"); SFx.trail_life = 1.2; SFx.swing_trail(self, Transform3D(h.global_transform.basis, h.global_position), 1.0)
 		await get_tree().process_frame
 		if str(i) in shots:
 			get_viewport().get_texture().get_image().save_png(a.out.replace(".png", "_%d.png" % i))
@@ -55,7 +55,7 @@ func _ready() -> void:
 		var p0 := pr[0].split(","); var p1 := pr[1].split(",")
 		c.position = Vector3(float(p0[0]), float(p0[1]), float(p0[2]))
 		c.look_at(Vector3(float(p1[0]), float(p1[1]), float(p1[2])))
-		for k in 3: await get_tree().process_frame
+		for kk in 3: await get_tree().process_frame
 		get_viewport().get_texture().get_image().save_png(String(a.get("out", "/tmp/p.png")).replace(".png", "_c%d.png" % ci))
 	get_viewport().get_texture().get_image().save_png(a.get("out", "/tmp/p.png"))
 	print("POSE_DONE")

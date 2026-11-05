@@ -23,7 +23,7 @@ bpy.data.objects["Magazine"].location.x = 0.0
 # source frame: x fwd, y left, z up (pre-rotation). marker axes given in SOURCE frame (root rotates them into weapon space)
 F = (1, 0, 0); U = (0, 0, 1); L = (0, 1, 0); R = (0, -1, 0)
 empty("Grip_R", (-0.016, -0.0125, -0.012), root, axes=(U, F, L))        # right palm on the back/right of the grip
-empty("Support_L", (0.004, 0.0135, -0.034), root, axes=((0, 0, -1), F, R))   # left palm on the left side, low
+empty("Support_L", (-0.010, 0.0135, -0.030), root, axes=((0, 0, -1), (0.82, -0.57, 0), (-0.57, -0.82, 0)))   # fingers sweep across the grip front   # left palm on the left side, low
 empty("Muzzle", (0.176, 0.0, 0.061), root)
 empty("Eject", (0.012, -0.015, 0.067), root, axes=(U, F, R))
 export(os.path.join(outdir, "handgun", "handgun.glb"), root)

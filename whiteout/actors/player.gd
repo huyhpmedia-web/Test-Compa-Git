@@ -361,8 +361,9 @@ func _try_fire() -> void:
 	_burst_t = 1.4
 	if _shots_burst >= 4:   # barrel wisp after rapid fire
 		ShotFX.muzzle_smoke(get_tree().current_scene, mxf.origin, Vector3.UP, 0.3)
-	muzzle_light.global_position = mxf.origin + mfwd * 0.15
-	muzzle_light.light_energy = 9.0
+	muzzle_light.global_position = mxf.origin + mfwd * 0.45
+	muzzle_light.omni_range = 7.0
+	muzzle_light.light_energy = 4.5 if id == "handgun" else 6.5
 	_flash_t = 0.035
 	_play_shot_audio(id)
 	Sfx.alert_noise(global_position, 25.0)

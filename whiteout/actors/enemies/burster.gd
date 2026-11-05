@@ -53,7 +53,7 @@ func _make_model() -> Node3D:
 	var h := CharacterModel.new()
 	h.setup({"model": "burster"})
 	h.pose = "zombie"
-		var s: float = clampf(h._s, 0.9, 1.3)
+	var s: float = clampf(h._s, 0.9, 1.3)
 	# v3: distended pus / gas boils (yellow-green, translucent, wet) instead of glowing ice sacs
 	_sac_mat = RimeLook.flesh("pus").duplicate()
 	_core_mat = Kit.glow_unique(Color(0.75, 0.7, 0.2), 1.2)

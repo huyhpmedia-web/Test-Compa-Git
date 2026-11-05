@@ -17,7 +17,7 @@ const FINGERS := ["thumb", "index", "middle", "ring", "pinky"]
 const SPECS := {
 	"handgun": {"ik": true, "aim": Vector3(-0.05, 1.405, 0.56), "low": Vector3(-0.085, 1.20, 0.42), "low_pitch": -0.78,
 		"recoil": [0.115, 0.034, 0.035], "move": "Slide", "travel": 0.030, "eject_delay": 0.0,
-		"curl_r": [18.0, 22.0, 72.0, 78.0, 80.0], "curl_l": [20.0, 66.0, 72.0, 76.0, 78.0]},
+		"curl_r": [18.0, 22.0, 72.0, 78.0, 80.0], "curl_l": [20.0, 78.0, 88.0, 92.0, 92.0]},
 	"magnum": {"ik": true, "aim": Vector3(-0.05, 1.405, 0.55), "low": Vector3(-0.085, 1.20, 0.40), "low_pitch": -0.78,
 		"recoil": [0.19, 0.05, 0.06], "move": "", "travel": 0.0, "eject_delay": 0.0,
 		"curl_r": [18.0, 24.0, 74.0, 80.0, 82.0], "curl_l": [20.0, 66.0, 72.0, 76.0, 78.0]},
@@ -27,7 +27,7 @@ const SPECS := {
 	"launcher": {"ik": true, "aim": Vector3(-0.12, 1.44, 0.42), "low": Vector3(-0.14, 1.18, 0.28), "low_pitch": -0.70,
 		"recoil": [0.16, 0.08, 0.04], "move": "", "travel": 0.0, "eject_delay": 0.0,
 		"curl_r": [20.0, 26.0, 74.0, 80.0, 82.0], "curl_l": [32.0, 56.0, 66.0, 70.0, 72.0]},
-	"knife": {"ik": false, "carry_rot": Vector3(0.45, 0.0, 0.0),
+	"knife": {"ik": false, "carry_rot": Vector3(0.0, 0.0, -1.1),
 		"curl_r": [30.0, 78.0, 82.0, 84.0, 84.0], "curl_l": []},
 }
 

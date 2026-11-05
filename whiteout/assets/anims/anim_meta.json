@@ -9,11 +9,43 @@
   "aim_up": {
    "duration": 0.06666666666666667
   },
+  "attack": {
+   "duration": 1.1333333333333333,
+   "legacy": true
+  },
+  "crawl": {
+   "duration": 1.4333333333333333,
+   "legacy": true
+  },
   "death": {
    "duration": 3.033333333333333
   },
+  "death_fwd": {
+   "duration": 1.7333333333333334,
+   "legacy": true
+  },
+  "death_knees": {
+   "duration": 2.1333333333333333,
+   "legacy": true
+  },
+  "death_side": {
+   "duration": 1.9333333333333333,
+   "legacy": true
+  },
   "flashlight": {
    "duration": 1.6333333333333333
+  },
+  "getup": {
+   "duration": 2.566666666666667,
+   "legacy": true
+  },
+  "grab": {
+   "duration": 1.4333333333333333,
+   "legacy": true
+  },
+  "hang": {
+   "duration": 3.033333333333333,
+   "legacy": true
   },
   "hatchet_2": {
    "duration": 1.7
@@ -42,6 +74,10 @@
   "hit_right": {
    "duration": 0.55
   },
+  "hurt": {
+   "duration": 0.6333333333333333,
+   "legacy": true
+  },
   "idle": {
    "duration": 3.1
   },
@@ -57,8 +93,17 @@
   "reload": {
    "duration": 2.1333333333333333
   },
+  "roar": {
+   "duration": 1.7333333333333334,
+   "legacy": true
+  },
   "roll": {
    "duration": 1.8666666666666667
+  },
+  "run": {
+   "duration": 0.7666666666666667,
+   "legacy": true,
+   "speed": 3.7480389323847034
   },
   "run_stop": {
    "duration": 1.7666666666666666
@@ -66,9 +111,13 @@
   "shoot": {
    "duration": 0.8333333333333334
   },
+  "sit": {
+   "duration": 1.0333333333333334,
+   "legacy": true
+  },
   "sprint": {
    "duration": 0.8333333333333334,
-   "speed": 0.0009140330010858864
+   "speed": 5.4
   },
   "stagger": {
    "duration": 2.433333333333333
@@ -82,6 +131,11 @@
   "turn_r": {
    "duration": 1.1333333333333333
   },
+  "walk": {
+   "duration": 1.1666666666666667,
+   "legacy": true,
+   "speed": 1.3071345876033358
+  },
   "walk_back": {
    "duration": 1.2666666666666666,
    "speed": 1.5900657916571204
@@ -93,9 +147,26 @@
   "walk_right": {
    "duration": 1.3333333333333333,
    "speed": 1.5852613921952745
+  },
+  "zombie_attack": {
+   "duration": 1.1333333333333333,
+   "legacy": true
+  },
+  "zombie_idle": {
+   "duration": 3.033333333333333,
+   "legacy": true
+  },
+  "zombie_walk": {
+   "duration": 1.8666666666666667,
+   "legacy": true,
+   "speed": 0.6483387554512546
   }
  },
  "zombie": {
+  "aim_idle": {
+   "duration": 2.433333333333333,
+   "legacy": true
+  },
   "attack": {
    "duration": 1.5
   },
@@ -109,6 +180,22 @@
   "death": {
    "duration": 3.033333333333333
   },
+  "death_fwd": {
+   "duration": 1.7333333333333334,
+   "legacy": true
+  },
+  "death_knees": {
+   "duration": 2.1333333333333333,
+   "legacy": true
+  },
+  "death_side": {
+   "duration": 1.9333333333333333,
+   "legacy": true
+  },
+  "getup": {
+   "duration": 2.566666666666667,
+   "legacy": true
+  },
   "getup_back": {
    "duration": 6.033333333333333
   },
@@ -120,6 +207,18 @@
   },
   "grab": {
    "duration": 3.2333333333333334
+  },
+  "hang": {
+   "duration": 3.033333333333333,
+   "legacy": true
+  },
+  "hatchet_swing": {
+   "duration": 1.1333333333333333,
+   "legacy": true
+  },
+  "heavy": {
+   "duration": 1.3333333333333333,
+   "legacy": true
   },
   "hit_back": {
    "duration": 0.55
@@ -136,11 +235,49 @@
   "hit_right": {
    "duration": 0.55
   },
+  "hurt": {
+   "duration": 0.6333333333333333,
+   "legacy": true
+  },
+  "idle": {
+   "duration": 3.2333333333333334,
+   "legacy": true
+  },
+  "knife": {
+   "duration": 0.6333333333333333,
+   "legacy": true
+  },
   "lunge": {
    "duration": 1.8333333333333333
   },
+  "reload": {
+   "duration": 2.033333333333333,
+   "legacy": true
+  },
+  "roar": {
+   "duration": 1.7333333333333334,
+   "legacy": true
+  },
+  "run": {
+   "duration": 0.7666666666666667,
+   "legacy": true,
+   "speed": 3.526408407167013
+  },
+  "shoot": {
+   "duration": 0.36666666666666664,
+   "legacy": true
+  },
+  "sit": {
+   "duration": 1.0333333333333334,
+   "legacy": true
+  },
   "stagger": {
    "duration": 2.433333333333333
+  },
+  "walk": {
+   "duration": 1.1666666666666667,
+   "legacy": true,
+   "speed": 1.2298405865518545
   },
   "zombie_attack": {
    "duration": 1.5

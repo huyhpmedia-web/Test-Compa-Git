@@ -233,8 +233,14 @@ static func _proto_set(set_name: String) -> Dictionary:
 	return out
 
 func _load_anim_sets() -> void:
-	if player == null or skeleton == null:
+	if skeleton == null:
 		return
+	if player == null:
+		# mesh-only character glb: the anim set(s) carry every clip
+		player = AnimationPlayer.new()
+		player.name = "AnimationPlayer"
+		model_root.add_child(player)
+		player.add_animation_library("", AnimationLibrary.new())
 	var lib := player.get_animation_library("")
 	if lib == null:
 		return
@@ -476,39 +482,192 @@ func _apply_bone_scales() -> void:
 			skeleton.set_bone_pose_scale(i, _stretch_for(i))
 
 # ------------------------------------------------------------------ animation tree
+## Additive hit reactions ("hit_*" clips are authored as poses; they are converted once into deltas from their first frame and
+## played through ADD one-shots whose amplitude is scaled by damage via a Blend2 against an identity "_zero" twin).
+const HITS := ["hit_front", "hit_back", "hit_left", "hit_right", "hit_head"]
+const UPPER_SHOTS := ["shoot", "hurt", "reload", "knife", "attack", "attack_b", "grab", "roar", "heavy", "hatchet_swing", "hatchet_2",
+	"hatchet_3", "flashlight", "interact", "pickup", "struggle", "bite"]
+const FULL_SHOTS := ["stagger", "lunge", "run_stop", "roll"]
+const GETUPS := ["getup", "getup_back", "getup_front", "getup_side"]
+const LOWER := ["pelvis", "thigh_l", "thigh_r", "calf_l", "calf_r", "foot_l", "foot_r", "ball_l", "ball_r"]
+const SPECIAL_WALK := {"husk": "zombie_walk_e", "siren": "zombie_walk_b", "burster": "zombie_walk_f", "hanger": "zombie_walk_g", "foreman": "zombie_walk_g"}
+const STRAFE_SPEED := 1.6
+
+var walk_variant := "zombie_walk"
+var idle_variant := "zombie_idle"
+var hit_dir := Vector3.ZERO        # world direction the last impact travelled (set by enemies for hit reacts + ragdoll)
+var hit_power := 0.0
+var allow_ragdoll := true
+var _combo := 0
+var _combo_t := 0.0
+var _prev_spd := 0.0
+var _prev_yaw := 0.0
+var _yaw_rate := 0.0
+var _last_pos := Vector3.ZERO
+var _local_vel := Vector3.ZERO
+var _strafe_w := 0.0
+var _turn_l_w := 0.0
+var _turn_r_w := 0.0
+var _hit_amt := {}
+var _meta_speeds := {}
+
+func _clip_speed(name: String, fallback: float) -> float:
+	return float(_meta_speeds.get(name, {}).get("speed", fallback))
+
+func _load_set_meta() -> void:
+	_meta_speeds.clear()
+	var p := ANIM_DIR + "anim_meta.json"
+	if FileAccess.file_exists(p):
+		var d = JSON.parse_string(FileAccess.get_file_as_string(p))
+		if d is Dictionary:
+			for s in _anim_sets_for_model():
+				for k in d.get(s, {}):
+					_meta_speeds[k] = d[s][k]
+	if _meta_speeds.has("walk") and _meta_speeds["walk"].has("speed"):
+		walk_speed = float(_meta_speeds["walk"]["speed"])
+	if _meta_speeds.has("run") and _meta_speeds["run"].has("speed"):
+		run_speed = float(_meta_speeds["run"]["speed"])
+
+## Convert a pose-style hit clip into deltas from its first frame (once per Animation resource) and make its identity twin.
+func _prepare_hit(lib: AnimationLibrary, an: String) -> void:
+	if not lib.has_animation(an):
+		return
+	var a: Animation = lib.get_animation(an)
+	if not a.has_meta("additive"):
+		for i in a.get_track_count():
+			var tt := a.track_get_type(i)
+			var n := a.track_get_key_count(i)
+			if n == 0:
+				continue
+			if tt == Animation.TYPE_ROTATION_3D:
+				var q0: Quaternion = a.track_get_key_value(i, 0)
+				for k in n:
+					var q: Quaternion = a.track_get_key_value(i, k)
+					a.track_set_key_value(i, k, q0.inverse() * q)
+			elif tt == Animation.TYPE_POSITION_3D:
+				var p0: Vector3 = a.track_get_key_value(i, 0)
+				for k in n:
+					a.track_set_key_value(i, k, (a.track_get_key_value(i, k) as Vector3) - p0)
+			elif tt == Animation.TYPE_SCALE_3D:
+				for k in n:
+					a.track_set_key_value(i, k, Vector3.ONE)
+		var z := a.duplicate() as Animation
+		for i in z.get_track_count():
+			var tt := z.track_get_type(i)
+			for k in z.track_get_key_count(i):
+				if tt == Animation.TYPE_ROTATION_3D:
+					z.track_set_key_value(i, k, Quaternion.IDENTITY)
+				elif tt == Animation.TYPE_POSITION_3D:
+					z.track_set_key_value(i, k, Vector3.ZERO)
+		a.set_meta("additive", true)
+		a.set_meta("zero", z)
+	if not lib.has_animation(an + "_zero"):
+		lib.add_animation(an + "_zero", a.get_meta("zero"))
+
+func _is_loop_name(an: String) -> bool:
+	return an in LOOPS or an.begins_with("zombie_walk") or an.begins_with("zombie_idle") or an in ["sprint", "walk_back", "walk_left", "walk_right", "turn_l", "turn_r", "zombie_run", "crawl_drag"]
+
+func _pick_variant(prefix: String, base: String) -> String:
+	var names: Array = []
+	for an in player.get_animation_list():
+		if an == base or (an.begins_with(prefix + "_") and an.length() == prefix.length() + 2):
+			names.append(an)
+	if names.is_empty():
+		return base
+	names.sort()
+	var h: int = hash(str(cfg.get("seed", randi())))
+	return names[abs(h) % names.size()]
+
 func _setup_animation() -> void:
 	if player == null:
 		return
+	_load_set_meta()
+	var lib0 := player.get_animation_library("")
+	for h in HITS:
+		_prepare_hit(lib0, h)
 	for an in player.get_animation_list():
 		var a := player.get_animation(an)
-		a.loop_mode = Animation.LOOP_LINEAR if an in LOOPS else Animation.LOOP_NONE
+		a.loop_mode = Animation.LOOP_LINEAR if _is_loop_name(an) else Animation.LOOP_NONE
 		_lens[an] = a.length
+	# per-instance variants (zombie shamble / idle); specials get their own gait
+	if cfg.has("walk_variant") and player.has_animation(String(cfg.walk_variant)):
+		walk_variant = String(cfg.walk_variant)
+	elif SPECIAL_WALK.has(model_name) and player.has_animation(SPECIAL_WALK[model_name]):
+		walk_variant = SPECIAL_WALK[model_name]
+	else:
+		walk_variant = _pick_variant("zombie_walk", "zombie_walk")
+	idle_variant = _pick_variant("zombie_idle", "zombie_idle")
+	zombie_speed = _clip_speed(walk_variant, zombie_speed)
 	var bt := AnimationNodeBlendTree.new()
 	var fn := func(anim: String) -> AnimationNodeAnimation:
 		var n := AnimationNodeAnimation.new()
 		n.animation = anim if player.has_animation(anim) else "idle"
 		return n
-	# --- normal locomotion: idle <-> (walk/run blend space, time scaled)
+	var have := func(anim: String) -> bool:
+		return player.has_animation(anim)
+	# --- normal locomotion: idle <-> (walk/run/sprint blend space, time scaled); strafe space when aiming
 	var bs := AnimationNodeBlendSpace1D.new()
 	bs.min_space = 0.0
 	bs.max_space = run_speed + 0.5
 	bs.sync = true
 	bs.add_blend_point(fn.call("walk"), walk_speed)
 	bs.add_blend_point(fn.call("run"), run_speed)
+	if have.call("sprint"):
+		bs.max_space = _clip_speed("sprint", 5.4) + 0.2
+		bs.add_blend_point(fn.call("sprint"), _clip_speed("sprint", 5.4))
 	bt.add_node("bs_move", bs, Vector2(-600, 0))
 	bt.add_node("ts_move", AnimationNodeTimeScale.new(), Vector2(-400, 0))
 	bt.connect_node("ts_move", 0, "bs_move")
+	var loco_out := "ts_move"
+	if have.call("walk_back") and have.call("walk_left") and have.call("walk_right"):
+		var s2 := AnimationNodeBlendSpace2D.new()
+		s2.min_space = Vector2(-1, -1)
+		s2.max_space = Vector2(1, 1)
+		s2.sync = true
+		s2.add_blend_point(fn.call("walk"), Vector2(0, 1))
+		s2.add_blend_point(fn.call("walk_back"), Vector2(0, -1))
+		s2.add_blend_point(fn.call("walk_left"), Vector2(1, 0))
+		s2.add_blend_point(fn.call("walk_right"), Vector2(-1, 0))
+		bt.add_node("bs_strafe", s2, Vector2(-600, 120))
+		bt.add_node("ts_strafe", AnimationNodeTimeScale.new(), Vector2(-400, 120))
+		bt.connect_node("ts_strafe", 0, "bs_strafe")
+		bt.add_node("mix_dir", AnimationNodeBlend2.new(), Vector2(-250, 60))
+		bt.connect_node("mix_dir", 0, "ts_move")
+		bt.connect_node("mix_dir", 1, "ts_strafe")
+		loco_out = "mix_dir"
 	bt.add_node("a_idle", fn.call("idle"), Vector2(-600, -150))
-	bt.add_node("mix_move", AnimationNodeBlend2.new(), Vector2(-200, -50))
+	bt.add_node("mix_move", AnimationNodeBlend2.new(), Vector2(-100, -50))
 	bt.connect_node("mix_move", 0, "a_idle")
-	bt.connect_node("mix_move", 1, "ts_move")
+	bt.connect_node("mix_move", 1, loco_out)
+	var normal_out := "mix_move"
+	# turn-in-place: lower-body stepping layers driven by yaw rate while standing
+	if have.call("turn_l") and have.call("turn_r"):
+		for sd in ["l", "r"]:
+			var tb := AnimationNodeBlend2.new()
+			tb.filter_enabled = true
+			for p in _track_paths_for(LOWER):
+				tb.set_filter_path(p, true)
+			bt.add_node("mix_turn_" + sd, tb, Vector2(100 + (0 if sd == "l" else 200), -50))
+			bt.add_node("a_turn_" + sd, fn.call("turn_" + sd), Vector2(100, -200))
+			bt.connect_node("mix_turn_" + sd, 0, normal_out)
+			bt.connect_node("mix_turn_" + sd, 1, "a_turn_" + sd)
+			normal_out = "mix_turn_" + sd
 	# --- zombie locomotion
-	bt.add_node("a_zidle", fn.call("zombie_idle"), Vector2(-600, 250))
-	bt.add_node("a_zwalk", fn.call("zombie_walk"), Vector2(-600, 350))
+	bt.add_node("a_zidle", fn.call(idle_variant), Vector2(-600, 250))
+	bt.add_node("ts_zidle", AnimationNodeTimeScale.new(), Vector2(-450, 250))
+	bt.connect_node("ts_zidle", 0, "a_zidle")
+	var zbs := AnimationNodeBlendSpace1D.new()
+	zbs.min_space = 0.0
+	zbs.max_space = 3.8
+	zbs.sync = true
+	zbs.add_blend_point(fn.call(walk_variant), zombie_speed)
+	if have.call("zombie_run"):
+		zbs.add_blend_point(fn.call("zombie_run"), maxf(_clip_speed("zombie_run", 3.5), zombie_speed + 1.2))
+	bt.add_node("a_zwalk", zbs, Vector2(-600, 350))
 	bt.add_node("ts_z", AnimationNodeTimeScale.new(), Vector2(-400, 350))
 	bt.connect_node("ts_z", 0, "a_zwalk")
 	bt.add_node("mix_z", AnimationNodeBlend2.new(), Vector2(-200, 300))
-	bt.connect_node("mix_z", 0, "a_zidle")
+	bt.connect_node("mix_z", 0, "ts_zidle")
 	bt.connect_node("mix_z", 1, "ts_z")
 	# --- crawl / sit / dead variants
 	bt.add_node("a_crawl", fn.call("crawl"), Vector2(-600, 450))
@@ -525,7 +684,7 @@ func _setup_animation() -> void:
 		_pose_t.set_input_name(i, POSES[i])
 	_pose_t.xfade_time = 0.18
 	bt.add_node("pose", _pose_t, Vector2(100, 150))
-	bt.connect_node("pose", 0, "mix_move")
+	bt.connect_node("pose", 0, normal_out)
 	bt.connect_node("pose", 1, "mix_z")
 	bt.connect_node("pose", 2, "ts_crawl")
 	bt.connect_node("pose", 3, "a_sit")
@@ -541,29 +700,56 @@ func _setup_animation() -> void:
 	bt.add_node("aim", aim_b, Vector2(350, 100))
 	bt.connect_node("aim", 0, "pose")
 	bt.connect_node("aim", 1, "a_aim")
-	# --- one shots: upper body, plus a full-body get-up
+	# --- one shots: upper body (+ full-body ones), then additive hit reacts
 	var last := "aim"
 	var x := 600
-	for os in ONESHOTS:
+	for os in UPPER_SHOTS + FULL_SHOTS:
+		if not have.call(os) and os != "hurt":
+			continue
 		var o := AnimationNodeOneShot.new()
-		o.filter_enabled = true
-		_filter_upper(o)
-		o.fadein_time = 0.06
-		o.fadeout_time = 0.18
+		var upper: bool = os in UPPER_SHOTS
+		o.filter_enabled = upper
+		if upper:
+			_filter_upper(o)
+		o.fadein_time = 0.06 if upper else 0.12
+		o.fadeout_time = 0.18 if upper else 0.25
 		bt.add_node("os_" + os, o, Vector2(x, 100))
 		bt.add_node("an_" + os, fn.call(os), Vector2(x, -150))
 		bt.connect_node("os_" + os, 0, last)
 		bt.connect_node("os_" + os, 1, "an_" + os)
 		last = "os_" + os
 		x += 250
-	var gu := AnimationNodeOneShot.new()
-	gu.fadein_time = 0.05
-	gu.fadeout_time = 0.3
-	bt.add_node("os_getup", gu, Vector2(x, 100))
-	bt.add_node("an_getup", fn.call("getup"), Vector2(x, -150))
-	bt.connect_node("os_getup", 0, last)
-	bt.connect_node("os_getup", 1, "an_getup")
-	bt.connect_node("output", 0, "os_getup")
+	for gu in GETUPS:
+		if not have.call(gu):
+			continue
+		var g := AnimationNodeOneShot.new()
+		g.fadein_time = 0.25
+		g.fadeout_time = 0.3
+		bt.add_node("os_" + gu, g, Vector2(x, 100))
+		bt.add_node("an_" + gu, fn.call(gu), Vector2(x, -150))
+		bt.connect_node("os_" + gu, 0, last)
+		bt.connect_node("os_" + gu, 1, "an_" + gu)
+		last = "os_" + gu
+		x += 250
+	for h in HITS:
+		if not have.call(h):
+			continue
+		var o := AnimationNodeOneShot.new()
+		o.mix_mode = AnimationNodeOneShot.MIX_MODE_ADD
+		o.fadein_time = 0.02
+		o.fadeout_time = 0.2
+		bt.add_node("os_" + h, o, Vector2(x, 100))
+		var bl := AnimationNodeBlend2.new()
+		bt.add_node("amt_" + h, bl, Vector2(x, -150))
+		bt.add_node("z_" + h, fn.call(h + "_zero"), Vector2(x - 100, -300))
+		bt.add_node("an_" + h, fn.call(h), Vector2(x + 100, -300))
+		bt.connect_node("amt_" + h, 0, "z_" + h)
+		bt.connect_node("amt_" + h, 1, "an_" + h)
+		bt.connect_node("os_" + h, 0, last)
+		bt.connect_node("os_" + h, 1, "amt_" + h)
+		last = "os_" + h
+		x += 250
+	bt.connect_node("output", 0, last)
 	tree = AnimationTree.new()
 	tree.name = "AnimTree"
 	tree.tree_root = bt
@@ -571,6 +757,25 @@ func _setup_animation() -> void:
 	tree.anim_player = tree.get_path_to(player)
 	tree.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
 	tree.active = true
+	_last_pos = global_position if is_inside_tree() else Vector3.ZERO
+	_prev_yaw = rotation.y
+	if zombie_like():
+		tree.advance(randf() * 3.0)
+		tree.set("parameters/ts_zidle/scale", randf_range(0.8, 1.2))
+
+func zombie_like() -> bool:
+	return model_name.begins_with("rimebound_") or model_name in ZOMBIE_LIKE
+
+func _track_paths_for(bones: Array) -> Array:
+	var out: Array = []
+	if not player.has_animation("idle"):
+		return out
+	var a: Animation = player.get_animation("idle")
+	for i in a.get_track_count():
+		var p := a.track_get_path(i)
+		if String(p.get_concatenated_subnames()) in bones:
+			out.append(p)
+	return out
 
 func _filter_upper(node) -> void:
 	if not player.has_animation("idle"):
@@ -588,22 +793,69 @@ func play(anim: String) -> void:
 	anim = ALIASES.get(anim, anim)
 	if tree == null:
 		return
-	if anim == "getup":
-		tree.set("parameters/os_getup/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
-		_os_name = "getup"; _os_t = 0.0; _os_len = float(_lens.get("getup", 2.0))
+	if anim in ["knife", "hatchet_swing"]:
+		# 3-hit combo: diagonal chop, backhand, shove (resets after a pause)
+		var seq := ["hatchet_swing", "hatchet_2", "hatchet_3"]
+		_combo = (_combo + 1) % 3 if _combo_t > 0.0 else 0
+		_combo_t = 1.4
+		anim = seq[_combo]
+	elif anim == "attack" and zombie_like() and player.has_animation("attack_b") and randf() < 0.4:
+		anim = "attack_b"
+	elif anim == "getup":
+		anim = _getup_for_variant()
+		if not tree.tree_root.has_node("os_" + anim):
+			anim = "getup"
+		if not tree.tree_root.has_node("os_" + anim):
+			return
+		tree.set("parameters/os_%s/request" % anim, AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+		_os_name = "getup"; _os_t = 0.0; _os_len = float(_lens.get(anim, 2.0))
 		return
-	if not (anim in ONESHOTS):
+	if not tree.tree_root.has_node("os_" + anim):
 		anim = "hurt"
+		if not tree.tree_root.has_node("os_hurt"):
+			return
 	_os_name = anim
 	_os_t = 0.0
 	_os_len = float(_lens.get(anim, 0.6))
 	tree.set("parameters/os_%s/request" % anim, AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+
+func _getup_for_variant() -> String:
+	match _death_idx:
+		0: return "getup_back"
+		1: return "getup_front"
+		3: return "getup_side"
+	return "getup"
 
 func is_playing(anim: String = "") -> bool:
 	if _os_name == "":
 		return false
 	anim = ALIASES.get(anim, anim)
 	return anim == "" or _os_name == anim
+
+## Directional additive hit reaction. `dir` = world direction the projectile / blow travelled (towards this body).
+func hit_react(dir: Vector3, dmg: float, headshot := false) -> void:
+	hit_dir = dir
+	hit_power = dmg
+	if tree == null or pose == "dead":
+		return
+	var l := global_transform.basis.inverse() * dir
+	var nm := "hit_front"
+	if headshot and player.has_animation("hit_head"):
+		nm = "hit_head"
+	elif absf(l.x) > absf(l.z) * 1.1:
+		nm = "hit_right" if l.x > 0.0 else "hit_left"
+	elif l.z > 0.0:
+		nm = "hit_back"
+	if not tree.tree_root.has_node("os_" + nm):
+		play("hurt")
+		return
+	var amt := clampf(0.35 + dmg / 40.0, 0.4, 1.0)
+	tree.set("parameters/amt_%s/blend_amount" % nm, amt)
+	tree.set("parameters/os_%s/request" % nm, AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+
+## Hit from a world position (e.g. the player being clawed).
+func hit_react_from(src: Vector3, dmg: float) -> void:
+	hit_react((global_position - src).normalized(), dmg)
 
 func _process(delta: float) -> void:
 	if tree == null:
@@ -613,6 +865,14 @@ func _process(delta: float) -> void:
 		_os_t += delta
 		if _os_t >= _os_len:
 			_os_name = ""
+	_combo_t = maxf(0.0, _combo_t - delta)
+	# local velocity + yaw rate come from the node itself (works for player, enemies, NPCs)
+	if delta > 0.0001:
+		var v := (global_position - _last_pos) / delta
+		_local_vel = _local_vel.lerp(global_transform.basis.inverse() * v, clampf(delta * 12.0, 0.0, 1.0))
+		_yaw_rate = lerpf(_yaw_rate, wrapf(rotation.y - _prev_yaw, -PI, PI) / delta, clampf(delta * 10.0, 0.0, 1.0))
+	_last_pos = global_position
+	_prev_yaw = rotation.y
 	var spd := move_speed
 	var dead_now := pose == "dead"
 	# pose transitions
@@ -622,9 +882,11 @@ func _process(delta: float) -> void:
 		var req := pose if pose in ["normal", "zombie", "crawl", "sit", "hang"] else "normal"
 		if dead_now:
 			var v := death_variant if death_variant >= 0 else randi() % 4
+			_death_idx = v % 4
 			req = ["dead", "dead_f", "dead_k", "dead_s"][v % 4]
-			for os in ONESHOTS:
-				tree.set("parameters/os_%s/request" % os, AnimationNodeOneShot.ONE_SHOT_REQUEST_ABORT)
+			for os in UPPER_SHOTS + FULL_SHOTS + GETUPS:
+				if tree.tree_root.has_node("os_" + os):
+					tree.set("parameters/os_%s/request" % os, AnimationNodeOneShot.ONE_SHOT_REQUEST_ABORT)
 			_os_name = ""
 			# spawned already dead (sleepers, corpses): jump straight to the final frame
 			var instant := _age < 0.25
@@ -632,8 +894,13 @@ func _process(delta: float) -> void:
 			for i in 4:
 				tree.set("parameters/ts_dead%d/scale" % i, 60.0 if instant else 1.0)
 			_dead_t = 0.0 if not instant else -1.0
+			if not instant and allow_ragdoll:
+				_rag_delay = [0.45, 0.35, 0.5, 0.4][_death_idx]
 		else:
 			_pose_t.xfade_time = 0.18
+			_rag_delay = -1.0
+			if _rag_sim != null:
+				stop_ragdoll()
 			if _was_dead and _age > 0.5:
 				play("getup")
 		tree.set("parameters/pose/transition_request", req)
@@ -642,15 +909,46 @@ func _process(delta: float) -> void:
 		for i in 4:
 			tree.set("parameters/ts_dead%d/scale" % i, 1.0)
 		_dead_t = 0.0
+	if _rag_delay >= 0.0:
+		_rag_delay -= delta
+		if _rag_delay < 0.0:
+			start_ragdoll(hit_dir.normalized() * clampf(2.0 + hit_power * 0.05, 2.0, 6.0) + Vector3(0, 1.2, 0))
 	# normal locomotion
 	_move_w = move_toward(_move_w, clampf(inverse_lerp(0.05, 0.6, spd), 0.0, 1.0), delta * 6.0)
 	tree.set("parameters/mix_move/blend_amount", _move_w)
 	var bsp: float = clampf(spd, walk_speed, run_speed)
+	if spd > run_speed * 1.15:
+		bsp = spd
 	tree.set("parameters/bs_move/blend_position", bsp)
 	tree.set("parameters/ts_move/scale", clampf(spd / maxf(bsp, 0.1), 0.5, 1.6))
+	if tree.tree_root.has_node("mix_dir"):
+		var want_strafe := 1.0 if (aim and pose == "normal" and spd > 0.1) else 0.0
+		_strafe_w = move_toward(_strafe_w, want_strafe, delta * 8.0)
+		tree.set("parameters/mix_dir/blend_amount", _strafe_w)
+		var lv := Vector2(_local_vel.x, _local_vel.z)
+		if lv.length() > 0.05:
+			lv = lv.normalized()
+		tree.set("parameters/bs_strafe/blend_position", lv)
+		tree.set("parameters/ts_strafe/scale", clampf(spd / STRAFE_SPEED, 0.5, 1.7))
+	if tree.tree_root.has_node("mix_turn_l"):
+		var standing := 1.0 if (spd < 0.25 and pose == "normal") else 0.0
+		var yr := clampf(absf(_yaw_rate) / 2.2, 0.0, 1.0) * standing
+		_turn_l_w = move_toward(_turn_l_w, yr if _yaw_rate > 0.0 else 0.0, delta * 6.0)
+		_turn_r_w = move_toward(_turn_r_w, yr if _yaw_rate < 0.0 else 0.0, delta * 6.0)
+		tree.set("parameters/mix_turn_l/blend_amount", _turn_l_w)
+		tree.set("parameters/mix_turn_r/blend_amount", _turn_r_w)
+	# run-to-stop
+	if tree.tree_root.has_node("os_run_stop"):
+		if pose == "normal" and not aim and _prev_spd > 2.8 and spd < 1.2:
+			tree.set("parameters/os_run_stop/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+		elif spd > 1.0 and _prev_spd <= 1.0:
+			tree.set("parameters/os_run_stop/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_ABORT)
+	_prev_spd = spd
 	# zombie
 	tree.set("parameters/mix_z/blend_amount", clampf(inverse_lerp(0.05, 0.4, spd), 0.0, 1.0))
-	tree.set("parameters/ts_z/scale", clampf(spd / zombie_speed, 0.6, 2.4))
+	var zbp: float = clampf(spd, zombie_speed, 3.8) if spd > 1.8 else zombie_speed
+	tree.set("parameters/a_zwalk/blend_position", zbp)
+	tree.set("parameters/ts_z/scale", clampf(spd / maxf(zbp, 0.1), 0.6, 2.4))
 	tree.set("parameters/ts_crawl/scale", clampf(spd / 0.6, 0.35, 2.0) if spd > 0.05 else 0.0)
 	# aim layer
 	var want := 1.0 if (aim and pose == "normal") else 0.0
@@ -665,6 +963,135 @@ func _process(delta: float) -> void:
 		weapon_ik.aim_point_world = aim_point
 		weapon_ik.update(delta)
 	_apply_bone_scales()
+	_update_look(delta)
+
+var _death_idx := 0
+var _rag_delay := -1.0
+
+# ------------------------------------------------------------------ look-at head tracking (zombies watch the player)
+var look_target: Node3D
+var _look_w := 0.0
+var _look_mods: Array = []
+var _look_node: Node3D
+
+## Make the head (and a little neck) follow `n` (e.g. the player) within anatomical limits; null releases.
+func set_look_target(n: Node3D) -> void:
+	look_target = n
+
+func _ensure_look() -> void:
+	if not _look_mods.is_empty() or skeleton == null:
+		return
+	_look_node = Node3D.new()
+	_look_node.name = "LookTarget"
+	_look_node.top_level = true
+	add_child(_look_node)
+	for spec in [["neck_01", 0.35, 35.0, 20.0], ["head", 0.85, 70.0, 40.0]]:
+		if skeleton.find_bone(spec[0]) < 0:
+			continue
+		var lm := LookAtModifier3D.new()
+		lm.name = "Look_" + spec[0]
+		skeleton.add_child(lm)
+		lm.bone_name = spec[0]
+		lm.forward_axis = 4   # BONE_AXIS_PLUS_Z (head bones are y-up / z-forward)
+		lm.primary_rotation_axis = Vector3.AXIS_Y
+		lm.use_angle_limitation = true
+		lm.symmetry_limitation = true
+		lm.primary_limit_angle = deg_to_rad(spec[2])
+		lm.secondary_limit_angle = deg_to_rad(spec[3])
+		lm.target_node = lm.get_path_to(_look_node)
+		lm.influence = 0.0
+		lm.set_meta("max_w", spec[1])
+		_look_mods.append(lm)
+
+func _update_look(delta: float) -> void:
+	var want := 0.0
+	if look_target != null and is_instance_valid(look_target) and pose in ["zombie", "normal"] and skeleton != null:
+		want = 1.0
+		_ensure_look()
+		if _look_node != null:
+			_look_node.global_position = look_target.global_position + Vector3(0, 1.45, 0)
+	_look_w = move_toward(_look_w, want, delta * 3.0)
+	for lm in _look_mods:
+		lm.influence = _look_w * float(lm.get_meta("max_w", 0.8))
+
+# ------------------------------------------------------------------ ragdoll (death clip first, then physics takes over)
+const RAG_BONES := [
+	# bone, child (length), radius, mass, swing, twist
+	["pelvis", "spine_02", 0.13, 12.0, 0.0, 0.0],
+	["spine_02", "spine_03", 0.14, 9.0, 35.0, 20.0],
+	["spine_03", "neck_01", 0.15, 10.0, 35.0, 20.0],
+	["head", "", 0.10, 4.5, 40.0, 40.0],
+	["upperarm_l", "lowerarm_l", 0.05, 2.2, 75.0, 40.0], ["upperarm_r", "lowerarm_r", 0.05, 2.2, 75.0, 40.0],
+	["lowerarm_l", "hand_l", 0.045, 1.4, 70.0, 30.0], ["lowerarm_r", "hand_r", 0.045, 1.4, 70.0, 30.0],
+	["thigh_l", "calf_l", 0.085, 8.0, 60.0, 25.0], ["thigh_r", "calf_r", 0.085, 8.0, 60.0, 25.0],
+	["calf_l", "foot_l", 0.06, 4.0, 45.0, 15.0], ["calf_r", "foot_r", 0.06, 4.0, 45.0, 15.0],
+]
+static var _rag_live: Array = []
+var _rag_sim: PhysicalBoneSimulator3D
+
+func can_ragdoll() -> bool:
+	return skeleton != null and is_inside_tree() and _hidden.is_empty() and absf(model_root.scale.x - 1.0) < 0.12 \
+		and skeleton.find_bone("pelvis") >= 0
+
+func start_ragdoll(impulse: Vector3 = Vector3.ZERO) -> void:
+	if not can_ragdoll():
+		return
+	if _rag_sim == null:
+		_rag_sim = PhysicalBoneSimulator3D.new()
+		_rag_sim.name = "Ragdoll"
+		skeleton.add_child(_rag_sim)
+		for r in RAG_BONES:
+			var bi := skeleton.find_bone(r[0])
+			if bi < 0:
+				continue
+			var ln := 0.2
+			if r[1] != "" and skeleton.find_bone(r[1]) >= 0:
+				ln = skeleton.get_bone_rest(skeleton.find_bone(r[1])).origin.length()
+			var pb := PhysicalBone3D.new()
+			pb.name = "PB_" + r[0]
+			_rag_sim.add_child(pb)
+			pb.bone_name = r[0]
+			pb.mass = r[3]
+			pb.collision_layer = 0
+			pb.collision_mask = 1
+			pb.linear_damp = 0.6
+			pb.angular_damp = 2.0
+			pb.friction = 1.0
+			if r[0] != "pelvis":
+				pb.joint_type = PhysicalBone3D.JOINT_TYPE_CONE
+				pb.set("joint_constraints/swing_span", r[4])
+				pb.set("joint_constraints/twist_span", r[5])
+			var cs := CollisionShape3D.new()
+			var cap := CapsuleShape3D.new()
+			cap.radius = r[2]
+			cap.height = maxf(ln, r[2] * 2.0 + 0.02)
+			cs.shape = cap
+			cs.position = Vector3(0, ln * 0.5, 0)
+			pb.add_child(cs)
+	_rag_sim.physical_bones_start_simulation()
+	_rag_live.erase(self)
+	_rag_live.append(self)
+	while _rag_live.size() > 10:
+		var old = _rag_live.pop_front()
+		if is_instance_valid(old):
+			old._rag_settle()
+	for pb in _rag_sim.get_children():
+		if pb is PhysicalBone3D:
+			var w := 1.0 if pb.bone_name in ["pelvis", "spine_03", "spine_02"] else 0.4
+			pb.apply_central_impulse(impulse * pb.mass * w)
+
+func _rag_settle() -> void:
+	if _rag_sim == null:
+		return
+	for pb in _rag_sim.get_children():
+		if pb is PhysicalBone3D:
+			pb.linear_damp = 8.0
+			pb.angular_damp = 8.0
+
+func stop_ragdoll() -> void:
+	if _rag_sim != null:
+		_rag_sim.physical_bones_stop_simulation()
+	_rag_live.erase(self)
 
 # aim pitch: bend the spine/head about the character's lateral axis (after animation)
 func _collect_pitch_bones() -> void:

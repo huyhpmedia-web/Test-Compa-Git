@@ -28,7 +28,7 @@ func _ready() -> void:
 		Game.level_id = args.level
 		Game.spawn_id = args.get("spawn", "start")
 		Game._load_level()
-	else:
+	elif scene != "sign":
 		var bg := ColorRect.new()
 		bg.color = Color(0.09, 0.11, 0.14)
 		bg.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -67,6 +67,27 @@ func _ready() -> void:
 			UI.open_save()
 		"itembox":
 			UI.open_item_box()
+		"sign":
+			var cam := Camera3D.new()
+			cam.position = Vector3(0, 0, 3.2)
+			add_child(cam)
+			cam.make_current()
+			var env := WorldEnvironment.new()
+			env.environment = Environment.new()
+			env.environment.background_mode = Environment.BG_COLOR
+			env.environment.background_color = Color(0.05, 0.06, 0.08)
+			env.environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+			env.environment.ambient_light_color = Color.WHITE
+			add_child(env)
+			var y := 1.0
+			for t in ["DANGER  HIGH VOLTAGE", "ST. BRENDAN'S", "BASEMENT\nBOILER · CUSTODIAL", "NO TRESPASSING — CORVANE SYSTEMS", "SHELTER ENTRANCE:\nWEST DOOR (CUSTODIAL)\nKNOCK. ASK FOR RUTH."]:
+				var l := Label3D.new()
+				l.text = t
+				l.font_size = 48
+				l.pixel_size = 0.004
+				l.position = Vector3(0, y, 0)
+				add_child(l)
+				y -= 0.6
 		"title":
 			UI.title_card("THE LONGEST NIGHT", "Kettle Falls, Minnesota  -  Dec 21, 2026  22:14  -  -40 degrees")
 	for i in int(args.get("wait", "40")):

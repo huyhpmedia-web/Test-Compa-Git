@@ -486,7 +486,7 @@ func _apply_bone_scales() -> void:
 ## played through ADD one-shots whose amplitude is scaled by damage via a Blend2 against an identity "_zero" twin).
 const HITS := ["hit_front", "hit_back", "hit_left", "hit_right", "hit_head"]
 const UPPER_SHOTS := ["shoot", "hurt", "reload", "knife", "attack", "attack_b", "grab", "roar", "heavy", "hatchet_swing", "hatchet_2",
-	"hatchet_3", "flashlight", "interact", "pickup", "struggle", "bite"]
+	"hatchet_3", "flashlight", "interact", "pickup", "struggle", "bite", "shoot_long", "reload_long"]
 const FULL_SHOTS := ["stagger", "lunge", "run_stop", "roll"]
 const GETUPS := ["getup", "getup_back", "getup_front", "getup_side"]
 const LOWER := ["pelvis", "thigh_l", "thigh_r", "calf_l", "calf_r", "foot_l", "foot_r", "ball_l", "ball_r"]
@@ -703,13 +703,26 @@ func _setup_animation() -> void:
 	bt.add_node("a_hang", fn.call("hang"), Vector2(-600, 1000))
 	bt.connect_node("pose", 8, "a_hang")
 	# --- aim layer (upper body only)
+	var aim_in := "a_aim"
 	bt.add_node("a_aim", fn.call("aim_idle"), Vector2(100, -100))
+	if have.call("aim_long"):
+		# long guns (shotgun, launcher): stock-to-shoulder two-handed pose instead of the pistol stance
+		bt.add_node("a_aim_long", fn.call("aim_long"), Vector2(100, -200))
+		var asel := AnimationNodeTransition.new()
+		asel.input_count = 2
+		asel.set_input_name(0, "pistol")
+		asel.set_input_name(1, "long")
+		asel.xfade_time = 0.2
+		bt.add_node("aim_sel", asel, Vector2(250, -150))
+		bt.connect_node("aim_sel", 0, "a_aim")
+		bt.connect_node("aim_sel", 1, "a_aim_long")
+		aim_in = "aim_sel"
 	var aim_b := AnimationNodeBlend2.new()
 	aim_b.filter_enabled = true
 	_filter_upper(aim_b)
 	bt.add_node("aim", aim_b, Vector2(350, 100))
 	bt.connect_node("aim", 0, "pose")
-	bt.connect_node("aim", 1, "a_aim")
+	bt.connect_node("aim", 1, aim_in)
 	# --- one shots: upper body (+ full-body ones), then additive hit reacts
 	var last := "aim"
 	var x := 600
@@ -803,6 +816,8 @@ func play(anim: String) -> void:
 	anim = ALIASES.get(anim, anim)
 	if tree == null:
 		return
+	if anim in ["shoot", "reload"] and _long_gun() and tree.tree_root.has_node("os_%s_long" % anim):
+		anim += "_long"
 	if anim in ["knife", "hatchet_swing"]:
 		# 3-hit combo: diagonal chop, backhand, shove (resets after a pause)
 		var seq := ["hatchet_swing", "hatchet_2", "hatchet_3"]
@@ -828,6 +843,9 @@ func play(anim: String) -> void:
 	_os_t = 0.0
 	_os_len = float(_lens.get(anim, 0.6))
 	tree.set("parameters/os_%s/request" % anim, AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+
+func _long_gun() -> bool:
+	return weapon_ik != null and weapon_ik.weapon != null and String(weapon_ik.get("wid")) in ["shotgun", "launcher"]
 
 func _getup_for_variant() -> String:
 	match _death_idx:
@@ -964,6 +982,8 @@ func _process(delta: float) -> void:
 	var want := 1.0 if (aim and pose == "normal") else 0.0
 	_aim_w = move_toward(_aim_w, want, delta * 7.0)
 	tree.set("parameters/aim/blend_amount", _aim_w)
+	if tree.tree_root.has_node("aim_sel"):
+		tree.set("parameters/aim_sel/transition_request", "long" if _long_gun() else "pistol")
 	tree.advance(delta)
 	_apply_aim_pitch()
 	_apply_extra_rot()

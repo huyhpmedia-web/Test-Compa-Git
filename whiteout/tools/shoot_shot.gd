@@ -35,6 +35,16 @@ func _ready() -> void:
 				p.cam_pitch = float(args.pitch)
 			if args.get("aim", "0") == "1":
 				Input.action_press("aim")
+		if p and args.has("target") and (i == 5 or i == fire_at - 1):
+			var best: Node3D = null
+			for e in get_tree().get_nodes_in_group("enemy"):
+				if best == null or e.global_position.distance_to(p.global_position) < best.global_position.distance_to(p.global_position):
+					best = e
+			if best:
+				var d: Vector3 = best.global_position - p.global_position
+				p.cam_yaw = atan2(d.x, d.z) + PI
+				p.model.rotation.y = atan2(d.x, d.z)
+				p.cam_pitch = atan2(1.15 - 1.65, Vector2(d.x, d.z).length())
 		if p and i == fire_at:
 			p.fire_cd = 0.0
 			p._try_fire()

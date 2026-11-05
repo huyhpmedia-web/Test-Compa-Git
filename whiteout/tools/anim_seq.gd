@@ -74,5 +74,9 @@ func _script(m: Node3D, tgt: Node3D, i: int, t: float, f: Dictionary) -> void:
 			m.aim = true
 			m.move_speed = 1.5
 			m.position += Vector3(0.1 if i > 3 else 0.0, 0, 0) * 0.0
+		"look":
+			if i == 2: m.set_look_target(tgt); tgt.position = Vector3(3, 0, 1.5)
+			if i == 5: tgt.position = Vector3(-3, 0, 1.5)
+			if i == 7: m.set_look_target(null)
 		"hatchet":
 			if i % 3 == 1: m.play("knife")

@@ -55,8 +55,12 @@ def cloth_painter(color, contrast, gcfg, seed, label, rough=0.9, tint2=None, ban
         col = (gr * 0.32 + col * 0.68) * 0.86                                  # drab, grimy fabric (not saturated)
         # dirt / wear
         d = gore.fbm(p, 110, seed + 3)
-        col = col * (0.86 + 0.2 * d[:, None])
-        col = col * (1 - 0.3 * pt.smoothstep(0.25, 0.0, p[:, 2])[:, None])        # dirty low
+        col = col * (0.68 + 0.26 * d[:, None])
+        col = col * (1 - 0.5 * pt.smoothstep(0.45, 0.0, p[:, 2])[:, None])        # mud / slush grime climbing from the hem
+        stain = pt.smoothstep(0.52, 0.72, gore.fbm(p, 14, seed + 150)) * 0.55          # old brown stains, sweat / bile / oil
+        col = col * (1 - stain[:, None]) + np.array([0.16, 0.11, 0.07])[None] * stain[:, None] * 0.6
+        wear = pt.smoothstep(0.62, 0.78, gore.fbm(p, 70, seed + 151)) * 0.35
+        col = col * (1 - wear[:, None])
         if bands:   # hi-vis reflective bands (dirty silver)
             zc0 = cb.conv(cb.H.joint("joint-spine-1"))[2]
             bd = np.maximum(pt.smoothstep(0.03, 0.01, np.abs(p[:, 2] - (zc0 + 0.03))), pt.smoothstep(0.03, 0.01, np.abs(p[:, 2] - (zc0 + 0.26))))

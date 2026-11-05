@@ -6,8 +6,8 @@ extends RefCounted
 ## Marker contract (see world/fx.gd weapon_mesh): the marker frame IS the hand bone frame (X thumb/pinky axis, Y along the fingers, Z palm normal).
 ## Everything here runs in skeleton space; the weapon node is placed with one global transform per frame.
 
-const ANCHOR_R := Vector3(0.0, 0.058, 0.032)    # centre of the closed fist (the grip axis passes through it), hand bone frame (right)
-const ANCHOR_L := Vector3(0.0, 0.074, 0.012)
+const ANCHOR_R := Vector3(0.0, 0.100, 0.030)    # centre of the closed fist (the grip axis passes through it), hand bone frame (right)
+const ANCHOR_L := Vector3(0.0, 0.090, 0.012)
 const POLE_R := Vector3(-0.45, -1.0, -0.35)
 const POLE_L := Vector3(0.45, -1.0, -0.35)
 const FINGERS := ["thumb", "index", "middle", "ring", "pinky"]

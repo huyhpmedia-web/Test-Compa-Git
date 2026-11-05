@@ -55,25 +55,25 @@ def _z(name, outfit, gender, age, color, color2=None, seed=1, skin=None, hair=No
 
 _z("rimebound_parka_m", "parka", 1.0, 44, (0.10, 0.2, 0.17), (0.12, 0.12, 0.14), 11, hair="hair/short03", hair_tint=(0.4, 0.4, 0.42), height=1.80, weight=0.55,
    gore_cloth=dict(mouth=0.5, soak=0.05, wounds=1, torn=1, splat=0.05, frost=1.0, hem=0.4), gore_skin=dict(mouth=0.5, wounds=1, splat=0.05, frost=0.9))
-_z("rimebound_jacket_m", "jacket", 1.0, 56, (0.25, 0.23, 0.14), (0.2, 0.2, 0.22), 12, hair=None, height=1.74, weight=0.6, pants=(0.18, 0.18, 0.2),
+_z("rimebound_jacket_m", "jacket", 1.0, 56, (0.25, 0.23, 0.14), (0.2, 0.2, 0.22), 12, hair="hair/short03", hair_tint=(0.3, 0.27, 0.24), height=1.74, weight=0.6, pants=(0.18, 0.18, 0.2),
    gore_cloth=dict(mouth=0.6, soak=0.20, wounds=3, torn=2, splat=0.15, frost=0.4), gore_skin=dict(mouth=0.6, wounds=3, splat=0.10, frost=0.5),
    boots=("shoes04", (0.1, 0.09, 0.08), 0.1))
 _z("rimebound_parka_f", "parka", 0.0, 37, (0.27, 0.1, 0.11), (0.2, 0.2, 0.24), 13, hair="hair/long01", hair_tint=(0.15, 0.13, 0.13), height=1.68, weight=0.45,
    gore_cloth=dict(mouth=1.0, soak=0.40, wounds=1, torn=1, splat=0.25, frost=0.45), gore_skin=dict(mouth=1.0, wounds=1, splat=0.20, frost=0.4), pants=(0.12, 0.13, 0.2))
 _z("rimebound_flannel_m", "flannel", 1.0, 34, (0.34, 0.16, 0.12), (0.14, 0.16, 0.22), 14, hair="hair/short04", hair_tint=(0.18, 0.15, 0.13), height=1.78, weight=0.5,
    gore_cloth=dict(mouth=0.8, soak=0.45, wounds=2, torn=2, splat=0.25, frost=0.35), gore_skin=dict(mouth=0.8, wounds=2, splat=0.20, frost=0.7), boots=("shoes04", (0.12, 0.1, 0.08), 0.1))
-_z("rimebound_tee_m", "tee_m", 1.0, 66, (0.62, 0.63, 0.64), (0.18, 0.2, 0.26), 15, hair=None, height=1.72, weight=0.4, pallor=(0.78, 0.84, 0.9),
+_z("rimebound_tee_m", "tee_m", 1.0, 66, (0.42, 0.39, 0.33), (0.18, 0.2, 0.26), 15, hair="hair/short01", hair_tint=(0.35, 0.34, 0.33), height=1.72, weight=0.4, pallor=(0.78, 0.84, 0.9),
    gore_cloth=dict(mouth=0.7, soak=0.50, wounds=2, torn=2, splat=0.30, frost=0.7), gore_skin=dict(mouth=0.7, wounds=2, splat=0.25, frost=0.7), boots=("shoes06", (0.3, 0.3, 0.32), 0.1))
 _z("rimebound_tee_f", "tee_f", 0.0, 29, (0.28, 0.33, 0.42), (0.12, 0.14, 0.2), 16, hair="hair/bob01", hair_tint=(0.16, 0.12, 0.1), height=1.64, weight=0.42,
    gore_cloth=dict(mouth=0.9, soak=0.40, wounds=2, torn=1, splat=0.25, frost=0.7), gore_skin=dict(mouth=0.9, wounds=2, splat=0.20, frost=0.7), boots=("shoes06", (0.25, 0.25, 0.28), 0.1))
-_z("rimebound_nurse", "nurse", 0.0, 41, (0.62, 0.7, 0.72), (0.55, 0.62, 0.64), 17, hair="hair/bob02", hair_tint=(0.3, 0.22, 0.17), height=1.66, weight=0.45,
+_z("rimebound_nurse", "nurse", 0.0, 41, (0.5, 0.56, 0.56), (0.45, 0.5, 0.5), 17, hair="hair/bob02", hair_tint=(0.3, 0.22, 0.17), height=1.66, weight=0.45,
    gore_cloth=dict(mouth=1.0, soak=0.50, wounds=3, torn=2, splat=0.30, frost=0.7), gore_skin=dict(mouth=1.0, wounds=2, splat=0.20, frost=0.7), boots=("shoes05", (0.34, 0.36, 0.4), 0.1))
 _z("rimebound_miner", "miner", 1.0, 52, (0.13, 0.16, 0.22), (0.38, 0.1, 0.08), 18, hair="hair/short04", hair_tint=(0.2, 0.18, 0.16), height=1.78, weight=0.6, muscle=0.6,
    gloves=(0.3, 0.27, 0.22), gore_cloth=dict(mouth=0.7, soak=0.25, wounds=3, torn=2, splat=0.20, frost=0.5), gore_skin=dict(mouth=0.7, wounds=3, splat=0.15, frost=0.5),
    boots=("shoes02", (0.08, 0.07, 0.06), 0.2))
 _z("rimebound_cop", "cop", 1.0, 40, (0.07, 0.1, 0.2), (0.1, 0.1, 0.12), 19, hair=None, hair_tint=(0.15, 0.13, 0.12), height=1.82, weight=0.55, muscle=0.55, pants=(0.07, 0.09, 0.16),
    gore_cloth=dict(mouth=0.8, soak=0.30, wounds=2, torn=2, splat=0.20, frost=0.5), gore_skin=dict(mouth=0.8, wounds=2, splat=0.15, frost=0.4))
-_z("rimebound_patient", "patient", 1.0, 58, (0.55, 0.68, 0.72), (0.5, 0.62, 0.68), 20, hair="hair/short03", hair_tint=(0.5, 0.5, 0.52), height=1.72, weight=0.5, pallor=(0.8, 0.86, 0.92),
+_z("rimebound_patient", "patient", 1.0, 58, (0.42, 0.52, 0.54), (0.4, 0.5, 0.54), 20, hair="hair/short03", hair_tint=(0.5, 0.5, 0.52), height=1.72, weight=0.5, pallor=(0.8, 0.86, 0.92),
    gore_cloth=dict(mouth=0.9, soak=0.50, wounds=2, torn=2, splat=0.30, frost=0.6), gore_skin=dict(mouth=0.9, wounds=2, splat=0.25, frost=0.6), boots=None)
 
 SPECIAL_DETAILS_HUSK = [("torso", "torso-scale-horiz", 0.9, "decr", "incr"), ("torso", "torso-scale-depth", 0.6, "decr", "incr"), ("neck", "neck-scale-horiz", 0.9, "decr", "incr"),
@@ -335,7 +335,7 @@ def jacket_texture(cb, label, P, pos, comp, jacket_ids, size=2048, orig=None):
     black += torso * pt.smoothstep(neck_z - 0.075, neck_z - 0.045, z)                    # collar / yoke
     black += torso * pt.smoothstep(waist_z - 0.075, waist_z - 0.105, z)                  # hem panel
     black += torso * pt.smoothstep(0.155, 0.185, ax) * (z < chest_z + 0.17)              # side panels
-    black += arm * pt.smoothstep(arm_len - 0.17, arm_len - 0.15, s)                       # forearm cuffs
+    black += arm * pt.smoothstep(arm_len - 0.2, arm_len - 0.12, s)                       # forearm cuffs
     black += arm * (1 - pt.smoothstep(0.03, 0.06, s)) * 0.0
     black += arm * pt.smoothstep(neck_z - 0.085, neck_z - 0.06, z) * (s < 0.10)           # shoulder cap
     black = np.clip(black, 0, 1)
@@ -520,6 +520,34 @@ def merge_meshes(parts):
     return np.concatenate(V), F
 
 
+def glove_uv(pos):
+    """planar, tiling uv (no wrap seam): the texture repeats every ~17 cm."""
+    return np.stack([pos[:, 0] * 6.0 + pos[:, 1] * 4.0, pos[:, 2] * 6.0], axis=1)
+
+
+def glove_material(n):
+    """worn dark leather / synthetic work glove: grain, seam lines, scuffs + matching normal map."""
+    size = 512
+    rng = np.random.RandomState(11)
+    yy, xx = np.mgrid[0:size, 0:size].astype(np.float32) / size
+    grain = pt.blur(rng.rand(size, size).astype(np.float32), 1)
+    cr = np.abs(np.sin(xx * 140 + grain * 5)) * np.abs(np.sin(yy * 120 + grain * 4))
+    base = np.array([0.20, 0.145, 0.10])
+    col = base[None, None, :] * (0.7 + 0.5 * grain[..., None]) * (0.85 + 0.2 * cr[..., None])
+    scuff = np.clip((pt.blur(rng.rand(size, size).astype(np.float32), 6) - 0.5) * 6, 0, 1)
+    col = col * (1 - 0.4 * scuff[..., None]) + np.array([0.33, 0.25, 0.17])[None, None, :] * 0.25 * scuff[..., None]
+    seam = np.exp(-(((xx * 3.0) % 1.0 - 0.0) / 0.01) ** 2) + np.exp(-(((yy * 2.0) % 1.0 - 0.5) / 0.008) ** 2)
+    col = col * (1 - 0.5 * np.clip(seam, 0, 1)[..., None])
+    h = grain * 0.6 + cr * 0.4 - np.clip(seam, 0, 1) * 1.5
+    gy, gx = np.gradient(pt.blur(h, 1))
+    nx, ny = -gx * 14.0, gy * 14.0
+    nz = np.sqrt(np.clip(1 - nx * nx - ny * ny, 0.05, 1)); l = np.sqrt(nx * nx + ny * ny + nz * nz)
+    nrm = np.stack([nx / l, ny / l, nz / l], axis=2) * 0.5 + 0.5
+    d_p = jtex(f"{n}_glove_diffuse.jpg", np.clip(col, 0, 1), 90)
+    n_p = jtex(f"{n}_glove_normal.jpg", nrm, 92)
+    return make_pbr(n + "_gloves", d_p, n_p, rough=0.62, spec=0.35)
+
+
 # ------------------------------------------------------------------ ELIAS
 def assemble(cb, spec):
     if spec.get("builder"):
@@ -606,9 +634,11 @@ def assemble(cb, spec):
     near = (np.minimum(np.linalg.norm(bpos - wristL, axis=1), np.linalg.norm(bpos - wristR, axis=1)) < 0.075) & (lw > 0.3)
     gmask = gmask | near
     gp, gfv, gft, gused = body_surface_patch(cb, gmask, 0.005)
-    gl = solid_mat(n + "_gloves", (0.42, 0.33, 0.22), 0.75)
-    go = cb.add_mesh("gloves", gp, gfv, None, None, W=cb.W[gused], mat=gl)
-    cb.decimate(go, 0.36)
+    gl = glove_material(n)
+    gpos_ = np.array(gp)
+    guv = glove_uv(gpos_)
+    go = cb.add_mesh("gloves", gp, gfv, gfv, guv, W=cb.W[gused], mat=gl)
+    cb.decimate(go, 0.7)
     del_verts |= set(np.where(gmask)[0].tolist())
 
     # ---------- tool belt (over the jacket hem)
@@ -680,7 +710,7 @@ def assemble(cb, spec):
         cb.add_mesh(nm, pp, [f[0] for f in Pp.faces], [f[1] for f in Pp.faces], Pp.uv, bone="head", mat=m)
     Ph = mh.Proxy(A("hair/short02/short02.mhclo"))
     hm = make_pbr(n + "_hair", hair_png(cb, "hair", A("hair/short02/short02_diffuse.png"), 1024, tint=spec.get("hair_tint", (0.2, 0.17, 0.15))), rough=0.7, alpha=True)
-    hp = messy(cb.conv(Ph.fit(H.v, H.base_v)), Ph.faces, 0.007)
+    hp = messy(inflate(cb.conv(Ph.fit(H.v, H.base_v)), Ph.faces, 0.010), Ph.faces, 0.004)   # lift off the skull first so the noise can't dip below the scalp
     ho_ = cb.add_mesh("hair", hp, [f[0] for f in Ph.faces], [f[1] for f in Ph.faces], Ph.uv, W=Ph.skin_weights(cb.Wfull), mat=hm)
     bc.fill_small_holes(ho_)
 
@@ -692,7 +722,7 @@ _z("rimebound_old_m", "flannel", 1.0, 78, (0.28, 0.33, 0.25), (0.22, 0.2, 0.18),
    boots=("shoes04", (0.2, 0.17, 0.13), 0.1), gore_cloth=dict(mouth=0.8, soak=0.5, wounds=1, torn=0, splat=0.05, frost=0.3, hem=0.3, hands=0.5), gore_skin=dict(mouth=0.8, neck=0.6, wounds=1, splat=0.05, hands=0.5, tears=0.5), tears=2, sunken=1.4)
 _z("rimebound_teen_f", "parka", 0.0, 16, (0.42, 0.24, 0.3), (0.16, 0.17, 0.24), 53, hair="hair/long01", hair_tint=(0.3, 0.22, 0.16), height=1.57, weight=0.3, muscle=0.2,
    gore_cloth=dict(mouth=0.9, soak=0.5, wounds=1, torn=0, splat=0.06, frost=0.3, hem=0.2, hands=0.7), gore_skin=dict(mouth=0.9, neck=0.8, wounds=1, splat=0.06, hands=0.7, tears=0.6), pants=(0.1, 0.12, 0.18), tears=2)
-_z("rimebound_fat_m", "tee_m", 1.0, 55, (0.38, 0.42, 0.32), (0.18, 0.2, 0.26), 54, hair=None, height=1.75, weight=1.0, muscle=0.2, pallor=(0.72, 0.8, 0.86),
+_z("rimebound_fat_m", "tee_m", 1.0, 55, (0.34, 0.37, 0.29), (0.18, 0.2, 0.26), 54, hair="hair/short02", hair_tint=(0.42, 0.4, 0.38), height=1.75, weight=1.0, muscle=0.2, pallor=(0.72, 0.8, 0.86),
    boots=("shoes06", (0.2, 0.2, 0.22), 0.1), gore_cloth=dict(mouth=0.9, soak=0.6, wounds=2, torn=0, splat=0.1, frost=0.3, hem=0.4, hands=0.6), gore_skin=dict(mouth=0.9, neck=0.8, wounds=2, splat=0.08, hands=0.6), tears=3, body_dec=0.36)
 # head variants on existing bodies: one missing an eye, one missing most of the jaw
 SPECS["rimebound_cop"]["eye_missing"] = "l"

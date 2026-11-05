@@ -267,7 +267,14 @@ func _process(delta: float) -> void:
 	pitch_pivot.rotation.x = cam_pitch + _ck.x
 	yaw_pivot.rotation.y = cam_yaw + _ck.y
 	arm.spring_length = lerp(2.4, 0.8, aim_t)
-	arm.position = Vector3(lerp(0.45, 0.58, aim_t), lerp(0.05, 0.1, aim_t), 0)
+	var side_off: float = lerp(0.45, 0.58, aim_t)
+	# keep the shoulder-offset camera out of walls in tight corridors (the spring arm only handles the back direction)
+	var q_side := PhysicsRayQueryParameters3D.create(pitch_pivot.global_position, pitch_pivot.global_position + pitch_pivot.global_transform.basis.x * (side_off + 0.2), 1)
+	q_side.exclude = [get_rid()]
+	var h_side := get_world_3d().direct_space_state.intersect_ray(q_side)
+	if h_side:
+		side_off = clampf(pitch_pivot.global_position.distance_to(h_side.position) - 0.2, 0.0, side_off)
+	arm.position = Vector3(side_off, lerp(0.05, 0.1, aim_t), 0)
 	cam.fov = lerp(62.0, 44.0, aim_t) + _fovk
 	if shake > 0.0:
 		cam.h_offset = randf_range(-1, 1) * shake * 0.06

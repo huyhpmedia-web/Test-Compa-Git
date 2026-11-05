@@ -41,7 +41,7 @@ def face_parts(cb, spec, hair=None, hair_tint=None, brow="eyebrows/eyebrow002/ey
         Ph = mh.Proxy(A(hair, os.path.basename(hair) + ".mhclo"))
         png = [f for f in os.listdir(A(hair)) if f.endswith(".png")][0]
         hm = make_pbr(n + "_hair", hair_png(cb, "hair", os.path.join(A(hair), png), 1024, tint=hair_tint, frost=frost_hair), rough=0.7, alpha=True)
-        ho = cb.add_mesh("hair", cb.conv(Ph.fit(H.v, H.base_v)), [f[0] for f in Ph.faces], [f[1] for f in Ph.faces], Ph.uv,
+        ho = cb.add_mesh("hair", inflate(cb.conv(Ph.fit(H.v, H.base_v)), Ph.faces, 0.005), [f[0] for f in Ph.faces], [f[1] for f in Ph.faces], Ph.uv,
                          W=Ph.skin_weights(cb.Wfull), mat=hm)
         bc.fill_small_holes(ho)
         if decim_hair < 1.0:

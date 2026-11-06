@@ -69,11 +69,12 @@ func _env() -> void:
 	e.glow_intensity = 0.9
 	e.glow_hdr_threshold = 0.95
 	e.volumetric_fog_albedo = Color(0.78, 0.86, 1.0)
+	e.volumetric_fog_length = 180.0
 	snowfall(1800)
 	footstep = "snow"
 
 func _add_spawns() -> void:
-	add_spawn("start", Vector3(0, 0, 82), 0.0)
+	add_spawn("start", Vector3(0, 0, 82), PI)
 
 func _process(delta: float) -> void:
 	super._process(delta)

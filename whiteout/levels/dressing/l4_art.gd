@@ -217,7 +217,7 @@ static func _lobby() -> void:
 	# ---- reception: stone top on a slatted-walnut body, metal kick, glowing under-edge, CORVANE back wall
 	var rd := "res://assets/env/props/reception_desk.glb"
 	var have_glb := ResourceLoader.exists(rd)
-	var wood := Mats.get_mat("wood_panel", 0.6)
+	var wood := Mats.color(Color(0.5, 0.33, 0.2), 0.5)
 	var top := pbr("terrazzo", 1.6, Color(0.9, 0.9, 0.92), 0.28, 0.4)
 	var dark := Mats.color(Color(0.035, 0.04, 0.05), 0.35, 0.55)
 	if have_glb:
@@ -445,13 +445,6 @@ static func _plant_pipeline() -> void:
 # ------------------------------------------------------------------ exterior
 static func _exterior() -> void:
 	# facade reading as a real building: curtain-wall glass bands and lit mullions
-	var gl := Mats.color(Color(0.05, 0.09, 0.12, 0.5), 0.05, 0.1)
-	for i in range(-6, 10):
-		var x := i * 5.0 - 1.0
-		if absf(x) < 4.0:
-			continue
-		for yy in [2.4, 6.4]:
-			box(Vector3(x, yy, 12.4), Vector3(2.7, 1.7, 0.06), gl, false)
 	# floodlights on poles near the gate: tall, cold, lit road
 	for p in [Vector3(-9.0, 0, 52.0), Vector3(9.0, 0, 56.0)]:
 		Props.lamp_post(geo, p, 0.0 if p.x < 0 else PI, true, Color(0.7, 0.85, 1.0))
@@ -470,7 +463,7 @@ static func _exterior() -> void:
 	# MERIDIAN wordmark: big, floodlit, readable from the spawn
 	var l := label("MERIDIAN", Vector3(0, 8.4, 12.34), 0.0, 260, Color(0.85, 0.95, 1.3), 0.016, false)
 	l.render_priority = 2
-	box(Vector3(0, 8.4, 12.3), Vector3(34.0, 3.2, 0.06), pbr("clad", 2.0, Color(0.5, 0.55, 0.6), 1.0), false)
+	box(Vector3(0, 8.4, 12.3), Vector3(34.0, 3.2, 0.06), emi(Color(0.05, 0.12, 0.2), 1.4), false)
 	# the entrance's sidelights glow warm (the only warm light in town)
 	box(Vector3(-2.2, 1.7, 12.42), Vector3(0.9, 3.0, 0.05), emi(Color(1.0, 0.85, 0.65), 1.1), false)
 	box(Vector3(2.2, 1.7, 12.42), Vector3(0.9, 3.0, 0.05), emi(Color(1.0, 0.85, 0.65), 1.1), false)

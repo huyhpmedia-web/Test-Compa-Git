@@ -986,6 +986,12 @@ jesabat — "Steam Hiss" · juskiddink — "Dogs growling" · poots — "deep_un
 Plus CC0 sounds by Kenney, MrFossy, LeMudCrab, michorvath, artisticdude and many Freesound contributors.
 Full list: audio/LICENSES.md
 
+[b]3D models[/b]
+Environment props, furniture, trees, pistol and hatchet: Poly Haven artists (CC0, polyhaven.com). Vehicles, shotgun, revolver, flare launcher, transformer, server rack, steeple, ice formations, ore cart and reception desk: generated for this project with Higgsfield (Tripo H3.1).
+
+[b]Animation[/b]
+Motion capture: CMU Graphics Lab Motion Capture Database (mocap.cs.cmu.edu), funded by NSF EIA-0196217. Quaternius Universal Animation Library (CC0).
+
 [b]Typeface[/b]
 Be Vietnam Pro by the Be Vietnam Pro Project Authors (SIL Open Font License 1.1). Full text: fonts/OFL.txt
 

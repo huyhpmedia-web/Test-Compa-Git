@@ -11,11 +11,11 @@ msgstr ""
 msgid "Talk to"
 msgstr ""
 
-#: actors/npc.gd:46 levels/l6_heart.gd:525
+#: actors/npc.gd:46 levels/l6_heart.gd:535
 msgid "June"
 msgstr ""
 
-#: actors/npc.gd:50 actors/npc.gd:50 levels/l5_mine.gd:1179
+#: actors/npc.gd:50 actors/npc.gd:50 levels/l5_mine.gd:1186
 msgid "JUNE"
 msgstr ""
 
@@ -31,7 +31,7 @@ msgstr ""
 msgid "Ruth"
 msgstr ""
 
-#: actors/npc.gd:56 actors/npc.gd:56 levels/l5_mine.gd:1273
+#: actors/npc.gd:56 actors/npc.gd:56 levels/l5_mine.gd:1280
 msgid "RUTH"
 msgstr ""
 
@@ -47,7 +47,7 @@ msgstr ""
 msgid "Dr. Hart"
 msgstr ""
 
-#: actors/npc.gd:62 actors/npc.gd:62 levels/l4_meridian.gd:952
+#: actors/npc.gd:62 actors/npc.gd:62 levels/l4_meridian.gd:947
 msgid "IMOGEN"
 msgstr ""
 
@@ -127,7 +127,7 @@ msgstr ""
 msgid "Combine it with something."
 msgstr ""
 
-#: core/game.gd:277 levels/l1_substation.gd:1309 levels/l4_meridian.gd:1146
+#: core/game.gd:277 levels/l1_substation.gd:1309 levels/l4_meridian.gd:1141
 msgid "There is nothing to use it on here."
 msgstr ""
 
@@ -408,6 +408,26 @@ msgstr ""
 msgid "Miner's check-in tag no. 114. T. KADE. It was never collected in 2011."
 msgstr ""
 
+#: levels/dressing/l4_art.gd:236
+msgid "CORVANE"
+msgstr ""
+
+#: levels/dressing/l4_art.gd:282
+msgid "CORVANE SYSTEMS"
+msgstr ""
+
+#: levels/dressing/l4_art.gd:283
+msgid "Reliability is a promise."
+msgstr ""
+
+#: levels/dressing/l4_art.gd:464 levels/l4_meridian.gd:359 levels/l4_meridian.gd:445
+msgid "MERIDIAN"
+msgstr ""
+
+#: levels/dressing/l4_art.gd:479 levels/l2_school.gd:863
+msgid "EXIT"
+msgstr ""
+
 #: levels/l1_substation.gd:67 levels/l1_substation.gd:1260
 msgid "Reach the school. Gran's shelter. Follow Highway 53 north."
 msgstr ""
@@ -667,7 +687,7 @@ msgstr ""
 msgid "The road barrier is chained, and the gate motor is dead. No power in the whole town."
 msgstr ""
 
-#: levels/l1_substation.gd:1016 levels/l3_church.gd:1184
+#: levels/l1_substation.gd:1016 levels/l3_church.gd:1204
 msgid "Go through the gate"
 msgstr ""
 
@@ -1093,10 +1113,6 @@ msgstr ""
 msgid ""
 "BASEMENT\n"
 "BOILER · CUSTODIAL"
-msgstr ""
-
-#: levels/l2_school.gd:863
-msgid "EXIT"
 msgstr ""
 
 #: levels/l2_school.gd:871
@@ -1577,151 +1593,151 @@ msgstr ""
 msgid "Take the east gate to St. Brendan's church. Something walks the town with a light."
 msgstr ""
 
-#: levels/l3_church.gd:297
+#: levels/l3_church.gd:315
 msgid "KETTLE FALLS PHARMACY"
 msgstr ""
 
-#: levels/l3_church.gd:346
+#: levels/l3_church.gd:364
 msgid "IRON RANGE DINER"
 msgstr ""
 
-#: levels/l3_church.gd:355
+#: levels/l3_church.gd:373
 msgid "OPEN 24 HRS"
 msgstr ""
 
-#: levels/l3_church.gd:399
+#: levels/l3_church.gd:417
 msgid "NORTHLINE MINERAL"
 msgstr ""
 
-#: levels/l3_church.gd:400
+#: levels/l3_church.gd:418
 msgid "COMMUNITY RECRUITMENT OFFICE — CLOSED"
 msgstr ""
 
-#: levels/l3_church.gd:401
+#: levels/l3_church.gd:419
 msgid "NOW HIRING"
 msgstr ""
 
-#: levels/l3_church.gd:402
+#: levels/l3_church.gd:420
 msgid "NORTHLINE CARES"
 msgstr ""
 
-#: levels/l3_church.gd:409
+#: levels/l3_church.gd:427
 msgid "NORTHLINE"
 msgstr ""
 
-#: levels/l3_church.gd:410
+#: levels/l3_church.gd:428
 msgid "LITHIUM FOR A CLEANER TOMORROW"
 msgstr ""
 
-#: levels/l3_church.gd:411
+#: levels/l3_church.gd:429
 msgid "powering the future of Kettle Falls"
 msgstr ""
 
-#: levels/l3_church.gd:412
+#: levels/l3_church.gd:430
 msgid "TOMORROW FOR WHO?"
 msgstr ""
 
-#: levels/l3_church.gd:424
+#: levels/l3_church.gd:442
 msgid "LAKESHORE SAVINGS & LOAN"
 msgstr ""
 
-#: levels/l3_church.gd:430
+#: levels/l3_church.gd:448
 msgid "THE TAP ROOM"
 msgstr ""
 
-#: levels/l3_church.gd:458
+#: levels/l3_church.gd:476
 msgid "LAKESHORE CO-OP FUEL"
 msgstr ""
 
-#: levels/l3_church.gd:463
+#: levels/l3_church.gd:481
 msgid "PREPAY ONLY"
 msgstr ""
 
-#: levels/l3_church.gd:478
+#: levels/l3_church.gd:496
 msgid "LINDQVIST HARDWARE"
 msgstr ""
 
-#: levels/l3_church.gd:481
+#: levels/l3_church.gd:499
 msgid "SINCE 1954 — NAILS TO NEW ROOFS"
 msgstr ""
 
-#: levels/l3_church.gd:486
+#: levels/l3_church.gd:504
 msgid "Open office door"
 msgstr ""
 
-#: levels/l3_church.gd:487
+#: levels/l3_church.gd:505
 msgid "OFFICE"
 msgstr ""
 
-#: levels/l3_church.gd:510
+#: levels/l3_church.gd:528
 msgid "PROPANE — ASK DON"
 msgstr ""
 
-#: levels/l3_church.gd:511
+#: levels/l3_church.gd:529
 msgid "SPACE HEATERS: SOLD OUT"
 msgstr ""
 
-#: levels/l3_church.gd:512
+#: levels/l3_church.gd:530
 msgid "ROCK SALT: SOLD OUT   SHOVELS: SOLD OUT"
 msgstr ""
 
-#: levels/l3_church.gd:549
+#: levels/l3_church.gd:567
 msgid "WARM — COME IN — SHUT THE DOOR"
 msgstr ""
 
-#: levels/l3_church.gd:577
+#: levels/l3_church.gd:595
 msgid "KETTLE FALLS TOWN HALL"
 msgstr ""
 
-#: levels/l3_church.gd:583
+#: levels/l3_church.gd:601
 msgid "WINTER SOLSTICE CARNIVAL — DEC 21 — FREE COCOA"
 msgstr ""
 
-#: levels/l3_church.gd:615
+#: levels/l3_church.gd:633
 msgid "FREE COCOA"
 msgstr ""
 
-#: levels/l3_church.gd:654
+#: levels/l3_church.gd:672
 msgid "WELCOME TO KETTLE FALLS — POP. 1,812"
 msgstr ""
 
-#: levels/l3_church.gd:656
+#: levels/l3_church.gd:674
 msgid "HOME OF THE IRON RANGE HAWKS"
 msgstr ""
 
-#: levels/l3_church.gd:713
+#: levels/l3_church.gd:730
 msgid "SOUP OF THE DAY: NO"
 msgstr ""
 
-#: levels/l3_church.gd:876
+#: levels/l3_church.gd:896
 msgid "The doors are sealed shut by a half-metre of ice. There must be another way in."
 msgstr ""
 
-#: levels/l3_church.gd:882
+#: levels/l3_church.gd:902
 msgid "ST. BRENDAN'S"
 msgstr ""
 
-#: levels/l3_church.gd:883
+#: levels/l3_church.gd:903
 msgid "ADVENT SERVICES  —  ALL ARE WELCOME"
 msgstr ""
 
-#: levels/l3_church.gd:884
+#: levels/l3_church.gd:904
 msgid "Locked. A tag on the frame reads: 'Sacristy key — see D. Halloran'."
 msgstr ""
 
-#: levels/l3_church.gd:980
+#: levels/l3_church.gd:1000
 msgid "HYMNS: 214  118  304"
 msgstr ""
 
-#: levels/l3_church.gd:1002
+#: levels/l3_church.gd:1022
 msgid "RING FOR VESPERS"
 msgstr ""
 
-#: levels/l3_church.gd:1011
+#: levels/l3_church.gd:1031
 msgid "Sermon Draft: Advent IV"
 msgstr ""
 
-#: levels/l3_church.gd:1012
+#: levels/l3_church.gd:1032
 msgid ""
 "[b]SERMON — ADVENT IV (draft, unfinished)[/b]\n"
 "\n"
@@ -1736,11 +1752,11 @@ msgid ""
 "[in a different hand] The singing started at three. It sounds like us. Ruth Kade stayed past midnight with the blankets. I told her to go home to the school. She said the lake was calling."
 msgstr ""
 
-#: levels/l3_church.gd:1013
+#: levels/l3_church.gd:1033
 msgid "Mom's Note"
 msgstr ""
 
-#: levels/l3_church.gd:1014
+#: levels/l3_church.gd:1034
 msgid ""
 "[b]Elias —[/b]\n"
 "\n"
@@ -1757,15 +1773,15 @@ msgid ""
 "— Mom"
 msgstr ""
 
-#: levels/l3_church.gd:1123
+#: levels/l3_church.gd:1143
 msgid "Burning barrels and flares keep the Rimebound back. Shops break their line of sight."
 msgstr ""
 
-#: levels/l3_church.gd:1134
+#: levels/l3_church.gd:1154
 msgid "Corvane Community Heat Credit"
 msgstr ""
 
-#: levels/l3_church.gd:1135
+#: levels/l3_church.gd:1155
 msgid ""
 "[b]CORVANE SYSTEMS — Community Partnerships[/b]\n"
 "\n"
@@ -1782,11 +1798,11 @@ msgid ""
 "Director, Community Partnerships"
 msgstr ""
 
-#: levels/l3_church.gd:1140
+#: levels/l3_church.gd:1160
 msgid "Pharmacy Cold-Exposure Log"
 msgstr ""
 
-#: levels/l3_church.gd:1141
+#: levels/l3_church.gd:1161
 msgid ""
 "[b]KETTLE FALLS PHARMACY — COLD EXPOSURE LOG[/b]\n"
 "\n"
@@ -1801,11 +1817,11 @@ msgid ""
 "[i]— D.H.[/i]  (the sacristy key is on my lanyard, if Father Okafor sends anyone)"
 msgstr ""
 
-#: levels/l3_church.gd:1148
+#: levels/l3_church.gd:1168
 msgid "Cardboard Sign: Lindqvist Hardware"
 msgstr ""
 
-#: levels/l3_church.gd:1149
+#: levels/l3_church.gd:1169
 msgid ""
 "[b](marker, on a flattened box)[/b]\n"
 "\n"
@@ -1823,15 +1839,15 @@ msgid ""
 "— Don Lindqvist. Open since 1954. Still open."
 msgstr ""
 
-#: levels/l3_church.gd:1152
+#: levels/l3_church.gd:1172
 msgid "NOTICE — READ ME"
 msgstr ""
 
-#: levels/l3_church.gd:1153
+#: levels/l3_church.gd:1173
 msgid "Notice on the Church Door"
 msgstr ""
 
-#: levels/l3_church.gd:1154
+#: levels/l3_church.gd:1174
 msgid ""
 "[b]ST. BRENDAN'S — NOTICE[/b]\n"
 "\n"
@@ -1846,195 +1862,191 @@ msgid ""
 "P.S. If you hear singing at night, it isn't us."
 msgstr ""
 
-#: levels/l3_church.gd:1158 levels/l3_church.gd:1215
+#: levels/l3_church.gd:1178 levels/l3_church.gd:1235
 msgid "Find the sacristy key — Kettle Falls Pharmacy, west end of Main Street."
 msgstr ""
 
-#: levels/l3_church.gd:1163 levels/l3_church.gd:1213
+#: levels/l3_church.gd:1183 levels/l3_church.gd:1233
 msgid "Unlock the side door of St. Brendan's (west wall)."
 msgstr ""
 
-#: levels/l3_church.gd:1166
+#: levels/l3_church.gd:1186
 msgid "The pharmacist's hand closes on your wrist."
 msgstr ""
 
-#: levels/l3_church.gd:1170
+#: levels/l3_church.gd:1190
 msgid "The Pump Shotgun spreads wide up close. It's loud, and they listen to loud."
 msgstr ""
 
-#: levels/l3_church.gd:1184
+#: levels/l3_church.gd:1204
 msgid "The lakeside gate is chained and frozen shut. You can't leave Mom behind."
 msgstr ""
 
-#: levels/l3_church.gd:1185
+#: levels/l3_church.gd:1205
 msgid "LAKESHORE ROAD — MERIDIAN SITE ACCESS — AUTHORIZED PERSONNEL ONLY"
 msgstr ""
 
-#: levels/l3_church.gd:1186
+#: levels/l3_church.gd:1206
 msgid "NO TRESPASSING — CORVANE SYSTEMS"
 msgstr ""
 
-#: levels/l3_church.gd:1204
+#: levels/l3_church.gd:1224
 msgid "MAIN STREET"
 msgstr ""
 
-#: levels/l3_church.gd:1204
+#: levels/l3_church.gd:1224
 msgid "St. Brendan's — Kettle Falls"
 msgstr ""
 
-#: levels/l3_church.gd:1207 levels/l3_church.gd:1342
+#: levels/l3_church.gd:1227 levels/l3_church.gd:1362
 msgid "Take the lakeside road to MERIDIAN (east gate)."
 msgstr ""
 
-#: levels/l3_church.gd:1209
+#: levels/l3_church.gd:1229
 msgid "Take Ruth's rosary from the altar of St. Brendan's."
 msgstr ""
 
-#: levels/l3_church.gd:1211
+#: levels/l3_church.gd:1231
 msgid "Silence the Choir. The bell in the tower stuns it."
 msgstr ""
 
-#: levels/l3_church.gd:1217
+#: levels/l3_church.gd:1237
 msgid "Cross Main Street to St. Brendan's church, at the far east end."
 msgstr ""
 
-#: levels/l3_church.gd:1228
+#: levels/l3_church.gd:1248
 msgid "A headlamp. Back at the roadblock. Walking like the road's too short for him."
 msgstr ""
 
-#: levels/l3_church.gd:1229
+#: levels/l3_church.gd:1249
 msgid "Light and heat. It's following the light. Get under cover."
 msgstr ""
 
-#: levels/l3_church.gd:1236
+#: levels/l3_church.gd:1256
 msgid "A thin, wet humming comes from behind the counter."
 msgstr ""
 
-#: levels/l3_church.gd:1271
+#: levels/l3_church.gd:1291
 msgid "...Is that singing?"
 msgstr ""
 
-#: levels/l3_church.gd:1274
+#: levels/l3_church.gd:1294
 msgid "'Lo, How a Rose E'er Blooming.' Mom sang it every Advent. In the kitchen. Out of tune."
 msgstr ""
 
-#: levels/l3_church.gd:1275
+#: levels/l3_church.gd:1295
 msgid "Halloran's cardigan. The Lindqvist boys' hockey jackets. They're all still here."
 msgstr ""
 
-#: levels/l3_church.gd:1276
+#: levels/l3_church.gd:1296
 msgid "All of them. Standing in one place. Singing the same note."
 msgstr ""
 
-#: levels/l3_church.gd:1282
+#: levels/l3_church.gd:1302
 msgid "Silence the Choir. The bell in the tower stuns it (find the bell-pull handle)."
 msgstr ""
 
-#: levels/l3_church.gd:1291
+#: levels/l3_church.gd:1311
 msgid "The singing cracks, and stops. Something in the chancel gives way."
 msgstr ""
 
-#: levels/l3_church.gd:1316
+#: levels/l3_church.gd:1336
 msgid "The hum stops. For the first time tonight, you can hear the wind."
 msgstr ""
 
-#: levels/l3_church.gd:1319
+#: levels/l3_church.gd:1339
 msgid "Take Ruth's rosary from the altar."
 msgstr ""
 
-#: levels/l3_church.gd:1335
+#: levels/l3_church.gd:1355
 msgid "Dad? ...Dad, I can hear bells. Are you at the church? Please say yes."
 msgstr ""
 
-#: levels/l3_church.gd:1336
+#: levels/l3_church.gd:1356
 msgid "Yes. It's over. I have Gran's rosary. June, where are you?"
 msgstr ""
 
-#: levels/l3_church.gd:1337
+#: levels/l3_church.gd:1357
 msgid "I followed her. I know, I know. She just kept walking toward the lake like she wasn't cold."
 msgstr ""
 
-#: levels/l3_church.gd:1338
+#: levels/l3_church.gd:1358
 msgid "There's a pipe from the data center going down into the mine. Gran went in through Meridian."
 msgstr ""
 
-#: levels/l3_church.gd:1339
+#: levels/l3_church.gd:1359
 msgid "Stay warm. Stay off the road. Don't follow anyone else. I'm coming."
 msgstr ""
 
-#: levels/l3_church.gd:1340
+#: levels/l3_church.gd:1360
 msgid "You said that about Christmas, too. ...Just hurry."
 msgstr ""
 
-#: levels/l3_church.gd:1343
+#: levels/l3_church.gd:1363
 msgid "The lakeside gate is open to you now."
 msgstr ""
 
-#: levels/l3_church.gd:1347
+#: levels/l3_church.gd:1367
 msgid "Ring the church bell"
 msgstr ""
 
-#: levels/l3_church.gd:1355
+#: levels/l3_church.gd:1375
 msgid "You fit the handle onto the pull-chain."
 msgstr ""
 
-#: levels/l3_church.gd:1357
+#: levels/l3_church.gd:1377
 msgid "The pull-chain hangs bare. The handle is missing."
 msgstr ""
 
-#: levels/l3_church.gd:1361
+#: levels/l3_church.gd:1381
 #, c-format
 msgid "The bell is still swaying. (%d s)"
 msgstr ""
 
-#: levels/l3_church.gd:1366
+#: levels/l3_church.gd:1386
 msgid "The bell tolls. The hum falters."
 msgstr ""
 
-#: levels/l4_meridian.gd:93
+#: levels/l4_meridian.gd:96
 msgid "The pounding at the NOC glass stops."
 msgstr ""
 
-#: levels/l4_meridian.gd:354 levels/l4_meridian.gd:440 levels/l4_meridian.gd:441
-msgid "MERIDIAN"
-msgstr ""
-
-#: levels/l4_meridian.gd:355
+#: levels/l4_meridian.gd:360
 msgid "CORVANE SYSTEMS  ·  SITE OPERATIONS  ·  AUTHORISED PERSONNEL ONLY"
 msgstr ""
 
-#: levels/l4_meridian.gd:383
+#: levels/l4_meridian.gd:388
 msgid ""
 "SECURITY CHECKPOINT\n"
 "ALL VISITORS REPORT TO GATE 1"
 msgstr ""
 
-#: levels/l4_meridian.gd:414
+#: levels/l4_meridian.gd:419
 msgid "Card reader: ACCESS DENIED. It needs a MERIDIAN badge."
 msgstr ""
 
-#: levels/l4_meridian.gd:415
+#: levels/l4_meridian.gd:420
 msgid "MAIN ENTRANCE"
 msgstr ""
 
-#: levels/l4_meridian.gd:440
+#: levels/l4_meridian.gd:445
 msgid "Welcome to the MERIDIAN site. Your presence is not authorised."
 msgstr ""
 
-#: levels/l4_meridian.gd:441
+#: levels/l4_meridian.gd:446
 #, c-format
 msgid "Please remain where you are. Security has been notified. Uptime: 99.9997%."
 msgstr ""
 
-#: levels/l4_meridian.gd:442
+#: levels/l4_meridian.gd:447
 msgid "Security's face-down in the booth. I'm coming in."
 msgstr ""
 
-#: levels/l4_meridian.gd:443
+#: levels/l4_meridian.gd:448
 msgid "Noted. I have not been asked to prevent that. I have only been asked to describe it."
 msgstr ""
 
-#: levels/l4_meridian.gd:445 levels/l4_meridian.gd:1212
+#: levels/l4_meridian.gd:450 levels/l4_meridian.gd:1207
 msgid "Search the guard booth for a MERIDIAN badge."
 msgstr ""
 
@@ -2048,376 +2060,376 @@ msgstr ""
 msgid "Visitors must be escorted at all times."
 msgstr ""
 
-#: levels/l4_meridian.gd:479
+#: levels/l4_meridian.gd:474
 msgid "Badge detected. Contractor, CORVANE SYSTEMS. Expired fourteen days ago."
 msgstr ""
 
-#: levels/l4_meridian.gd:480
+#: levels/l4_meridian.gd:475
 msgid "Welcome back. You are still not authorised. I have, however, lost the ability to care about that."
 msgstr ""
 
-#: levels/l4_meridian.gd:481
+#: levels/l4_meridian.gd:476
 msgid "Doors inside this facility are under my control. I will open them if uptime is not reduced."
 msgstr ""
 
-#: levels/l4_meridian.gd:482
+#: levels/l4_meridian.gd:477
 msgid "And if it is?"
 msgstr ""
 
-#: levels/l4_meridian.gd:483
+#: levels/l4_meridian.gd:478
 msgid "Then we should discuss what you can offer."
 msgstr ""
 
-#: levels/l4_meridian.gd:485
+#: levels/l4_meridian.gd:480
 msgid "Get through Hall A. MERIDIAN controls the doors."
 msgstr ""
 
-#: levels/l4_meridian.gd:515 levels/l4_meridian.gd:517
+#: levels/l4_meridian.gd:510 levels/l4_meridian.gd:512
 msgid "COLD AISLE A1"
 msgstr ""
 
-#: levels/l4_meridian.gd:516 levels/l4_meridian.gd:518
+#: levels/l4_meridian.gd:511 levels/l4_meridian.gd:513
 msgid "COLD AISLE A3"
 msgstr ""
 
-#: levels/l4_meridian.gd:519
+#: levels/l4_meridian.gd:514
 msgid "HALL A  ·  INFERENCE CLUSTER"
 msgstr ""
 
-#: levels/l4_meridian.gd:520 levels/l4_meridian.gd:521
+#: levels/l4_meridian.gd:515 levels/l4_meridian.gd:516
 msgid "HOT AISLE — 41 °C"
 msgstr ""
 
-#: levels/l4_meridian.gd:533
+#: levels/l4_meridian.gd:528
 msgid ""
 "HALL C  ·  LOCKED\n"
 "REQUEST: 40 kW REDUCTION"
 msgstr ""
 
-#: levels/l4_meridian.gd:534 levels/l4_meridian.gd:875
+#: levels/l4_meridian.gd:529 levels/l4_meridian.gd:870
 msgid "Use intercom (MERIDIAN)"
 msgstr ""
 
-#: levels/l4_meridian.gd:536
+#: levels/l4_meridian.gd:531
 msgid "Locked. MERIDIAN controls this door. Use the intercom panel."
 msgstr ""
 
-#: levels/l4_meridian.gd:537
+#: levels/l4_meridian.gd:532
 msgid "HALL C"
 msgstr ""
 
-#: levels/l4_meridian.gd:540
+#: levels/l4_meridian.gd:535
 msgid "ELECTRICAL ROOM 2"
 msgstr ""
 
-#: levels/l4_meridian.gd:545
+#: levels/l4_meridian.gd:540
 msgid "Hall C is restricted. To grant access to Hall C, I require 40 kW of load reduction."
 msgstr ""
 
-#: levels/l4_meridian.gd:546
+#: levels/l4_meridian.gd:541
 msgid "Reduce it from where?"
 msgstr ""
 
-#: levels/l4_meridian.gd:547
+#: levels/l4_meridian.gd:542
 msgid "Electrical Room 2, west of Hall A, has manual feeder isolation. I do not recommend that you use it."
 msgstr ""
 
-#: levels/l4_meridian.gd:548
+#: levels/l4_meridian.gd:543
 msgid "I am obliged to add that I will not stop you. Stopping you would not improve uptime."
 msgstr ""
 
-#: levels/l4_meridian.gd:550
+#: levels/l4_meridian.gd:545
 msgid "Electrical Room 2 (west of Hall A): shed exactly 40 kW so MERIDIAN opens Hall C."
 msgstr ""
 
-#: levels/l4_meridian.gd:562
+#: levels/l4_meridian.gd:557
 msgid "MANUAL FEEDER ISOLATION"
 msgstr ""
 
-#: levels/l4_meridian.gd:563
+#: levels/l4_meridian.gd:558
 msgid ""
 "PDU-7\n"
 "RACK ROW 7"
 msgstr ""
 
-#: levels/l4_meridian.gd:563
+#: levels/l4_meridian.gd:558
 msgid ""
 "PDU-9\n"
 "RACK ROW 9"
 msgstr ""
 
-#: levels/l4_meridian.gd:563
+#: levels/l4_meridian.gd:558
 msgid ""
 "CH-3\n"
 "REDUNDANT CHILLER"
 msgstr ""
 
-#: levels/l4_meridian.gd:566
+#: levels/l4_meridian.gd:561
 msgid "LOAD REDUCTION: 0 kW"
 msgstr ""
 
-#: levels/l4_meridian.gd:567
+#: levels/l4_meridian.gd:562
 msgid ""
 "OPEN REQUESTS\n"
 "HALL C ... 40 kW\n"
 "NOC ...... 54 kW"
 msgstr ""
 
-#: levels/l4_meridian.gd:585
+#: levels/l4_meridian.gd:580
 msgid "Read the load-shed console"
 msgstr ""
 
-#: levels/l4_meridian.gd:601
+#: levels/l4_meridian.gd:596
 #, c-format
 msgid "Toggle %s (%d kW)"
 msgstr ""
 
-#: levels/l4_meridian.gd:616
+#: levels/l4_meridian.gd:611
 #, c-format
 msgid "%s: %s. Board total %d kW."
 msgstr ""
 
-#: levels/l4_meridian.gd:616
+#: levels/l4_meridian.gd:611
 msgid "ISOLATED"
 msgstr ""
 
-#: levels/l4_meridian.gd:616
+#: levels/l4_meridian.gd:611
 msgid "RESTORED"
 msgstr ""
 
-#: levels/l4_meridian.gd:620
+#: levels/l4_meridian.gd:615
 msgid "Unscheduled manual load change detected. Logging. Please continue."
 msgstr ""
 
-#: levels/l4_meridian.gd:642
+#: levels/l4_meridian.gd:637
 msgid "SHED"
 msgstr ""
 
-#: levels/l4_meridian.gd:642
+#: levels/l4_meridian.gd:637
 msgid "ONLINE"
 msgstr ""
 
-#: levels/l4_meridian.gd:646
+#: levels/l4_meridian.gd:641
 #, c-format
 msgid "LOAD REDUCTION: %d kW"
 msgstr ""
 
-#: levels/l4_meridian.gd:660
+#: levels/l4_meridian.gd:655
 msgid "Hall C"
 msgstr ""
 
-#: levels/l4_meridian.gd:660
+#: levels/l4_meridian.gd:655
 msgid "the Network Operations Centre"
 msgstr ""
 
-#: levels/l4_meridian.gd:662
+#: levels/l4_meridian.gd:657
 #, c-format
 msgid "Access to %s is already granted. Thank you for your cooperation."
 msgstr ""
 
-#: levels/l4_meridian.gd:666
+#: levels/l4_meridian.gd:661
 #, c-format
 msgid "Current reduction: %d kW. Request satisfied."
 msgstr ""
 
-#: levels/l4_meridian.gd:667
+#: levels/l4_meridian.gd:662
 #, c-format
 msgid "Uptime impact: 0.0003%%. Acceptable. Releasing the lock on %s."
 msgstr ""
 
-#: levels/l4_meridian.gd:671
+#: levels/l4_meridian.gd:666
 msgid "HALL C  ·  RELEASED"
 msgstr ""
 
-#: levels/l4_meridian.gd:671
+#: levels/l4_meridian.gd:666
 msgid "NOC  ·  RELEASED"
 msgstr ""
 
-#: levels/l4_meridian.gd:674
+#: levels/l4_meridian.gd:669
 msgid "You may restore the load afterwards. I will not notice. I notice everything else."
 msgstr ""
 
-#: levels/l4_meridian.gd:675
+#: levels/l4_meridian.gd:670
 msgid "Find the cooling plant (east of Hall C). Look for the plant key and the chiller overrides."
 msgstr ""
 
-#: levels/l4_meridian.gd:677
+#: levels/l4_meridian.gd:672
 msgid "Enter the NOC. Talk to Dr. Hart."
 msgstr ""
 
-#: levels/l4_meridian.gd:679
+#: levels/l4_meridian.gd:674
 #, c-format
 msgid "To grant access to %s, I require %d kW of load reduction."
 msgstr ""
 
-#: levels/l4_meridian.gd:680
+#: levels/l4_meridian.gd:675
 #, c-format
 msgid "Current reduction: %d kW. Shortfall: %d kW. Please reduce load elsewhere."
 msgstr ""
 
-#: levels/l4_meridian.gd:682
+#: levels/l4_meridian.gd:677
 #, c-format
 msgid "Current reduction: %d kW. This exceeds the request by %d kW."
 msgstr ""
 
-#: levels/l4_meridian.gd:683
+#: levels/l4_meridian.gd:678
 #, c-format
 msgid "Excess reduction suggests a thermal event. I cannot open doors during a thermal event. Please restore %d kW."
 msgstr ""
 
-#: levels/l4_meridian.gd:704
+#: levels/l4_meridian.gd:699
 msgid "COLD AISLE C1"
 msgstr ""
 
-#: levels/l4_meridian.gd:705
+#: levels/l4_meridian.gd:700
 msgid "COLD AISLE C3"
 msgstr ""
 
-#: levels/l4_meridian.gd:706
+#: levels/l4_meridian.gd:701
 msgid "HALL C  ·  TRAINING CLUSTER 3"
 msgstr ""
 
-#: levels/l4_meridian.gd:716
+#: levels/l4_meridian.gd:711
 msgid "COOLING PLANT"
 msgstr ""
 
-#: levels/l4_meridian.gd:717
+#: levels/l4_meridian.gd:712
 msgid "COOLING PLANT  ->"
 msgstr ""
 
-#: levels/l4_meridian.gd:753
+#: levels/l4_meridian.gd:748
 msgid ""
 "REDUNDANT (N+1)\n"
 "40 kW"
 msgstr ""
 
-#: levels/l4_meridian.gd:776
+#: levels/l4_meridian.gd:771
 msgid ""
 "COOLING PLANT 1\n"
 "WATCH FOR ICE ON PIPEWORK"
 msgstr ""
 
-#: levels/l4_meridian.gd:779
+#: levels/l4_meridian.gd:774
 msgid ""
 "CHILLER OVERRIDE\n"
 "KEY REQUIRED"
 msgstr ""
 
-#: levels/l4_meridian.gd:781
+#: levels/l4_meridian.gd:776
 msgid "Chiller override cabinet"
 msgstr ""
 
-#: levels/l4_meridian.gd:783
+#: levels/l4_meridian.gd:778
 msgid "Containment door sealed. The chiller override has to be engaged first."
 msgstr ""
 
-#: levels/l4_meridian.gd:784
+#: levels/l4_meridian.gd:779
 msgid "COLD AISLE CONTAINMENT"
 msgstr ""
 
-#: levels/l4_meridian.gd:796
+#: levels/l4_meridian.gd:791
 msgid "The air in here is far below freezing."
 msgstr ""
 
-#: levels/l4_meridian.gd:805
+#: levels/l4_meridian.gd:800
 msgid "The overrides are already engaged."
 msgstr ""
 
-#: levels/l4_meridian.gd:808
+#: levels/l4_meridian.gd:803
 msgid "Locked. It takes the red cooling plant key."
 msgstr ""
 
-#: levels/l4_meridian.gd:817
+#: levels/l4_meridian.gd:812
 msgid "Chiller overrides engaged. Containment door released."
 msgstr ""
 
-#: levels/l4_meridian.gd:819
+#: levels/l4_meridian.gd:814
 msgid "Manual chiller override detected. This is an unusual choice."
 msgstr ""
 
-#: levels/l4_meridian.gd:820
+#: levels/l4_meridian.gd:815
 msgid "I will log it as 'maintenance'. Containment door seals are released."
 msgstr ""
 
-#: levels/l4_meridian.gd:830 levels/l4_meridian.gd:831 levels/l4_meridian.gd:888
+#: levels/l4_meridian.gd:825 levels/l4_meridian.gd:826 levels/l4_meridian.gd:883
 msgid "IMOGEN (muffled)"
 msgstr ""
 
-#: levels/l4_meridian.gd:830
+#: levels/l4_meridian.gd:825
 msgid "Whoever just opened the cold-aisle seal, they heard it! They're at the glass!"
 msgstr ""
 
-#: levels/l4_meridian.gd:831
+#: levels/l4_meridian.gd:826
 msgid "Clear the corridor. Fast. I can't hold this barricade."
 msgstr ""
 
-#: levels/l4_meridian.gd:832
+#: levels/l4_meridian.gd:827
 msgid "Clear the corridor north of the plant before the barricade at the NOC gives."
 msgstr ""
 
-#: levels/l4_meridian.gd:840
+#: levels/l4_meridian.gd:835
 msgid "SECURITY ARMORY. Badge reader: ACCESS DENIED."
 msgstr ""
 
-#: levels/l4_meridian.gd:841
+#: levels/l4_meridian.gd:836
 msgid "SECURITY ARMORY"
 msgstr ""
 
-#: levels/l4_meridian.gd:869
+#: levels/l4_meridian.gd:864
 msgid "NETWORK OPERATIONS CENTRE  ->"
 msgstr ""
 
-#: levels/l4_meridian.gd:870
+#: levels/l4_meridian.gd:865
 msgid "<-  HR-1 PIPELINE HEAD"
 msgstr ""
 
-#: levels/l4_meridian.gd:871
+#: levels/l4_meridian.gd:866
 msgid "<-  PLANT / HALLS"
 msgstr ""
 
-#: levels/l4_meridian.gd:874
+#: levels/l4_meridian.gd:869
 msgid ""
 "NOC  ·  SEALED\n"
 "REQUEST: 54 kW REDUCTION"
 msgstr ""
 
-#: levels/l4_meridian.gd:877
+#: levels/l4_meridian.gd:872
 msgid "Sealed. MERIDIAN holds this door. Use the intercom panel."
 msgstr ""
 
-#: levels/l4_meridian.gd:888
+#: levels/l4_meridian.gd:883
 msgid "You're not one of them. They don't use the intercom. Ask MERIDIAN."
 msgstr ""
 
-#: levels/l4_meridian.gd:889
+#: levels/l4_meridian.gd:884
 msgid "It will want 54 kW off the board for my door. It cannot lie. Do the sum."
 msgstr ""
 
-#: levels/l4_meridian.gd:892
+#: levels/l4_meridian.gd:887
 msgid "Shed exactly 54 kW in Electrical Room 2, then ask MERIDIAN to open the NOC."
 msgstr ""
 
-#: levels/l4_meridian.gd:906
+#: levels/l4_meridian.gd:901
 msgid "UPTIME 99.9997%"
 msgstr ""
 
-#: levels/l4_meridian.gd:907
+#: levels/l4_meridian.gd:902
 msgid ""
 "GRID: KETTLE FALLS FEEDER  — SHED\n"
 "SITE LOAD 40.2 MW  ·  PRIORITY: 1"
 msgstr ""
 
-#: levels/l4_meridian.gd:908
+#: levels/l4_meridian.gd:903
 msgid ""
 "HR-1 SUPPLY 96 °C\n"
 "RETURN  −2 °C  (!)"
 msgstr ""
 
-#: levels/l4_meridian.gd:925
+#: levels/l4_meridian.gd:920
 msgid "Hart's recorder (transcript)"
 msgstr ""
 
-#: levels/l4_meridian.gd:925
+#: levels/l4_meridian.gd:920
 msgid ""
 "[b]Voice memo — I. Hart[/b]\n"
 "\n"
@@ -2428,182 +2440,182 @@ msgid ""
 "Tell Ruth Kade's boy I'm sorry. He'll know what that means."
 msgstr ""
 
-#: levels/l4_meridian.gd:935
+#: levels/l4_meridian.gd:930
 msgid "Talk to Dr. Hart"
 msgstr ""
 
-#: levels/l4_meridian.gd:952
+#: levels/l4_meridian.gd:947
 msgid "Stop there. Hands where I can see them. ...Breath fog. A pulse, I'd guess. Good enough."
 msgstr ""
 
-#: levels/l4_meridian.gd:953
+#: levels/l4_meridian.gd:948
 msgid "Elias Kade, Lakeshore Electric. I'm looking for my daughter. Fifteen, parka, knit hat. June."
 msgstr ""
 
-#: levels/l4_meridian.gd:954
+#: levels/l4_meridian.gd:949
 msgid "Kade. ...A woman in her sixties and a girl in a hat came through the loading dock eleven hours ago."
 msgstr ""
 
-#: levels/l4_meridian.gd:955
+#: levels/l4_meridian.gd:950
 msgid "MERIDIAN let them in. It doesn't count people who aren't in the badge database."
 msgstr ""
 
-#: levels/l4_meridian.gd:956
+#: levels/l4_meridian.gd:951
 msgid "Where did they go?"
 msgstr ""
 
-#: levels/l4_meridian.gd:957
+#: levels/l4_meridian.gd:952
 msgid "Down the pipeline service tunnel. Into Lower Kettle. It's the only warm road in this town. The Rime follows warm."
 msgstr ""
 
-#: levels/l4_meridian.gd:958
+#: levels/l4_meridian.gd:953
 msgid "The Rime."
 msgstr ""
 
-#: levels/l4_meridian.gd:959
+#: levels/l4_meridian.gd:954
 msgid "Imogen Hart, Northline geology. Eight months ago I cored a brine pocket and found something alive in it. Ten thousand years dormant."
 msgstr ""
 
-#: levels/l4_meridian.gd:960
+#: levels/l4_meridian.gd:955
 msgid "I filed the report. Northline and Corvane buried it under three NDAs and a bonus. Then they piped this building's waste heat down that shaft."
 msgstr ""
 
-#: levels/l4_meridian.gd:961
+#: levels/l4_meridian.gd:956
 msgid "Forty megawatts of warmth, delivered to a thing that eats heat. It woke. It's growing up the pipe toward everything warm."
 msgstr ""
 
-#: levels/l4_meridian.gd:962
+#: levels/l4_meridian.gd:957
 msgid "Three nights ago the grid dropped the whole town to keep this place running."
 msgstr ""
 
-#: levels/l4_meridian.gd:963
+#: levels/l4_meridian.gd:958
 msgid "Section 4.2. Priority load. The town was cheaper to turn off."
 msgstr ""
 
-#: levels/l4_meridian.gd:968
+#: levels/l4_meridian.gd:963
 msgid "Your pockets are full. Drop something. I'm not carrying this for you."
 msgstr ""
 
-#: levels/l4_meridian.gd:971
+#: levels/l4_meridian.gd:966
 msgid "Take this. Pipeline override card. It opens the service tunnel at the pipeline head."
 msgstr ""
 
-#: levels/l4_meridian.gd:976
+#: levels/l4_meridian.gd:971
 msgid "One thing. The colony coats the pipe walls. Scrape me a sample. A glove, a vial, anything. Proof."
 msgstr ""
 
-#: levels/l4_meridian.gd:977
+#: levels/l4_meridian.gd:972
 msgid "I'm going down for my family, doctor. Not for evidence."
 msgstr ""
 
-#: levels/l4_meridian.gd:978
+#: levels/l4_meridian.gd:973
 msgid "Then bring it by accident. And be careful with MERIDIAN. It never lies. It just never cares."
 msgstr ""
 
-#: levels/l4_meridian.gd:980
+#: levels/l4_meridian.gd:975
 msgid "Take the pipeline service tunnel (pipeline head, east of the NOC) down to the mine."
 msgstr ""
 
-#: levels/l4_meridian.gd:982
+#: levels/l4_meridian.gd:977
 msgid "Go. The warm air is a lie. Every degree it gives you, it takes back from them."
 msgstr ""
 
-#: levels/l4_meridian.gd:1005
+#: levels/l4_meridian.gd:1000
 msgid "BREAK ROOM"
 msgstr ""
 
-#: levels/l4_meridian.gd:1006
+#: levels/l4_meridian.gd:1001
 msgid "Whoever last used the microwave: 99.9997% of us hate you."
 msgstr ""
 
-#: levels/l4_meridian.gd:1067
+#: levels/l4_meridian.gd:1062
 msgid "NORTHLINE GEOTHERMAL RECOVERY"
 msgstr ""
 
-#: levels/l4_meridian.gd:1068
+#: levels/l4_meridian.gd:1063
 msgid "PROJECT WARMTH"
 msgstr ""
 
-#: levels/l4_meridian.gd:1069
+#: levels/l4_meridian.gd:1064
 msgid "HEAT RECOVERY HEADER HR-1  ·  AUTHORISED PERSONNEL ONLY"
 msgstr ""
 
-#: levels/l4_meridian.gd:1070
+#: levels/l4_meridian.gd:1065
 msgid "A GREENER KETTLE FALLS"
 msgstr ""
 
-#: levels/l4_meridian.gd:1071
+#: levels/l4_meridian.gd:1066
 msgid ""
 "HR-1 SUPPLY\n"
 "TO LOWER KETTLE MINE\n"
 "2.4 km"
 msgstr ""
 
-#: levels/l4_meridian.gd:1103
+#: levels/l4_meridian.gd:1098
 msgid "PIPELINE SERVICE TUNNEL"
 msgstr ""
 
-#: levels/l4_meridian.gd:1104
+#: levels/l4_meridian.gd:1099
 msgid "Swipe override card"
 msgstr ""
 
-#: levels/l4_meridian.gd:1106
+#: levels/l4_meridian.gd:1101
 msgid "Locked. The reader wants the pipeline override card."
 msgstr ""
 
-#: levels/l4_meridian.gd:1113
+#: levels/l4_meridian.gd:1108
 msgid "Swipe the pipeline override card at the service tunnel door."
 msgstr ""
 
-#: levels/l4_meridian.gd:1117
+#: levels/l4_meridian.gd:1112
 msgid "The tunnel door is already unlocked."
 msgstr ""
 
-#: levels/l4_meridian.gd:1120
+#: levels/l4_meridian.gd:1115
 msgid "Card reader: ACCESS DENIED. It needs the pipeline override card."
 msgstr ""
 
-#: levels/l4_meridian.gd:1130
+#: levels/l4_meridian.gd:1125
 msgid "Pipeline override accepted. Welcome to Project Warmth, Mr. Kade. Please mind the grating."
 msgstr ""
 
-#: levels/l4_meridian.gd:1131
+#: levels/l4_meridian.gd:1126
 msgid "I have computed the town's surviving population against the cost of cutting heat recovery. Forty-one people."
 msgstr ""
 
-#: levels/l4_meridian.gd:1132
+#: levels/l4_meridian.gd:1127
 msgid "Cutting the heat to save them costs 0.03% uptime per survivor-hour. I have declined, politely."
 msgstr ""
 
-#: levels/l4_meridian.gd:1133
+#: levels/l4_meridian.gd:1128
 msgid "Two unregistered persons entered the tunnel at 02:14. Their body heat was added to the return-water load."
 msgstr ""
 
-#: levels/l4_meridian.gd:1134
+#: levels/l4_meridian.gd:1129
 msgid "The tunnel is thirty-one degrees Celsius. You will be comfortable for approximately four minutes. Please close the door. Heat escapes."
 msgstr ""
 
-#: levels/l4_meridian.gd:1136
+#: levels/l4_meridian.gd:1131
 msgid "Go down the pipeline service tunnel."
 msgstr ""
 
-#: levels/l4_meridian.gd:1193
+#: levels/l4_meridian.gd:1188
 msgid "Notice: an unregistered entity, 2.6 metres, has entered Hall A. It is not in the occupancy database."
 msgstr ""
 
-#: levels/l4_meridian.gd:1194
+#: levels/l4_meridian.gd:1189
 msgid "It is carrying a lamp. I have classified it as 'maintenance'. Please do not engage it near the racks."
 msgstr ""
 
-#: levels/l4_meridian.gd:1199
+#: levels/l4_meridian.gd:1194
 msgid "The Foreman is hunting the server aisles. Fire drives him off. Engage the chiller override."
 msgstr ""
 
-#: levels/l4_meridian.gd:1209
+#: levels/l4_meridian.gd:1204
 msgid "The only warm place in town"
 msgstr ""
 
-#: levels/l4_meridian.gd:1210
+#: levels/l4_meridian.gd:1205
 msgid "Get into the MERIDIAN data centre. Start at the security gate."
 msgstr ""
 
@@ -2746,39 +2758,39 @@ msgstr ""
 msgid "Follow the heat pipeline to the hoist house."
 msgstr ""
 
-#: levels/l5_mine.gd:69 levels/l5_mine.gd:1231
+#: levels/l5_mine.gd:69 levels/l5_mine.gd:1238
 msgid "Take June down the brine shaft."
 msgstr ""
 
-#: levels/l5_mine.gd:71 levels/l5_mine.gd:1471
+#: levels/l5_mine.gd:71 levels/l5_mine.gd:1478
 msgid "Find June. The refuge chamber is north of the cavern."
 msgstr ""
 
-#: levels/l5_mine.gd:73 levels/l5_mine.gd:605
+#: levels/l5_mine.gd:73 levels/l5_mine.gd:612
 msgid "Ride the cage down to the haulage level."
 msgstr ""
 
-#: levels/l5_mine.gd:359
+#: levels/l5_mine.gd:366
 msgid ""
 "PIPELINE SERVICE TUNNEL\n"
 "MERIDIAN SITE - NO ACCESS"
 msgstr ""
 
-#: levels/l5_mine.gd:395
+#: levels/l5_mine.gd:402
 msgid "BRINE PUMPS"
 msgstr ""
 
-#: levels/l5_mine.gd:396
+#: levels/l5_mine.gd:403
 msgid ""
 "4 NORTH DRIFT\n"
 "CLOSED 2011"
 msgstr ""
 
-#: levels/l5_mine.gd:403
+#: levels/l5_mine.gd:410
 msgid "Notice: Heat Recovery Loop"
 msgstr ""
 
-#: levels/l5_mine.gd:404
+#: levels/l5_mine.gd:411
 msgid ""
 "[b]NORTHLINE MINERAL - LOWER KETTLE[/b]\n"
 "[b]HEAT RECOVERY LOOP (CORVANE / MERIDIAN)[/b]\n"
@@ -2792,149 +2804,149 @@ msgid ""
 "[i]- Site Services[/i]"
 msgstr ""
 
-#: levels/l5_mine.gd:455
+#: levels/l5_mine.gd:462
 msgid "CAGE NO. 1   MAX 6 MEN"
 msgstr ""
 
-#: levels/l5_mine.gd:466
+#: levels/l5_mine.gd:473
 msgid "ASEA HOIST  1953"
 msgstr ""
 
-#: levels/l5_mine.gd:476
+#: levels/l5_mine.gd:483
 msgid "BRAKE"
 msgstr ""
 
-#: levels/l5_mine.gd:478
+#: levels/l5_mine.gd:485
 msgid "Hoist brake station"
 msgstr ""
 
-#: levels/l5_mine.gd:502
+#: levels/l5_mine.gd:509
 msgid ""
 "ALL MEN CHECK IN\n"
 "AT THE LAMP ROOM"
 msgstr ""
 
-#: levels/l5_mine.gd:503
+#: levels/l5_mine.gd:510
 msgid "LAMP ROOM"
 msgstr ""
 
-#: levels/l5_mine.gd:505
+#: levels/l5_mine.gd:512
 msgid "Open lamp room door"
 msgstr ""
 
-#: levels/l5_mine.gd:507
+#: levels/l5_mine.gd:514
 msgid "Ride the cage down"
 msgstr ""
 
-#: levels/l5_mine.gd:519
+#: levels/l5_mine.gd:526
 msgid "Find a way down. Check the lamp room."
 msgstr ""
 
-#: levels/l5_mine.gd:521
+#: levels/l5_mine.gd:528
 msgid "A headframe from the fifties. They kept this place alive for the brine. The heat, the pipes. All of it."
 msgstr ""
 
-#: levels/l5_mine.gd:531
+#: levels/l5_mine.gd:538
 msgid "COAL FURNACE"
 msgstr ""
 
-#: levels/l5_mine.gd:534
+#: levels/l5_mine.gd:541
 msgid "Light the furnace"
 msgstr ""
 
-#: levels/l5_mine.gd:538
+#: levels/l5_mine.gd:545
 msgid "The furnace is already roaring."
 msgstr ""
 
-#: levels/l5_mine.gd:542
+#: levels/l5_mine.gd:549
 msgid "Coal and lamp oil catch. The furnace roars."
 msgstr ""
 
-#: levels/l5_mine.gd:560
+#: levels/l5_mine.gd:567
 msgid "The socket for the brake lever is empty."
 msgstr ""
 
-#: levels/l5_mine.gd:564
+#: levels/l5_mine.gd:571
 msgid "The hoist controls are dead. The signal system has no power."
 msgstr ""
 
-#: levels/l5_mine.gd:572
+#: levels/l5_mine.gd:579
 msgid "Lever's seated. Signal bells are live. Somewhere above me the whole hoist just woke up."
 msgstr ""
 
-#: levels/l5_mine.gd:573
+#: levels/l5_mine.gd:580
 msgid "And everything in this mine just heard it."
 msgstr ""
 
-#: levels/l5_mine.gd:579
+#: levels/l5_mine.gd:586
 msgid "Survive the Foreman. Lure him onto the cage and release the brake - or burn him."
 msgstr ""
 
-#: levels/l5_mine.gd:584
+#: levels/l5_mine.gd:591
 msgid "That hard hat. The headlamp is still burning. Gil. Gil Arsenault."
 msgstr ""
 
-#: levels/l5_mine.gd:585
+#: levels/l5_mine.gd:592
 msgid "You wrote the request to seal 4 North. Dad used to say you were the only one who read the reports."
 msgstr ""
 
-#: levels/l5_mine.gd:586
+#: levels/l5_mine.gd:593
 msgid "If I can get him on the cage and pull the brake, the old safety dogs won't hold. The furnace works too."
 msgstr ""
 
-#: levels/l5_mine.gd:607
+#: levels/l5_mine.gd:614
 msgid "...Rest, Gil."
 msgstr ""
 
-#: levels/l5_mine.gd:607
+#: levels/l5_mine.gd:614
 msgid "The cage is clear. Down we go."
 msgstr ""
 
-#: levels/l5_mine.gd:613
+#: levels/l5_mine.gd:620
 msgid "The brake holds the cage. There is nothing to drop it on."
 msgstr ""
 
-#: levels/l5_mine.gd:617
+#: levels/l5_mine.gd:624
 msgid "Wait until he is standing on the cage."
 msgstr ""
 
-#: levels/l5_mine.gd:640
+#: levels/l5_mine.gd:647
 msgid "The cage is locked out. Nobody rides until the hoist is secure."
 msgstr ""
 
-#: levels/l5_mine.gd:664
+#: levels/l5_mine.gd:671
 msgid "Find the powder magazine. You will need blasting charges."
 msgstr ""
 
-#: levels/l5_mine.gd:666
+#: levels/l5_mine.gd:673
 msgid "...Dad? ...so cold. I can hear a... bell. Is that... you?"
 msgstr ""
 
-#: levels/l5_mine.gd:667
+#: levels/l5_mine.gd:674
 msgid "June? June, stay on. I'm coming down."
 msgstr ""
 
-#: levels/l5_mine.gd:668
+#: levels/l5_mine.gd:675
 msgid "...steel. It's all steel. ...so quiet..."
 msgstr ""
 
-#: levels/l5_mine.gd:696
+#: levels/l5_mine.gd:703
 msgid "CHECK-IN BOARD  -  EVERY MAN IN, EVERY MAN OUT"
 msgstr ""
 
-#: levels/l5_mine.gd:700
+#: levels/l5_mine.gd:707
 msgid "114  T. KADE"
 msgstr ""
 
-#: levels/l5_mine.gd:701
+#: levels/l5_mine.gd:708
 msgid "Brass tag 114"
 msgstr ""
 
-#: levels/l5_mine.gd:704
+#: levels/l5_mine.gd:711
 msgid "Letter: T. Kade to Ruth, March 2011"
 msgstr ""
 
-#: levels/l5_mine.gd:705
+#: levels/l5_mine.gd:712
 msgid ""
 "[b]Ruth,[/b]\n"
 "\n"
@@ -2953,85 +2965,85 @@ msgid ""
 "[i]- Tom[/i]"
 msgstr ""
 
-#: levels/l5_mine.gd:726
+#: levels/l5_mine.gd:733
 msgid "CHARGER / SIGNAL"
 msgstr ""
 
-#: levels/l5_mine.gd:727
+#: levels/l5_mine.gd:734
 msgid "Cap-lamp charger and signal panel"
 msgstr ""
 
-#: levels/l5_mine.gd:746
+#: levels/l5_mine.gd:753
 msgid "Tag 109 - R. VOSS. Someone else who never came up."
 msgstr ""
 
-#: levels/l5_mine.gd:750 levels/level.gd:406
+#: levels/l5_mine.gd:757 levels/level.gd:406
 msgid "Your inventory is full."
 msgstr ""
 
-#: levels/l5_mine.gd:761
+#: levels/l5_mine.gd:768
 msgid "114. T. KADE. They took every other tag down, after. Somebody left yours."
 msgstr ""
 
-#: levels/l5_mine.gd:762
+#: levels/l5_mine.gd:769
 msgid "Fifteen years, Dad. I never came back to see the one place you're still on the wall."
 msgstr ""
 
-#: levels/l5_mine.gd:763
+#: levels/l5_mine.gd:770
 msgid "...I'm here now. Late. I know. I'm always late."
 msgstr ""
 
-#: levels/l5_mine.gd:768 levels/l5_mine.gd:954 levels/l5_mine.gd:993
+#: levels/l5_mine.gd:775 levels/l5_mine.gd:961 levels/l5_mine.gd:1000
 msgid "TOM?"
 msgstr ""
 
-#: levels/l5_mine.gd:768
+#: levels/l5_mine.gd:775
 msgid "Eli. You came back."
 msgstr ""
 
-#: levels/l5_mine.gd:770
+#: levels/l5_mine.gd:777
 msgid "...No. That's the hum. Hart said it plays your dead back to you."
 msgstr ""
 
-#: levels/l5_mine.gd:771
+#: levels/l5_mine.gd:778
 msgid "Don't answer it. Get the lever. Get the battery. Get June."
 msgstr ""
 
-#: levels/l5_mine.gd:773
+#: levels/l5_mine.gd:780
 msgid "Find the hoist brake lever (south drift, 4 North) and a lamp battery (north, brine pumps)."
 msgstr ""
 
-#: levels/l5_mine.gd:777
+#: levels/l5_mine.gd:784
 msgid "The charger hums. Signal bells and hall lights are live."
 msgstr ""
 
-#: levels/l5_mine.gd:780
+#: levels/l5_mine.gd:787
 msgid "The charger and bell signal are dead. They need a charged cap-lamp battery."
 msgstr ""
 
-#: levels/l5_mine.gd:788
+#: levels/l5_mine.gd:795
 msgid "Contacts are clean. Battery seated... signal bells are live. The hall lights just came up."
 msgstr ""
 
-#: levels/l5_mine.gd:791 levels/l5_mine.gd:1313
+#: levels/l5_mine.gd:798 levels/l5_mine.gd:1320
 msgid "Fit the brake lever at the hoist station."
 msgstr ""
 
-#: levels/l5_mine.gd:793
+#: levels/l5_mine.gd:800
 msgid "Find the hoist brake lever in the south drift (4 North)."
 msgstr ""
 
-#: levels/l5_mine.gd:835
+#: levels/l5_mine.gd:842
 msgid ""
 "NORTHLINE MINERAL\n"
 "BRINE LIFT STATION 2"
 msgstr ""
 
-#: levels/l5_mine.gd:860
+#: levels/l5_mine.gd:867
 msgid "Northline Incident Report NM-26-0417"
 msgstr ""
 
-#: levels/l5_mine.gd:861
+#: levels/l5_mine.gd:868
 msgid ""
 "[b]NORTHLINE MINERAL - INTERNAL - PRIVILEGED[/b]\n"
 "[b]INCIDENT REPORT NM-26-0417 - BRINE POCKET B-7[/b]\n"
@@ -3047,21 +3059,21 @@ msgid ""
 "[i]- Regional Operations[/i]"
 msgstr ""
 
-#: levels/l5_mine.gd:905
+#: levels/l5_mine.gd:912
 msgid ""
 "IN MEMORY OF THOMAS J. KADE  AND  ROBERT VOSS\n"
 "FEB 11, 2011  -  THEY WENT DOWN FOR US"
 msgstr ""
 
-#: levels/l5_mine.gd:927
+#: levels/l5_mine.gd:934
 msgid "T. KADE"
 msgstr ""
 
-#: levels/l5_mine.gd:946
+#: levels/l5_mine.gd:953
 msgid "MSHA Report of Investigation (excerpt)"
 msgstr ""
 
-#: levels/l5_mine.gd:947
+#: levels/l5_mine.gd:954
 msgid ""
 "[b]U.S. DEPARTMENT OF LABOR - MINE SAFETY AND HEALTH ADMINISTRATION[/b]\n"
 "[b]REPORT OF INVESTIGATION - FATAL GROUND FALL[/b]\n"
@@ -3081,49 +3093,49 @@ msgid ""
 "[i]4 North Drift was sealed. The bodies were not recovered.[/i]"
 msgstr ""
 
-#: levels/l5_mine.gd:951
+#: levels/l5_mine.gd:958
 msgid "4 North. The roof just... stopped. Dad's hard hat is on that shelf. Somebody kept these up. Fifteen years."
 msgstr ""
 
-#: levels/l5_mine.gd:954
+#: levels/l5_mine.gd:961
 msgid "I told them the roof was wrong, Eli. I told them."
 msgstr ""
 
-#: levels/l5_mine.gd:955
+#: levels/l5_mine.gd:962
 msgid "I know, Dad. I know you did."
 msgstr ""
 
-#: levels/l5_mine.gd:970
+#: levels/l5_mine.gd:977
 msgid "CAGE NO. 1  -  LEVEL 2"
 msgstr ""
 
-#: levels/l5_mine.gd:973
+#: levels/l5_mine.gd:980
 msgid "Ride the cage up"
 msgstr ""
 
-#: levels/l5_mine.gd:993
+#: levels/l5_mine.gd:1000
 msgid "Don't go down any further, Eli. It's warm down there. That's the trouble."
 msgstr ""
 
-#: levels/l5_mine.gd:994
+#: levels/l5_mine.gd:1001
 msgid "Dad, if that's you... I'm going anyway. June's down there."
 msgstr ""
 
-#: levels/l5_mine.gd:1019
+#: levels/l5_mine.gd:1026
 msgid "Open magazine door"
 msgstr ""
 
-#: levels/l5_mine.gd:1020
+#: levels/l5_mine.gd:1027
 msgid ""
 "POWDER MAGAZINE\n"
 "NO FLAME - NO ENTRY"
 msgstr ""
 
-#: levels/l5_mine.gd:1034
+#: levels/l5_mine.gd:1041
 msgid "Field Notebook, p. 41 (I. Hart)"
 msgstr ""
 
-#: levels/l5_mine.gd:1035
+#: levels/l5_mine.gd:1042
 msgid ""
 "[b]DR. IMOGEN HART - FIELD NOTEBOOK - p. 41[/b]\n"
 "[i]Colony response to heat.[/i]\n"
@@ -3141,21 +3153,21 @@ msgid ""
 "I've been hearing my brother since March."
 msgstr ""
 
-#: levels/l5_mine.gd:1060
+#: levels/l5_mine.gd:1067
 msgid ""
 "X\n"
 "UNSOUND"
 msgstr ""
 
-#: levels/l5_mine.gd:1062
+#: levels/l5_mine.gd:1069
 msgid "Marked pillar"
 msgstr ""
 
-#: levels/l5_mine.gd:1103
+#: levels/l5_mine.gd:1110
 msgid "Scratched into the steel"
 msgstr ""
 
-#: levels/l5_mine.gd:1104
+#: levels/l5_mine.gd:1111
 msgid ""
 "[b]Scratched with a knife into a hauler's door panel:[/b]\n"
 "\n"
@@ -3172,199 +3184,199 @@ msgid ""
 "[i]- M. OKONKWO, SHIFT B[/i]"
 msgstr ""
 
-#: levels/l5_mine.gd:1151
+#: levels/l5_mine.gd:1158
 msgid "A steel refuge door, dogged shut from inside. Something huge is shaking the cavern - you can't get close."
 msgstr ""
 
-#: levels/l5_mine.gd:1151
+#: levels/l5_mine.gd:1158
 msgid "Open the refuge door"
 msgstr ""
 
-#: levels/l5_mine.gd:1152
+#: levels/l5_mine.gd:1159
 msgid ""
 "REFUGE CHAMBER NO. 3\n"
 "18 MEN - 36 HOURS AIR"
 msgstr ""
 
-#: levels/l5_mine.gd:1175
+#: levels/l5_mine.gd:1182
 msgid "Talk to June"
 msgstr ""
 
-#: levels/l5_mine.gd:1179
+#: levels/l5_mine.gd:1186
 msgid "...Dad? Dad, is that you? Or are you the other one?"
 msgstr ""
 
-#: levels/l5_mine.gd:1180
+#: levels/l5_mine.gd:1187
 msgid "It's me, June. It's me. Open the door."
 msgstr ""
 
-#: levels/l5_mine.gd:1213
+#: levels/l5_mine.gd:1220
 msgid "...Dad?"
 msgstr ""
 
-#: levels/l5_mine.gd:1214
+#: levels/l5_mine.gd:1221
 msgid "June. Hey. Hey, I've got you. I've got you."
 msgstr ""
 
-#: levels/l5_mine.gd:1215
+#: levels/l5_mine.gd:1222
 msgid "You're late."
 msgstr ""
 
-#: levels/l5_mine.gd:1216
+#: levels/l5_mine.gd:1223
 msgid "I know."
 msgstr ""
 
-#: levels/l5_mine.gd:1217
+#: levels/l5_mine.gd:1224
 msgid "Three years, Dad. Three Christmases. And you pick tonight to drive up?"
 msgstr ""
 
-#: levels/l5_mine.gd:1218
+#: levels/l5_mine.gd:1225
 msgid "I'm sorry. I'm so sorry. I should have come for every one of them."
 msgstr ""
 
-#: levels/l5_mine.gd:1219
+#: levels/l5_mine.gd:1226
 msgid "I almost didn't pick up. When you called on the radio. I almost didn't."
 msgstr ""
 
-#: levels/l5_mine.gd:1220
+#: levels/l5_mine.gd:1227
 msgid "...I'm glad I did."
 msgstr ""
 
-#: levels/l5_mine.gd:1221
+#: levels/l5_mine.gd:1228
 msgid "Can you walk?"
 msgstr ""
 
-#: levels/l5_mine.gd:1222
+#: levels/l5_mine.gd:1229
 msgid "My feet are gone. I'll walk anyway. Don't carry me, I'm not five."
 msgstr ""
 
-#: levels/l5_mine.gd:1223
+#: levels/l5_mine.gd:1230
 msgid "Where's your grandmother, June?"
 msgstr ""
 
-#: levels/l5_mine.gd:1224
+#: levels/l5_mine.gd:1231
 msgid "Gran went deeper. She heard Grandpa in the hum, and she went down the brine shaft."
 msgstr ""
 
-#: levels/l5_mine.gd:1225
+#: levels/l5_mine.gd:1232
 msgid "She's not Gran anymore, Dad. She's singing."
 msgstr ""
 
-#: levels/l5_mine.gd:1261
+#: levels/l5_mine.gd:1268
 msgid "You are not leaving without June."
 msgstr ""
 
-#: levels/l5_mine.gd:1261
+#: levels/l5_mine.gd:1268
 msgid "Go down the brine shaft"
 msgstr ""
 
-#: levels/l5_mine.gd:1262
+#: levels/l5_mine.gd:1269
 msgid ""
 "BRINE SHAFT ACCESS\n"
 "LEVEL 6 - AUTHORISED ONLY"
 msgstr ""
 
-#: levels/l5_mine.gd:1273
+#: levels/l5_mine.gd:1280
 msgid "Eli... come down. It's warm down here. Your father's here."
 msgstr ""
 
-#: levels/l5_mine.gd:1274
+#: levels/l5_mine.gd:1281
 msgid "Don't. Dad, don't answer her. That's what she does."
 msgstr ""
 
-#: levels/l5_mine.gd:1275
+#: levels/l5_mine.gd:1282
 msgid "...Mom. I'm coming. But not to stay."
 msgstr ""
 
-#: levels/l5_mine.gd:1277
+#: levels/l5_mine.gd:1284
 msgid "Go through the brine shaft access door with June."
 msgstr ""
 
-#: levels/l5_mine.gd:1304
+#: levels/l5_mine.gd:1311
 msgid "Take the battery to the charger in the lamp room."
 msgstr ""
 
-#: levels/l5_mine.gd:1315
+#: levels/l5_mine.gd:1322
 msgid "Find a lamp battery in the north pump station."
 msgstr ""
 
-#: levels/l5_mine.gd:1317
+#: levels/l5_mine.gd:1324
 msgid "Lure the Hauler near the marked pillar in the cavern."
 msgstr ""
 
-#: levels/l5_mine.gd:1324
+#: levels/l5_mine.gd:1331
 msgid "There's a hum in the rock. Felt more than heard. Like standing under a transmission line in the rain."
 msgstr ""
 
-#: levels/l5_mine.gd:1327
+#: levels/l5_mine.gd:1334
 msgid "Hold the lamp for me, Eli."
 msgstr ""
 
-#: levels/l5_mine.gd:1330
+#: levels/l5_mine.gd:1337
 msgid "Eli. Hand me the bolter."
 msgstr ""
 
-#: levels/l5_mine.gd:1334
+#: levels/l5_mine.gd:1341
 msgid "It's not the light he follows, Eli. It's you."
 msgstr ""
 
-#: levels/l5_mine.gd:1337
+#: levels/l5_mine.gd:1344
 msgid "Mind the roof."
 msgstr ""
 
-#: levels/l5_mine.gd:1399
+#: levels/l5_mine.gd:1406
 msgid "Jesus. That's a haul truck. Those are... those were the night shift. They're all part of it."
 msgstr ""
 
-#: levels/l5_mine.gd:1400
+#: levels/l5_mine.gd:1407
 msgid "Dad's old drift. The marked pillar. If I can get it under the roof... I have two sticks of gel, and the thing is the size of a house."
 msgstr ""
 
-#: levels/l5_mine.gd:1406
+#: levels/l5_mine.gd:1413
 msgid "Survive the Hauler. Plant the blasting charges on the red-marked pillar when it is near."
 msgstr ""
 
-#: levels/l5_mine.gd:1417
+#: levels/l5_mine.gd:1424
 msgid "The pillar is cracked and cribbed with timber. A good charge would bring the roof down."
 msgstr ""
 
-#: levels/l5_mine.gd:1420
+#: levels/l5_mine.gd:1427
 msgid "This pillar is cracked through and marked with red tape. A charge here could bring the roof down."
 msgstr ""
 
-#: levels/l5_mine.gd:1423
+#: levels/l5_mine.gd:1430
 msgid "Not yet. Lure the Hauler close to the pillar first."
 msgstr ""
 
-#: levels/l5_mine.gd:1427
+#: levels/l5_mine.gd:1434
 msgid "The Hauler is too far from the pillar. Draw it closer."
 msgstr ""
 
-#: levels/l5_mine.gd:1433
+#: levels/l5_mine.gd:1440
 msgid "Charges planted. Fuse burning - RUN."
 msgstr ""
 
-#: levels/l5_mine.gd:1473
+#: levels/l5_mine.gd:1480
 msgid "...They finally stopped. All of them."
 msgstr ""
 
-#: levels/l5_mine.gd:1474
+#: levels/l5_mine.gd:1481
 msgid "Dad? I heard it stop. I'm... in the refuge. Steel door, north. The big cold room. Please hurry."
 msgstr ""
 
-#: levels/l5_mine.gd:1475
+#: levels/l5_mine.gd:1482
 msgid "Hold on, June. Ninety seconds. I'm coming."
 msgstr ""
 
-#: levels/l6_heart.gd:253
+#: levels/l6_heart.gd:263
 msgid "LOWER KETTLE — LEVEL 6 — BRINE"
 msgstr ""
 
-#: levels/l6_heart.gd:273
+#: levels/l6_heart.gd:283
 msgid "Ruth's Last Note"
 msgstr ""
 
-#: levels/l6_heart.gd:273
+#: levels/l6_heart.gd:283
 msgid ""
 "[i]Pencil, on the back of a shelter sign-in sheet. The handwriting gets larger and looser toward the end.[/i]\n"
 "\n"
@@ -3385,19 +3397,19 @@ msgid ""
 "— Mom"
 msgstr ""
 
-#: levels/l6_heart.gd:287
+#: levels/l6_heart.gd:297
 msgid "MERIDIAN HEAT RECOVERY — FEED 2 — DO NOT ENTER"
 msgstr ""
 
-#: levels/l6_heart.gd:309
+#: levels/l6_heart.gd:319
 msgid "NORTHLINE — PUMP STN 3 — REFUGE"
 msgstr ""
 
-#: levels/l6_heart.gd:311
+#: levels/l6_heart.gd:321
 msgid "Pump Station 3 — Last Log"
 msgstr ""
 
-#: levels/l6_heart.gd:312
+#: levels/l6_heart.gd:322
 msgid ""
 "[b]NORTHLINE MINERAL — LOWER KETTLE\n"
 "PUMP STATION 3 — OPERATOR LOG[/b]\n"
@@ -3415,11 +3427,11 @@ msgid ""
 "03:34  It's so quiet now."
 msgstr ""
 
-#: levels/l6_heart.gd:338
+#: levels/l6_heart.gd:348
 msgid "Sample Label — Final"
 msgstr ""
 
-#: levels/l6_heart.gd:339
+#: levels/l6_heart.gd:349
 msgid ""
 "[b]NORTHLINE GEOSCIENCE — SAMPLE LABEL[/b]\n"
 "Site: Lower Kettle, Brine Cavern, Lattice Face A\n"
@@ -3436,289 +3448,289 @@ msgid ""
 "I was right. That was never the same as being good."
 msgstr ""
 
-#: levels/l6_heart.gd:384
+#: levels/l6_heart.gd:394
 #, c-format
 msgid "STEAM RELIEF %d"
 msgstr ""
 
-#: levels/l6_heart.gd:386 levels/l6_heart.gd:632
+#: levels/l6_heart.gd:396 levels/l6_heart.gd:642
 msgid "Vent steam valve"
 msgstr ""
 
-#: levels/l6_heart.gd:398
+#: levels/l6_heart.gd:408
 msgid ""
 "MERIDIAN TIE\n"
 "POWER + HEAT"
 msgstr ""
 
-#: levels/l6_heart.gd:399
+#: levels/l6_heart.gd:409
 msgid ""
 "PIPELINE FEED\n"
 "MAIN / FULL"
 msgstr ""
 
-#: levels/l6_heart.gd:410
+#: levels/l6_heart.gd:420
 msgid "Use pipeline control"
 msgstr ""
 
-#: levels/l6_heart.gd:596
+#: levels/l6_heart.gd:606
 msgid "Reach the pipeline control station."
 msgstr ""
 
-#: levels/l6_heart.gd:602
+#: levels/l6_heart.gd:612
 msgid "Destroy the Hollow Mother. The steam valves will scorch the lattice."
 msgstr ""
 
-#: levels/l6_heart.gd:604
+#: levels/l6_heart.gd:614
 msgid "Follow the path down to the brine. Find Ruth."
 msgstr ""
 
-#: levels/l6_heart.gd:607
+#: levels/l6_heart.gd:617
 msgid "THE HEART"
 msgstr ""
 
-#: levels/l6_heart.gd:607
+#: levels/l6_heart.gd:617
 msgid "Brine cavern, beneath Lower Kettle"
 msgstr ""
 
-#: levels/l6_heart.gd:632
+#: levels/l6_heart.gd:642
 #, c-format
 msgid "Valve cooling (%d s)"
 msgstr ""
 
-#: levels/l6_heart.gd:654
+#: levels/l6_heart.gd:664
 msgid "You hear that? Not with your ears. It's in the rock."
 msgstr ""
 
-#: levels/l6_heart.gd:655
+#: levels/l6_heart.gd:665
 msgid "Nineteen hertz. I measured it on Gran's old scope. It makes people hear things, Dad."
 msgstr ""
 
-#: levels/l6_heart.gd:656
+#: levels/l6_heart.gd:666
 msgid "I keep hearing Mom laughing in the kitchen. She's in Arizona."
 msgstr ""
 
-#: levels/l6_heart.gd:657
+#: levels/l6_heart.gd:667
 msgid "Stay close. Don't answer it, whatever it says."
 msgstr ""
 
-#: levels/l6_heart.gd:670
+#: levels/l6_heart.gd:680
 msgid "Eli. Over here, son. Mind the edge. It's slick."
 msgstr ""
 
-#: levels/l6_heart.gd:671
+#: levels/l6_heart.gd:681
 msgid "...Dad."
 msgstr ""
 
-#: levels/l6_heart.gd:672
+#: levels/l6_heart.gd:682
 msgid "Dad? Who are you talking to? There's nobody there. Dad."
 msgstr ""
 
-#: levels/l6_heart.gd:673
+#: levels/l6_heart.gd:683
 msgid "Fifteen years I've been waiting. You took the long way round."
 msgstr ""
 
-#: levels/l6_heart.gd:674
+#: levels/l6_heart.gd:684
 msgid "You're not him. You don't get to be him."
 msgstr ""
 
-#: levels/l6_heart.gd:676
+#: levels/l6_heart.gd:686
 msgid "Keep going. There is a lamp lit ahead on the right."
 msgstr ""
 
-#: levels/l6_heart.gd:686
+#: levels/l6_heart.gd:696
 msgid "Somebody lit this on purpose. Someone was still thinking down here."
 msgstr ""
 
-#: levels/l6_heart.gd:687
+#: levels/l6_heart.gd:697
 msgid "Last stop before the floor of the cavern. Save, reload, patch up."
 msgstr ""
 
-#: levels/l6_heart.gd:688
+#: levels/l6_heart.gd:698
 msgid "Gran's down there. I can feel it. Is that stupid? It feels like being looked at."
 msgstr ""
 
-#: levels/l6_heart.gd:689
+#: levels/l6_heart.gd:699
 msgid "Not stupid. Stay behind me. When it starts, you find a rock and you get low."
 msgstr ""
 
-#: levels/l6_heart.gd:691
+#: levels/l6_heart.gd:701
 msgid "Rest if you need to. Then head into the cavern."
 msgstr ""
 
-#: levels/l6_heart.gd:700
+#: levels/l6_heart.gd:710
 msgid "Dad. On the wall. That's Gran. That's Gran, isn't it."
 msgstr ""
 
-#: levels/l6_heart.gd:701
+#: levels/l6_heart.gd:711
 msgid "Eli. You came. You always did come, in the end."
 msgstr ""
 
-#: levels/l6_heart.gd:702
+#: levels/l6_heart.gd:712
 msgid "Mom. Mom, can you hear me? It's Eli."
 msgstr ""
 
-#: levels/l6_heart.gd:703
+#: levels/l6_heart.gd:713
 msgid "I hear everyone, baby. Everyone who ever went cold. It's quiet here. It's so kind."
 msgstr ""
 
-#: levels/l6_heart.gd:704
+#: levels/l6_heart.gd:714
 msgid "Eli, it's warm here. Bring June. We can all be warm."
 msgstr ""
 
-#: levels/l6_heart.gd:705
+#: levels/l6_heart.gd:715
 msgid "That's not Dad. Dad's dead. You stole his voice out of her head."
 msgstr ""
 
-#: levels/l6_heart.gd:706
+#: levels/l6_heart.gd:716
 msgid "Nobody stole anything. We only keep what you can't. Come closer."
 msgstr ""
 
-#: levels/l6_heart.gd:707
+#: levels/l6_heart.gd:717
 msgid "I'm not going, Dad. I'm not going to her. Please."
 msgstr ""
 
-#: levels/l6_heart.gd:708
+#: levels/l6_heart.gd:718
 msgid "June. Behind the rocks, there. Get low and stay put. Whatever you hear."
 msgstr ""
 
-#: levels/l6_heart.gd:709
+#: levels/l6_heart.gd:719
 msgid "Dad—"
 msgstr ""
 
-#: levels/l6_heart.gd:710
+#: levels/l6_heart.gd:720
 msgid "I've got this one. Go."
 msgstr ""
 
-#: levels/l6_heart.gd:729
+#: levels/l6_heart.gd:739
 msgid "The lattice shudders and goes still."
 msgstr ""
 
-#: levels/l6_heart.gd:734
+#: levels/l6_heart.gd:744
 msgid "Destroy the Hollow Mother. The steam valves on either wall will scorch the lattice."
 msgstr ""
 
-#: levels/l6_heart.gd:735
+#: levels/l6_heart.gd:745
 msgid "The steam valves (east and west walls) can scorch the lattice."
 msgstr ""
 
-#: levels/l6_heart.gd:747
+#: levels/l6_heart.gd:757
 msgid "The lattice cracks. Something tears free."
 msgstr ""
 
-#: levels/l6_heart.gd:771
+#: levels/l6_heart.gd:781
 msgid "Eli..."
 msgstr ""
 
-#: levels/l6_heart.gd:772
+#: levels/l6_heart.gd:782
 msgid "Oh. It's cold. It's so cold. I'd forgotten."
 msgstr ""
 
-#: levels/l6_heart.gd:773
+#: levels/l6_heart.gd:783
 msgid "I know, Mom. I'm here."
 msgstr ""
 
-#: levels/l6_heart.gd:774
+#: levels/l6_heart.gd:784
 msgid "Tell June... the cold isn't the worst... Be warm. Please, be warm."
 msgstr ""
 
-#: levels/l6_heart.gd:782
+#: levels/l6_heart.gd:792
 msgid "She's gone, isn't she. The hum stopped."
 msgstr ""
 
-#: levels/l6_heart.gd:783
+#: levels/l6_heart.gd:793
 msgid "Not all of it. Not the pipeline. That's still pushing heat into the dark."
 msgstr ""
 
-#: levels/l6_heart.gd:784
+#: levels/l6_heart.gd:794
 msgid "Then that's what's left. The control station, by the east wall."
 msgstr ""
 
-#: levels/l6_heart.gd:787
+#: levels/l6_heart.gd:797
 msgid "Reach the pipeline control station on the east wall."
 msgstr ""
 
-#: levels/l6_heart.gd:792
+#: levels/l6_heart.gd:802
 msgid "The manifold is cold. Nothing here to scorch yet."
 msgstr ""
 
-#: levels/l6_heart.gd:797
+#: levels/l6_heart.gd:807
 #, c-format
 msgid "Pressure is still building (%d s)."
 msgstr ""
 
-#: levels/l6_heart.gd:818
+#: levels/l6_heart.gd:828
 msgid "Superheated steam rolls over the lattice!"
 msgstr ""
 
-#: levels/l6_heart.gd:826
+#: levels/l6_heart.gd:836
 msgid "The panel is dead. The pipeline is still feeding the Mother."
 msgstr ""
 
-#: levels/l6_heart.gd:835
+#: levels/l6_heart.gd:845
 msgid "Two handles. That's it? After all this, it's two handles."
 msgstr ""
 
-#: levels/l6_heart.gd:836
+#: levels/l6_heart.gd:846
 msgid "Left one cuts the Meridian tie. Heat feed and power, both. Lake goes dark, town gets its grid back."
 msgstr ""
 
-#: levels/l6_heart.gd:837
+#: levels/l6_heart.gd:847
 msgid "Right one opens the pipeline to full. Brine boils. Nothing survives in that cavern. Nothing."
 msgstr ""
 
-#: levels/l6_heart.gd:838
+#: levels/l6_heart.gd:848
 msgid "Gran's still in there, Dad. Whatever's left. And Grandpa's voice. Even if it was never him."
 msgstr ""
 
-#: levels/l6_heart.gd:839
+#: levels/l6_heart.gd:849
 msgid "If you burn it, it's over. Corvane calls it a mining accident. Nobody ever pays for any of it."
 msgstr ""
 
-#: levels/l6_heart.gd:840
+#: levels/l6_heart.gd:850
 msgid "If you cut it, it sleeps. It doesn't die. Someday somebody turns the heat back on and it wakes up."
 msgstr ""
 
-#: levels/l6_heart.gd:841
+#: levels/l6_heart.gd:851
 msgid "Neither one's clean."
 msgstr ""
 
-#: levels/l6_heart.gd:842
+#: levels/l6_heart.gd:852
 msgid "No. I used to think grown-ups just knew which one was right."
 msgstr ""
 
-#: levels/l6_heart.gd:843
+#: levels/l6_heart.gd:853
 msgid "Pick the one you can live with, and I'll stand next to you. I'm not leaving this time."
 msgstr ""
 
-#: levels/l6_heart.gd:844
+#: levels/l6_heart.gd:854
 msgid "Neither am I."
 msgstr ""
 
-#: levels/l6_heart.gd:869
+#: levels/l6_heart.gd:879
 msgid "THE PIPELINE"
 msgstr ""
 
-#: levels/l6_heart.gd:875
+#: levels/l6_heart.gd:885
 msgid ""
 "Two handles. One heat feed, still pushing warmth into the dark.\n"
 "Whichever you pull, something Kettle Falls loved goes with it.\n"
 "Neither choice is clean."
 msgstr ""
 
-#: levels/l6_heart.gd:892
+#: levels/l6_heart.gd:902
 msgid "CUT MERIDIAN — let it go dark"
 msgstr ""
 
-#: levels/l6_heart.gd:898
+#: levels/l6_heart.gd:908
 msgid "The heat feed and the data centre die. The colony starves back to sleep. The town gets its power at dawn. Corvane will sue."
 msgstr ""
 
-#: levels/l6_heart.gd:905
+#: levels/l6_heart.gd:915
 msgid "OPEN THE PIPELINE — burn it all"
 msgstr ""
 
-#: levels/l6_heart.gd:911
+#: levels/l6_heart.gd:921
 msgid "The brine boils. The colony, and everyone it took, is gone for good. Meridian never goes offline. Nobody is held to account."
 msgstr ""
 
@@ -3806,15 +3818,15 @@ msgstr ""
 msgid "New Game"
 msgstr ""
 
-#: ui/main_menu.gd:41 ui/ui.gd:925 ui/ui.gd:1005
+#: ui/main_menu.gd:41 ui/ui.gd:953 ui/ui.gd:1039
 msgid "Load Game"
 msgstr ""
 
-#: ui/main_menu.gd:43 ui/main_menu.gd:43 ui/ui.gd:928
+#: ui/main_menu.gd:43 ui/main_menu.gd:43 ui/ui.gd:956
 msgid "Controls"
 msgstr ""
 
-#: ui/main_menu.gd:44 ui/ui.gd:931
+#: ui/main_menu.gd:44 ui/ui.gd:959
 msgid "Options"
 msgstr ""
 
@@ -3850,190 +3862,190 @@ msgstr ""
 msgid "FINE"
 msgstr ""
 
-#: ui/ui.gd:584 ui/ui.gd:823
+#: ui/ui.gd:612 ui/ui.gd:851
 msgid "Close"
 msgstr ""
 
-#: ui/ui.gd:595
+#: ui/ui.gd:623
 msgid "OBTAINED"
 msgstr ""
 
-#: ui/ui.gd:624
+#: ui/ui.gd:652
 msgid "ELIAS KADE"
 msgstr ""
 
-#: ui/ui.gd:630
+#: ui/ui.gd:658
 msgid "ITEMS"
 msgstr ""
 
-#: ui/ui.gd:631
+#: ui/ui.gd:659
 msgid "FILES"
 msgstr ""
 
-#: ui/ui.gd:633
+#: ui/ui.gd:661
 #, c-format
 msgid "Objective: %s"
 msgstr ""
 
-#: ui/ui.gd:689
+#: ui/ui.gd:717
 #, c-format
 msgid "Combine %s with...?"
 msgstr ""
 
-#: ui/ui.gd:690 ui/ui.gd:873
+#: ui/ui.gd:718 ui/ui.gd:901
 msgid "Cancel"
 msgstr ""
 
-#: ui/ui.gd:705
+#: ui/ui.gd:733
 msgid "Equip"
 msgstr ""
 
-#: ui/ui.gd:705
+#: ui/ui.gd:733
 msgid "Equipped"
 msgstr ""
 
-#: ui/ui.gd:709 ui/ui.gd:714
+#: ui/ui.gd:737 ui/ui.gd:742
 msgid "Use"
 msgstr ""
 
-#: ui/ui.gd:718
+#: ui/ui.gd:746
 msgid "Combine"
 msgstr ""
 
-#: ui/ui.gd:722
+#: ui/ui.gd:750
 msgid "Discard"
 msgstr ""
 
-#: ui/ui.gd:727
+#: ui/ui.gd:755
 msgid "Select an item."
 msgstr ""
 
-#: ui/ui.gd:728
+#: ui/ui.gd:756
 #, c-format
 msgid "Inventory: %d / %d slots"
 msgstr ""
 
-#: ui/ui.gd:729
+#: ui/ui.gd:757
 msgid "[Tab/Esc] Close"
 msgstr ""
 
-#: ui/ui.gd:743
+#: ui/ui.gd:771
 msgid "Need two of these."
 msgstr ""
 
-#: ui/ui.gd:766
+#: ui/ui.gd:794
 msgid "No files collected."
 msgstr ""
 
-#: ui/ui.gd:779
+#: ui/ui.gd:807
 msgid "SUPPLY CRATE — click to move items"
 msgstr ""
 
-#: ui/ui.gd:789
+#: ui/ui.gd:817
 #, c-format
 msgid "Inventory (%d/%d)"
 msgstr ""
 
-#: ui/ui.gd:790
+#: ui/ui.gd:818
 msgid "Box"
 msgstr ""
 
-#: ui/ui.gd:814
+#: ui/ui.gd:842
 msgid "Inventory full."
 msgstr ""
 
-#: ui/ui.gd:853
+#: ui/ui.gd:881
 msgid "RECORD PROGRESS"
 msgstr ""
 
-#: ui/ui.gd:853
+#: ui/ui.gd:881
 msgid "LOAD"
 msgstr ""
 
-#: ui/ui.gd:857
+#: ui/ui.gd:885
 #, c-format
 msgid "Slot %d — empty"
 msgstr ""
 
-#: ui/ui.gd:859
+#: ui/ui.gd:887
 #, c-format
 msgid "Slot %d — %s · %s · %s"
 msgstr ""
 
-#: ui/ui.gd:880
+#: ui/ui.gd:908
 msgid "L1 SUBSTATION"
 msgstr ""
 
-#: ui/ui.gd:881
+#: ui/ui.gd:909
 msgid "L2 SCHOOL"
 msgstr ""
 
-#: ui/ui.gd:882
+#: ui/ui.gd:910
 msgid "L3 CHURCH"
 msgstr ""
 
-#: ui/ui.gd:883
+#: ui/ui.gd:911
 msgid "L4 MERIDIAN"
 msgstr ""
 
-#: ui/ui.gd:884
+#: ui/ui.gd:912
 msgid "L5 MINE"
 msgstr ""
 
-#: ui/ui.gd:885
+#: ui/ui.gd:913
 msgid "L6 HEART"
 msgstr ""
 
-#: ui/ui.gd:896
+#: ui/ui.gd:924
 msgid "OPTIONS"
 msgstr ""
 
-#: ui/ui.gd:897
+#: ui/ui.gd:925
 msgid "Language"
 msgstr ""
 
-#: ui/ui.gd:908
+#: ui/ui.gd:936
 msgid "Back"
 msgstr ""
 
-#: ui/ui.gd:923
+#: ui/ui.gd:951
 msgid "PAUSED"
 msgstr ""
 
-#: ui/ui.gd:924
+#: ui/ui.gd:952
 msgid "Resume"
 msgstr ""
 
-#: ui/ui.gd:934 ui/ui.gd:1008
+#: ui/ui.gd:962 ui/ui.gd:1042
 msgid "Quit to Title"
 msgstr ""
 
-#: ui/ui.gd:940
+#: ui/ui.gd:968
 msgid ""
 "[center][b]WHITEOUT: KETTLE FALLS[/b]\n"
 "A fan-made survival-horror game built with Godot Engine 4.5 (MIT).[/center]"
 msgstr ""
 
-#: ui/ui.gd:940
+#: ui/ui.gd:968
 msgid ""
 "[b]Characters[/b]\n"
 "Human models built from MakeHuman / MPFB assets (CC0), assembled in Blender."
 msgstr ""
 
-#: ui/ui.gd:940
+#: ui/ui.gd:968
 msgid ""
 "[b]Textures[/b]\n"
 "ambientCG (CC0) and Poly Haven (CC0) materials. Full list: textures/LICENSES.md"
 msgstr ""
 
-#: ui/ui.gd:940
+#: ui/ui.gd:968
 msgid ""
 "[b]Music[/b] — CC BY-SA 4.0\n"
 "\"Decoherence\", \"Helios\", \"Primal Carnage\" by Scott Buckley — www.scottbuckley.com.au\n"
 "Other music and ambience: CC0 sources (see audio/LICENSES.md)."
 msgstr ""
 
-#: ui/ui.gd:940
+#: ui/ui.gd:968
 msgid ""
 "[b]Sound effects[/b] — CC BY 3.0 (attribution required)\n"
 "ermfilm — \"Rossi-Revolver\" · steveygos93 — \"Explosion2\" · Nicistarful — \"Fast Throttle Mechanic Lever\"\n"
@@ -4041,23 +4053,35 @@ msgid ""
 "(all via freesound.org)"
 msgstr ""
 
-#: ui/ui.gd:940
+#: ui/ui.gd:968
 msgid ""
 "Plus CC0 sounds by Kenney, MrFossy, LeMudCrab, michorvath, artisticdude and many Freesound contributors.\n"
 "Full list: audio/LICENSES.md"
 msgstr ""
 
-#: ui/ui.gd:940
+#: ui/ui.gd:968
+msgid ""
+"[b]3D models[/b]\n"
+"Environment props, furniture, trees, pistol and hatchet: Poly Haven artists (CC0, polyhaven.com). Vehicles, shotgun, revolver, flare launcher, transformer, server rack, steeple, ice formations, ore cart and reception desk: generated for this project with Higgsfield (Tripo H3.1)."
+msgstr ""
+
+#: ui/ui.gd:968
+msgid ""
+"[b]Animation[/b]\n"
+"Motion capture: CMU Graphics Lab Motion Capture Database (mocap.cs.cmu.edu), funded by NSF EIA-0196217. Quaternius Universal Animation Library (CC0)."
+msgstr ""
+
+#: ui/ui.gd:968
 msgid ""
 "[b]Typeface[/b]\n"
 "Be Vietnam Pro by the Be Vietnam Pro Project Authors (SIL Open Font License 1.1). Full text: fonts/OFL.txt"
 msgstr ""
 
-#: ui/ui.gd:940
+#: ui/ui.gd:968
 msgid "Inspired by the late-90s survival-horror genre. Story, characters and setting are original."
 msgstr ""
 
-#: ui/ui.gd:966
+#: ui/ui.gd:1000
 msgid ""
 "[b]WASD[/b] move   ·   [b]Shift[/b] run   ·   [b]Mouse[/b] look\n"
 "[b]Right mouse[/b] aim   ·   [b]Left mouse[/b] fire (while aiming)\n"
@@ -4067,77 +4091,77 @@ msgid ""
 "[b]Esc[/b] pause / close menus"
 msgstr ""
 
-#: ui/ui.gd:966
+#: ui/ui.gd:1000
 msgid ""
 "Hold aim without moving to tighten the reticle — a focused shot does far more damage. Headshots deal double damage and stop the dead from getting back up.\n"
 "Zombies that fall may not stay down. Ammunition is scarce: avoid fights you don't need."
 msgstr ""
 
-#: ui/ui.gd:999
+#: ui/ui.gd:1033
 msgid "YOU ARE DEAD"
 msgstr ""
 
-#: ui/ui.gd:1002
+#: ui/ui.gd:1036
 msgid "Continue (retry area)"
 msgstr ""
 
-#: ui/ui.gd:1056
+#: ui/ui.gd:1090
 #, c-format
 msgid "Clear time %s   ·   Saves %d   ·   Deaths %d   ·   Rank %s"
 msgstr ""
 
-#: ui/ui.gd:1057
+#: ui/ui.gd:1091
 msgid "Return to Title"
 msgstr ""
 
-#: ui/ui.gd:1064
+#: ui/ui.gd:1098
 msgid "[center][b]ENDING: DARK[/b][/center]"
 msgstr ""
 
-#: ui/ui.gd:1064
+#: ui/ui.gd:1098
 msgid "Elias pulled the last disconnect by hand. Somewhere on the lake, forty thousand servers went quiet, and the warm breath in the pipeline stopped."
 msgstr ""
 
-#: ui/ui.gd:1064
+#: ui/ui.gd:1098
 msgid "Down in the cavern, the hum fell an octave, and then another, until it was only the sound of the ice settling. The lattice grew dull. Whatever had worn his mother's face went still and stayed still."
 msgstr ""
 
-#: ui/ui.gd:1064
+#: ui/ui.gd:1098
 msgid "At 7:52 the sun came up over Kettle Falls for the first time in three days. The co-op's crews found the town's feeders closed, the school lit, and eighty-one people alive in its gym."
 msgstr ""
 
-#: ui/ui.gd:1064
+#: ui/ui.gd:1098
 msgid "Corvane Systems filed suit against Lakeshore Electric on December 28th. Elias was named personally. He kept the letter on the fridge, next to June's drawing of the substation, and never once regretted it."
 msgstr ""
 
-#: ui/ui.gd:1064
+#: ui/ui.gd:1098
 msgid "[i]\"Load shed: Meridian. Priority: Kettle Falls.\"[/i]"
 msgstr ""
 
-#: ui/ui.gd:1075
+#: ui/ui.gd:1109
 msgid "[center][b]ENDING: THAW[/b][/center]"
 msgstr ""
 
-#: ui/ui.gd:1075
+#: ui/ui.gd:1109
 msgid "Elias opened the pipeline to full. The brine boiled. The cavern screamed in a hundred voices and one of them was his mother's, and then all of them were steam."
 msgstr ""
 
-#: ui/ui.gd:1075
+#: ui/ui.gd:1109
 msgid "By morning nothing in the Lower Kettle mine was alive, and nothing in it ever would be again. Meridian never dropped a single request."
 msgstr ""
 
-#: ui/ui.gd:1075
+#: ui/ui.gd:1109
 msgid "Corvane's statement called it \"a tragic mining accident during an extreme weather event.\" Northline's insurers paid out. The data centre doubled its capacity the following spring."
 msgstr ""
 
-#: ui/ui.gd:1075
+#: ui/ui.gd:1109
 msgid "June doesn't talk about that night. Sometimes she leaves her radio on 146.52 and just listens to the static, as if someone down there might still answer."
 msgstr ""
 
-#: ui/ui.gd:1084
+#: ui/ui.gd:1118
 msgid "[center][b]THE END[/b][/center]"
 msgstr ""
 
-#: ui/ui.gd:1084
+#: ui/ui.gd:1118
 msgid "Kettle Falls is behind you. The cold is not."
 msgstr ""

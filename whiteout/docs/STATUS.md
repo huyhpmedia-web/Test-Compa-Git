@@ -41,3 +41,18 @@ steeple 6c9c2b1e-e879-4ffc-830b-29bb5a6955ca
 Batch 2 (tripo): van 6c119b6d-299c-4d9a-9f8c-e2baf64a25a9, snowplow 83181eb4-1e8a-48b8-b00e-83fa25613344,
 ice_cluster 838d85db-5cc6-493e-abbe-427e0d4630f1, ore_cart 9432913f-fcf1-4242-9cef-938b3277d911,
 reception_desk 6ee68acf-44a6-4f13-be8f-2e2a0d47a9be. Agent F = L4/L6 environment pass.
+
+## Upgrade round result (Nov 6 2026, lead scores from renders, harsh 2026 bar)
+| Area | Before | After | Notes |
+|---|---|---|---|
+| Weapons (meshes) | 1 | 8 | PH service_pistol/hatchet + Higgsfield shotgun/revolver/flare gun |
+| Grip / two-hand IK | 1 | 7.5 | actors/weapon_ik.gd; left fingers hidden by cuff |
+| Shooting feel | 2 | 7.5 | spring recoil, flash, smoke, casings, impacts, hit-stop, markers |
+| Elias hair/head | 3 | 7 | no holes; hairline edge slightly hard |
+| Zombies | 3 | 7 | no ice; decay, wounds, teeth, torn clothes, 4 new bodies |
+| Specials | 4 | 7 | flayed husk, ruptured burster; still MakeHuman bases |
+| Animation | 2 | 7 | mocap (CMU + Quaternius), chops, reloads, long gun, ragdoll, hit reacts, look-at |
+| L1 / L2 / L3 / L4 / L5 / L6 | 2 | 7 / 7.5 / 7 / 7 / 7 / 7 | real PH props, HD vehicles, conifers, fire VFX, real ice |
+| Vietnamese | - | 8.5 | 889/889 strings, Be Vietnam Pro font, language toggle |
+Known gaps: no jaw bone in the MPFB rig (jaw layer is a no-op), L4 NOC/break room light dressing,
+L6 control station primitives, far L3 blocks, foot IK, leg-loss crawl.

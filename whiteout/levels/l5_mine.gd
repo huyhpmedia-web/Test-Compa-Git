@@ -224,7 +224,7 @@ func rails(a: Vector3, b: Vector3, gauge := 0.9) -> void:
 
 func ore_cart(pos: Vector3, yaw := 0.0, full := true) -> void:
 	if Props.Env.has("props/ore_cart"):
-		var oc := Props.prop(geo, "props/ore_cart", pos, yaw, {"fit_len": 1.9, "snow": 0.0, "collide": Vector3(1.8, 1.0, 1.0)})
+		var oc := Props.prop(geo, "props/ore_cart", pos, yaw, {"fit_len": 1.9, "snow": 0.0, "collide": Vector3(1.5, 0.9, 0.6)})
 		if oc:
 			return
 	var r := Node3D.new()

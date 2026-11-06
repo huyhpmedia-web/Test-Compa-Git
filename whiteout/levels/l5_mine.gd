@@ -250,8 +250,8 @@ func rime(pos: Vector3, normal := Vector3.UP, n := 5, size := 0.5, lit := false)
 	var nrm := normal.normalized()
 	var q := Quaternion(Vector3.UP, nrm) if nrm.dot(Vector3.UP) > -0.99 else Quaternion(Vector3.RIGHT, PI)
 	var bq := Basis(q)
-	if Props.Env.has("props/ice_cluster"):
-		var ic := Props.prop(geo, "props/ice_cluster", pos, rk(0, TAU), {"scale": size * rk(0.9, 1.7), "collide": "none", "snow": 0.0, "shadow": false, "range": 70.0, "ice_tex": true})
+	if Props.Env.has("props/ice_cluster") and size >= 0.4 and _rng.randf() < 0.35:
+		var ic := Props.prop(geo, "props/ice_cluster", pos, rk(0, TAU), {"scale": size * rk(0.35, 0.8), "collide": "none", "snow": 0.0, "shadow": false, "range": 70.0, "ice_tex": true})
 		if ic:
 			ic.position = pos - nrm * size * 0.1
 			ic.quaternion = q * Quaternion(Vector3.UP, rk(0, TAU))
@@ -261,8 +261,8 @@ func rime(pos: Vector3, normal := Vector3.UP, n := 5, size := 0.5, lit := false)
 	var skin := Props.sphere(geo, size * 0.55, pos, _rime(), Vector3(1.3, 0.12, 1.0))
 	skin.basis = bq * Basis(Vector3.UP, rk(0, TAU)) * Basis.from_scale(Vector3(1.3, 0.12, 1.0) * size * 0.55)
 	skin.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	for i in maxi(2, n / 2):
-		var rr := size * rk(0.12, 0.26)
+	for i in maxi(1, n / 4):
+		var rr := size * rk(0.08, 0.16)
 		var off := bq * Vector3(rk(-1, 1), 0, rk(-1, 1)) * size * 0.45
 		var lump := Props.sphere(geo, rr, pos + off + nrm * rr * 0.3, _rime(), Vector3(rk(0.8, 1.4), rk(0.5, 1.0), rk(0.8, 1.3)))
 		lump.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF

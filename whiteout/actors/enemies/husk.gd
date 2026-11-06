@@ -66,9 +66,9 @@ func _make_model() -> Node3D:
 		list.append(["lowerarm_" + sd, Vector3(0.04, 0.18, 0.03), Vector3(0.8, 0.5, 0.3), 0.24, 0.07, 0.035])
 		list.append(["thigh_" + sd, Vector3(0.0, 0.14, 0.08), Vector3(0.0, -0.4, 1.0), 0.32, 0.1, 0.05])
 		list.append(["clavicle_" + sd, Vector3(0.06 * x, 0.04, 0.0), Vector3(x * 0.6, 1.0, -0.2), 0.34, 0.12, 0.05])
-	for i in 4:
-		list.append(["spine_03", Vector3((i - 1.5) * 0.1, 0.05 + (i % 2) * 0.12, -0.12), Vector3((i - 1.5) * 0.35, 0.9, -1.0), 0.42 + (i % 2) * 0.2, 0.11, 0.055])
-	list.append(["spine_02", Vector3(0.0, 0.05, -0.12), Vector3(0, 0.7, -1.0), 0.45, 0.12, 0.055])
+	# v3b: the back is left bare: a split, flayed back (raw muscle + exposed spine) is baked into the skin / shirt
+	list.append(["spine_03", Vector3(0.12, 0.2, 0.1), Vector3(0.4, 0.5, 1.0), 0.3, 0.11, 0.05])
+	list.append(["spine_03", Vector3(-0.12, 0.2, 0.1), Vector3(-0.4, 0.5, 1.0), 0.3, 0.11, 0.05])
 	for e in list:
 		var ba: Node3D = h.bone_attachment(e[0])
 		if ba == null:

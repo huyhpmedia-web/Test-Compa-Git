@@ -288,7 +288,7 @@ def tear_spots(cb, spec):
     groups = [("spine_01", "spine_02", "spine_03"), ("upperarm_l", "upperarm_r", "lowerarm_l", "lowerarm_r"), ("thigh_l", "thigh_r")]
     out = []
     zmid = cb.conv(H.joint("joint-spine-2"))[2]
-    for kind, sign, rad in (("flay", 1.0, 0.17), ("rupture", -1.0, 0.16)):
+    for kind, sign, rad in (("flay", 1.0, 0.25), ("rupture", -1.0, 0.2)):
         if spec.get(kind):
             mm = np.where((np.abs(bp[:, 0]) < 0.04) & (np.abs(bp[:, 2] - zmid) < 0.03))[0]
             if len(mm):

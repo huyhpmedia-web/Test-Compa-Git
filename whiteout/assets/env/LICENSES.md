@@ -20,3 +20,8 @@ Props converted with Blender (bpy) from **Poly Haven** glTF models (CC0 1.0, htt
 
 ## Generated via Higgsfield (Tripo H3.1), built by tools/charpipe/props_hd.py
 vehicles/sedan, police, ambulance, bucket_truck, haul_truck; props/transformer, server_rack, steeple. Generated for this project via Higgsfield (Tripo H3.1).
+
+## Added by agent F (L4 MERIDIAN / L6 Heart)
+- office/*: Poly Haven CC0 (decimated/1k via tools/env_build/conv2.py): mounted_fluorescent_lights, security_camera_01, potted_plant_01/02, modern_arm_chair_01, mid_century_lounge_chair, modern_coffee_table_01, classic_laptop, office_notepads, stationery_supplies, clipboard, WetFloorSign_01, modern_ceiling_lamp_01, plastic_monobloc_chair_01 (https://polyhaven.com/a/<id>).
+- cave/boulder_nq2: Poly Haven namaqualand_boulder_02 (CC0).
+- textures/env/f/{carpet,ceil,terrazzo,plaster,concrete,metal,rock,rock2,ice,diamond}_*.jpg: ambientCG CC0 (Carpet012, OfficeCeiling001, Terrazzo013, PaintedPlaster017, Concrete048, Metal061B, Rock035, Rock058, Ice003, DiamondPlate009). raised_*, wpanel_*, clad_*, hazard_*: generated procedurally for this project (CC0).

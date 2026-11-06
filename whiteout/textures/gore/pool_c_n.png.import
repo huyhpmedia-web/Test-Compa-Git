@@ -15,9 +15,9 @@ dest_files=["res://.godot/imported/pool_c_n.png-8f307bb2ff321347686b574912c7de89
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
-compress/lossy_quality=0.7
+compress/lossy_quality=0.9
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
 compress/hdr_compression=1

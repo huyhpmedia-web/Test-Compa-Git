@@ -15,9 +15,9 @@ dest_files=["res://.godot/imported/brick_albedo.png-64f5c2e3e5ec9641c6f3b0a3e7f3
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
-compress/lossy_quality=0.7
+compress/lossy_quality=0.9
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
 compress/hdr_compression=1

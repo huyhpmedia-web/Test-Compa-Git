@@ -15,9 +15,9 @@ dest_files=["res://.godot/imported/spray_a_a.png-160b65eb1de5c11d2fed5c24c3602c2
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
-compress/lossy_quality=0.7
+compress/lossy_quality=0.9
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
 compress/hdr_compression=1

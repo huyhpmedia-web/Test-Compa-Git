@@ -18,9 +18,9 @@ dest_files=["res://.godot/imported/hauler_hd_ORM_436261a5-faaf-4855-b077-e044f02
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
-compress/lossy_quality=0.7
+compress/lossy_quality=0.9
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
 compress/hdr_compression=1

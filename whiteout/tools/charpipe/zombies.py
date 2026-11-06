@@ -309,19 +309,36 @@ def tear_spots(cb, spec):
 
 
 def mouth_parts(cb, spec):
-    """stained teeth + dark tongue (MakeHuman CC0 proxies) visible through the dropped jaw / receded lips."""
+    """low-poly stained teeth (2 rows of small blocks, ~300 tris) + the CC0 tongue proxy + a dark cavity, all on the head bone,
+    so an opening jaw never shows an empty mouth."""
     H = cb.H
-    for nm, rel, col in (("teeth", "teeth/teeth_base/teeth_base", spec.get("tooth", (0.52, 0.45, 0.32))), ("tongue", "tongue/tongue01/tongue01", (0.30, 0.09, 0.1))):
-        try:
-            Pp = mh.Proxy(A(rel + ".mhclo"))
-        except Exception as e:
-            print("[warn] mouth part", nm, e); continue
-        pos = cb.conv(Pp.fit(H.v, H.base_v))
-        ob_ = cb.add_mesh(nm, pos, [f[0] for f in Pp.faces], [f[1] for f in Pp.faces], Pp.uv, bone="head", mat=solid_mat(f"{cb.name}_{nm}", col, 0.25 if nm == "teeth" else 0.35))
-        cb.decimate(ob_, 0.16 if nm == "teeth" else 0.3)
-        if nm == "teeth":
-            cen = pos.mean(0)
-    # dark mouth cavity behind the teeth so an opening jaw never shows an empty skull
+    from specs import box_mesh
+    try:
+        Pt = mh.Proxy(A("teeth/teeth_base/teeth_base.mhclo"))
+        tp = cb.conv(Pt.fit(H.v, H.base_v))
+        cen = tp.mean(0); ext = tp.max(0) - tp.min(0)
+        yfront = tp[:, 1].min()
+    except Exception as e:
+        print("[warn] teeth", e); return
+    hw = float(ext[0]) * 0.42
+    parts = []
+    n_t = 11
+    for row, dz in ((0, 0.0045), (1, -0.0060)):
+        for k in range(n_t):
+            u = (k / (n_t - 1)) * 2 - 1
+            x = u * hw
+            y = yfront + 0.003 + (u * u) * 0.018
+            h_ = 0.0085 if row == 0 else 0.0070
+            parts.append(box_mesh([x, y, cen[2] + dz], (0.0052, 0.0042, h_), rot_z=u * 0.5))
+    V, F = merge_meshes(parts)
+    cb.add_mesh("teeth", V, F, bone="head", mat=solid_mat(f"{cb.name}_teeth", spec.get("tooth", (0.50, 0.43, 0.30)), 0.25))
+    try:
+        Pg = mh.Proxy(A("tongue/tongue01/tongue01.mhclo"))
+        gp = cb.conv(Pg.fit(H.v, H.base_v))
+        og = cb.add_mesh("tongue", gp, [f[0] for f in Pg.faces], [f[1] for f in Pg.faces], Pg.uv, bone="head", mat=solid_mat(f"{cb.name}_tongue", (0.30, 0.09, 0.10), 0.35))
+        cb.decimate(og, 0.5)
+    except Exception as e:
+        print("[warn] tongue", e)
     V, F = sphere_mesh(cen + np.array([0.0, 0.028, 0.0]), 0.03, 10, 6, (1.15, 0.8, 0.75))
     cb.add_mesh("mouth_cavity", V, [f[::-1] for f in F], bone="head", mat=solid_mat(f"{cb.name}_cavity", (0.05, 0.008, 0.01), 0.3))
 

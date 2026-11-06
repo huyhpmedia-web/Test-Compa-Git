@@ -233,6 +233,12 @@ func _block(x0: float, z0: float, x1: float, z1: float, north_side: bool, label 
 			else:
 				Props.window(geo, Vector3(gx, 1.75, zf + out * 0.03), yaw, 1.7, 1.7, (int(abs(gx)) + gi) % 5 == 0)
 		Props.prop(geo, "facade/wall_lamp", Vector3(x0 + gspan * 0.5 + 1.2, 2.6, zf + out * 0.1), yaw, {"collide": "none", "snow": 0.2, "range": 60.0})
+	# end walls: windows on the party-wall sides too, so a gap in the terrace never shows a blank flank
+	for ex in [[x0, -PI * 0.5, -1.0], [x1, PI * 0.5, 1.0]]:
+		for zk in [0.3, 0.7]:
+			var wz: float = z0 + (z1 - z0) * zk
+			Props.window(geo, Vector3(ex[0] + ex[2] * 0.03, 5.2, wz), ex[1], 1.2, 1.7, false)
+			Props.window(geo, Vector3(ex[0] + ex[2] * 0.03, 1.9, wz), ex[1], 1.2, 1.6, false)
 	# snow cap + cornice
 	_b(Vector3(x1 - x0 + 0.5, 0.45, z1 - z0 + 0.5), Vector3((x0 + x1) * 0.5, 7.35, (z0 + z1) * 0.5), "snow", true)
 	if Props.Env.has("facade/gutter_run"):

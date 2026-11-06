@@ -486,7 +486,7 @@ func _apply_bone_scales() -> void:
 ## played through ADD one-shots whose amplitude is scaled by damage via a Blend2 against an identity "_zero" twin).
 const HITS := ["hit_front", "hit_back", "hit_left", "hit_right", "hit_head"]
 const UPPER_SHOTS := ["shoot", "hurt", "reload", "knife", "attack", "attack_b", "grab", "roar", "heavy", "hatchet_swing", "hatchet_2",
-	"hatchet_3", "flashlight", "interact", "pickup", "struggle", "bite", "shoot_long", "reload_long"]
+	"hatchet_3", "flashlight", "interact", "pickup", "struggle", "bite", "shoot_long", "reload_long", "reload_revolver"]
 const FULL_SHOTS := ["stagger", "lunge", "run_stop", "roll"]
 const GETUPS := ["getup", "getup_back", "getup_front", "getup_side"]
 const LOWER := ["pelvis", "thigh_l", "thigh_r", "calf_l", "calf_r", "foot_l", "foot_r", "ball_l", "ball_r"]
@@ -818,6 +818,9 @@ func play(anim: String) -> void:
 		return
 	if anim in ["shoot", "reload"] and _long_gun() and tree.tree_root.has_node("os_%s_long" % anim):
 		anim += "_long"
+	if anim == "reload" and weapon_ik != null and weapon_ik.weapon != null and String(weapon_ik.get("wid")) == "magnum" \
+			and tree.tree_root.has_node("os_reload_revolver"):
+		anim = "reload_revolver"
 	if anim in ["knife", "hatchet_swing"]:
 		# 3-hit combo: diagonal chop, backhand, shove (resets after a pause)
 		var seq := ["hatchet_swing", "hatchet_2", "hatchet_3"]
@@ -994,6 +997,7 @@ func _process(delta: float) -> void:
 		weapon_ik.update(delta)
 	_apply_bone_scales()
 	_update_look(delta)
+	_update_jaw(delta)
 
 var _death_idx := 0
 var _rag_delay := -1.0
@@ -1037,6 +1041,37 @@ func _update_look(delta: float) -> void:
 		var r := Basis(up, _look_yaw * w) * Basis(right, -_look_pitch * w * 0.5)
 		var local_rot := (pg.inverse() * r * pg) * Basis(skeleton.get_bone_pose_rotation(i))
 		skeleton.set_bone_pose_rotation(i, local_rot.get_rotation_quaternion())
+
+# ------------------------------------------------------------------ zombie jaw layer
+## Slow random chatter (15-30 deg) while idle/walking, wide open (38+ deg) during attack/grab/bite/roar, plus a slight head tilt back.
+## Uses a "jaw" bone when the character rig has one (MPFB2 "default" rig); the game_engine rig has none, so then only the head tilt
+## (and a hair of neck extension) sells the open mouth. Axis: bone-local X (opening swings the chin down).
+var jaw_open := 0.0
+var _jaw_t := 0.0
+var _jaw_phase := randf() * 10.0
+const JAW_WIDE := ["attack", "attack_b", "grab", "bite", "roar", "lunge"]
+
+func _update_jaw(delta: float) -> void:
+	if skeleton == null or not zombie_like() or pose in ["dead", "sit", "hang"]:
+		jaw_open = move_toward(jaw_open, 0.0, delta * 3.0)
+		return
+	_jaw_t += delta
+	var chatter := 0.5 + 0.5 * sin(_jaw_t * 1.7 + _jaw_phase) * (0.6 + 0.4 * sin(_jaw_t * 0.53 + _jaw_phase * 2.0))
+	var want := deg_to_rad(15.0 + 15.0 * chatter)
+	if _os_name in JAW_WIDE and _os_t < _os_len:
+		want = deg_to_rad(40.0 + 8.0 * sin(_jaw_t * 11.0))
+	jaw_open = lerpf(jaw_open, want, clampf(delta * 6.0, 0.0, 1.0))
+	var ji := skeleton.find_bone("jaw")
+	if ji >= 0:
+		skeleton.set_bone_pose_rotation(ji, skeleton.get_bone_pose_rotation(ji) * Quaternion(Vector3.RIGHT, jaw_open))
+	var hi := skeleton.find_bone("head")
+	if hi >= 0:
+		var tilt := -jaw_open * (0.35 if ji >= 0 else 0.55)
+		var right := (skeleton.global_transform.basis.inverse() * global_transform.basis * Vector3.RIGHT).normalized()
+		var par := skeleton.get_bone_parent(hi)
+		var pg := skeleton.get_bone_global_pose(par).basis if par >= 0 else Basis.IDENTITY
+		var lr := (pg.inverse() * Basis(right, tilt) * pg) * Basis(skeleton.get_bone_pose_rotation(hi))
+		skeleton.set_bone_pose_rotation(hi, lr.get_rotation_quaternion())
 
 # ------------------------------------------------------------------ ragdoll (death clip first, then physics takes over)
 const RAG_BONES := [

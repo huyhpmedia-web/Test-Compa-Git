@@ -99,6 +99,9 @@
   "reload_long": {
    "duration": 2.8
   },
+  "reload_revolver": {
+   "duration": 3.0
+  },
   "roar": {
    "duration": 1.7333333333333334,
    "legacy": true
@@ -147,15 +150,15 @@
   },
   "walk_back": {
    "duration": 1.2666666666666666,
-   "speed": 1.5900657916571204
+   "speed": 1.5900657916571201
   },
   "walk_left": {
    "duration": 1.3333333333333333,
-   "speed": 1.5852613921952745
+   "speed": 1.585261392195274
   },
   "walk_right": {
    "duration": 1.3333333333333333,
-   "speed": 1.5852613921952745
+   "speed": 1.585261392195274
   },
   "zombie_attack": {
    "duration": 1.1333333333333333,

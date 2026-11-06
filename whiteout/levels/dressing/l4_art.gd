@@ -60,7 +60,7 @@ static func ext() -> StandardMaterial3D:
 	return pbr("clad", 2.0, Color.WHITE, 1.0, 1.0, 0.3)
 
 static func floor_lobby() -> StandardMaterial3D:
-	return pbr("terrazzo", 2.4, Color(0.34, 0.37, 0.42), 0.38, 0.5)
+	return pbr("terrazzo", 3.2, Color(0.5, 0.54, 0.6), 0.34, 0.5)
 
 static func floor_raised() -> StandardMaterial3D:
 	return pbr("raised", 1.2, Color(0.8, 0.86, 0.95), 1.0, 1.0)
@@ -236,14 +236,15 @@ static func _lobby() -> void:
 	label("CORVANE", Vector3(-4.5, 2.5, -0.15), 0.0, 120, Color(0.88, 0.94, 1.1), 0.007, false)
 	label("S  Y  S  T  E  M  S", Vector3(-4.5, 2.05, -0.15), 0.0, 40, Color(0.55, 0.75, 1.0), 0.005, false)
 	box(Vector3(-4.5, 2.2, -0.17), Vector3(3.0, 0.015, 0.01), emi(Color(0.5, 0.8, 1.0), 3.5), false)
-	# monitors / laptop / lamp on the desk (kept away from the note and the gel pickup spots)
-	for mx in [-5.9, -4.6]:
-		box(Vector3(mx, 1.4, 1.14), Vector3(0.52, 0.32, 0.03), Mats.color(Color(0.03, 0.03, 0.035), 0.3), false, Vector3(0, 0.25, 0))
-		box(Vector3(mx, 1.4, 1.13), Vector3(0.47, 0.27, 0.01), emi(Color(0.12, 0.35, 0.6), 1.4), false, Vector3(0, 0.25, 0))
-		box(Vector3(mx, 1.2, 1.15), Vector3(0.06, 0.2, 0.06), dark, false)
-	spawn("laptop", Vector3(-3.7, 1.13, 1.08), 0.5, {"scale": 0.5, "collide": "none"})
-	spawn("notepads", Vector3(-2.8, 1.13, 1.2), 0.3, {"scale": 0.3, "collide": "none"})
-	spawn("stationery", Vector3(-5.2, 1.13, 1.28), 0.0, {"scale": 1.0, "collide": "none"})
+	if not have_glb:
+		# monitors / laptop / lamp on the desk (kept away from the note and the gel pickup spots)
+		for mx in [-5.9, -4.6]:
+			box(Vector3(mx, 1.4, 1.14), Vector3(0.52, 0.32, 0.03), Mats.color(Color(0.03, 0.03, 0.035), 0.3), false, Vector3(0, 0.25, 0))
+			box(Vector3(mx, 1.4, 1.13), Vector3(0.47, 0.27, 0.01), emi(Color(0.12, 0.35, 0.6), 1.4), false, Vector3(0, 0.25, 0))
+			box(Vector3(mx, 1.2, 1.15), Vector3(0.06, 0.2, 0.06), dark, false)
+		spawn("laptop", Vector3(-3.7, 1.13, 1.08), 0.5, {"scale": 0.5, "collide": "none"})
+		spawn("notepads", Vector3(-2.8, 1.13, 1.2), 0.3, {"scale": 0.3, "collide": "none"})
+		spawn("stationery", Vector3(-5.2, 1.13, 1.28), 0.0, {"scale": 1.0, "collide": "none"})
 	# the receptionist's chair is on its side (spawned by Props.chair in the level); add a second, fallen
 	Props.chair(geo, Vector3(-3.6, 0, 2.4), 2.1, true)
 	Props.papers(geo, Vector3(-5.4, 0.03, 3.2), 9)
@@ -278,7 +279,6 @@ static func _lobby() -> void:
 		var yaw := PI * 0.5 if sx < 0 else -PI * 0.5
 		for i in 20:
 			box(Vector3(sx, 1.5, -5.0 + i * 0.6), Vector3(0.06, 2.6, 0.18), wood, false)
-		box(Vector3(sx + (0.02 if sx < 0 else -0.02), 1.5, 3.0), Vector3(0.03, 2.8, 12.4), Mats.color(Color(0.02, 0.025, 0.03), 0.6), false)
 	label("CORVANE SYSTEMS", Vector3(-7.78, 2.9, 4.0), PI * 0.5, 44, Color(0.7, 0.85, 1.05), 0.005)
 	label("Reliability is a promise.", Vector3(7.78, 2.9, 4.0), -PI * 0.5, 44, Color(0.7, 0.85, 1.05), 0.005)
 	# floor wayfinding (matches turnstile lane) + wet-floor sign left standing

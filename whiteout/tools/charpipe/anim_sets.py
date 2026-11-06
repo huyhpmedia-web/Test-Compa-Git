@@ -269,6 +269,25 @@ def elias_authored(ctx, W):
         kk(1.85, L_(sc, 0.04, -0.46, 1.27), gr, cl=55, lean=3)      # release
         kk(2.2, aimh["l"], aimh["r"])
         author(ctx, aim_b, c)
+    # --- revolver reload: gun to the sternum, muzzle up, left hand swings the cylinder out, eject (shake), speedloader from the belt, close, back to aim
+    if W("reload_revolver"):
+        c = Clip("reload_revolver", 3.0, False)
+        gun = L_(sc, -0.10, -0.36, 1.20)
+        aimh = {"l": L_(sc, 0.035, -0.60, 1.375), "r": L_(sc, -0.035, -0.64, 1.40)}
+        def kr(t, hl, hr, cl=55, lean=4):
+            r = dict(aim_rot); r["spine_02"] = (lean, 0, 8); r["head"] = (lean * 2.5, 0, -8)
+            c.key(t, rot=r, hand={"l": hl, "r": hr}, curl={"l": cl, "r": 62}, twist=tw)
+        kr(0.0, aimh["l"], aimh["r"], lean=0)
+        kr(0.35, L_(sc, 0.06, -0.34, 1.16), gun)
+        kr(0.7, L_(sc, 0.12, -0.30, 1.18), gun, cl=30)              # thumb the cylinder latch, swing it out
+        kr(1.0, L_(sc, 0.14, -0.30, 1.30), L_(sc, -0.10, -0.34, 1.34), cl=40)   # muzzle up, ejector rod
+        kr(1.25, L_(sc, 0.14, -0.30, 1.34), L_(sc, -0.10, -0.34, 1.38), cl=40)  # shells fall out
+        kr(1.5, L_(sc, 0.25, -0.06, 0.96), L_(sc, -0.10, -0.36, 1.22), cl=25)   # speedloader from the belt
+        kr(1.95, L_(sc, 0.10, -0.30, 1.18), gun, cl=75)             # loader into the cylinder
+        kr(2.25, L_(sc, 0.08, -0.30, 1.16), gun, cl=60)             # close the cylinder
+        kr(2.5, L_(sc, 0.04, -0.46, 1.22), gun, cl=50)
+        kr(3.0, aimh["l"], aimh["r"], lean=0)
+        author(ctx, aim_b, c)
     # --- long gun (shotgun / launcher): stock to the shoulder, support hand on the fore-end
     rh = L_(sc, -0.15, -0.34, 1.30)
     lh = L_(sc, 0.09, -0.64, 1.30)

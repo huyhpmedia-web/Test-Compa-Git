@@ -8,6 +8,7 @@ extends "res://levels/level.gd"
 ## Flags set: l6_intro, l6_tom1, l6_nook, l6_revealed, l6_phase2, mother_dead, l6_ending_talk
 ## Flags read: mother_dead, found_june (optional)
 
+const Art6 = preload("res://levels/dressing/l6_art.gd")
 const CYAN := Color(0.3, 0.85, 1.0)
 const HEAT := Color(1.0, 0.5, 0.18)
 
@@ -62,6 +63,7 @@ func build() -> void:
 	_build_station()
 	_build_lattice_wall()
 	_build_crystals()
+	Art6.dress(self)
 	_build_hanging_bodies()
 	_build_items()
 	_build_enemies()
@@ -81,7 +83,8 @@ func _mk_crystal_mat() -> StandardMaterial3D:
 
 # ------------------------------------------------------------------ helpers
 func _mass(x0: float, z0: float, x1: float, z1: float, y0 := -3.0, y1 := 21.0, mat := "rock") -> void:
-	box(Vector3((x0 + x1) * 0.5, (y0 + y1) * 0.5, (z0 + z1) * 0.5), Vector3(abs(x1 - x0), y1 - y0, abs(z1 - z0)), mat)
+	var mm: Variant = Art6.rock_mat() if mat == "rock" else mat
+	box(Vector3((x0 + x1) * 0.5, (y0 + y1) * 0.5, (z0 + z1) * 0.5), Vector3(abs(x1 - x0), y1 - y0, abs(z1 - z0)), mm)
 
 func _barrier(center: Vector3, size: Vector3) -> void:
 	var sb := StaticBody3D.new()
@@ -96,10 +99,17 @@ func _barrier(center: Vector3, size: Vector3) -> void:
 
 func _boulder(pos: Vector3, size: Vector3, solid := true) -> void:
 	var rot := Vector3(_rng.randf_range(-0.25, 0.25), _rng.randf_range(0, TAU), _rng.randf_range(-0.25, 0.25))
+	if Art6.boulder(geo, Vector3(pos.x, pos.y, pos.z), size, solid, rot.y):
+		return
 	Props.box(geo, size, pos + Vector3(0, size.y * 0.4, 0), Mats.get_mat("rock" if _rng.randf() > 0.4 else "rock_wet"), solid, rot)
 
 func _crystal(pos: Vector3, h: float, r: float, tilt := Vector3.ZERO, solid := false, lit := false) -> void:
 	var up := Basis.from_euler(tilt) * Vector3.UP
+	if Art6.ice(geo, pos, h, r, tilt):
+		if lit:
+			var l0 := light(pos + up * h * 0.5, CYAN, 3.0, min(h * 1.6, 22.0), false)
+			_crystal_lights.append([l0, 3.0, _rng.randf() * TAU])
+		return
 	Props.cyl(geo, r, h, pos + up * h * 0.5, _crystal_mat, solid, 0.0, tilt, 6)
 	if r > 0.5:
 		# twin shard
@@ -152,7 +162,7 @@ func _hang_body(x: float, z: float, y_top: float, yaw := 0.0) -> void:
 	Props.cyl(r, 0.08, 0.75, Vector3(0.11, -0.7, 0.05), cloth, false)
 	Props.cyl(r, 0.06, 0.65, Vector3(-0.3, 0.12, 0), cloth, false, -1.0, Vector3(0, 0, 0.5))
 	Props.cyl(r, 0.06, 0.65, Vector3(0.3, 0.12, 0), cloth, false, -1.0, Vector3(0, 0, -0.5))
-	Props.cyl(r, 0.42, 2.0, Vector3(0, -0.15, 0), _filament_mat, false, 0.25, Vector3.ZERO, 8)  # cocoon
+	Props.sphere(r, 0.5, Vector3(0, -0.2, 0), _filament_mat, Vector3(0.85, 2.1, 0.85))  # cocoon
 	var top := 20.0 - y_top
 	for i in 3:
 		var fx := _rng.randf_range(-0.15, 0.15)
@@ -161,15 +171,15 @@ func _hang_body(x: float, z: float, y_top: float, yaw := 0.0) -> void:
 # ------------------------------------------------------------------ shell
 func _build_shell() -> void:
 	# floors (rock slabs 3m thick so there is no void underneath)
-	floor_rect(-2.0, 44.0, 2.5, 67.0, 0.0, "rock", 3.0)       # descent, upper leg
-	floor_rect(0.0, 22.0, 5.0, 46.0, 0.0, "rock", 3.0)        # descent, lower leg
-	floor_rect(5.0, 30.0, 12.0, 36.0, 0.0, "rock", 3.0)       # nook
-	floor_rect(-17.0, -32.0, 19.0, 24.0, 0.0, "rock", 3.0)    # arena
+	floor_rect(-2.0, 44.0, 2.5, 67.0, 0.0, Art6.rock_floor(), 3.0)       # descent, upper leg
+	floor_rect(0.0, 22.0, 5.0, 46.0, 0.0, Art6.rock_floor(), 3.0)        # descent, lower leg
+	floor_rect(5.0, 30.0, 12.0, 36.0, 0.0, Art6.rock_floor(), 3.0)       # nook
+	floor_rect(-17.0, -32.0, 19.0, 24.0, 0.0, Art6.rock_floor(), 3.0)    # arena
 	# a few dressing patches of wet rock on the floor
 	for i in 5:
 		box(Vector3(_rng.randf_range(-12, 14), 0.01, _rng.randf_range(-24, 14)), Vector3(_rng.randf_range(2, 5), 0.02, _rng.randf_range(2, 5)), "rock_wet", false, _rng.randf() * TAU)
 	# ceiling
-	ceiling_rect(-46.0, -41.0, 31.0, 68.0, 20.0, "rock", 3.0)
+	ceiling_rect(-46.0, -41.0, 31.0, 68.0, 20.0, Art6.rock_mat(), 3.0)
 	# outer walls
 	_mass(-47.0, -41.0, -45.0, 68.0)
 	_mass(-47.0, -43.0, 31.0, -40.0)
@@ -185,9 +195,9 @@ func _build_shell() -> void:
 	# back wall (the lattice wall)
 	_mass(-47.0, -42.0, 31.0, -33.0)
 	# low overhang above the lower leg: the Hanger's ceiling
-	box(Vector3(2.0, 5.0, 41.0), Vector3(8.5, 1.2, 7.0), "rock")
+	box(Vector3(2.0, 5.0, 41.0), Vector3(8.5, 1.2, 7.0), Art6.rock_mat())
 	# nook ceiling (cosy low roof)
-	ceiling_rect(5.0, 30.0, 12.0, 36.0, 3.4, "rock", 0.8)
+	ceiling_rect(5.0, 30.0, 12.0, 36.0, 3.4, Art6.rock_wet(), 0.8)
 	# lake barriers (invisible, tall) + low visible rim stones
 	_barrier(Vector3(-2.3, 2, 55), Vector3(0.4, 6, 22))
 	_barrier(Vector3(-1.15, 2, 44.0), Vector3(2.4, 6, 0.4))
@@ -208,7 +218,7 @@ func _build_shell() -> void:
 		var sz := _rng.randf_range(-38, 65)
 		var len := _rng.randf_range(2.5, 9.0)
 		var rr := _rng.randf_range(0.2, 0.7)
-		Props.cyl(geo, 0.04, len, Vector3(sx, 20.0 - len * 0.5, sz), Mats.get_mat("rock_wet"), false, rr, Vector3.ZERO, 7)
+		Art6.spike(geo, Vector3(sx, 20.0, sz), len * 1.3, rr * 1.4, true, i)
 	# a few stalagmites on the lake shore side of the arena + path
 	for i in 10:
 		var gx := _rng.randf_range(-16, 18)
@@ -216,7 +226,7 @@ func _build_shell() -> void:
 		if abs(gx) < 3 and gz > -6:
 			continue
 		var gh := _rng.randf_range(0.8, 2.2)
-		Props.cyl(geo, _rng.randf_range(0.25, 0.5), gh, Vector3(gx, gh * 0.5, gz), Mats.get_mat("rock"), false, 0.05, Vector3.ZERO, 7)
+		Art6.spike(geo, Vector3(gx, -0.1, gz), gh * 1.2, _rng.randf_range(0.3, 0.6), false, i + 40)
 
 func _build_lake() -> void:
 	# lake bed, dark reflective surface, crystal islands

@@ -30,6 +30,8 @@ func _ready() -> void:
 	var tgt := Node3D.new(); add_child(tgt); tgt.position = Vector3(2.5, 0, 2.5)
 	var cam := Camera3D.new(); add_child(cam)
 	cam.look_at_from_position(Vector3(0, 1.3, 3.6), Vector3(0, 0.85, 0), Vector3.UP); cam.fov = 40; cam.current = true
+	if mode == "face":
+		cam.look_at_from_position(Vector3(0.3, 1.45, 1.5), Vector3(0, 1.38, 0), Vector3.UP); cam.fov = 30
 	m.rotation.y = 0.0
 	m.pose = "zombie" if model != "elias" else "normal"
 	var t0 := Time.get_ticks_msec()
@@ -78,5 +80,7 @@ func _script(m: Node3D, tgt: Node3D, i: int, t: float, f: Dictionary) -> void:
 			if i == 2: m.set_look_target(tgt); tgt.position = Vector3(3, 0, 1.5)
 			if i == 5: tgt.position = Vector3(-3, 0, 1.5)
 			if i == 7: m.set_look_target(null)
+		"face":
+			if i == 3: m.play("grab")
 		"hatchet":
 			if i % 3 == 1: m.play("knife")

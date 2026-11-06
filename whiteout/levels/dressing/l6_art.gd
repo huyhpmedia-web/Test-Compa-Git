@@ -28,8 +28,8 @@ static func ice_mat() -> StandardMaterial3D:
 	if _ice_mat != null:
 		return _ice_mat
 	var m := StandardMaterial3D.new()
-	m.albedo_color = Color(0.7, 0.9, 1.0, 0.62)
-	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_DEPTH_PRE_PASS
+	m.albedo_color = Color(0.55, 0.85, 1.0, 0.55)
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	m.roughness = 0.07
 	m.metallic_specular = 1.0
 	m.rim_enabled = true
@@ -37,8 +37,7 @@ static func ice_mat() -> StandardMaterial3D:
 	m.rim_tint = 0.5
 	m.emission_enabled = true
 	m.emission = Color(0.1, 0.5, 0.75)
-	m.emission_energy_multiplier = 0.55
-	m.cull_mode = BaseMaterial3D.CULL_DISABLED
+	m.emission_energy_multiplier = 1.2
 	var ps := Env.scene("props/ice_cluster")
 	if ps:
 		var inst := ps.instantiate()
@@ -69,11 +68,11 @@ static func ice(parent: Node3D, pos: Vector3, h: float, r: float, tilt := Vector
 	root.position = pos
 	root.rotation = tilt
 	parent.add_child(root)
-	var count := clampi(int(ceil(h / 5.0)), 1, 4)
+	var count := 1
 	var seg := h / float(count)
 	for k in count:
 		var inst := ps.instantiate() as Node3D
-		var s := clampf(seg / 2.2 * 1.3, 0.14, 5.0)
+		var s := clampf(seg / 2.2 * 1.15, 0.14, 7.0)
 		var sxz := clampf(r * 1.5, 0.16, s * 1.7)
 		inst.scale = Vector3(sxz, s, sxz)
 		inst.rotation.y = rng.randf() * TAU
@@ -85,7 +84,7 @@ static func ice(parent: Node3D, pos: Vector3, h: float, r: float, tilt := Vector
 			var m: MeshInstance3D = mi
 			m.material_override = ice_mat()
 			m.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-			m.visibility_range_end = 150.0
+			m.visibility_range_end = 80.0
 	return true
 
 # ------------------------------------------------------------------ procedural rock spikes
@@ -171,7 +170,7 @@ static func dress(level: Node3D) -> void:
 	geo = level.get("geo") if level.get("geo") is Node3D else level
 	rng.seed = 6006
 	# wall relief: blocks sunk into the masses so the flat box walls disappear
-	var rows := [0.0, 2.6, 5.4, 8.4]
+	var rows := [0.0, 3.0, 6.2]
 	# path east wall (x = 2.5 for z 46..66, 5.0 for z 36..46) and arena east wall (x = 19)
 	for row in rows.size():
 		var z := 66.0
@@ -188,7 +187,7 @@ static func dress(level: Node3D) -> void:
 				_wall_block(Vector3(19.0, rows[row], z), 1, rng.randf_range(1.1, 1.5))
 			z -= 4.2
 	# the back (lattice) wall, behind the crystals
-	for row in 3:
+	for row in 2:
 		var x := -19.0
 		while x < 20.0:
 			_wall_block(Vector3(x, rows[row], -33.0), 2, rng.randf_range(1.1, 1.5))
@@ -196,18 +195,21 @@ static func dress(level: Node3D) -> void:
 	# pipeline wall damage: rubble pile of real rocks under the breach
 	for i in 7:
 		boulder(geo, Vector3(17.2 + rng.randf_range(-1.4, 0.8), 0, -20.0 + rng.randf_range(-3.5, 3.5)), Vector3(rng.randf_range(0.6, 1.4), rng.randf_range(0.4, 1.0), rng.randf_range(0.6, 1.4)), false, rng.randf() * TAU)
-	# frozen puddle sheets across the arena floor (translucent ice over dark rock)
-	var sheet := ice_mat().duplicate() as StandardMaterial3D
-	sheet.albedo_color = Color(0.6, 0.85, 1.0, 0.35)
-	sheet.emission_energy_multiplier = 0.25
-	sheet.cull_mode = BaseMaterial3D.CULL_BACK
-	for i in 14:
-		var p := Vector3(rng.randf_range(-13, 16), 0.02, rng.randf_range(-24, 20))
-		var m := Props.cyl(geo, rng.randf_range(1.2, 3.0), 0.025, p, sheet, false, -1.0, Vector3.ZERO, 20)
-		m.scale = Vector3(1.0, 1.0, rng.randf_range(0.6, 1.0))
-		m.rotation.y = rng.randf() * TAU
 	# ice shelf and drip columns on the lake edge
 	for i in 16:
 		var x := rng.randf_range(-16.0, -4.0)
 		var z := rng.randf_range(-28.0, 22.0)
 		spike(geo, Vector3(x, 0.0, z), rng.randf_range(0.8, 2.4), rng.randf_range(0.18, 0.4), false, i + 7, ice_mat())
+
+## A Rimebound impaled by a natural ice formation (replaces the stacked-sphere column of Props.crystal_impale).
+static func impale(parent: Node3D, pos: Vector3, yaw := 0.0, h := 2.3) -> Node3D:
+	var r := Node3D.new()
+	r.position = pos
+	r.rotation.y = yaw
+	parent.add_child(r)
+	ice(r, Vector3(0.0, 0.0, 0.0), h * 0.9, 0.45, Vector3(0.05, 0.0, -0.06))
+	var c := Props.corpse_pose(r, Vector3(0.04, h - 1.6, 0.0), randf() * TAU, {"model": "rimebound_miner"}, "normal", false)
+	c.rotation.x = 0.18
+	Props.frost_overlay(c, 0.3)
+	Props._pool_at(r, Vector3(0.1, 0.0, 0.1), 2.0)
+	return r

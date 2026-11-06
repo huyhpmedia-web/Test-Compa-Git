@@ -7,6 +7,7 @@ extends RefCounted
 const D = preload("res://levels/dressing/dress_util.gd")
 const Gore = preload("res://world/gore.gd")
 const Props = preload("res://world/props.gd")
+const Art6 = preload("res://levels/dressing/l6_art.gd")
 
 static func dress(level: Node3D) -> void:
 	D.begin(level)
@@ -34,7 +35,7 @@ static func _path() -> void:
 	D.pool(Vector3(1.0, 0.02, 47.0), 1.8, true)
 	D.pool(Vector3(3.2, 0.02, 37.5), 1.4, true)
 	# crystal-mounted victim at the path (a warning)
-	Props.crystal_impale(D.lv, Vector3(5.4, 0.0, 44.5), 2.8, 2.4)
+	Art6.impale(D.lv, Vector3(5.4, 0.0, 44.5), 2.8, 2.4)
 	D.n += 3
 	D.spray(Vector3(4.86, 1.4, 56.0), Vector3(-1, 0, 0), Vector3(0, 0, -1), 1.6, true)
 	D.splat(Vector3(2.0, 0.02, 22.0), 1.2, true)
@@ -66,11 +67,11 @@ static func _arena() -> void:
 	D.splat(Vector3(4.0, 0.02, 0.0), 1.8)
 	D.splat(Vector3(-2.0, 0.02, -8.0), 1.6, true)
 	# impaled on the colony's crystals around the arena
-	Props.crystal_impale(D.lv, Vector3(-13.0, 0.0, -10.0), 0.8, 2.6)
+	Art6.impale(D.lv, Vector3(-13.0, 0.0, -10.0), 0.8, 2.6)
 	D.n += 3
-	Props.crystal_impale(D.lv, Vector3(14.0, 0.0, 0.0), 3.9, 2.2)
+	Art6.impale(D.lv, Vector3(14.0, 0.0, 0.0), 3.9, 2.2)
 	D.n += 3
-	Props.crystal_impale(D.lv, Vector3(-7.0, 0.0, -24.0), 0.2, 2.4)
+	Art6.impale(D.lv, Vector3(-7.0, 0.0, -24.0), 0.2, 2.4)
 	D.n += 3
 	# human remains the Mother has finished with
 	Props.torso(D.lv, Vector3(-2.5, 0.0, -4.0), 1.1, Color(0.25, 0.28, 0.33))

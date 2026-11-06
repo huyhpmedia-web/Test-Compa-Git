@@ -232,7 +232,7 @@ def scalp_cap(cb, p, rgb, frost=0.0):
     ear = pt.smoothstep(0.075, 0.092, ax) * pt.smoothstep(eye_z + 0.03, eye_z - 0.02, z) * (1 - front * 0.5)
     back_low = (eye_z - 0.065) if longh else (eye_z - 0.03)
     line = np.where(y > -0.02, np.minimum(line, back_low + 0.03 * pt.smoothstep(0.0, 0.07, ax) + jag), line)
-    m = pt.smoothstep(line - 0.004, line + 0.007, z) * (1 - ear)
+    m = pt.smoothstep(line - 0.012, line + 0.016, z) * (1 - ear)
     stub = np.clip(m, 0, 1) * (0.84 + 0.16 * n)
     cap = hc[None, :] * (0.75 + 0.5 * n2[:, None])
     return rgb * (1 - stub[:, None]) + cap * stub[:, None]

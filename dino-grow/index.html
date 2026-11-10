@@ -74,11 +74,14 @@
   .float.bad{color:var(--danger)}
   #end{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(10,6,2,.55);pointer-events:auto;
     padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px))}
-  #end .card{background:#2a1d10;border:4px solid #ffb21a;border-radius:22px;padding:18px 30px 16px;text-align:center;box-shadow:0 8px 0 #7a3a06}
-  #end h2{margin:0;font-size:64px;line-height:1}
-  #end p{margin:6px 0 12px;font-size:24px;font-variant-numeric:tabular-nums}
-  #end button{font:28px/1 var(--font);border:0;border-radius:14px;padding:10px 26px 6px;cursor:pointer;background:#ffb21a;color:var(--ink);box-shadow:0 4px 0 #7a3a06}
-  @media (prefers-reduced-motion:reduce){#tut .hand,#bSkill.ready .ic{animation:none}}
+  #end{flex-direction:column;gap:26px}
+  #end .logo{font-size:120px;line-height:1;filter:drop-shadow(0 8px 0 rgba(0,0,0,.35));animation:float 2s ease-in-out infinite}
+  @keyframes float{50%{transform:translateY(-10px) rotate(-4deg)}}
+  #bPlay{font:clamp(40px,11vw,64px)/1 var(--font);color:#fff;letter-spacing:.02em;border:0;border-radius:26px;padding:22px 52px 16px;cursor:pointer;
+    background:linear-gradient(#5fe04a,#28a81e);box-shadow:0 9px 0 #16700f,0 14px 28px rgba(0,0,0,.4);text-shadow:0 3px 0 rgba(0,0,0,.25);animation:cta 1.1s ease-in-out infinite}
+  #bPlay:active{transform:translateY(5px);box-shadow:0 4px 0 #16700f}
+  @keyframes cta{50%{transform:scale(1.07)}}
+  @media (prefers-reduced-motion:reduce){#tut .hand,#bSkill.ready .ic,#bPlay,#end .logo{animation:none}}
 </style>
 </head>
 <body>
@@ -100,6 +103,7 @@
         <button id="bPow" type="button">⚡ Sức mạnh ×2</button>
         <button id="bFill" type="button">💥 Đầy kỹ năng</button>
         <button id="bNext" type="button">⏭ Màn sau</button>
+        <button id="bEnd" type="button">🏁 End card</button>
       </div>
     </div>
   </div>
@@ -108,7 +112,7 @@
   <div id="banner"><div class="big" id="bnBig"></div><div class="sm" id="bnSm"></div></div>
   <div id="joy"><i></i></div>
   <div id="flash"></div>
-  <div id="end"><div class="card"><h2>🏆</h2><p id="endStats"></p><button id="bRestart" type="button" aria-label="Chơi lại">↻</button></div></div>
+  <div id="end"><div class="logo">🦖</div><button id="bPlay" type="button">PLAY NOW</button></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.152.2/three.min.js"></script>
 <script>
@@ -121,28 +125,33 @@
    ===================================================================== */
 const CONFIG = {
   template: 'eat-and-grow',
-  player: { baseSpeed: 3.9, speedPerScale: 1.55 },
-  growth: { gainK: 0.32, gainMin: 0.5, hurtLoss: 0.15, bossHurtLoss: 0.22 },
-  skill: { perEat: 0.14, dur: 5.5, mult: 1.6, stun: 2.6, speed: 1.3 },
-  population: 26,
+  // ad playable: no difficulty — bigger creatures only bump you, hazards are cosmetic, growth is fast
+  easy: true,
+  ctaUrl: 'https://example.com/store',   // store link for the PLAY NOW button (mraid.open when the ad SDK provides it)
+  player: { baseSpeed: 4.2, speedPerScale: 1.6 },
+  growth: { gainK: 0.42, gainMin: 0.6, hurtLoss: 0.15, bossHurtLoss: 0.22 },
+  skill: { perEat: 0.2, dur: 5.5, mult: 1.6, stun: 2.6, speed: 1.3, fireFrom: 4, fireDur: 2.6 },
+  population: 30,
+  spawnMix: [0.78, 0.92],   // share of edible / slightly-bigger spawns; the rest are big
+  // every stage changes colour AND body: feathers -> spike armour -> bull horns -> wings -> wings + fire
   stages: [
-    { at: 0,    name: 'Baby Raptor',   look: 'baby' },
-    { at: 8,    name: 'Raptor',        look: 'raptor' },
-    { at: 30,   name: 'Dilophosaurus', look: 'dilo' },
-    { at: 100,  name: 'Allosaurus',    look: 'allo' },
-    { at: 350,  name: 'Carnotaurus',   look: 'carno' },
-    { at: 1000, name: 'T-Rex',         look: 'rex' },
+    { at: 0,   name: 'Baby Raptor',  look: 'baby' },
+    { at: 8,   name: 'Raptor',       look: 'raptor' },
+    { at: 28,  name: 'Spike Raptor', look: 'spike' },
+    { at: 90,  name: 'Horn Crusher', look: 'horn' },
+    { at: 300, name: 'Sky Raptor',   look: 'wing' },
+    { at: 900, name: 'Inferno Rex',  look: 'inferno' },
   ],
   levels: [
-    { id: 'jungle', icon: '🌴', w: 70, h: 92, start: [0, 40], portal: [0, -41], target: 100, range: [1, 220],
-      species: ['beetle', 'dragonfly', 'egg', 'compy', 'proto', 'raptor'],
+    { id: 'jungle', icon: '🌴', w: 70, h: 92, start: [0, 40], portal: [0, -41], target: 80, range: [1, 200],
+      species: ['compy', 'proto', 'raptor'],
       sky: [0x6fb0c0, 0xcfe6cf], fog: 0x9ec2a4, sun: 0xfff0d2, ground: [0x355f1f, 0x4f7426, 0x6a4a28] },
-    { id: 'swamp', icon: '🐸', w: 90, h: 112, start: [0, 50], portal: [0, -51], target: 400, range: [15, 1100],
-      species: ['dragonfly', 'frog', 'egg', 'compy', 'hadro', 'stego', 'croc', 'spino', 'raptor'],
+    { id: 'swamp', icon: '🐸', w: 90, h: 112, start: [0, 50], portal: [0, -51], target: 320, range: [15, 1000],
+      species: ['compy', 'proto', 'hadro', 'stego', 'croc', 'spino', 'raptor'],
       sky: [0x8a9a86, 0xc9d2bb], fog: 0x8f9c84, sun: 0xffe8c8, ground: [0x3e4f2a, 0x55602e, 0x4a3e26] },
     { id: 'volcano', icon: '🌋', w: 100, h: 124, start: [0, 54], arena: [0, -42], arenaR: 17, range: [120, 3200],
-      boss: { power: 2500, hp: 6 },
-      species: ['egg', 'raptor', 'ankylo', 'trike', 'carno', 'stego'],
+      boss: { power: 2000, hp: 5 },
+      species: ['raptor', 'ankylo', 'trike', 'carno', 'stego', 'hadro'],
       sky: [0x6a3a2c, 0xd08a5a], fog: 0x7a4a36, sun: 0xffc49a, ground: [0x2e2824, 0x3e3330, 0x5a3424] },
   ],
 };
@@ -152,10 +161,10 @@ const SPECIES = {
   dragonfly: { kind: 'fly', range: [2, 14], speed: 2.2, base: 0.9, rad: 0.7, h: 1.6, flee: true, harmless: true },
   egg:       { kind: 'egg', range: [1, 700], speed: 0, base: 0.62, rad: 0.8, h: 1.0, harmless: true },
   frog:      { kind: 'frog', range: [12, 120], speed: 2.0, base: 0.85, rad: 0.8, h: 1.1, flee: true, nearWater: true },
-  compy:     { kind: 'theropod', look: 'compy', range: [4, 45], speed: 2.9, base: 1, rad: 0.9, h: 2.0, flee: true },
-  raptor:    { kind: 'theropod', look: 'raptorNpc', range: [20, 1400], speed: 3.0, base: 1, rad: 0.9, h: 2.0, aggr: true },
-  proto:     { kind: 'quad', look: 'proto', range: [10, 100], speed: 1.9, base: 1, rad: 1.0, h: 1.9, flee: true },
-  hadro:     { kind: 'quad', look: 'hadro', range: [60, 420], speed: 2.0, base: 1.05, rad: 1.1, h: 2.3, flee: true },
+  compy:     { kind: 'theropod', look: 'compy', range: [1, 45], speed: 2.6, base: 1, rad: 0.9, h: 2.0, flee: true },
+  raptor:    { kind: 'theropod', look: 'raptorNpc', range: [6, 1400], speed: 2.8, base: 1, rad: 0.9, h: 2.0, aggr: true },
+  proto:     { kind: 'quad', look: 'proto', range: [2, 100], speed: 1.7, base: 1, rad: 1.0, h: 1.9, flee: true },
+  hadro:     { kind: 'quad', look: 'hadro', range: [40, 900], speed: 1.9, base: 1.05, rad: 1.1, h: 2.3, flee: true },
   stego:     { kind: 'quad', look: 'stego', range: [110, 900], speed: 1.6, base: 1.05, rad: 1.15, h: 2.5 },
   croc:      { kind: 'quad', look: 'croc', range: [150, 950], speed: 2.4, base: 1.0, rad: 1.1, h: 1.3, aggr: true, water: true },
   spino:     { kind: 'theropod', look: 'spino', range: [300, 1300], speed: 2.7, base: 1.05, rad: 1.0, h: 2.6, aggr: true },
@@ -164,12 +173,13 @@ const SPECIES = {
   carno:     { kind: 'theropod', look: 'carnoNpc', range: [500, 2800], speed: 2.9, base: 1, rad: 1.0, h: 2.2, aggr: true },
 };
 const LOOKS = {
+  // player evolution line — each stage: new colour + new body parts
   baby:      { top: 0x8a6a3e, belly: 0xe8d2a8, stripe: 0x4a3520, head: 1.4, neck: 0.9, tail: 0.85, bulk: 0.95, feathers: 0xc98a4a, eye: 0xffc93a },
-  raptor:    { top: 0x55687a, belly: 0xd8d2c4, stripe: 0x24303c, feathers: 0x2f6fa8, claw: true },
-  dilo:      { top: 0x7a8f3a, belly: 0xe6e0b0, stripe: 0x3d4a1a, crest: 0xd84a3a, neck: 1.15 },
-  allo:      { top: 0xa0622e, belly: 0xe8c9a0, stripe: 0x5a3418, brow: true, head: 1.1, bulk: 1.1 },
-  carno:     { top: 0x9a2f22, belly: 0xe0b49a, stripe: 0x4a1410, horns: true, arms: 0.5, bulk: 1.15, head: 1.05 },
-  rex:       { top: 0x4c5430, belly: 0xcfc08e, stripe: 0x262a18, head: 1.35, arms: 0.42, bulk: 1.3, neck: 0.9 },
+  raptor:    { top: 0x2a6ad0, belly: 0xd8e8f4, stripe: 0x0e2450, feathers: 0x5ad0ff, claw: true, eye: 0xffe14d },
+  spike:     { top: 0x3aa03a, belly: 0xe0e8b0, stripe: 0x123a12, backSpikes: 0xf0e8c8, spikeSize: 1.2, brow: true, bulk: 1.1, claw: true, eye: 0xff4a1a },
+  horn:      { top: 0xd02a1a, belly: 0xf0c0a0, stripe: 0x3a0806, horns: true, hornSize: 1.55, backSpikes: 0x1a1210, spikeSize: 1.4, shoulder: 0x2a1a14, bulk: 1.22, head: 1.18, arms: 0.6, eye: 0xffe14d },
+  wing:      { top: 0x6a2ab8, belly: 0xe0c8f8, stripe: 0x1a0640, wings: 0x9a4ae8, wings2: 0x3a1070, horns: true, hornSize: 1.4, backSpikes: 0xe8d8ff, spikeSize: 1.2, bulk: 1.25, head: 1.2, arms: 0.55, eye: 0x4af0ff },
+  inferno:   { top: 0x141010, belly: 0x3a1a0e, stripe: 0xff5a10, sw: 0.82, wings: 0x2a0e08, wings2: 0xff4a0a, horns: true, hornSize: 1.6, spikes: 0xff6a1a, shoulder: 0x2a1a14, bulk: 1.38, head: 1.38, arms: 0.45, eye: 0xff8a1a, fire: true },
   compy:     { top: 0x6f8f4a, belly: 0xe9e3c0, stripe: 0x34451f, head: 1.1, bulk: 0.85, neck: 1.1 },
   raptorNpc: { top: 0x7a4a2a, belly: 0xe0c8a0, stripe: 0x2a1a0e, feathers: 0x8a2a1a, claw: true },
   spino:     { top: 0x4a6b6f, belly: 0xd8d0b8, stripe: 0x203436, sail: 0xb84a2a, snout: 1.5, bulk: 1.1 },
@@ -260,8 +270,8 @@ tallMat.onBeforeCompile = sh => {
       float dl_ = length(vWP - (uCam + ab_ * t_)), r_ = uRad * (0.45 + t_ * 0.75);
       float n_ = fract(sin(dot(floor(gl_FragCoord.xy), vec2(12.9898, 78.233))) * 43758.5453);
       // cut a clean hole along the camera->player line (dithered only at its rim) and drop anything hugging the camera
-      if (t_ < 0.93 && dl_ < r_ && n_ < clamp((r_ - dl_) / (r_ * 0.25), 0.0, 1.0)) discard;
-      float dc_ = length(vWP - uCam); if (dc_ < L_ * 0.55 && n_ < clamp((L_ * 0.55 - dc_) / (L_ * 0.15), 0.0, 1.0)) discard;`);
+      if (t_ < 0.93 && dl_ < r_ && n_ < clamp((r_ - dl_) / (r_ * 0.12), 0.0, 1.0)) discard;
+      float dc_ = length(vWP - uCam); if (dc_ < L_ * 0.5 && n_ < clamp((L_ * 0.5 - dc_) / (L_ * 0.05), 0.0, 1.0)) discard;`);
 };
 const bugMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.28, metalness: 0.45 });
 const toothMat = new THREE.MeshStandardMaterial({ color: 0xf4ead2, roughness: 0.4 });
@@ -270,10 +280,12 @@ const pupilMat = new THREE.MeshStandardMaterial({ color: 0x080808, roughness: 0.
 const eyeMats = {}; const eyeMat = c => eyeMats[c] || (eyeMats[c] = new THREE.MeshStandardMaterial({ color: c, roughness: 0.15, emissive: c, emissiveIntensity: 0.18 }));
 const wingMat = new THREE.MeshStandardMaterial({ color: 0xcfe8ff, roughness: 0.2, metalness: 0.2, transparent: true, opacity: 0.45, side: THREE.DoubleSide, depthWrite: false });
 const glowMat = new THREE.MeshStandardMaterial({ color: 0x3a1a0a, emissive: 0xff6a1a, emissiveIntensity: 2.2, roughness: 0.6 });
+const wingSkin = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.55, side: THREE.DoubleSide, transparent: true, opacity: 0.92 });
 const gcache = new Map();
+let BLOB_SW = 0.42;   // stripe threshold for the model being built (higher = thinner stripes, e.g. lava cracks)
 // deformed sphere with vertex colours: belly->back gradient, optional stripes/spots, tapering front/back
 function blob(rx, ry, rz, top, belly, o = {}) {
-  const key = [rx, ry, rz, top, belly, o.stripe, o.freq, o.tb, o.tf, o.seg, o.spots].join('|');
+  const key = [rx, ry, rz, top, belly, o.stripe, o.freq, o.tb, o.tf, o.seg, o.spots, BLOB_SW].join('|');
   if (gcache.has(key)) return gcache.get(key);
   const seg = o.seg || 16, g = new THREE.SphereGeometry(1, seg, Math.max(8, Math.round(seg * 0.7)));
   const p = g.attributes.position, cols = new Float32Array(p.count * 3);
@@ -283,7 +295,7 @@ function blob(rx, ry, rz, top, belly, o = {}) {
     let k = 1; if (o.tb && z < 0) k -= o.tb * -z; if (o.tf && z > 0) k -= o.tf * z; k = Math.max(0.06, k);
     p.setXYZ(i, x * rx * k, y * ry * k, z * rz);
     c.copy(Bc).lerp(T, clamp((y + 0.25) / 0.8, 0, 1));
-    if (S && y > -0.2) { const s = Math.sin(z * (o.freq || 5) * PI + Math.abs(x) * 1.3); if (s > 0.42) c.lerp(S, 0.7 * clamp((y + 0.2) / 0.5, 0, 1)); }
+    if (S && y > -0.2) { const s = Math.sin(z * (o.freq || 5) * PI + Math.abs(x) * 1.3); if (s > BLOB_SW) c.lerp(S, (BLOB_SW > 0.6 ? 0.95 : 0.7) * clamp((y + 0.2) / 0.5, 0, 1)); }
     if (o.spots && y > -0.1 && hash(Math.round(x * 9) * 31 + Math.round(y * 9) * 17 + Math.round(z * 9) * 7) > 0.8) c.lerp(S || T, 0.75);
     const n = 0.9 + hash(Math.round(x * 20) + Math.round(y * 20) * 41 + Math.round(z * 20) * 83) * 0.18;
     cols[i * 3] = c.r * n; cols[i * 3 + 1] = c.g * n; cols[i * 3 + 2] = c.b * n;
@@ -337,6 +349,7 @@ function buildTheropod(L, m = skinMat) {
   const root = new THREE.Group(), B = {};
   const G_ = (n, p, x, y, z) => { const g = new THREE.Group(); g.name = n; g.position.set(x, y, z); p.add(g); B[n] = g; return g; };
   const bk = L.bulk || 1, H = L.head || 1, NK = L.neck || 1, sn = L.snout || 1, top = L.top, bel = L.belly, st = L.stripe;
+  BLOB_SW = L.sw || 0.42;
   const hips = G_('Hips', root, 0, 0.84, 0);
   const torso = addMesh(blob(0.3 * bk, 0.34 * bk, 0.6, top, bel, { stripe: st, freq: 4, tb: 0.35, tf: 0.2 }), m, hips, 0, 0.06, 0.1); torso.rotation.x = -0.14;
   const chest = G_('Chest', hips, 0, 0.16, 0.5);
@@ -352,7 +365,10 @@ function buildTheropod(L, m = skinMat) {
   for (const sx of [-1, 1]) { addMesh(EYE, eyeMat(L.eye || 0xd8b23a), hd, sx * 0.12, 0.09, 0.12, false); addMesh(PUPIL, pupilMat, hd, sx * 0.152, 0.095, 0.135, false); }
   if (L.crest) for (const sx of [-1, 1]) { const c = addMesh(halfDisc(0.13, L.crest), m, hd, sx * 0.045, 0.14, 0.18 * sn, false); c.rotation.y = PI / 2; c.scale.set(1.5, 1, 1); }
   if (L.brow) for (const sx of [-1, 1]) addMesh(tint(new THREE.ConeGeometry(0.04, 0.1, 5), 0x5a3418), m, hd, sx * 0.1, 0.17, 0.1, false);
-  if (L.horns) for (const sx of [-1, 1]) { const h = addMesh(tint(new THREE.ConeGeometry(0.045, 0.2, 6), 0x2a1a10), m, hd, sx * 0.13, 0.17, 0.08, false); h.rotation.z = -sx * 0.9; }
+  if (L.horns) for (const sx of [-1, 1]) {   // bull horns: sweep out sideways then up
+    const hs = L.hornSize || 1, h = addMesh(tint(new THREE.ConeGeometry(0.045, 0.2, 6), 0xe8dcc0, 0.05, 0x2a1a10, 'y', -0.1, 0.1), m, hd, sx * (0.12 + 0.05 * hs), 0.17 + 0.03 * hs, 0.06, false);
+    h.rotation.z = -sx * (hs > 1.5 ? 1.25 : 0.9); h.rotation.x = -0.2; h.scale.set(hs, hs * 1.15, hs);
+  }
   if (L.feathers != null) {
     const parts = []; const f = new THREE.ConeGeometry(0.03, 0.16, 4);
     for (let i = 0; i < 7; i++) parts.push([tint(f.clone(), L.feathers, 0.15), M4(rnd(-0.04, 0.04), 0.16, -0.02 - i * 0.03, -1.9 + i * 0.05, 0, rnd(-0.3, 0.3))]);
@@ -369,10 +385,28 @@ function buildTheropod(L, m = skinMat) {
     if (i === 0) tg.rotation.x = 0.1;
     const r = (0.22 - i * 0.045) * bk; addMesh(blob(r, r * 1.05, len * 0.74, top, bel, { stripe: st, freq: 3, tb: 0.28, tf: 0.05 }), m, tg, 0, 0, -len * 0.5);
     if (L.spikes) addMesh(new THREE.ConeGeometry(r * 0.35, r * 0.9, 5), glowMat, tg, 0, r * 0.95, -len * 0.4, false);
+    if (L.backSpikes) for (const zz of [-0.2, -0.6]) { const s = L.spikeSize || 1; addMesh(tint(new THREE.ConeGeometry(r * 0.3 * s, r * 0.9 * s, 5), L.backSpikes, 0.08), m, tg, 0, r * (0.9 + 0.3 * s), -len * zz * -1, false); }
     par = tg; len *= 0.88;
   }
   if (L.sail) { const s = addMesh(halfDisc(0.55, L.sail, 0.03), m, hips, 0, 0.28, 0.1, false); s.rotation.y = PI / 2; s.scale.set(1.25, 0.9, 1); }
-  if (L.spikes) for (let i = 0; i < 5; i++) addMesh(new THREE.ConeGeometry(0.06, 0.2, 5), glowMat, hips, 0, 0.4, 0.45 - i * 0.18, false);
+  if (L.spikes) for (let i = 0; i < 5; i++) addMesh(new THREE.ConeGeometry(0.06 * (L.fire ? 1.6 : 1), 0.2 * (L.fire ? 1.8 : 1), 5), glowMat, hips, 0, 0.4 * bk, 0.45 - i * 0.18, false);
+  if (L.backSpikes) {   // spike armour: a row of bony spikes along the back + side studs
+    const s = L.spikeSize || 1, parts = [], cone = new THREE.ConeGeometry(0.055 * s, 0.22 * s, 5);
+    for (let i = 0; i < 7; i++) parts.push([tint(cone.clone(), L.backSpikes, 0.08), M4(0, 0.38 * bk + 0.05 * s, 0.62 - i * 0.17, -0.25)]);
+    for (const sx of [-1, 1]) for (let i = 0; i < 4; i++) parts.push([tint(cone.clone(), L.backSpikes, 0.08), M4(sx * 0.27 * bk, 0.22 * bk, 0.45 - i * 0.22, 0, 0, -sx * 1.0, 0.7)]);
+    addMesh(merge(parts), m, hips, 0, 0, 0, false);
+  }
+  if (L.shoulder) for (const sx of [-1, 1]) {   // armour plates over the shoulders
+    const p = addMesh(tint(jitter(new THREE.DodecahedronGeometry(0.16, 0), 0.03), L.shoulder, 0.1), m, hips, sx * 0.2 * bk, 0.3 * bk, 0.42, false); p.scale.set(1, 0.55, 1.2);
+  }
+  if (L.wings) for (const [side, sx] of [['Left', 1], ['Right', -1]]) {   // membrane wings with finger bones
+    const wg = G_(side + 'Wing', chest, sx * 0.16 * bk, 0.22 * bk, -0.05); wg.scale.set(sx * bk, bk, bk);
+    const sh = new THREE.Shape(); sh.moveTo(0, 0.05); sh.lineTo(0.75, 0.55); sh.lineTo(1.45, 0.42); sh.lineTo(1.2, 0.05); sh.lineTo(0.95, -0.25); sh.lineTo(0.62, -0.05); sh.lineTo(0.4, -0.35); sh.lineTo(0.15, -0.12); sh.lineTo(0, -0.1);
+    const mg = new THREE.ExtrudeGeometry(sh, { depth: 0.015, bevelEnabled: false }); mg.rotateX(-PI / 2);
+    const membrane = addMesh(tint(mg, L.wings2 || L.wings, 0.08, L.wings, 'z', -0.6, 0.2), wingSkin, wg, 0, 0, 0, false);
+    const bones = []; for (const [x, z] of [[1.45, -0.42], [1.2, -0.05], [0.95, 0.25], [0.4, 0.35]]) { const len = Math.hypot(x, z), b = new THREE.CylinderGeometry(0.018, 0.03, len, 5); b.rotateZ(PI / 2); b.translate(len / 2, 0.01, 0); bones.push([tint(b, L.top, 0.05), M4(0, 0, 0, 0, Math.atan2(-z, x))]); }
+    addMesh(merge(bones), m, wg, 0, 0, 0, false);
+  }
   for (const [side, sx] of [['Left', 1], ['Right', -1]]) {
     const th = G_(side + 'Thigh', hips, sx * 0.2, 0, 0.04);
     addMesh(blob(0.13 * bk, 0.27, 0.17 * bk, top, bel, { stripe: st, freq: 2 }), m, th, 0, -0.15, 0.02);
@@ -383,6 +417,7 @@ function buildTheropod(L, m = skinMat) {
     const c = addMesh(CLAWS, clawMat, ft, 0, 0.01, 0.02, false); c.scale.set(bk, 1, 1);
     if (L.claw) { const k = addMesh(new THREE.ConeGeometry(0.025, 0.12, 4), clawMat, ft, sx * 0.05, 0.08, 0.1, false); k.rotation.x = -0.6; }
   }
+  BLOB_SW = 0.42;
   return { root, B, kind: 'theropod', cyc: rnd(0, 6), t: rnd(0, 6), lastS: 0, chomp: -1 };
 }
 
@@ -514,6 +549,11 @@ function animDino(d, dt, a) {
     set(B.Neck, 'x', base + nx + (a.moving && d.kind === 'theropod' ? c * 0.04 : 0), d.chomp >= 0 ? 1 : k); set(B.Neck, 'y', hy);
     set(B.Jaw, 'x', jx, d.chomp >= 0 ? 1 : k);
     if (d.kind === 'theropod') { set(B.LeftArm, 'x', 0.7 + (a.moving ? s * 0.15 : 0)); set(B.RightArm, 'x', 0.7 - (a.moving ? s * 0.15 : 0)); }
+    if (B.LeftWing) {   // wings: half-folded at rest, big flaps while running / roaring
+      const f = a.roar || a.fire ? 0.35 + Math.sin(d.t * 14) * 0.6 : a.moving ? 0.25 + Math.sin(d.t * 9) * 0.45 : 0.15 + Math.sin(d.t * 2) * 0.08;
+      B.LeftWing.rotation.z = f; B.RightWing.rotation.z = -f;
+      B.LeftWing.rotation.y = B.RightWing.rotation.y = a.moving || a.roar || a.fire ? 0 : 0.5;
+    }
   } else if (d.kind === 'beetle') {
     if (a.moving) d.cyc += dt * 18;
     d.B.legs.forEach((g, i) => { g.rotation.y = Math.sin(d.cyc + i * 2.1) * 0.5 * (a.moving ? 1 : 0.1); });
@@ -775,7 +815,8 @@ function pickSpecies(p) {
 }
 function trySpawn(near = false) {
   const P = PLY.power, r = Math.random();
-  let p = r < 0.6 ? P * rnd(0.18, 0.88) : r < 0.82 ? P * rnd(1.05, 1.45) : P * rnd(1.7, 3.2);
+  const [mA, mB] = CONFIG.spawnMix;   // mostly food, a few slightly bigger targets, rare big ones
+  let p = r < mA ? P * rnd(0.25, 0.92) : r < mB ? P * rnd(1.05, 1.45) : P * rnd(1.6, 2.6);
   p = clamp(Math.max(1, p), LV.range[0], LV.range[1]);
   let [sp, pw] = pickSpecies(p);
   const view = viewR();
@@ -792,7 +833,7 @@ function trySpawn(near = false) {
   }
 }
 const effPower = () => PLY.power * (PLY.rampT > 0 ? CONFIG.skill.mult : 1);
-const playerSpeed = () => (CONFIG.player.baseSpeed + CONFIG.player.speedPerScale * PLY.scale) * (PLY.rampT > 0 ? CONFIG.skill.speed : 1) * (inPool(pools, PLY.pos.x, PLY.pos.z) ? 0.72 : 1);
+const playerSpeed = () => (CONFIG.player.baseSpeed + CONFIG.player.speedPerScale * PLY.scale) * (PLY.rampT > 0 ? CONFIG.skill.speed : 1) * (!CONFIG.easy && inPool(pools, PLY.pos.x, PLY.pos.z) ? 0.72 : 1);
 const viewR = () => camDist() * 0.95;
 function updateCreature(c, dt) {
   const S = c.S, cp = c.root.position, p = PLY.pos;
@@ -800,7 +841,7 @@ function updateCreature(c, dt) {
   const edible = c.power <= eff; c.age += dt; c.stun = Math.max(0, c.stun - dt);
   let mx = 0, mz = 0, sp = 0; const spd = S.speed * (0.65 + 0.5 * c.scale), pSp = playerSpeed();
   if (S.speed > 0 && c.stun <= 0) {
-    if (!edible && S.aggr && d < 6 + 5 * c.scale && c.chaseT < 4.5 && PLY.invT <= 0) { mx = dx / d; mz = dz / d; sp = Math.min(spd * 1.15, pSp * 0.86); c.chaseT += dt; }
+    if (!CONFIG.easy && !edible && S.aggr && d < 6 + 5 * c.scale && c.chaseT < 4.5 && PLY.invT <= 0) { mx = dx / d; mz = dz / d; sp = Math.min(spd * 1.15, pSp * 0.86); c.chaseT += dt; }
     else if (edible && S.flee && d < 4 + 4 * PLY.scale) { mx = -dx / d; mz = -dz / d; sp = Math.min(spd, pSp * 0.7); }
     else {
       c.chaseT = Math.max(0, c.chaseT - dt * 0.6); c.wTimer -= dt;
@@ -827,7 +868,7 @@ function updateCreature(c, dt) {
 }
 
 /* ---------------- player ---------------- */
-const PLY = { power: 1, stage: 0, d: null, scale: sizeOf(1), pos: new V3(), heading: PI, kb: new V3(), hurtT: 0, invT: 0, chompT: -1, chompCd: 0, skill: 0, rampT: 0, roarT: -1, eaten: 0, maxPower: 1, mat: null };
+const PLY = { power: 1, stage: 0, d: null, scale: sizeOf(1), pos: new V3(), heading: PI, kb: new V3(), hurtT: 0, invT: 0, chompT: -1, chompCd: 0, skill: 0, rampT: 0, roarT: -1, eaten: 0, maxPower: 1, mat: null, popT: 0, fireT: 0 };
 function makePlayerModel() {
   const look = LOOKS[CONFIG.stages[PLY.stage].look];
   PLY.mat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.68, metalness: 0.02, emissive: 0x000000 });
@@ -870,7 +911,7 @@ function hurt(src, loss = CONFIG.growth.hurtLoss) {
 function checkEvolve() {
   const st = CONFIG.stages;
   if (PLY.stage < st.length - 1 && PLY.power >= st[PLY.stage + 1].at) {
-    PLY.stage++; makePlayerModel(); slowmo = 0.7;
+    PLY.stage++; makePlayerModel(); slowmo = 0.7; PLY.popT = 1;
     flash('flash', 0.85, 700); sfx.evolve(); shake = Math.max(shake, 0.3);
     ring(PLY.pos, PLY.scale, PLY.scale * 6, 0xffe14d, 0.8, 0.9); ring(PLY.pos, PLY.scale * 0.5, PLY.scale * 4, 0xffffff, 0.6, 0.8);
     for (let i = 0; i < 24; i++) particle(PLY.pos.clone().add(new V3(rnd(-1, 1) * PLY.scale, rnd(0, 2) * PLY.scale, rnd(-1, 1) * PLY.scale)), PLY.scale * 0.08, new V3(0, rnd(2, 5) * PLY.scale, 0), chunkMats.gold, rnd(0.6, 1.1), 0);
@@ -878,9 +919,36 @@ function checkEvolve() {
     setTimeout(checkEvolve, 350);
   }
 }
+const fireMats = [0xffe14d, 0xff8a1a, 0xff3a0a].map(c => new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0.85, depthWrite: false, blending: THREE.AdditiveBlending }));
+let fireTick = 0;
+const fireLight = new THREE.PointLight(0xff7a1a, 0, 20); scene.add(fireLight);
+function breatheFire(dt) {
+  const fwd = new V3(Math.sin(PLY.heading), 0, Math.cos(PLY.heading));
+  const mouth = PLY.d.B.Head.getWorldPosition(new V3()).addScaledVector(fwd, PLY.scale * 0.5);
+  const L = 3 + 3.4 * PLY.scale;
+  for (let i = 0; i < 9; i++) {   // a thick, slow cone of fire balls that grows as it travels
+    const v = fwd.clone().multiplyScalar(L * rnd(1.1, 1.6)).add(new V3(rnd(-1, 1), rnd(-0.2, 0.4), rnd(-1, 1)).multiplyScalar(PLY.scale * 1.1)); v.y -= PLY.scale * 1.1;
+    particle(mouth.clone().addScaledVector(fwd, rnd(0, 0.6) * PLY.scale), PLY.scale * rnd(0.18, 0.32), v, pick(fireMats), rnd(0.45, 0.65), -2, true);
+  }
+  fireLight.position.copy(mouth).addScaledVector(fwd, L * 0.8); fireLight.intensity = 2.2 + Math.random() * 1.2; fireLight.distance = L * 2;
+  fireTick -= dt; if (fireTick > 0) return; fireTick = 0.12;
+  noise(0.14, 500, 0.6, 0.12, 'lowpass'); shake = Math.max(shake, 0.08);
+  const cap = Math.floor(effPower()) * 2.2;   // fire swallows anything up to 2.2x your power, stuns the rest
+  for (const c of [...creatures]) {
+    const to = c.root.position.clone().sub(PLY.pos).setY(0), dd = to.length();
+    if (dd > L + c.radius || to.dot(fwd) / (dd || 1) < 0.78) continue;
+    if (c.power <= cap) eat(c); else c.stun = 2;
+  }
+  if (boss && !boss.dead) { const to = boss.pos.clone().sub(PLY.pos).setY(0), dd = to.length(); if (dd < L + boss.radius && to.dot(fwd) / (dd || 1) > 0.7) boss.stun = 1; }
+}
+function bump(src, k = 1) {   // knock-back without losing power
+  const dir = new V3(PLY.pos.x - src.x, 0, PLY.pos.z - src.z).normalize(); PLY.kb.copy(dir).multiplyScalar((5 + 2.5 * PLY.scale) * k); PLY.invT = 0.6;
+  shake = Math.max(shake, 0.12); beep(150, 0.12, 'triangle', 0.05);
+}
 function useSkill() {
   if (PLY.skill < 1 || PLY.rampT > 0 || transitioning) return;
   PLY.skill = 0; PLY.rampT = CONFIG.skill.dur; PLY.roarT = 0;
+  if (PLY.stage >= CONFIG.skill.fireFrom) PLY.fireT = CONFIG.skill.fireDur;   // winged forms breathe fire
   const R = 7 + 4.5 * PLY.scale;
   ring(PLY.pos, PLY.scale, R, 0xff8a2a, 0.6, 0.85); ring(PLY.pos, PLY.scale, R * 0.7, 0xffffff, 0.45, 0.6);
   dust(PLY.pos.clone(), PLY.scale * 1.4, 14);
@@ -919,7 +987,7 @@ function updateBoss(dt) {
     if (b.t >= 1.1) {
       fxGroup.remove(b.warn); b.warn.geometry.dispose(); b.warn.material.dispose(); b.warn = null; b.d.B.Hips.rotation.x = 0;
       ring(b.pos, 1, R, 0xff6a1a, 0.5, 0.9); dust(b.pos.clone(), b.scale * 1.2, 16); shake = Math.max(shake, 0.6); sfx.stomp(8); noise(0.5, 120, 0.7, 0.4, 'lowpass');
-      if (d < R && PLY.invT <= 0) hurt(b.pos, CONFIG.growth.bossHurtLoss);
+      if (d < R && PLY.invT <= 0) { if (CONFIG.easy) bump(b.pos, 1.4); else hurt(b.pos, CONFIG.growth.bossHurtLoss); }
       b.state = 'chase'; b.atkT = rnd(2.8, 4);
     }
   }
@@ -937,7 +1005,7 @@ function updateBoss(dt) {
       floatText('💥', hit.clone().add(new V3(0, PLY.scale, 0))); sfx.chomp(PLY.scale * 1.5); shake = Math.max(shake, 0.5);
       b.pos.x -= dx / d * 1.5; b.pos.z -= dz / d * 1.5;
       if (b.hp <= 0) { b.dead = true; b.lbl.show = false; slowmo = 1.2; flash('flash', 0.9, 900); sfx.roar(); setTimeout(showEnd, 1800); for (let i = 0; i < 40; i++) particle(b.pos.clone().setY(b.scale), b.scale * 0.05, new V3(rnd(-6, 6), rnd(4, 12), rnd(-6, 6)), pick([chunkMats.gold, chunkMats.ember]), rnd(1, 1.8), 9); }
-    } else if (!canBite && PLY.invT <= 0 && b.stun <= 0) { b.biteT = 0; hurt(b.pos, CONFIG.growth.bossHurtLoss); }
+    } else if (!canBite && PLY.invT <= 0 && b.stun <= 0) { b.biteT = 0; if (CONFIG.easy) bump(b.pos, 1.2); else hurt(b.pos, CONFIG.growth.bossHurtLoss); }
   }
 }
 
@@ -1019,11 +1087,17 @@ function goNextLevel() {
   transitioning = true; const f = $('flash'); f.style.transition = 'opacity .45s'; f.style.opacity = 1;
   setTimeout(() => { loadLevel(levelIdx + 1); banner(LV.icon, '', 1300); setTimeout(() => { f.style.opacity = 0; transitioning = false; }, 400); }, 480);
 }
-function showEnd() { if (endShown) return; endShown = true; PLY.maxPower = Math.max(PLY.maxPower, PLY.power); $('endStats').textContent = `🦖 ${PLY.eaten}   ·   ⚡ ${fmt(PLY.maxPower)}`; $('end').style.display = 'flex'; }
-$('bRestart').onclick = () => location.reload();
+function showEnd() { if (endShown) return; endShown = true; $('end').style.display = 'flex'; }
+// end card CTA: ad SDKs expose mraid.open; otherwise open the store link in a new tab
+function playNow() {
+  try { if (window.mraid && typeof window.mraid.open === 'function') { window.mraid.open(CONFIG.ctaUrl); return; } } catch (e) {}
+  try { window.open(CONFIG.ctaUrl, '_blank'); } catch (e) {}
+}
+$('bPlay').addEventListener('click', playNow);
 
 /* ---------------- tools (review only) ---------------- */
 $('bGear').onclick = e => { const pn = $('toolPanel'); pn.hidden = !pn.hidden; };
+$('bEnd').onclick = () => showEnd();
 $('bPow').onclick = () => { PLY.power *= 2; PLY.maxPower = Math.max(PLY.maxPower, PLY.power); checkEvolve(); };
 $('bFill').onclick = () => { PLY.skill = 1; };
 $('bNext').onclick = () => { if (levelIdx < CONFIG.levels.length - 1) { PLY.power = Math.max(PLY.power, LV.target || 1); checkEvolve(); goNextLevel(); } };
@@ -1047,7 +1121,7 @@ function frame(now) {
   if (moving) { if (!moved) { moved = true; $('tut').style.opacity = '0'; } const sp = playerSpeed() * mv.l; p.x += mv.x * sp * dt; p.z += mv.z * sp * dt; PLY.heading = lerpAngle(PLY.heading, Math.atan2(mv.x, mv.z), Math.min(1, dt * 10)); }
   p.addScaledVector(PLY.kb, dt); PLY.kb.multiplyScalar(Math.max(0, 1 - dt * 6));
   p.x = clamp(p.x, -LV.w / 2, LV.w / 2); p.z = clamp(p.z, -LV.h / 2, LV.h / 2);
-  if (inPool(lavas, p.x, p.z)) {   // lava burns a little power every half second
+  if (!CONFIG.easy && inPool(lavas, p.x, p.z)) {   // lava burns a little power every half second (off in easy mode)
     if (Math.random() < dt * 8) particle(p.clone().setY(0.2), PLY.scale * 0.1, new V3(rnd(-1, 1), 3, rnd(-1, 1)), chunkMats.ember, 0.6, 3);
     if (PLY.invT <= 0) { const l = Math.max(1, Math.round(PLY.power * 0.05)); PLY.power = Math.max(1, PLY.power - l); floatText('-' + fmt(l), p.clone().setY(PLY.scale * 2), true); flash('hurt', 0.5, 400); PLY.invT = 0.5; }
   }
@@ -1059,7 +1133,9 @@ function frame(now) {
   if (PLY.roarT >= 0) { PLY.roarT += dt; if (PLY.roarT > 0.9) PLY.roarT = -1; }
   PLY.mat.emissive.setHex(PLY.rampT > 0 ? 0xff4a00 : 0x000000); PLY.mat.emissiveIntensity = PLY.rampT > 0 ? 0.25 + Math.sin(T * 10) * 0.12 : 0;
   const sp = playerSpeed();
-  const step = animDino(d, dt, { moving, rate: 9 * mv.l * sp / Math.max(0.5, PLY.scale) / 2.2 + 3, amp: mv.l, roar: PLY.roarT >= 0 });
+  if (PLY.popT > 0) { PLY.popT = Math.max(0, PLY.popT - dt / 0.5); d.root.scale.setScalar(PLY.scale * (1 + Math.sin(PLY.popT * PI) * 0.35)); }
+  if (PLY.fireT > 0) { PLY.fireT -= dt; breatheFire(dt); } else fireLight.intensity = 0;
+  const step = animDino(d, dt, { moving, rate: 9 * mv.l * sp / Math.max(0.5, PLY.scale) / 2.2 + 3, amp: mv.l, roar: PLY.roarT >= 0 || PLY.fireT > 0, fire: PLY.fireT > 0 });
   if (step) {
     const foot = d.B[step === 1 ? 'LeftFoot' : 'RightFoot'].getWorldPosition(new V3());
     dust(foot, PLY.scale * 0.5, PLY.scale > 1.5 ? 4 : 2); footprint(foot, PLY.heading, PLY.scale);
@@ -1075,8 +1151,11 @@ function frame(now) {
     const reach = PLY.radius * 1.35 + c.radius;
     if (c.power <= eff && dist < reach && PLY.chompCd <= 0) { eat(c); continue; }
     if (c.power > eff && dist < PLY.radius + c.radius * 0.9) {
-      if (!c.S.harmless && c.stun <= 0 && PLY.invT <= 0) { c.biteT = 0; hurt(c.root.position); }
-      else { const nx = (p.x - c.root.position.x) / dist, nz = (p.z - c.root.position.z) / dist, push = PLY.radius + c.radius * 0.9 - dist; p.x += nx * push; p.z += nz * push; }
+      if (!CONFIG.easy && !c.S.harmless && c.stun <= 0 && PLY.invT <= 0) { c.biteT = 0; hurt(c.root.position); }
+      else {   // easy mode: a bigger creature only bumps you away (no power lost)
+        const nx = (p.x - c.root.position.x) / dist, nz = (p.z - c.root.position.z) / dist, push = PLY.radius + c.radius * 0.9 - dist; p.x += nx * push; p.z += nz * push;
+        if (CONFIG.easy && PLY.invT <= 0 && c.stun <= 0) { bump(c.root.position, 0.6); if (c.d.kind === 'theropod' || c.d.kind === 'quad') c.biteT = 0; }
+      }
     }
     if (dist > viewR() * 2.6 || (c.power < PLY.power * 0.06 && dist > viewR() * 1.1)) { W.remove(c.root); removeCreature(c); }
   }

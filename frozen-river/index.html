@@ -34,6 +34,14 @@
   .pill.lvl{padding:2px 12px;font-size:15px}
   .pill.bump{animation:bump .25s}
   @keyframes bump{50%{transform:scale(1.12)}}
+  .prog{display:flex;align-items:center;gap:8px;background:var(--panel);border-radius:999px;padding:3px 14px 3px 6px;box-shadow:0 3px 0 rgba(0,0,0,.2)}
+  .prog .lv{font-size:18px;line-height:1}
+  .prog .bar{position:relative;width:132px;height:12px;border-radius:6px;background:rgba(255,255,255,.18)}
+  .prog .bar u{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:linear-gradient(90deg,#ffd34a,#ffb000);width:0;transition:width .3s}
+  .prog .bar b{position:absolute;top:50%;transform:translate(-50%,-50%);font-size:20px;line-height:1;color:#5a6b7d;text-shadow:0 1px 0 rgba(0,0,0,.4)}
+  .prog .bar b.on{color:#ffd34a}
+  .maxtag.big{font-size:15px;padding:2px 9px 0;box-shadow:0 2px 0 rgba(0,0,0,.3)}
+  .bubble.icon{padding:2px 6px 3px;font-size:18px}
   #storm{padding:3px 10px;gap:6px;opacity:0;transition:opacity .3s}
   #storm.warn{animation:blink .45s steps(2) infinite}
   @keyframes blink{50%{opacity:.25}}
@@ -94,7 +102,7 @@
       <div class="pill small" id="stackPill"><span class="coin" id="stackIcon">·</span><span id="stack">0/6</span></div>
     </div>
     <div class="mid">
-      <div class="pill lvl" id="lvl">🎣 1/3</div>
+      <div class="prog"><span class="lv" id="lvl">🎣</span><div class="bar"><u id="progBar"></u><b style="left:33%">★</b><b style="left:66%">★</b><b style="left:100%">★</b></div></div>
       <div class="pill" id="storm"><span>❄️</span><i><u id="stormBar"></u></i></div>
     </div>
     <div id="tools">
@@ -102,7 +110,6 @@
       <div class="panel" id="toolPanel" hidden>
         <button id="bLayout" type="button">▦ Bố cục</button>
         <button id="bView" type="button">◎ Toàn cảnh</button>
-        <button id="bMode" type="button">👥 Hàng dài</button>
         <button id="bStorm" type="button">❄️ Bão tuyết</button>
         <button id="bCash" type="button">+ $100 (test)</button>
         <button id="bNext" type="button">⏭ Màn sau</button>
@@ -139,19 +146,25 @@ const CONFIG = {
     ],
   },
   items: { scale: 1.5 },
-  player: { speed: 5.3, capacity: 6, start: [-3, 3], swing: 0.42, dmg: 1, reach: 1.45 },
+  player: { speed: 5.3, capacity: 6, start: [-3, 3], swing: 0.42, dmg: 1, reach: 1.75 },
   kitchen: { pos: [0, 0], input: [-2.1, 2.3], output: [2.6, 0.4], cook: 0.7, outMax: 12 },
   counter: { x: 8, halfLen: 2.2, serve: [6.5, 0], serveZone: { minX: 5.4, maxX: 7.4, minZ: -2.6, maxZ: 2.6 }, cash: [5.7, -4.1] },
   sawmill: { pos: [0, -8.5], output: [2.8, -6.8], every: 2.4, max: 8 },
   furnace: { pos: [4.7, 5.0], feed: [3.05, 5.0], burn: 7, max: 8, startFuel: 3 },
   workers: { cap: 4, speed: 3.7 },
-  villagers: { spawnX: 19.5, queueRow: 8, spacing: 0.82, mode: 'queue' },
+  // EAST flow is one-way: road -> crowd (behind rope) -> gate -> service lane -> counter -> exit lane (south) -> road, off-frame.
+  // Served villagers never walk back through the crowd.
+  villagers: { spawnX: 19.5, laneSize: 3,
+    lane: [[9.25, 0], [9.25, -0.95], [9.25, -1.9]], gate: [10.0, -3.3],
+    enter: [[19.5, -17], [19.5, -8], [17.3, -4.4]],
+    exit: [[9.3, 1.7], [9.9, 4.0], [13.5, 4.7], [17.6, 6.4], [19.5, 9.5], [19.5, 19]],
+    crowd: { x0: 10.8, x1: 16.4, z0: -6.0, z1: 1.9, gap: 0.78 } },
   levels: [
-    { name: 'Frozen Creek', badge: '🎣', sky: 0x7cc4ee, fog: 0xcfe6f6, sun: 0xfff2dc, iceCol: 0x3ea6dc, decor: 'creek',
+    { name: 'Frozen Creek', badge: '🎣', sky: 0x7cc4ee, fog: 0xcfe6f6, sun: 0xfff2dc, iceCol: 0x2f8fd0, decor: 'creek',
       ice: { hp: 3, fish: [1, 2], respawn: 4, size: 1,
         start: [[-9.0, -1.8], [-9.0, 1.8], [-11.8, -1.8], [-11.8, 1.8]],
         extra: [[-14.6, -1.8], [-14.6, 1.8], [-10.4, -5.0], [-13.2, -5.0]] },
-      soupPrice: 8, villagers: { start: 7, max: 15, every: [1.2, 2.2], patience: 46 },
+      soupPrice: 8, villagers: { crowd: 22, every: [0.9, 1.6], patience: 40 },
       blizzard: { first: 26, every: 38, dur: 9, power: 0.7 },
       unlocks: [
         { id: 'ice',     icon: '🧊', price: 20,  pos: [-12.0, -7.4] },
@@ -160,11 +173,11 @@ const CONFIG = {
         { id: 'fisher',  icon: '👷', price: 75,  pos: [-4.6, 5.0] },
         { id: 'next',    icon: '🛷', price: 100, pos: [1.0, 7.3] },
       ] },
-    { name: 'Pine Outpost', badge: '🌲', sky: 0x9fb8de, fog: 0xd8e1f0, sun: 0xfff0e0, iceCol: 0x3898cf, decor: 'pine',
-      ice: { hp: 5, fish: [2, 3], respawn: 3.5, size: 1.08,
+    { name: 'Pine Outpost', badge: '🌲', sky: 0x9fb8de, fog: 0xd8e1f0, sun: 0xfff0e0, iceCol: 0x2a80c0, decor: 'pine',
+      ice: { hp: 3, fish: [2, 3], respawn: 3.5, size: 1,
         start: [[-9.2, -2.4], [-9.2, 2.4], [-11.9, 0], [-14.6, -2.4], [-14.6, 2.4]],
         extra: [[-11.9, -4.8], [-11.9, 4.8], [-9.2, -5.9], [-14.6, 5.4]] },
-      soupPrice: 12, villagers: { start: 9, max: 16, every: [1.0, 1.9], patience: 42 },
+      soupPrice: 12, villagers: { crowd: 26, every: [0.8, 1.4], patience: 36 },
       blizzard: { first: 14, every: 30, dur: 11, power: 1.0 },
       unlocks: [
         { id: 'sawmill', icon: '🪚', price: 40,  pos: [0, -6.9] },
@@ -175,11 +188,11 @@ const CONFIG = {
         { id: 'waiter',  icon: '🧑‍🍳', price: 120, pos: [3.4, -3.2] },
         { id: 'next',    icon: '🛷', price: 150, pos: [1.0, 7.3] },
       ] },
-    { name: 'Glacier Bay', badge: '🏔️', sky: 0xf0bfcd, fog: 0xf6dce3, sun: 0xffd6ad, iceCol: 0x4aaedf, decor: 'glacier',
-      ice: { hp: 7, fish: [3, 4], respawn: 3, size: 1.16,
+    { name: 'Glacier Bay', badge: '🏔️', sky: 0xf0bfcd, fog: 0xf6dce3, sun: 0xffd6ad, iceCol: 0x3596d4, decor: 'glacier',
+      ice: { hp: 3, fish: [3, 4], respawn: 3, size: 1.12,
         start: [[-9.4, -3.2], [-9.4, 0], [-9.4, 3.2], [-12.6, -3.2], [-12.6, 0], [-12.6, 3.2]],
         extra: [[-15.3, -1.6], [-15.3, 1.6], [-11.0, -6.3], [-11.0, 6.3]] },
-      soupPrice: 16, villagers: { start: 11, max: 18, every: [0.8, 1.6], patience: 40 },
+      soupPrice: 16, villagers: { crowd: 30, every: [0.7, 1.2], patience: 32 },
       blizzard: { first: 10, every: 24, dur: 12, power: 1.25 },
       unlocks: [
         { id: 'furnace', icon: '🔥', price: 50,  pos: [4.7, 5.0] },
@@ -249,6 +262,32 @@ function canvasTex(w, h, draw) {
 }
 const FONT = '"Baloo 2", ui-rounded, system-ui, sans-serif';
 
+/* ---------------- ink outline (inverted hull, constant screen-space width) ---------------- */
+const inkMat = new THREE.ShaderMaterial({
+  uniforms: { thick: { value: 0.006 }, aspect: { value: innerWidth / innerHeight }, color: { value: new THREE.Color(0x1a1f2e) } },
+  vertexShader: `uniform float thick; uniform float aspect;
+    void main(){
+      vec4 p = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      vec4 cn = projectionMatrix * vec4(normalMatrix * normal, 0.0);
+      vec2 d = cn.xy; float l = length(d);
+      if (l > 1e-5) { d /= l; d.x /= aspect; p.xy += d * thick * p.w; }
+      gl_Position = p;
+    }`,
+  fragmentShader: `uniform vec3 color; void main(){ gl_FragColor = vec4(color, 1.0); }`,
+  side: THREE.BackSide,
+});
+function inkify(root, minR = 0.045) {
+  const list = [];
+  root.traverse(o => { if (o.isMesh && !o.userData.noInk && !o.userData.isInk && !o.material.transparent && !o.material.isMeshBasicMaterial) list.push(o); });
+  for (const m of list) {
+    if (!m.geometry.boundingSphere) m.geometry.computeBoundingSphere();
+    const s = m.scale, r = m.geometry.boundingSphere.radius * Math.max(s.x, s.y, s.z);
+    if (r < minR) continue;
+    const o = new THREE.Mesh(m.geometry, inkMat); o.userData.isInk = true; o.castShadow = false; o.receiveShadow = false; m.add(o);
+  }
+  return root;
+}
+
 /* ---------------- audio (synth only, no files) ---------------- */
 let actx = null, noiseBuf = null, wind = null;
 function beep(f, d = 0.07, type = 'sine', v = 0.05) {
@@ -287,22 +326,45 @@ const addBox = (x0, x1, z0, z1) => { const o = { c: 0, x0, x1, z0, z1 }; obstacl
 
 /* ---------------- items ---------------- */
 const IS = CONFIG.items.scale;
-const ITEM_H = { fish: 0.22 * IS, soup: 0.18 * IS, wood: 0.23 * IS, coin: 0.075 };
+const ITEM_H = { fish: 0.16 * IS, soup: 0.18 * IS, wood: 0.23 * IS, coin: 0.075 };
 const G = {
-  fish: SPH(1, 12, 8), tail: CONE(0.11, 0.16, 4), fin: CONE(0.05, 0.1, 3), eye: SPH(0.028, 6, 4),
+  eyeW: SPH(0.034, 8, 6), eyeB: SPH(0.019, 6, 4),
   bowl: CYL(0.2, 0.13, 0.15, 14), soup: CYL(0.185, 0.185, 0.02, 14), bit: BOX(0.05, 0.03, 0.05),
   log: CYL(0.075, 0.075, 0.46, 8), rope: CYL(0.082, 0.082, 0.05, 8), coin: CYL(0.13, 0.13, 0.05, 16),
 };
-const FISH_COLS = [0xff7a2a, 0x3fa9f5, 0xff5470, 0x9b6cff];
-function fishShape(g, col) {
-  const b = mk(G.fish, col, g, 0, 0.11, 0); b.scale.set(0.27, 0.11, 0.1);
-  const belly = mk(G.fish, 0xfff3e0, g, 0.02, 0.085, 0, false); belly.scale.set(0.22, 0.06, 0.085);
-  const t = mk(G.tail, col, g, -0.31, 0.11, 0); t.rotation.z = -PI / 2; t.scale.z = 0.3;
-  const f = mk(G.fin, col, g, 0, 0.21, 0, false); f.scale.z = 0.3;
-  mk(G.eye, 0x111111, g, 0.18, 0.14, 0.065, false); mk(G.eye, 0x111111, g, 0.18, 0.14, -0.065, false);
+// fish: tapered body with dark back / light belly (vertex colours), forked tail, dorsal + pectoral fins, white eyes
+const FISH_PAL = [[0x2a9d8f, 0xfff1d8, 0xff7a2a], [0x2f6fd6, 0xe9f6ff, 0xffc531], [0xff5a3d, 0xffe8d0, 0xd8324f], [0x7a5cf0, 0xf2ecff, 0xff8ad1]];
+const fishParts = FISH_PAL.map(pal => {
+  const g = new THREE.SphereGeometry(1, 22, 14), p = g.attributes.position, col = [];
+  const top = new THREE.Color(pal[0]), bel = new THREE.Color(pal[1]);
+  for (let i = 0; i < p.count; i++) {
+    const x = p.getX(i), y = p.getY(i), z = p.getZ(i);
+    const k = x < 0 ? 1 - 0.7 * Math.pow(-x, 1.4) : 1 - 0.2 * x * x;
+    p.setXYZ(i, x * 0.31, y * 0.135 * k + 0.01 * (1 - x * x), z * 0.075 * k);
+    const c = bel.clone().lerp(top, clamp((y + 0.15) / 0.75, 0, 1)); col.push(c.r, c.g, c.b);
+  }
+  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); g.computeVertexNormals();
+  return { body: g, mat: new THREE.MeshToonMaterial({ vertexColors: true, gradientMap: TOON }), fin: mat(pal[2]) };
+});
+const finGeo = (pts, depth = 0.016) => {
+  const s = new THREE.Shape(); s.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) s.lineTo(pts[i][0], pts[i][1]);
+  const g = new THREE.ExtrudeGeometry(s, { depth, bevelEnabled: false }); g.translate(0, 0, -depth / 2); g.computeVertexNormals(); return g;
+};
+const TAIL = finGeo([[0, 0.025], [-0.15, 0.15], [-0.105, 0], [-0.15, -0.15], [0, -0.025]], 0.02);
+const DORSAL = finGeo([[-0.12, 0], [-0.04, 0.1], [0.07, 0.03], [0.08, 0]]);
+const PECT = finGeo([[0, 0], [-0.09, 0.035], [-0.08, -0.03]], 0.012);
+function fishShape(g, pi = Math.floor(Math.random() * FISH_PAL.length)) {
+  const F = fishParts[pi];
+  mk(F.body, F.mat, g, 0, 0, 0); mk(TAIL, F.fin, g, -0.27, 0, 0); mk(DORSAL, F.fin, g, 0, 0.115, 0);
+  for (const sz of [1, -1]) {
+    const pf = mk(PECT, F.fin, g, 0.07, -0.04, sz * 0.06, false); pf.rotation.y = sz * 0.6; pf.rotation.z = -0.4;
+    mk(G.eyeW, 0xffffff, g, 0.19, 0.03, sz * 0.05, false); mk(G.eyeB, 0x111111, g, 0.205, 0.035, sz * 0.068, false);
+  }
+  return g;
 }
-const wrapItem = (kind, build) => { const g = new THREE.Group(), s = new THREE.Group(); s.scale.setScalar(IS); g.add(s); build(s); g.userData.kind = kind; return g; };
-const makeFish = () => wrapItem('fish', g => fishShape(g, pick(FISH_COLS)));
+const wrapItem = (kind, build) => { const g = new THREE.Group(), s = new THREE.Group(); s.scale.setScalar(IS); g.add(s); build(s); inkify(g); g.userData.kind = kind; return g; };
+// a caught fish lies on its side, so stacks stay flat and loose fish flop on the ice
+const makeFish = () => wrapItem('fish', g => { const f = new THREE.Group(); f.rotation.x = PI / 2; f.position.y = 0.08; g.add(f); fishShape(f); });
 const makeSoup = () => wrapItem('soup', g => {
   mk(G.bowl, 0x9b5a2b, g, 0, 0.075, 0); mk(G.soup, 0xff9a2e, g, 0, 0.145, 0, false);
   mk(G.bit, 0x3fbf55, g, 0.06, 0.16, 0.03, false); mk(G.bit, 0xffe14d, g, -0.05, 0.16, -0.04, false); mk(G.bit, 0xff5470, g, -0.02, 0.16, 0.08, false);
@@ -509,6 +571,7 @@ function makeHumanoid(o) {
     } else { const ax = mk(BOX(0.06, 0.28, 0.26), 0xcfd8df, t, 0, -0.7, 0.12); ax.rotation.x = 0.1; }
     B.tool = t;
   }
+  inkify(root, 0.07);
   root.scale.setScalar(o.scale || 1);
   const carry = new THREE.Group(); carry.position.set(0, 0.85, 0.58); root.add(carry);
   const back = new THREE.Group(); back.position.set(0, 1.12, -0.46); root.add(back);
@@ -553,6 +616,7 @@ function pine(x, z, s = 1, block = false) {
     mk(CONE(r * 0.72, h * 0.34, 7), 0xffffff, g, 0, y + h * 0.33, 0, false);
   });
   if (block) addCircle(x, z, 0.6 * s);
+  if (Math.abs(x) < 19 && Math.abs(z) < 11.5) inkify(g, 0.2);   // outline only trees near the play area (draw-call budget)
   return g;
 }
 function fenceLine(x0, z0, x1, z1) {
@@ -568,14 +632,14 @@ function snowman(x, z, s = 1) {
   const n = mk(CONE(0.06, 0.3, 6), 0xff7a1a, g, 0, 1.82, 0.38, false); n.rotation.x = PI / 2;
   mk(CYL(0.2, 0.22, 0.28, 12), 0x222222, g, 0, 2.18, 0); mk(CYL(0.32, 0.32, 0.04, 12), 0x222222, g, 0, 2.05, 0);
   const sc = mk(new THREE.TorusGeometry(0.3, 0.07, 6, 14), 0xe23b2e, g, 0, 1.58, 0); sc.rotation.x = PI / 2;
-  addCircle(x, z, 0.6 * s);
+  inkify(g, 0.1); addCircle(x, z, 0.6 * s);
 }
 function tent(x, z, col, s = 1) {
   const g = new THREE.Group(); g.position.set(x, 0, z); g.scale.setScalar(s); W.add(g);
   const t = mk(CONE(1.35, 1.9, 4), col, g, 0, 0.95, 0); t.rotation.y = PI / 4;
   const d = mk(new THREE.PlaneGeometry(0.7, 1.0), 0x2a1a0e, g, 0, 0.5, 0.96, false);
   mk(CONE(0.6, 0.5, 4), 0xffffff, g, 0, 1.75, 0, false).rotation.y = PI / 4;
-  addCircle(x, z, 1.05 * s);
+  inkify(g, 0.3); addCircle(x, z, 1.05 * s);
 }
 function lantern(x, z) {
   mk(BOX(0.12, 2.2, 0.12), 0x5d3a1e, W, x, 1.1, z);
@@ -628,14 +692,33 @@ const crackTex = canvasTex(256, 256, (c, w, h) => {
   }
   c.strokeStyle = 'rgba(20,90,150,.55)'; c.lineWidth = 2; for (let i = 0; i < 5; i++) { c.beginPath(); c.moveTo(rnd(0, w), rnd(0, h)); c.lineTo(rnd(0, w), rnd(0, h)); c.stroke(); }
 });
+// river ice: mid-grey base (the level colour multiplies it darker), white frost blotches + crack lines read lighter
 const riverTex = canvasTex(256, 256, (c, w, h) => {
-  c.fillStyle = '#ffffff'; c.fillRect(0, 0, w, h);
-  c.strokeStyle = 'rgba(255,255,255,.0)';
-  for (let i = 0; i < 40; i++) { c.fillStyle = `rgba(255,255,255,${rnd(0.15, 0.45).toFixed(2)})`; c.beginPath(); c.ellipse(rnd(0, w), rnd(0, h), rnd(10, 40), rnd(4, 10), rnd(0, 3), 0, PI * 2); c.fill(); }
-  c.strokeStyle = 'rgba(30,110,170,.25)'; c.lineWidth = 2;
-  for (let i = 0; i < 12; i++) { c.beginPath(); let x = rnd(0, w), y = rnd(0, h); c.moveTo(x, y); for (let k = 0; k < 4; k++) { x += rnd(-30, 30); y += rnd(-30, 30); c.lineTo(x, y); } c.stroke(); }
+  c.fillStyle = '#c4cfd8'; c.fillRect(0, 0, w, h);
+  for (let i = 0; i < 46; i++) { c.fillStyle = `rgba(255,255,255,${rnd(0.08, 0.3).toFixed(2)})`; c.beginPath(); c.ellipse(rnd(0, w), rnd(0, h), rnd(8, 36), rnd(3, 9), rnd(0, 3), 0, PI * 2); c.fill(); }
+  c.strokeStyle = 'rgba(255,255,255,.75)'; c.lineCap = 'round';
+  for (let i = 0; i < 16; i++) { c.lineWidth = rnd(1, 2.5); c.beginPath(); let x = rnd(0, w), y = rnd(0, h); c.moveTo(x, y); for (let k = 0; k < 5; k++) { x += rnd(-28, 28); y += rnd(-28, 28); c.lineTo(x, y); } c.stroke(); }
+  for (let i = 0; i < 60; i++) { c.fillStyle = 'rgba(255,255,255,.9)'; c.fillRect(rnd(0, w), rnd(0, h), 2, 2); }
 });
-riverTex.wrapS = riverTex.wrapT = THREE.RepeatWrapping; riverTex.repeat.set(5, 10);
+riverTex.wrapS = riverTex.wrapT = THREE.RepeatWrapping; riverTex.repeat.set(6, 36);
+// camp deck: warm planks with dark seams, nail dots and snow dust
+const deckTex = canvasTex(256, 256, (c, w, h) => {
+  const rows = 8, rh = h / rows, tones = ['#c97a3e', '#d98b4a', '#b96c33', '#cf8146', '#c27236'];
+  c.fillStyle = '#6b3a1c'; c.fillRect(0, 0, w, h);
+  for (let r = 0; r < rows; r++) {
+    let x = -rnd(0, 80);
+    while (x < w) {
+      const len = rnd(80, 140); c.fillStyle = pick(tones); c.fillRect(x + 1, r * rh + 2, len - 3, rh - 4);
+      c.fillStyle = 'rgba(255,255,255,.12)'; c.fillRect(x + 1, r * rh + 2, len - 3, 3);
+      c.fillStyle = 'rgba(80,40,15,.25)'; for (let k = 0; k < 3; k++) c.fillRect(x + rnd(6, len - 10), r * rh + rnd(6, rh - 8), rnd(10, 30), 1.5);
+      c.fillStyle = '#4a2a12'; c.fillRect(x + 5, r * rh + rh / 2 - 1, 3, 3); c.fillRect(x + len - 9, r * rh + rh / 2 - 1, 3, 3);
+      x += len;
+    }
+  }
+  for (let i = 0; i < 90; i++) { c.fillStyle = `rgba(255,255,255,${rnd(0.4, 0.9).toFixed(2)})`; c.fillRect(rnd(0, w), rnd(0, h), rnd(2, 5), 1.5); }
+});
+deckTex.wrapS = deckTex.wrapT = THREE.RepeatWrapping;
+const arrowTex = canvasTex(64, 64, (c, w, h) => { c.fillStyle = '#ffffff'; c.beginPath(); c.moveTo(32, 4); c.lineTo(58, 34); c.lineTo(42, 34); c.lineTo(42, 60); c.lineTo(22, 60); c.lineTo(22, 34); c.lineTo(6, 34); c.closePath(); c.fill(); });
 const warmTex = canvasTex(128, 128, (c, w, h) => {
   const g = c.createRadialGradient(w / 2, h / 2, 4, w / 2, h / 2, w / 2);
   g.addColorStop(0, 'rgba(255,170,60,.85)'); g.addColorStop(0.6, 'rgba(255,120,30,.35)'); g.addColorStop(1, 'rgba(255,120,30,0)');
@@ -649,7 +732,7 @@ const LAY = CONFIG.layout, bnd = LAY.bounds, PA = LAY.playerArea, PL = CONFIG.pl
 const SM = CONFIG.sawmill, FU = CONFIG.furnace, VG = CONFIG.villagers;
 let levelIdx = 0, LV = null, S = null;
 let money = 0, totalSold = 0, totalEarned = 0;
-let custMode = VG.mode, tutorialDone = false, endShown = false, transitioning = false;
+let tutorialDone = false, endShown = false, transitioning = false, maxL = null;
 const player = makeHumanoid({ skin: 0xf3c9a0, coat: 0xff7a1a, coat2: 0xe05f10, pants: 0x2f4f8f, hair: 0x5a3825, hat: 'beanie', hatColor: 0xe23b2e, hatColor2: 0xffffff, scarf: 0x2ec4b6, mitten: 0x2ec4b6, tool: 'pickaxe', pack: true });
 scene.add(player.root);
 let stack = null;
@@ -657,8 +740,7 @@ const P = { swingT: 0, hitDone: false, dmg: PL.dmg, swing: PL.swing, heading: 0 
 
 /* ---------------- level building ---------------- */
 function clearWorld() {
-  scene.remove(W);
-  W.traverse(o => { if (o.geometry && !Object.values(G).includes(o.geometry) && !shardGeos.includes(o.geometry) && o.geometry !== puffGeo && o.geometry !== confGeo) o.geometry.dispose(); });
+  scene.remove(W);   // geometry is mostly shared between levels; three.js frees GPU buffers with the dropped meshes on its own
   W = new THREE.Group(); scene.add(W);
   obstacles.length = 0; flyers.clear(); pops.length = 0; shards.length = 0; puffs.length = 0; confs.length = 0;
   for (const L of [...labels]) removeLabel(L); floats.length = 0;
@@ -666,9 +748,14 @@ function clearWorld() {
 function buildGround() {
   const g = flat(220, 220, 0xf2f6fb, 0, 0, 0); g.receiveShadow = true;
   const river = flat(34, 220, LV.iceCol, -23.4, 0, 0.012); river.material = new THREE.MeshToonMaterial({ color: LV.iceCol, map: riverTex, gradientMap: TOON });
-  for (let z = -16; z <= 16; z += 1.1) { const s = mk(SPH(0.7, 10, 6), 0xffffff, W, -6.3 + rnd(-0.15, 0.15), 0, z + rnd(-0.2, 0.2), false); s.scale.set(rnd(0.8, 1.2), 0.45, rnd(0.9, 1.3)); }
-  flat(14, 12, 0xe2eaf4, 0.6, 0, 0.015);
-  flat(9.4, 10.6, 0xe9eef6, 12.4, 0, 0.015);
+  for (let z = -16; z <= 16; z += 1.1) { if (Math.abs(z) < 1.3) continue; const s = mk(SPH(0.7, 10, 6), 0xffffff, W, -6.3 + rnd(-0.15, 0.15), 0, z + rnd(-0.2, 0.2), false); s.scale.set(rnd(0.8, 1.2), 0.45, rnd(0.9, 1.3)); }
+  // wooden camp deck over the centre + east zones, with a border beam and steps down to the ice
+  const dw = 23.6, dd = 13.2, deck = flat(dw, dd, 0xffffff, 5.4, 0, 0.015);
+  const dt = deckTex.clone(); dt.needsUpdate = true; dt.repeat.set(dw / 3, dd / 3);
+  deck.material = new THREE.MeshToonMaterial({ map: dt, gradientMap: TOON });
+  for (const z of [-dd / 2, dd / 2]) mk(BOX(dw, 0.12, 0.3), 0x7a4422, W, 5.4, 0.06, z, false);
+  mk(BOX(0.3, 0.12, dd), 0x7a4422, W, -6.4, 0.06, 0, false);
+  for (let i = 0; i < 3; i++) mk(BOX(0.34, 0.06 + i * 0.03, 2.4), i % 2 ? 0xc97a3e : 0xd98b4a, W, -6.75 - i * 0.34, 0.03, 0, false);
   flat(3.4, 220, 0xd3dce8, VG.spawnX, 0, 0.02);
   for (const dx of [-0.6, 0.6]) flat(0.12, 220, 0xbfcad8, VG.spawnX + dx, 0, 0.025);
   flat(3.6, 2.2, 0xe9eef6, 18.2, 0, 0.018);
@@ -708,26 +795,31 @@ const iceFlash = new THREE.MeshToonMaterial({ color: 0xffffff, emissive: 0xbfeff
 const edgeMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.8 });
 let blocks = [];
 function makeBlock(slot, active) {
-  const s = LV.ice.size, w = 1.25 * s, h = 1.05 * s;
-  const hole = flat(1, 1, 0x1a5a8c, slot[0], slot[1], 0.03); hole.geometry = new THREE.CircleGeometry(w * 0.62, 20);
-  const rim = flat(1, 1, 0xffffff, slot[0], slot[1], 0.025); rim.geometry = new THREE.RingGeometry(w * 0.62, w * 0.78, 20);
+  const s = LV.ice.size, w = 1.55 * s, h = 1.2 * s;
+  const hole = flat(1, 1, 0x123f6b, slot[0], slot[1], 0.03); hole.geometry = new THREE.CircleGeometry(w * 0.6, 22);
+  const rim = flat(1, 1, 0xffffff, slot[0], slot[1], 0.025); rim.geometry = new THREE.RingGeometry(w * 0.6, w * 0.76, 22);
   const g = new THREE.Group(); g.position.set(slot[0], 0, slot[1]); W.add(g);
   const inner = new THREE.Group(); g.add(inner);
-  const fish = new THREE.Group(); fishShape(fish, pick(FISH_COLS)); fish.scale.setScalar(2.9 * s); fish.position.y = h * 0.28; fish.rotation.set(0, rnd(-0.6, 0.6) + PI / 4, 0.15); inner.add(fish);
+  const fish = makeIceFish(s, h); inner.add(fish);
   const body = mk(BOX(w, h, w), iceMat, inner, 0, h / 2, 0); body.renderOrder = 2;
   const crack = new THREE.Mesh(BOX(w * 1.01, h * 1.01, w * 1.01), new THREE.MeshBasicMaterial({ map: crackTex, transparent: true, opacity: 0, depthWrite: false }));
   crack.position.y = h / 2; crack.renderOrder = 3; inner.add(crack);
   // a small snow drift on one corner only — a full cap hid the fish
   const cap = mk(SPH(w * 0.32, 10, 6), 0xffffff, inner, -w * 0.26, h, -w * 0.26); cap.scale.y = 0.35;
   const e = new THREE.LineSegments(new THREE.EdgesGeometry(body.geometry), edgeMat); e.position.y = h / 2; inner.add(e);
-  const b = { pos: new V3(slot[0], 0, slot[1]), g, inner, body, crack, fish, w, h, max: LV.ice.hp, hp: LV.ice.hp, alive: active, respawnT: 0, rise: 1, squash: 0, flash: 0, by: null, obs: addCircle(slot[0], slot[1], w * 0.62) };
+  const b = { slot, pos: new V3(slot[0], 0, slot[1]), off: new V3(), vel: new V3(), g, inner, body, crack, fish, w, h, max: LV.ice.hp, hp: LV.ice.hp, alive: active, respawnT: 0, rise: 1, squash: 0, flash: 0, by: null, obs: addCircle(slot[0], slot[1], w * 0.6) };
   if (!active) { inner.visible = false; b.obs.off = true; b.locked = true; g.visible = false; hole.visible = rim.visible = false; b.hole = hole; b.rim = rim; }
   return b;
 }
 function activateBlock(b) { b.locked = false; b.g.visible = true; b.hole.visible = b.rim.visible = true; respawnBlock(b); }
+function makeIceFish(s, h) {
+  const f = new THREE.Group(); fishShape(f); inkify(f);
+  f.scale.setScalar(2.3 * s); f.position.y = h * 0.45; f.rotation.set(0, rnd(-0.5, 0.5) + PI / 4, rnd(-0.15, 0.15)); return f;
+}
 function respawnBlock(b) {
   b.alive = true; b.hp = b.max; b.crack.material.opacity = 0; b.inner.visible = true; b.rise = 0; b.obs.off = false;
-  b.fish.children.forEach(m => { if (m.material !== mat(0x111111) && m.material !== mat(0xfff3e0)) m.material = mat(pick(FISH_COLS)); });
+  b.off.set(0, 0, 0); b.vel.set(0, 0, 0); b.pos.set(b.slot[0], 0, b.slot[1]); b.g.position.copy(b.pos); b.obs.x = b.pos.x; b.obs.z = b.pos.z;
+  b.inner.remove(b.fish); b.fish = makeIceFish(LV.ice.size, b.h); b.inner.add(b.fish);
   for (let i = 0; i < 10; i++) spawnShard(b.pos.clone().setY(0.1), 0.07, new V3(rnd(-2, 2), rnd(3, 6), rnd(-2, 2)), dropMat, 0.5);
 }
 function hitBlock(b, dmg, by) {
@@ -737,6 +829,7 @@ function hitBlock(b, dmg, by) {
   const dir = by ? new V3(by.x - b.pos.x, 0, by.z - b.pos.z).normalize() : new V3(1, 0, 0);
   const top = b.pos.clone().setY(b.h * 0.9).addScaledVector(dir, b.w * 0.45);
   for (let i = 0; i < 6; i++) spawnShard(top, rnd(0.05, 0.1), new V3(dir.x * rnd(1, 3) + rnd(-1.5, 1.5), rnd(2.5, 5), dir.z * rnd(1, 3) + rnd(-1.5, 1.5)), shardMat, 0.9);
+  b.vel.addScaledVector(dir, -1.15);   // knock-back: the block slides away from the hitter on the ice
   noise(0.12, 2600, 2, 0.12); beep(180, 0.06, 'triangle', 0.05);
   if (b.hp <= 0) shatter(b, by);
 }
@@ -769,10 +862,17 @@ function updateBlocks(dt, t) {
     if (b.locked) continue;
     if (!b.alive) { b.respawnT -= dt; if (b.respawnT <= 0) respawnBlock(b); continue; }
     if (b.rise < 1) { b.rise = Math.min(1, b.rise + dt / 0.55); const e = 1 - Math.pow(1 - b.rise, 3); b.inner.position.y = -b.h * (1 - e); }
+    // slide on ice: low friction, capped so the block stays near its hole
+    if (b.vel.lengthSq() > 1e-6) {
+      b.off.addScaledVector(b.vel, dt); b.vel.multiplyScalar(Math.max(0, 1 - dt * 4.2));
+      if (b.off.length() > 0.5) { b.off.setLength(0.5); b.vel.multiplyScalar(0.3); }
+      b.pos.set(b.slot[0] + b.off.x, 0, b.slot[1] + b.off.z); b.g.position.copy(b.pos); b.obs.x = b.pos.x; b.obs.z = b.pos.z;
+    }
     b.squash = Math.max(0, b.squash - dt * 6);
     const sq = Math.sin(b.squash * PI) * 0.12;
     b.inner.scale.set(1 + sq * 0.6, 1 - sq, 1 + sq * 0.6);
-    b.inner.position.x = Math.sin(t * 80) * b.squash * 0.06;
+    b.inner.rotation.z = -b.vel.x * 0.07; b.inner.rotation.x = b.vel.z * 0.07;
+    b.inner.position.x = Math.sin(t * 80) * b.squash * 0.04;
     if (b.flash > 0) { b.flash -= dt; b.body.material = iceFlash; } else b.body.material = iceMat;
   }
   for (const f of loose) { f.userData.flop += dt; const k = (f.userData.flop * 2.2) % 1; f.position.y = 0.02 + Math.sin(k * PI) * 0.12 * (k < 0.5 ? 1 : 0); f.rotation.z = Math.sin(f.userData.flop * 9) * 0.3; }
@@ -794,6 +894,7 @@ function buildKitchen() {
   mk(new THREE.TorusGeometry(0.64, 0.05, 6, 18), 0x3e4955, g, 0, 1.34, 0).rotation.x = PI / 2;
   const tb = mk(BOX(1.4, 0.55, 1.1), 0xa0612b, W, K.input[0], 0.27, K.input[1]); mk(BOX(1.45, 0.06, 1.15), 0x7a4a22, W, K.input[0], 0.56, K.input[1], false);
   const to = mk(BOX(1.6, 0.55, 1.4), 0xa0612b, W, K.output[0], 0.27, K.output[1]); mk(BOX(1.65, 0.06, 1.45), 0x7a4a22, W, K.output[0], 0.56, K.output[1], false);
+  inkify(g, 0.1); inkify(tb); inkify(to);
   flat(2.2, 2.0, 0xffe0b0, K.input[0], K.input[1], 0.02); flat(2.4, 2.2, 0xffe0b0, K.output[0], K.output[1], 0.02);
   addCircle(kx, kz, 1.25);
   addBox(K.input[0] - 0.72, K.input[0] + 0.72, K.input[1] - 0.57, K.input[1] + 0.57);
@@ -832,14 +933,23 @@ function buildCounter() {
   const C = CC, g = new THREE.Group(); g.position.set(C.x, 0, 0); W.add(g);
   mk(BOX(0.9, 1.0, C.halfLen * 2), 0x9b5a2b, g, 0, 0.5, 0); mk(BOX(1.05, 0.12, C.halfLen * 2 + 0.2), 0xffffff, g, 0, 1.06, 0);
   for (let z = -C.halfLen + 0.3; z < C.halfLen; z += 0.55) mk(BOX(0.92, 0.85, 0.05), 0x7a4422, g, 0, 0.5, z, false);
-  for (const z of [-C.halfLen - 0.1, C.halfLen + 0.1]) { mk(BOX(0.12, 2.7, 0.12), 0x6b4226, g, 0, 1.35, z); }
-  mk(BOX(0.14, 0.14, C.halfLen * 2 + 0.4), 0x6b4226, g, 0, 2.66, 0);
-  const sg = canvasTex(256, 128, (c, w, h) => { c.fillStyle = '#7a4422'; c.fillRect(0, 0, w, h); c.fillStyle = '#fff4e0'; c.fillRect(6, 6, w - 12, h - 12);
-    c.fillStyle = '#9b5a2b'; c.beginPath(); c.ellipse(w / 2, 70, 58, 30, 0, 0, PI); c.fill(); c.fillStyle = '#ff9a2e'; c.fillRect(w / 2 - 58, 64, 116, 8);
-    c.strokeStyle = '#9aa4ae'; c.lineWidth = 6; c.lineCap = 'round'; for (const x of [-26, 0, 26]) { c.beginPath(); c.moveTo(w / 2 + x, 52); c.bezierCurveTo(w / 2 + x - 10, 40, w / 2 + x + 10, 30, w / 2 + x, 16); c.stroke(); } });
-  for (const sx of [1, -1]) { const s = mk(new THREE.PlaneGeometry(1.8, 0.9), new THREE.MeshBasicMaterial({ map: sg }), g, sx * 0.08, 3.1, 0, false); s.rotation.y = sx * PI / 2; }
-  mk(BOX(0.08, 0.9, 1.8), 0x7a4422, g, 0, 3.1, 0);
+  for (const [x, z] of [[-0.5, -C.halfLen - 0.1], [0.6, -C.halfLen - 0.1], [-0.5, C.halfLen + 0.1], [0.6, C.halfLen + 0.1]]) mk(BOX(0.12, 2.6, 0.12), 0x6b4226, g, x, 1.3, z);
+  // red/white striped awning with snow on top, fish sign facing the camera
+  const stripes = canvasTex(64, 256, (c, w, h) => { for (let i = 0; i < 10; i++) { c.fillStyle = i % 2 ? '#ffffff' : '#e23b2e'; c.fillRect(0, i * h / 10, w, h / 10); } });
+  const aw = mk(BOX(1.55, 0.08, C.halfLen * 2 + 0.6), new THREE.MeshToonMaterial({ map: stripes, gradientMap: TOON }), g, 0.1, 2.62, 0); aw.rotation.z = -0.22;
+  const snowTop = mk(BOX(0.32, 0.16, C.halfLen * 2 + 0.5), 0xffffff, g, -0.55, 2.86, 0, false); snowTop.rotation.z = -0.22;   // snow only along the ridge so the stripes show
+  const sg = canvasTex(256, 112, (c, w, h) => {
+    c.fillStyle = '#6b4226'; c.fillRect(0, 0, w, h); c.fillStyle = '#9fd8f5'; c.fillRect(8, 8, w - 16, h - 16);
+    c.fillStyle = '#2a9d8f'; c.beginPath(); c.ellipse(w / 2 + 10, h / 2, 62, 26, 0, 0, PI * 2); c.fill();
+    c.beginPath(); c.moveTo(w / 2 - 46, h / 2); c.lineTo(w / 2 - 90, h / 2 - 28); c.lineTo(w / 2 - 80, h / 2); c.lineTo(w / 2 - 90, h / 2 + 28); c.closePath(); c.fill();
+    c.fillStyle = '#fff1d8'; c.beginPath(); c.ellipse(w / 2 + 14, h / 2 + 10, 48, 11, 0, 0, PI * 2); c.fill();
+    c.fillStyle = '#fff'; c.beginPath(); c.arc(w / 2 + 50, h / 2 - 6, 8, 0, PI * 2); c.fill(); c.fillStyle = '#111'; c.beginPath(); c.arc(w / 2 + 52, h / 2 - 6, 4, 0, PI * 2); c.fill();
+  });
+  mk(BOX(1.9, 0.85, 0.1), 0x6b4226, g, 0, 3.35, 0);
+  const sign = mk(new THREE.PlaneGeometry(1.8, 0.78), new THREE.MeshBasicMaterial({ map: sg }), g, 0, 3.35, 0.06, false);
+  mk(BOX(1.95, 0.14, 0.2), 0xffffff, g, 0, 3.82, 0, false);
   const pot = mk(CYL(0.4, 0.32, 0.45, 14), 0x2c3540, g, 0.05, 1.35, 1.4); mk(CYL(0.36, 0.36, 0.03, 14), 0xff9a2e, g, 0.05, 1.56, 1.4, false);
+  inkify(g, 0.1);
   addBox(C.x - 0.55, C.x + 0.55, -C.halfLen - 0.2, C.halfLen + 0.2);
   const cash = flat(1.7, 1.7, 0xffffff, C.cash[0], C.cash[1], 0.03);
   cash.material = new THREE.MeshToonMaterial({ gradientMap: TOON, map: canvasTex(128, 128, (c, w, h) => { c.fillStyle = '#fff5d1'; c.fillRect(0, 0, w, h); c.strokeStyle = '#c98a06'; c.lineWidth = 10; c.strokeRect(8, 8, w - 16, h - 16);
@@ -851,40 +961,64 @@ const SKINS = [0xf3c9a0, 0xe0ac7e, 0xc68a5c, 0x8d5a3b, 0xffdcb8];
 const COATS = [0x3fa9f5, 0xe23b2e, 0x7bc950, 0x9b6cff, 0xf4a259, 0x2ec4b6, 0xff6fa0, 0x4a5d8f, 0xffc531];
 const HAIRS = [0x2b1d14, 0x5a3825, 0xd9a441, 0x1c1c1c, 0x8b4513, 0xb0b0b0];
 const PANTS = [0x2f3a56, 0x4a4a4a, 0x5a4636, 0x2f5d50, 0x4b3f7a];
-const CROWD = [[9.3, 0]];
-for (let x = 10.2; x <= 16.2; x += 0.95) for (let z = -4.2; z <= 4.21; z += 0.95) CROWD.push([x + ((Math.round(z / 0.95) & 1) ? 0.45 : 0), z]);
-CROWD.sort((a, b) => Math.hypot(a[0] - 9.3, a[1] * 1.3) - Math.hypot(b[0] - 9.3, b[1] * 1.3));
-function slotPos(i, c) {
-  if (custMode === 'queue') {
-    const r = Math.floor(i / VG.queueRow), k = i % VG.queueRow, zr = [0, 1.3, -1.3, 2.6][Math.min(r, 3)];
-    const col = r % 2 ? VG.queueRow - 1 - k : k;
-    return new V3(9.3 + col * VG.spacing + (r ? 0.6 : 0), 0, zr);
+/* EAST flow (one-way, never back through the crowd):
+   road (north, off-frame) -> crowd spot behind the rope -> gate -> service lane (3 slots) -> counter
+   -> exit lane going south -> road (south, off-frame). Only the 3 lane villagers lose patience. */
+const V2 = (a) => new V3(a[0], 0, a[1]);
+let spots = [], lane = [];
+function buildSpots() {
+  const c = VG.crowd, gate = V2(VG.gate); spots = [];
+  for (let x = c.x0; x <= c.x1 + 1e-3; x += c.gap) for (let z = c.z0; z <= c.z1 + 1e-3; z += c.gap)
+    spots.push({ p: new V3(x + rnd(-0.18, 0.18), 0, z + rnd(-0.18, 0.18)), v: null });
+  spots.sort((a, b) => a.p.distanceTo(gate) - b.p.distanceTo(gate));
+}
+const freeSpot = () => spots.find(s => !s.v);
+function buildCrowdRope() {
+  const seg = (a, b) => {
+    const len = Math.hypot(b[0] - a[0], b[1] - a[1]), n = Math.max(1, Math.round(len / 1.3)), ang = Math.atan2(b[0] - a[0], b[1] - a[1]);
+    for (let i = 0; i <= n; i++) { const t = i / n; mk(CYL(0.07, 0.09, 0.95, 8), 0x6b4226, W, lerp(a[0], b[0], t), 0.47, lerp(a[1], b[1], t)); mk(SPH(0.1, 8, 6), 0xffc531, W, lerp(a[0], b[0], t), 0.98, lerp(a[1], b[1], t), false); }
+    const r = mk(BOX(0.06, 0.06, len), 0xe23b2e, W, (a[0] + b[0]) / 2, 0.8, (a[1] + b[1]) / 2, false); r.rotation.y = ang;
+  };
+  seg([10.25, -6.6], [10.25, -4.1]); seg([10.25, -2.5], [10.25, 2.6]); seg([10.25, 2.6], [17.2, 2.6]);
+  // painted arrows on the exit lane so the one-way flow reads at a glance
+  for (const [x, z, a] of [[9.4, 2.9, PI], [11.6, 4.6, -PI / 2], [15.2, 5.4, -PI / 2 - 0.4]]) {   // a: PI = south, -PI/2 = east
+    const m = flat(0.9, 0.9, 0xffffff, x, z, 0.04); m.material = new THREE.MeshBasicMaterial({ map: arrowTex, transparent: true, opacity: 0.7, depthWrite: false }); m.rotation.z = a;
   }
-  const p = CROWD[Math.min(i, CROWD.length - 1)], j = i ? 1 : 0;
-  return new V3(p[0] + c.jx * j * 0.5, 0, p[1] + c.jz * j * 0.5);
 }
 const iceShellMat = new THREE.MeshToonMaterial({ color: 0xbfefff, emissive: 0x5fb6e0, emissiveIntensity: 0.3, transparent: true, opacity: 0.55, gradientMap: TOON });
-function spawnVillager(near = false) {
+// state: 'arrive' (road -> spot) · 'crowd' · 'toLane' · 'wait' (in lane) · 'paying' · 'exit' (exit lane -> off-frame)
+function spawnVillager(mode) {
   const h = makeHumanoid({ skin: pick(SKINS), coat: pick(COATS), pants: pick(PANTS), hair: pick(HAIRS), hat: pick(['beanie', 'hood', 'earmuff', 'beanie']), hatColor: pick(COATS), hatColor2: 0xffffff, scarf: Math.random() < 0.6 ? pick(COATS) : null, mitten: pick(COATS), scale: rnd(0.9, 1.04) });
-  const side = Math.random() < 0.5 ? -1 : 1, V = LV.villagers;
-  const c = { h, demand: rint(1, 3), got: 0, patience: V.patience, max: V.patience, state: 'in', jx: rnd(-0.3, 0.3), jz: rnd(-0.3, 0.3), arrived: false, exitZ: side * 14 };
-  const idx = villagers.filter(k => k.state !== 'out').length;
-  h.root.position.copy(near ? slotPos(idx, c) : new V3(VG.spawnX, 0, side * 14)); W.add(h.root);
+  const V = LV.villagers;
+  const c = { h, demand: rint(1, 3), got: 0, patience: V.patience, max: V.patience, state: 'crowd', path: [], spot: null, arrived: false, idleT: rnd(0, 3), face: -PI / 2 };
+  if (mode === 'lane') { c.state = 'wait'; lane.push(c); h.root.position.copy(V2(VG.lane[lane.length - 1])); c.arrived = true; }
+  else {
+    c.spot = freeSpot(); if (!c.spot) return null; c.spot.v = c;
+    if (mode === 'crowd') h.root.position.copy(c.spot.p);
+    else { c.state = 'arrive'; h.root.position.copy(V2(VG.enter[0])); c.path = VG.enter.slice(1).map(V2).concat([c.spot.p.clone()]); }
+  }
+  h.root.rotation.y = -PI / 2; W.add(h.root);
   c.pile = new Pile(h.carry, 0, 0, 0, { dy: ITEM_H.soup });
-  c.bub = addLabel('', '', () => _tmp.copy(h.root.position).setY(2.35 * h.root.scale.x).clone());
+  c.bub = addLabel('', '', () => _tmp.copy(h.root.position).setY(2.4 * h.root.scale.x).clone()); c.bub.show = false;
   c.breathT = rnd(0, 2);
-  villagers.push(c); renderBubble(c); return c;
+  villagers.push(c); return c;
 }
 function renderBubble(c) {
-  if (c.state === 'out') { c.bub.el.className = 'lbl face'; c.bub.el.innerHTML = c.happy ? '😊' : '🥶'; return; }
-  const pct = Math.max(0, c.patience / c.max * 100), col = pct > 50 ? 'var(--good)' : pct > 25 ? '#f2a218' : 'var(--cold)';
-  c.bub.el.className = 'lbl bubble';
-  c.bub.el.innerHTML = `🍲 ${c.got}/${c.demand}<i><u style="width:${pct.toFixed(0)}%;background:${col}"></u></i>`;
+  if (c.state === 'exit') { c.bub.el.className = 'lbl face'; c.bub.el.innerHTML = c.happy ? '😊' : '🥶'; return; }
+  const i = lane.indexOf(c);
+  if (i === 0) {
+    const pct = Math.max(0, c.patience / c.max * 100), col = pct > 50 ? 'var(--good)' : pct > 25 ? '#f2a218' : 'var(--cold)';
+    c.bub.el.className = 'lbl bubble icon';
+    c.bub.el.innerHTML = `${'🍲'.repeat(Math.max(1, c.demand - c.got))}<i><u style="width:${pct.toFixed(0)}%;background:${col}"></u></i>`;
+  } else { c.bub.el.className = 'lbl bubble icon'; c.bub.el.innerHTML = '🍲'; }
 }
-const activeVillagers = () => villagers.filter(c => c.state !== 'out');
-const frontReady = () => { const a = activeVillagers(); return a.length && a[0].arrived && a[0].state === 'wait' ? a[0] : null; };
+const frontReady = () => { const f = lane[0]; return f && f.arrived && f.state === 'wait' ? f : null; };
 function leave(c, happy) {
-  c.state = 'out'; c.happy = happy; c.arrived = false; renderBubble(c); c.outT = 0;
+  const i = lane.indexOf(c); if (i >= 0) lane.splice(i, 1);
+  c.state = 'exit'; c.happy = happy; c.arrived = false; c.outT = 0;
+  c.path = VG.exit.map(V2); if (i > 0) c.path.unshift(new V3(8.75, 0, c.h.root.position.z + 0.6));   // step aside so the front villager is not walked through
+  c.bub.show = true; renderBubble(c);
+  lane.forEach(v => { v.arrived = false; });
   if (happy) { beep(880, 0.08, 'sine', 0.05); setTimeout(() => beep(1320, 0.1, 'sine', 0.04), 70); }
   else { const sh = mk(CAP(0.48, 0.95), iceShellMat, c.h.root, 0, 0.95, 0, false); popIn(sh); noise(0.3, 3000, 1, 0.1); }
 }
@@ -895,31 +1029,46 @@ function villagerDrain() {
 }
 function updateVillagers(dt) {
   const V = LV.villagers; spawnT -= dt;
-  const max = custMode === 'queue' ? V.max : V.max + 3;
-  if (spawnT <= 0 && activeVillagers().length < max) { spawnVillager(); spawnT = rnd(V.every[0], V.every[1]); }
-  activeVillagers().forEach((c, i) => { c.idx = i; });
+  // keep the crowd full: newcomers walk in from the north road
+  const inCrowd = villagers.filter(c => c.state === 'crowd' || c.state === 'arrive').length;
+  if (spawnT <= 0 && inCrowd < V.crowd) { spawnVillager('arrive'); spawnT = rnd(V.every[0], V.every[1]); }
+  // call the crowd member nearest the gate into the service lane
+  if (lane.length < VG.laneSize) {
+    let best = null, bd = 1e9; const gate = V2(VG.gate);
+    for (const c of villagers) if (c.state === 'crowd') { const d = c.h.root.position.distanceTo(gate); if (d < bd) { bd = d; best = c; } }
+    if (best) { best.spot.v = null; best.spot = null; best.state = 'toLane'; best.arrived = false; lane.push(best); best.path = [gate.clone()]; }
+  }
   const drain = villagerDrain();
   for (let k = villagers.length - 1; k >= 0; k--) {
-    const c = villagers[k], r = c.h.root; let tgt;
-    if (c.state === 'out') { c.outT += dt; tgt = new V3(VG.spawnX, 0, c.exitZ); if (c.outT > 1.6) c.bub.show = false; }
-    else { tgt = slotPos(c.idx, c); c.bub.show = c.idx < 4; }
+    const c = villagers[k], r = c.h.root, li = lane.indexOf(c);
+    let tgt;
+    if (c.path.length) tgt = c.path[0];
+    else if (li >= 0) tgt = V2(VG.lane[li]);
+    else if (c.spot) tgt = c.spot.p;
+    else tgt = r.position;
     const d = new V3(tgt.x - r.position.x, 0, tgt.z - r.position.z), dist = d.length(), moving = dist > 0.06;
     if (moving) {
-      const sp = c.state === 'out' ? (c.happy ? 3.2 : 1.6) : 2.8;
+      const sp = c.state === 'exit' ? (c.happy ? 3.2 : 1.5) : c.state === 'arrive' ? 3.0 : 2.6;
       d.multiplyScalar(Math.min(dist, sp * dt) / dist); r.position.add(d);
       r.rotation.y = lerpAngle(r.rotation.y, Math.atan2(d.x, d.z), Math.min(1, dt * 10));
-    } else if (c.state !== 'out') {
-      r.rotation.y = lerpAngle(r.rotation.y, -PI / 2, Math.min(1, dt * 8));
-      if (!c.arrived) { c.arrived = true; if (c.state === 'in') c.state = 'wait'; }
+    } else if (c.path.length) c.path.shift();
+    else {
+      if (c.state === 'exit') { removeLabel(c.bub); W.remove(r); villagers.splice(k, 1); continue; }
+      if (c.state === 'arrive') c.state = 'crowd';
+      if (li >= 0) { if (!c.arrived) { c.arrived = true; if (c.state === 'toLane') c.state = 'wait'; } c.face = li === 0 ? -PI / 2 : 0; }
+      else { c.idleT -= dt; if (c.idleT <= 0) { c.idleT = rnd(1.5, 4); c.face = Math.atan2(9.25 - r.position.x, -r.position.z) + rnd(-0.5, 0.5); } }
+      r.rotation.y = lerpAngle(r.rotation.y, c.face, Math.min(1, dt * 6));
     }
-    if (c.state === 'wait' || c.state === 'in') {
-      if (c.arrived) { c.patience -= dt * drain * (c.idx === 0 ? 1 : c.idx < 4 ? 0.35 : 0.12); if (Math.random() < dt * 4) renderBubble(c); }
-      if (c.patience <= 0) leave(c, false);
-    }
-    const cold = c.state !== 'out' ? (c.patience / c.max < 0.5 || storm.k > 0.4) : !c.happy;
-    c.breathT -= dt; if (c.breathT <= 0 && c.idx < 8 && c.state !== 'out') { c.breathT = rnd(1.2, 2.6); const hp = r.position.clone().setY(1.55 * r.scale.x).add(new V3(-0.3, 0, 0)); puff(hp, 0.07, new V3(-0.4, 0.3, 0), 0.7); }
-    animHuman(c.h, dt, { moving, sp: 0.75, front: c.pile.count > 0, shiver: cold && c.pile.count === 0, cheer: c.state === 'out' && c.happy && !moving });
-    if (c.state === 'out' && !moving) { removeLabel(c.bub); W.remove(r); villagers.splice(k, 1); }
+    if (li >= 0 && c.state === 'wait' && c.arrived) {
+      c.patience -= dt * drain * (li === 0 ? 1 : 0.4);
+      if (Math.random() < dt * 4) renderBubble(c);
+      c.bub.show = true;
+      if (c.patience <= 0) { leave(c, false); continue; }
+    } else if (c.state !== 'exit') c.bub.show = false;
+    else { c.outT += dt; if (c.outT > 1.6) c.bub.show = false; }
+    const cold = c.state === 'exit' ? !c.happy : (storm.k > 0.4 && !(furnace && furnace.fuel > 0)) || (li >= 0 && c.patience / c.max < 0.5);
+    c.breathT -= dt; if (c.breathT <= 0 && c.state !== 'exit' && Math.random() < 0.5) { c.breathT = rnd(1.2, 3); puff(r.position.clone().setY(1.55 * r.scale.x).add(new V3(-0.3, 0, 0)), 0.07, new V3(-0.4, 0.3, 0), 0.7); }
+    animHuman(c.h, dt, { moving, sp: 0.75, front: c.pile.count > 0, shiver: cold && c.pile.count === 0 && !moving });
   }
 }
 function serveOne(from) {
@@ -928,7 +1077,7 @@ function serveOne(from) {
   f.pile.add(from.take(), 0.3, 0.9); f.got++; renderBubble(f); beep(760, 0.04, 'triangle', 0.03);
   if (f.got >= f.demand) {
     f.state = 'paying';
-    setTimeout(() => { if (!villagers.includes(f)) return; pay(f); leave(f, true); }, 260);
+    setTimeout(() => { if (!villagers.includes(f) || f.state !== 'paying') return; pay(f); leave(f, true); }, 260);
   }
   return true;
 }
@@ -956,6 +1105,7 @@ function buildSawmill(anim) {
   for (let i = 0; i < 12; i++) { const t = mk(BOX(0.08, 0.1, 0.05), 0x8a97a3, blade, Math.cos(i / 12 * PI * 2) * 0.52, Math.sin(i / 12 * PI * 2) * 0.52, 0, false); t.rotation.z = i / 12 * PI * 2; }
   for (let i = 0; i < 5; i++) { const l = mk(CYL(0.2, 0.2, 1.6, 8), 0x8a5530, g, -1.2 + (i % 3) * 0.05, 0.2 + Math.floor(i / 3) * 0.36, -0.55 + (i % 3) * 0.42 - (i >= 3 ? 0.2 : 0)); l.rotation.z = PI / 2; l.rotation.y = PI / 2; }
   const log = mk(CYL(0.16, 0.16, 1.1, 8), 0x8a5530, g, -0.9, 0.95, 0.2); log.rotation.z = PI / 2;
+  inkify(g, 0.1);
   flat(2.0, 1.8, 0xffe0b0, SM.output[0], SM.output[1], 0.02);
   addBox(x - 2.0, x + 2.0, z - 1.1, z + 1.1);
   sawmill = { g, blade, log, t: 0, out: new Pile(W, SM.output[0], 0.02, SM.output[1], { cols: 2, rows: 2, dx: 0.75, dz: 0.55, dy: ITEM_H.wood }), outPos: new V3(SM.output[0], 0, SM.output[1]) };
@@ -981,7 +1131,8 @@ function buildFurnace(anim) {
   const flame = new THREE.Group(); flame.position.set(-0.98, 0.45, 0); g.add(flame);
   const fm1 = new THREE.MeshBasicMaterial({ color: 0xff6a1a }), fm2 = new THREE.MeshBasicMaterial({ color: 0xffd23a });
   for (let i = 0; i < 4; i++) { const f = mk(CONE(0.18, 0.6, 6), i % 2 ? fm2 : fm1, flame, 0, 0.1, -0.3 + i * 0.2, false); f.userData.ph = rnd(0, 6); }
-  const warm = flat(10, 10, 0xffffff, 10.8, 0, 0.05); warm.material = new THREE.MeshBasicMaterial({ map: warmTex, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending });
+  inkify(g, 0.1);
+  const warm = flat(13, 13, 0xffffff, 12.6, -1.8, 0.05);   // heat spreads over the crowd and the service lane warm.material = new THREE.MeshBasicMaterial({ map: warmTex, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending });
   const warm2 = flat(5, 5, 0xffffff, x - 0.6, z, 0.05); warm2.material = warm.material;
   flat(1.8, 1.8, 0xffe0b0, FU.feed[0], FU.feed[1], 0.02);
   addBox(x - 1.0, x + 1.0, z - 0.9, z + 0.9);
@@ -1046,11 +1197,11 @@ function updateWorker(w, dt) {
         if (w.target) w.target.by = null;
         let best = null, bd = 1e9;
         for (const b of blocks) { if (!b.alive || b.locked || (b.by && b.by !== w)) continue; const d = b.pos.distanceTo(p); if (d < bd) { bd = d; best = b; } }
-        w.target = best; if (best) { best.by = w; const r = best.w * 0.62 + 0.62; w.stand = best.pos.clone().add(new V3(r, 0, rnd(-0.3, 0.3))); }
+        w.target = best; if (best) { best.by = w; w.standOff = new V3(best.w * 0.6 + 0.62, 0, rnd(-0.3, 0.3)); }
         else if (st.count) w.state = 'deliver';
       }
       if (w.target) {
-        if (walk(w, w.stand, dt)) {
+        if (walk(w, w.target.pos.clone().add(w.standOff), dt)) {   // blocks slide when hit, so the stand point follows the block
           faceTo(w, w.target.pos, dt);
           w.swingT += dt; const iv = PL.swing * 1.15;
           if (w.swingT >= iv) { w.swingT -= iv; w.hitDone = false; }
@@ -1331,6 +1482,10 @@ function updateHUD() {
   const st = stack.type;
   $('stack').textContent = `${stack.count}/${PL.capacity}`;
   $('stackIcon').textContent = st === 'fish' ? '🐟' : st === 'soup' ? '🍲' : st === 'wood' ? '🪵' : '·';
+  maxL.show = stack.count >= PL.capacity;
+  const done = pads.filter(p => p.done).length, frac = pads.length ? done / pads.length : 0;
+  $('progBar').style.width = (frac * 100).toFixed(0) + '%';
+  document.querySelectorAll('.prog .bar b').forEach((b, k) => b.classList.toggle('on', frac >= (k + 1) / 3 - 1e-6));
 }
 
 /* ---------------- level flow ---------------- */
@@ -1339,16 +1494,18 @@ function loadLevel(i) {
   clearWorld();
   if (stack) { stack.clear(); player.back.remove(stack.g); }
   stack = new Pile(player.back, 0, 0, 0, { auto: true });
-  kitchen = sawmill = furnace = null; villagers = []; workers = []; loose = []; blocks = [];
+  kitchen = sawmill = furnace = null; villagers = []; workers = []; loose = []; blocks = []; lane = [];
   money = 0; shownMoney = -1; P.dmg = PL.dmg; P.swing = PL.swing;
-  buildGround(); buildDecor(); buildKitchen(); buildCounter();
+  buildGround(); buildDecor(); buildKitchen(); buildCounter(); buildSpots(); buildCrowdRope();
   blocks = LV.ice.start.map(s => makeBlock(s, true)).concat(LV.ice.extra.map(s => makeBlock(s, false)));
   buildPads();
-  for (let k = 0; k < LV.villagers.start; k++) spawnVillager(true);
+  for (let k = 0; k < VG.laneSize; k++) spawnVillager('lane');
+  for (let k = 0; k < LV.villagers.crowd; k++) spawnVillager('crowd');
   spawnT = 1;
   Object.assign(storm, { k: 0, phase: 'calm', next: LV.blizzard.first, left: 0 });
   player.root.position.set(PL.start[0], 0, PL.start[1]); P.heading = 0;
-  $('lvl').textContent = `${LV.badge} ${i + 1}/${CONFIG.levels.length}`;
+  maxL = addLabel('<span class="maxtag big">MAX</span>', '', () => _tmp.copy(player.root.position).setY(2.15 + stack.count * stack.dy).clone()); maxL.show = false;
+  $('lvl').textContent = LV.badge;
   revealPads(); updateCamera(0, true);
 }
 function goNextLevel() {
@@ -1370,7 +1527,6 @@ let overview = false;
 $('bGear').onclick = e => { const pn = $('toolPanel'); pn.hidden = !pn.hidden; e.currentTarget.classList.toggle('on', !pn.hidden); };
 $('bLayout').onclick = e => { if (!overlay) buildOverlay(); else overlay.visible = !overlay.visible; e.currentTarget.classList.toggle('on', overlay.visible); };
 $('bView').onclick = e => { overview = !overview; e.currentTarget.classList.toggle('on', overview); };
-$('bMode').onclick = e => { custMode = custMode === 'queue' ? 'crowd' : 'queue'; e.currentTarget.textContent = custMode === 'queue' ? '👥 Hàng dài' : '👥 Đám đông'; villagers.forEach(c => { if (c.state !== 'out') c.arrived = false; }); };
 $('bStorm').onclick = () => { if (storm.phase === 'storm') storm.left = 0; else storm.next = 0; };
 $('bCash').onclick = () => { money += 100; bumpMoney(); };
 $('bNext').onclick = () => { if (levelIdx < CONFIG.levels.length - 1) goNextLevel(); };
@@ -1396,7 +1552,7 @@ function updateCamera(dt, snap) {
   camera.position.copy(camPos).add(sh);
   camera.lookAt(camPos.clone().sub(want).add(look).add(sh));
 }
-addEventListener('resize', () => { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); });
+addEventListener('resize', () => { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); inkMat.uniforms.aspect.value = camera.aspect; });
 
 /* ---------------- boot + loop ---------------- */
 loadLevel(0);
@@ -1427,6 +1583,7 @@ window.__wf = {
   get money() { return money; }, set money(v) { money = v; }, player, get stack() { return stack; }, get blocks() { return blocks; },
   get pads() { return pads; }, get villagers() { return villagers; }, get workers() { return workers; }, get level() { return levelIdx; },
   get furnace() { return furnace; }, get storm() { return storm; }, get kitchen() { return kitchen; }, loadLevel,
+  get lane() { return lane; }, giveSoup(n) { stack.clear(); for (let i = 0; i < n; i++) { const s = makeSoup(); s.position.copy(player.root.position); W.add(s); stack.add(s, 0); } },
 };
 };
 

@@ -24,3 +24,12 @@ Quick check: `05_render.py closeup 48 50 _t` (50 % scale, ~40 s).
 - Skin: add detail/normal map, stronger lips colour, specular variation; the neck fade under the choker.
 - Geometry: ear position/shape and jaw line from the profile photo; bust/shoulder shape vs. the front photo.
 - Real lashes as curves; bow shape closer to the photo.
+
+## Seen in the final renders (fix first next time)
+- PROFILE shot is the weakest: the front lock on her right hangs across the cheek/eye and the ear is hidden
+  (photo: ear visible, hair tucked behind it, only a thin lock in front) -> narrow/thin the front lock, keep it
+  behind the eye line, widen the ear gap in `hairgen.comb` (phi_r ranges, thickness, flare).
+- PROFILE: choker tail/strings stick out diagonally in front of the bust (they should lie on the chest);
+  face looks over-exposed from the side; tee has a flap at the bust side.
+- FRONT/CLOSE-UP: thin vertical line on her right cheek (mirrored content from the left ear junction), patch edge
+  on the forehead near the part, faint neck line under the choker; bust bumps still show through the tee.

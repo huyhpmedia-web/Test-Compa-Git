@@ -133,7 +133,8 @@ def sample_photo(name, cams, pos, nrm, valid, bvh):
     cam_c = cam[:3, 3]
     view = cam_c[None, None, :] - pos
     view /= np.maximum(np.linalg.norm(view, axis=2, keepdims=True), 1e-9)
-    cosv = np.clip(((nrm * view).sum(2) - 0.12) / 0.88, 0.0, 1.0)
+    # ignore grazing angles: there a small geometric error smears features across the surface
+    cosv = np.clip(((nrm * view).sum(2) - 0.38) / 0.62, 0.0, 1.0)
     vis = visibility(bvh, pos, nrm, valid, cam_c, VIS_DIV)
     zc = np.clip((pos[:, :, 2] - Z_CUT[0]) / (Z_CUT[1] - Z_CUT[0]), 0.0, 1.0)
     if name == "profile":

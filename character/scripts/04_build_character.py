@@ -34,11 +34,18 @@ def skin_material(albedo_path):
     tex = nt.nodes.new("ShaderNodeTexImage")
     tex.image = bpy.data.images.load(albedo_path)
     nt.links.new(tex.outputs["Color"], bsdf.inputs["Base Color"])
-    bsdf.inputs["Subsurface Weight"].default_value = 0.18
+    bsdf.inputs["Subsurface Weight"].default_value = 0.22
     bsdf.inputs["Subsurface Radius"].default_value = (1.0, 0.36, 0.20)
     bsdf.inputs["Subsurface Scale"].default_value = 0.0045
-    bsdf.inputs["Roughness"].default_value = 0.44
     bsdf.inputs["Specular IOR Level"].default_value = 0.42
+    lipm = nt.nodes.new("ShaderNodeTexImage")
+    lipm.image = bpy.data.images.load(os.path.join(mhlib.MH_DATA, "mpfb_lips.jpg"))
+    lipm.image.colorspace_settings.name = 'Non-Color'
+    rough = nt.nodes.new("ShaderNodeMapRange")
+    rough.inputs["To Min"].default_value = 0.45
+    rough.inputs["To Max"].default_value = 0.24
+    nt.links.new(lipm.outputs["Color"], rough.inputs["Value"])
+    nt.links.new(rough.outputs["Result"], bsdf.inputs["Roughness"])
     # fine pores
     tc = nt.nodes.new("ShaderNodeTexCoord")
     noise = nt.nodes.new("ShaderNodeTexNoise")
@@ -77,7 +84,7 @@ def setup_world(scene):
     bg.inputs[0].default_value = (0.74, 0.83, 1.0, 1.0)
     bg.inputs[1].default_value = 1.35
     sun = bpy.data.lights.new("Sun", 'SUN')
-    sun.energy = 6.4
+    sun.energy = 5.4
     sun.angle = math.radians(9.0)
     sun.color = (1.0, 0.96, 0.9)
     so = bpy.data.objects.new("Sun", sun)
@@ -104,11 +111,24 @@ def main():
         centers[side] = p.mean(0)
         radii[side] = float(np.linalg.norm(p - centers[side], axis=1).mean())
     tex = {k: os.path.join(ROOT, "textures", f"eye_{k}.png") for k in ("L", "R")}
-    projected = all(os.path.exists(t) for t in tex.values())
+    projected = os.environ.get("EYES") == "projected" and all(os.path.exists(t) for t in tex.values())
+    iris_rgb = (0.30, 0.40, 0.46)
+    pp = os.path.join(ROOT, "data", "face_params.json")
+    if os.path.exists(pp) and "eye_c_L" in fit:
+        import json
+        par = json.load(open(pp))
+        for side in ("L", "R"):
+            centers[side], radii[side] = fit[f"eye_c_{side}"], float(fit[f"eye_r_{side}"])
+        eyelib.IRIS_R = 0.5 * (par["iris_r_L"] + par["iris_r_R"])
+        eyelib.PUPIL_R = 0.30 * eyelib.IRIS_R
+        c = np.array(par["iris_rgb"])
+        if c[2] <= c[0] * 1.05:                       # sample polluted by skin/lashes: fall back to grey-blue
+            c = np.array([0.36, 0.47, 0.55])
+        iris_rgb = tuple(np.clip(c / max(c.max(), 1e-3) * 0.52, 0, 1))      # keep the hue, normalise brightness
     eyeballs = (eyelib.build_projected_eyes(centers, radii, tex, col=c_char) if projected
-                else eyelib.build_eyes(centers, radii, col=c_char))
+                else eyelib.build_eyes(centers, radii, col=c_char, iris_rgb=iris_rgb))
     extra = {}
-    for modname in ("hairgen", "outfit"):
+    for modname in ("hairgen", "outfit", "facehair"):
         try:
             mod = __import__(modname)
         except ImportError:
@@ -116,8 +136,9 @@ def main():
         extra[modname] = mod.build(base=base, fit=fit, body=body, rig=rig, col=c_char)
     for ob in eyeballs.values():
         parent_to_bone(ob, rig, "head")
-    for ob in extra.get("hairgen", {}).get("head_objects", []):
-        parent_to_bone(ob, rig, "head")
+    for modname in ("hairgen", "facehair"):
+        for ob in extra.get(modname, {}).get("head_objects", []):
+            parent_to_bone(ob, rig, "head")
 
     # ---- poses: arms down; the head pose is keyed per shot (frame) so that each photo camera,
     #      which is rigidly attached to the head, ends up level with the world
@@ -175,7 +196,7 @@ def main():
 
     blcore.setup_cycles(scene, samples=160, res=(charlib.RES, charlib.RES))
     scene.view_settings.view_transform = 'AgX'
-    scene.view_settings.exposure = 0.35
+    scene.view_settings.exposure = 0.22
     try:
         scene.view_settings.look = 'AgX - Medium High Contrast'
     except TypeError:

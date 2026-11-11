@@ -111,16 +111,31 @@ def build(base, fit, body, rig, col):
     A.data[:] = 1.0
     deg = np.maximum(np.asarray(A.sum(axis=1)).ravel(), 1.0)
     bust = (p0[:, 2] > z_apex - 0.075) & (p0[:, 2] < z_apex + 0.09) & (p0[:, 1] < -0.02) & (np.abs(p0[:, 0]) < 0.125)
-    Ps = P + nv * (0.013 * bust)[:, None]              # light padding so the cloth reads as a smooth cup
-    for _ in range(700):
-        avg = (A @ Ps) / deg[:, None]
-        Ps[bust] = 0.5 * Ps[bust] + 0.5 * avg[bust]
     wm = bust.astype(np.float64)
     for _ in range(40):
         wm = 0.5 * wm + 0.5 * (A @ wm) / deg
-    gap = ((Ps - p0) * nv).sum(1)
-    d = np.maximum(D_MIN, gap + 0.006 * wm)          # small even padding hides body detail under the cloth
-    P = p0 + nv * d[:, None]
+    # 1) iron small body detail out of the surface the cloth is built on
+    base_s = p0.copy()
+    for _ in range(70):
+        avg = (A @ base_s) / deg[:, None]
+        base_s[bust] = 0.5 * base_s[bust] + 0.5 * avg[bust]
+    d0 = D_MIN + 0.009 * wm                                                      # padded like a lined cup
+    # offset along *smoothed* normals: the raw body normals fan out around small detail and
+    # would print it straight back into the cloth
+    ns = nv.copy()
+    for _ in range(80):
+        avg = (A @ ns) / deg[:, None]
+        ns[bust] = 0.5 * ns[bust] + 0.5 * avg[bust]
+    ns /= np.maximum(np.linalg.norm(ns, axis=1, keepdims=True), 1e-9)
+    nv = ns
+    # 2) let the cloth span the cleavage
+    Ps = base_s + nv * d0[:, None]
+    for _ in range(1500):
+        avg = (A @ Ps) / deg[:, None]
+        Ps[bust] = 0.5 * Ps[bust] + 0.5 * avg[bust]
+    d = np.maximum(d0, ((Ps - base_s) * nv).sum(1))
+    P = base_s + nv * d[:, None]
+    P = p0 + nv * np.maximum(0.0018, ((P - p0) * nv).sum(1))[:, None]             # always clear of the real skin
     # even out the cut edge: average every rim vertex with its two rim neighbours
     e = np.sort(np.concatenate([np.stack([f2[:, a], f2[:, (a + 1) % 4]], axis=1) for a in range(4)]), axis=1)
     ue, cnt_e = np.unique(e, axis=0, return_counts=True)

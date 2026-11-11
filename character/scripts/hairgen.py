@@ -62,13 +62,14 @@ def comb(roots, c, r, z_eye, rng, ear_y):
     uy = un[:, 1]
     # release azimuth (degrees): 0 = front, +90 = her left, -90 = her right, 180 = back.
     # right: a face-framing lock in front of the ear, the rest behind it; left: all tucked behind the ear
-    phi_r = np.where(uy < -0.25, np.interp(uy, [-0.9, -0.25], [-50.0, -66.0]),
-                     np.interp(uy, [-0.25, 0.9], [-120.0, -180.0]))
+    lock = uy < -0.38                                       # face-framing lock in front of her right ear
+    phi_r = np.where(lock, np.interp(uy, [-0.9, -0.38], [-56.0, -72.0]),
+                     np.interp(uy, [-0.38, 0.9], [-116.0, -180.0]))
     phi_l = np.interp(uy, [-0.9, 0.9], [110.0, 180.0])
     phi = np.radians(np.where(side < 0, phi_r, phi_l) + rng.normal(0, 6.0, n))
     z_rel = z_eye + 0.014 + rng.normal(0, 0.004, n)
     own = roots[:, 2] < z_rel + 0.012                        # low roots simply hang from where they are
-    thick = np.where(side < 0, 0.030, 0.018)
+    thick = np.where(side < 0, 0.030, 0.018) * np.where((side < 0) & lock, 0.7, 1.0)
     off = 0.004 + thick * layer
     q = np.sqrt(np.clip(1.0 - ((z_rel - c[2]) / r[2]) ** 2, 0.05, 1.0))
     rho = q / np.sqrt((np.sin(phi) / r[0]) ** 2 + (np.cos(phi) / r[1]) ** 2)

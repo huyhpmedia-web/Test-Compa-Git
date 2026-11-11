@@ -11,6 +11,13 @@ The user asked to focus on the PERSON; the background stays a rough sketch (do n
 Environment: `./setup_env.sh <venv>` (bpy 5.2.4 + MediaPipe); Cycles CPU, a full 1254 px shot takes 6-9 min.
 Quick check: `05_render.py closeup 48 50 _t` (50 % scale, ~40 s).
 
+## Direction change (user feedback: "looks like a flat PNG pasted on and distorted")
+Photo projection on the face was dropped.  The face is now true 3D: `02b_fit_eyes.py` (eye opening fit),
+`03_paint_skin.py` (painted albedo placed from the mesh), procedural eyes with cornea, `facehair.py`
+(brows + lashes as curves).  Pipeline: 01 -> 02 -> 02b -> 03_paint_skin -> 04 -> 05.
+`03_bake_skin.py` (projection) is kept only for reference.  Higgsfield image-to-3D was offered to the
+user as an alternative but NOT approved -- do not upload the photos anywhere without an explicit yes.
+
 ## What is in the character
 - Head: MakeHuman mesh warped to 478 landmarks (2 frontal photos) + profile silhouette.
 - Skin: photos projected into the UV atlas (viewing-angle cut-off, hair-masked, mirrored fill, photo-space de-lighting).

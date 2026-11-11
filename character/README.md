@@ -8,7 +8,8 @@ Nhân vật được dựng hoàn toàn bằng script Blender Python (`bpy` 5.2 
 | `character.blend` | Cảnh hoàn chỉnh: thân + rig, da, mắt, tóc, áo, dây choker, bối cảnh, đèn, 3 camera |
 | `renders/front.png`, `profile.png`, `closeup.png` | Render đúng 3 góc ảnh gốc |
 | `renders/compare_*.jpg` | Ảnh gốc (trái) đặt cạnh render (phải) |
-| `textures/skin_albedo.png` | Texture da 4096² chiếu từ ảnh tham chiếu |
+| `textures/skin_albedo.png` | Texture da 4096² vẽ thủ tục theo hình khối (không dán ảnh) |
+| `data/face_params.json` | Màu môi / mống mắt / lông mày và cỡ mống mắt lấy mẫu từ ảnh |
 | `data/fit_head.npz` | Hình học đầu đã khớp với ảnh + ma trận camera của từng ảnh |
 | `scripts/` | Toàn bộ pipeline, chạy lại được từ đầu |
 
@@ -24,13 +25,17 @@ bấm F12 để render góc tương ứng.
 2. **Khớp khuôn mặt** (`02_fit_head.py`): render đầu từ camera ước lượng, dò 478 điểm mốc
    (MediaPipe) trên cả ảnh thật lẫn ảnh render, đổi sai lệch pixel thành dịch chuyển 3D và nắn
    lưới bằng RBF; xen kẽ với bước khớp đường viền trán–mũi–môi–cằm lấy từ ảnh nghiêng.
-3. **Da** (`03_bake_skin.py`): chiếu 3 ảnh lên atlas UV bằng chính các camera đã khớp, kiểm tra
-   che khuất, chỉ lấy điểm ảnh là da, phần bị tóc che lấy đối xứng từ bên kia, khử bóng đổ có sẵn.
-4. **Lắp ráp** (`04_build_character.py`): rig + tạo dáng (tay xuôi, đầu nghiêng như ảnh), nhãn cầu
-   có giác mạc khúc xạ (`eyes.py`), tóc dạng Curves ~58 nghìn sợi (`hairgen.py`), áo thun cắt từ
-   bề mặt thân (`outfit.py`), choker thắt nơ + dây yếm + khuyên tai (`outfit_posed.py`),
-   bối cảnh cổng sắt / trụ gạch / tán cây (`env.py`), nắng + trời.
-5. **Render** (`05_render.py`): 3 góc + ảnh so sánh.
+3. **Khớp mí mắt** (`02b_fit_eyes.py`): đo khe mắt của lưới theo từng cột điểm ảnh (tia nào chạm
+   nhãn cầu trước da) và nắn mí cho đến khi trùng đường viền mắt trong ảnh cận mặt.
+4. **Da** (`03_paint_skin.py`): texture được vẽ từ chính hình khối — tông da lấy mẫu từ ảnh, môi theo
+   mặt nạ môi của lưới, má hồng, phấn mắt, đường kẻ mắt chạy dọc mép mí đã khớp, tàn nhang, da đầu.
+   Không có điểm ảnh chụp nào trên mặt nên nét mặt không thể lệch khỏi hình khối 3D.
+   (`03_bake_skin.py` là cách cũ — chiếu ảnh lên lưới — giữ lại để tham khảo.)
+5. **Lắp ráp** (`04_build_character.py`): rig + tạo dáng (tay xuôi, đầu nghiêng như ảnh), nhãn cầu
+   3D có giác mạc khúc xạ và mống mắt thủ tục (`eyes.py`), lông mày + lông mi bằng sợi (`facehair.py`),
+   tóc dạng Curves ~57 nghìn sợi (`hairgen.py`), áo thun cắt từ bề mặt thân (`outfit.py`),
+   choker thắt nơ + dây yếm + khuyên tai (`outfit_posed.py`), nền phác thảo (`env.py`), nắng + trời.
+6. **Render** (`05_render.py`): 3 góc + ảnh so sánh.
 
 ## Chạy lại từ đầu
 
@@ -39,7 +44,7 @@ bấm F12 để render góc tương ứng.
 ```
 
 ```bash
-for s in 01_analyze_refs 02_fit_head 03_bake_skin 04_build_character 05_render; do .venv/bin/python scripts/$s.py; done
+for s in 01_analyze_refs 02_fit_head 02b_fit_eyes 03_paint_skin 04_build_character 05_render; do .venv/bin/python scripts/$s.py; done
 ```
 
 `02_fit_head.py` chỉ cần chạy lại nếu muốn khớp đầu lại từ đầu (~10 phút); kết quả đã lưu ở
@@ -47,13 +52,12 @@ for s in 01_analyze_refs 02_fit_head 03_bake_skin 04_build_character 05_render; 
 
 ## Giới hạn đã biết
 
-- Đây là bản dựng thủ tục từ 3 ảnh, không phải bản quét: hình khối khuôn mặt khớp theo điểm mốc
-  (sai lệch khoảng 2,5–3,5 px so với ảnh) nhưng không trùng khít tuyệt đối.
-- Tóc được sinh theo quy tắc (rẽ ngôi lệch, gợn sóng, đuôi vểnh) nên dáng tổng thể giống,
-  từng lọn tóc thì không trùng với ảnh.
-- Phần bên phải khuôn mặt bị tóc che trong ảnh chính diện được suy ra từ nửa trái (đối xứng) và
-  ảnh nghiêng.
-- Thân dưới áo không có ảnh tham chiếu; giữ nguyên dáng MakeHuman.
+- Đây là nhân vật CG dựng thủ tục từ 3 ảnh, không phải bản quét: tỉ lệ khuôn mặt, dáng mắt, đường
+  nghiêng trán–mũi–môi–cằm khớp theo ảnh, nhưng da và nét mặt là 3D tổng hợp nên **na ná chứ không
+  giống hệt người trong ảnh**.
+- Tóc sinh theo quy tắc (rẽ ngôi lệch, gợn sóng, đuôi vểnh): dáng tổng thể giống, từng lọn thì không.
+- Nửa phải khuôn mặt bị tóc che trong ảnh chính diện được suy ra đối xứng từ nửa trái.
+- Thân dưới áo không có ảnh tham chiếu; giữ dáng MakeHuman. Nền chỉ là phác thảo.
 
 ## Giấy phép dữ liệu
 

@@ -26,22 +26,24 @@ import mhlib  # noqa: E402
 ROOT = charlib.ROOT
 B = charlib.B
 SIZE = int(os.environ.get("ATLAS", "4096"))
+EYE_RADIUS = 0.0122
+EYE_TEX = 512
 VIS_DIV = 2                      # visibility is ray-cast on a SIZE/VIS_DIV grid
-DELIGHT = float(os.environ.get("DELIGHT", "0.8"))
+DELIGHT = float(os.environ.get("DELIGHT", "0.5"))
 Z_CUT = [0.0, 1.0]               # set in main(): projection fades out below the jaw
 PHOTOS = {"closeup": ("ref_closeup.jpg", "seg_3.npy", 1.0),
           "profile": ("ref_profile.jpg", "seg_2.npy", 0.8),
           "front": ("ref_front.jpg", "seg_1.npy", 0.5)}
 
 
-def bake_geometry(body, size):
+def bake_geometry(body, size, bounds=None):
     """Per-texel world position, normal and validity via a Cycles EMIT bake."""
     scene = bpy.context.scene
     scene.render.engine = 'CYCLES'
     scene.cycles.device = 'CPU'
     scene.cycles.samples = 1
     scene.cycles.use_denoising = False
-    co = blcore.get_coords(body)
+    co = blcore.evaluated_coords(body)
     lo, hi = co.min(0) - 0.01, co.max(0) + 0.01
     out = {}
     for what in ("position", "normal"):
@@ -110,8 +112,8 @@ def sample_photo(name, cams, pos, nrm, valid, bvh):
     img = cv2.imread(os.path.join(ROOT, "reference", fn)).astype(np.float32) / 255.0
     seg = np.load(os.path.join(B, segfn)).astype(np.float32)
     skin = seg[:, :, 2] + seg[:, :, 3]
-    hair = cv2.dilate(seg[:, :, 1], np.ones((17, 17), np.uint8))
-    mask = cv2.erode((skin > 0.6).astype(np.float32), np.ones((9, 9), np.uint8)) * (hair < 0.2)
+    hair = cv2.dilate(seg[:, :, 1], np.ones((19, 19), np.uint8))
+    mask = cv2.erode((skin > 0.6).astype(np.float32), np.ones((7, 7), np.uint8)) * (hair < 0.2)
     mask = cv2.GaussianBlur(mask, (0, 0), 1.5)
     cam = cams[name]
     fpx = fitlib.focal_px(charlib.LENS, charlib.RES)
@@ -128,11 +130,44 @@ def sample_photo(name, cams, pos, nrm, valid, bvh):
     cosv = np.clip(((nrm * view).sum(2) - 0.12) / 0.88, 0.0, 1.0)
     vis = visibility(bvh, pos, nrm, valid, cam_c, VIS_DIV)
     zc = np.clip((pos[:, :, 2] - Z_CUT[0]) / (Z_CUT[1] - Z_CUT[0]), 0.0, 1.0)
+    if name == "profile":
+        prio = prio * np.clip((-nrm[:, :, 0] - 0.45) / 0.3, 0.0, 1.0)
     w = (cosv ** 2) * m * vis * inside * valid * prio * zc
     return np.clip(col, 0, 1), w.astype(np.float32)
 
 
-def blend(samples, power=3.0):
+def bake_eyes(fit, base, cams, bvh):
+    """Eyeball textures: what each photo shows through the eye opening of the fitted lids."""
+    import bmesh
+    v = fit["verts"]
+    for side, grp in (("L", "helper-l-eye"), ("R", "helper-r-eye")):
+        hp = v[base.group_indices(grp)]
+        c = hp.mean(0)
+        EYE_RADIUS = float(np.linalg.norm(hp - c, axis=1).mean())
+        me = bpy.data.meshes.new("EyeBake")
+        bm = bmesh.new()
+        bm.loops.layers.uv.new("UVMap")
+        bmesh.ops.create_uvsphere(bm, u_segments=48, v_segments=24, radius=EYE_RADIUS, calc_uvs=True)
+        bm.to_mesh(me); bm.free()
+        ob = bpy.data.objects.new("EyeBake", me)
+        bpy.context.scene.collection.objects.link(ob)
+        ob.location = c
+        bpy.context.view_layer.update()
+        geo = bake_geometry(ob, EYE_TEX)
+        samples = []
+        for k in PHOTOS:
+            col, w = sample_photo(k, cams, geo["pos"], geo["nrm"], geo["valid"], bvh)
+            samples.append((col, w))
+        col, w = blend(samples)
+        a = np.clip(w / 0.05, 0, 1)[:, :, None]
+        sclera = np.array([0.70, 0.74, 0.80], np.float32)          # bgr
+        out = col * a + sclera * (1 - a)
+        cv2.imwrite(os.path.join(ROOT, "textures", f"eye_{side}.png"), np.clip(out * 255 + 0.5, 0, 255).astype(np.uint8))
+        bpy.data.objects.remove(ob)
+    print("wrote eye textures")
+
+
+def blend(samples, power=1.6):
     num = np.zeros_like(samples[0][0]); den = np.zeros(samples[0][1].shape, dtype=np.float32)
     for col, w in samples:
         ww = w ** power
@@ -154,6 +189,8 @@ def main():
     chin_z = float(fit["H"][152][2])
     Z_CUT[0], Z_CUT[1] = chin_z - 0.050, chin_z - 0.018
 
+    os.makedirs(os.path.join(ROOT, "textures"), exist_ok=True)
+    bake_eyes(fit, base, cams, bvh)
     direct = {k: sample_photo(k, cams, pos, nrm, valid, bvh) for k in PHOTOS}
     # per-photo colour gain relative to the close-up, measured where both see the surface
     ref_c, ref_w = direct["closeup"]
@@ -185,24 +222,38 @@ def main():
     bm[:700] = False
     base_col = np.median(ph[bm], axis=0).astype(np.float32)
     print("base skin (bgr)", np.round(base_col, 3))
+    def delight(col, alpha):
+        """Bring the low-frequency colour of projected skin to the body tone (removes the baked
+        hair shadow / sun gradient; real shading comes from the scene lights)."""
+        q = 4
+        small = cv2.resize(col * alpha[:, :, None], (SIZE // q, SIZE // q), interpolation=cv2.INTER_AREA)
+        smallw = cv2.resize(alpha, (SIZE // q, SIZE // q), interpolation=cv2.INTER_AREA)
+        sig = SIZE / 4096 * 80 / q
+        low = cv2.GaussianBlur(small, (0, 0), sig) / np.maximum(cv2.GaussianBlur(smallw, (0, 0), sig), 1e-4)[:, :, None]
+        low = cv2.resize(low, (SIZE, SIZE), interpolation=cv2.INTER_LINEAR)
+        gain = np.clip(base_col[None, None, :] / np.maximum(low, 1e-3), 0.7, 2.4)
+        return np.clip(col * (1.0 + DELIGHT * (gain - 1.0)), 0, 1)
+
     a_d = np.clip(w_d / 0.12, 0, 1)
-    a_m = np.clip(w_m / 0.12, 0, 1) * (1 - a_d)
+    a_mm = np.clip(w_m / 0.12, 0, 1)
+    col_d, col_m = delight(col_d, a_d), delight(col_m, a_mm)
+    a_d = np.minimum(a_d, cv2.GaussianBlur(cv2.erode(a_d, np.ones((7, 7), np.uint8)), (0, 0), SIZE / 4096 * 45))
+    a_m = a_mm * (1 - a_d)
     tot = np.clip(a_d + a_m, 0, 1)
     proj = (col_d * a_d[:, :, None] + col_m * a_m[:, :, None]) / np.maximum(a_d + a_m, 1e-6)[:, :, None]
-    # de-light: bring the low-frequency colour of the projected skin to the body tone
-    # (removes the baked hair shadow / sun gradient; real shading comes from the scene lights)
-    q = 4
-    small = cv2.resize(proj * tot[:, :, None], (SIZE // q, SIZE // q), interpolation=cv2.INTER_AREA)
-    smallw = cv2.resize(tot, (SIZE // q, SIZE // q), interpolation=cv2.INTER_AREA)
-    sig = SIZE / 4096 * 90 / q
-    low = cv2.GaussianBlur(small, (0, 0), sig) / np.maximum(cv2.GaussianBlur(smallw, (0, 0), sig), 1e-4)[:, :, None]
-    low = cv2.resize(low, (SIZE, SIZE), interpolation=cv2.INTER_LINEAR)
-    gain = np.clip(base_col[None, None, :] / np.maximum(low, 1e-3), 0.7, 2.4)
-    proj = np.clip(proj * (1.0 + DELIGHT * (gain - 1.0)), 0, 1)
     # feathered edge towards the plain body tone
     feather = cv2.GaussianBlur(cv2.erode(tot, np.ones((9, 9), np.uint8)), (0, 0), SIZE / 4096 * 22)
     tot = np.minimum(tot, feather)
     out = proj * tot[:, :, None] + base_col[None, None, :] * (1 - tot[:, :, None])
+    # scalp under the hair: dark-blonde tint so that gaps between strands do not show pink skin
+    import hairgen
+    hc, hr, hz_eye = hairgen.skull(fit, base)
+    hu = (pos - hc.astype(np.float32)) / hr.astype(np.float32)
+    hun = hu / np.maximum(np.linalg.norm(hu, axis=2, keepdims=True), 1e-6)
+    thr = np.interp(hun[:, :, 1], [-1, -0.55, 0.0, 0.5, 1.0], [0.52, 0.34, 0.10, -0.42, -0.72])
+    sc = np.clip((hun[:, :, 2] - thr) / 0.10, 0, 1) * (pos[:, :, 2] > hc[2] - 0.075) * valid
+    sc = cv2.GaussianBlur(sc.astype(np.float32), (0, 0), SIZE / 4096 * 10)[:, :, None]
+    out = out * (1 - 0.9 * sc) + np.array([0.20, 0.30, 0.42], np.float32) * (0.9 * sc)
     out[~valid] = base_col
     # bleed valid colours across UV seams
     inval = (~valid).astype(np.uint8)

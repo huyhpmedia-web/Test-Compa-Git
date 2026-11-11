@@ -17,8 +17,29 @@ RES = 1254
 LENS = 85.0
 
 
+BUST_DROP = 0.200      # bust apex sits this far below the chin in the front photo (metres)
+
+
 def load_fit():
-    return dict(np.load(os.path.join(ROOT, "data", "fit_head.npz")))
+    """Fitted head + body tweaks (the photo's bust sits much higher than the MakeHuman default)."""
+    fit = dict(np.load(os.path.join(ROOT, "data", "fit_head.npz")))
+    v = fit["verts"]
+    delta = np.zeros_like(v)
+    for name, w in (("breast/breast-trans-up", 1.0), ("breast/breast-volume-vert-up", 0.5)):
+        idx, d = mhlib.load_target(name)
+        delta[idx] += mhlib.mh_to_bl(d) * w
+    chin_z = float(fit["H"][152][2])
+    b = v[:mhlib.N_BODY]
+    chest = (np.abs(b[:, 0]) < 0.13) & (b[:, 2] > 1.10) & (b[:, 2] < 1.32) & (b[:, 1] < 0)
+
+    def apex(w):
+        q = (v + delta * w)[:mhlib.N_BODY][chest]
+        return q[np.argmin(q[:, 1]), 2]
+    ws = np.linspace(0.0, 2.2, 23)
+    best = ws[int(np.argmin([abs(apex(w) - (chin_z - BUST_DROP)) for w in ws]))]
+    fit["verts"] = v + delta * best
+    fit["bust_w"] = best
+    return fit
 
 
 def profile_camera(fit):

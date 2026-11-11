@@ -38,76 +38,116 @@ def fabric_material():
     return mat
 
 
-def garment_mask(base, v, weights, joints):
-    n = mhlib.N_BODY
-    arm_w = np.zeros(n)
-    for bname, pairs in weights.items():
-        if bname.startswith(ARM_BONES):
-            for vi, w in pairs:
-                if vi < n:
-                    arm_w[vi] += w
-    is_arm = arm_w > 0.5
-    x, y, z = v[:n, 0], v[:n, 1], v[:n, 2]
-    chest = (np.abs(x) < 0.13) & (z > 1.12) & (z < 1.30) & (y < 0)
+def _field(co, is_arm, joints):
+    """Signed 'inside the garment' value per vertex (> 0 inside), plus bust apex / hem heights."""
+    x, y, z = co[:, 0], co[:, 1], co[:, 2]
+    chest = (np.abs(x) < 0.13) & (z > 1.10) & (z < 1.32) & (y < 0) & (~is_arm)
     z_apex = float(z[chest][np.argmin(y[chest])])
-    z_hem = z_apex - 0.082
-    # wide square neckline: lower in front, a little higher at the back
+    z_hem = z_apex - 0.085
+    # wide square neckline: low in front (just above the bust), a little higher at the back
     front = np.clip((0.02 - y) / 0.05, 0.0, 1.0)
-    z_neck = (z_apex + 0.072 + 0.018 * (np.abs(x) / 0.125) ** 2) * front + (z_apex + 0.135) * (1 - front)
-    open_neck = (np.abs(x) < 0.122) & (z > z_neck)
-    torso = (~is_arm) & (z > z_hem) & (z < 1.40) & (~open_neck)
-    sleeve = np.zeros(n, dtype=bool)
+    z_neck = (z_apex + 0.030 + 0.024 * np.clip(np.abs(x) / 0.125, 0, 1) ** 2) * front + (z_apex + 0.115) * (1 - front)
+    g_neck = np.maximum(z_neck - z, np.abs(x) - 0.125)
+    f = np.minimum(np.minimum(z - z_hem, g_neck), 1.40 - z)
     for side in ("l", "r"):
         sh, el = joints[f"joint-{side}-shoulder"], joints[f"joint-{side}-elbow"]
         axis = (el - sh) / np.linalg.norm(el - sh)
-        along = (v[:n] - sh) @ axis
+        along = (co - sh) @ axis
         sgn = 1.0 if side == "l" else -1.0
-        sleeve |= is_arm & (along < 0.095) & (x * sgn > 0)
-    return torso | sleeve, z_apex, z_hem
+        arm = is_arm & (x * sgn > 0)
+        f[arm] = 0.098 - along[arm]
+    return f, z_apex, z_hem
 
 
 def build(base, fit, body, rig, col):
-    v = fit["verts"]
-    bones, weights = mhlib.load_rig(base, v)
-    joints = mhlib.joint_positions(base, v)
-    mask, z_apex, z_hem = garment_mask(base, v, weights, joints)
-    fidx = [i for i in base.body_faces() if all(mask[j] for j in base.faces[i])]
-    used = sorted({j for i in fidx for j in base.faces[i]})
-    remap = {j: k for k, j in enumerate(used)}
-    used = np.array(used)
-    nrm = np.empty(len(body.data.vertices) * 3)
-    body.data.vertices.foreach_get("normal", nrm)
-    nrm = nrm.reshape(-1, 3)[used]
-    p0 = v[used]
-    P = p0 + nrm * D_MIN
-    faces = [[remap[j] for j in base.faces[i]] for i in fidx]
-    # umbrella smoothing over the bust so the cloth bridges the cleavage
-    nb = [set() for _ in used]
-    for f in faces:
-        for a in range(4):
-            nb[f[a]].add(f[(a + 1) % 4]); nb[f[(a + 1) % 4]].add(f[a])
-    bust = (p0[:, 2] > z_apex - 0.07) & (p0[:, 2] < z_apex + 0.085) & (p0[:, 1] < -0.02) & (np.abs(p0[:, 0]) < 0.125)
-    idx = np.where(bust)[0]
-    Ps = P.copy()
+    """Cut the garment out of the *subdivided* rest-pose body so its rim is smooth."""
+    from scipy import sparse
+    joints = mhlib.joint_positions(base, fit["verts"])
+    sub = body.modifiers["Subdiv"]
+    old = sub.levels
+    sub.levels = 2
+    bpy.context.view_layer.update()
+    ev = body.evaluated_get(bpy.context.evaluated_depsgraph_get())
+    me = ev.to_mesh()
+    n = len(me.vertices)
+    co = np.empty(n * 3); me.vertices.foreach_get("co", co); co = co.reshape(-1, 3)
+    nrm = np.empty(n * 3); me.vertices.foreach_get("normal", nrm); nrm = nrm.reshape(-1, 3)
+    faces = np.empty(len(me.polygons) * 4, dtype=np.int32); me.polygons.foreach_get("vertices", faces)
+    faces = faces.reshape(-1, 4)
+    cand = np.where((co[:, 2] > 0.98) & (co[:, 2] < 1.43))[0]
+    names = [g.name for g in body.vertex_groups]
+    arm_idx = {i for i, nm in enumerate(names) if nm.startswith(ARM_BONES)}
+    arm_w = np.zeros(n)
+    vw = {}
+    for i in cand:
+        gs = [(g.group, g.weight) for g in me.vertices[i].groups]
+        vw[int(i)] = gs
+        arm_w[i] = sum(w for g, w in gs if g in arm_idx)
+    field, z_apex, z_hem = _field(co, arm_w > 0.5, joints)
+    mask = np.zeros(n, dtype=bool)
+    mask[cand] = field[cand] > 0
+    fsel = faces[mask[faces].all(axis=1)]
+    used = np.unique(fsel)
+    remap = -np.ones(n, dtype=np.int64); remap[used] = np.arange(len(used))
+    p0 = co[used].copy()
+    # rim vertices slide along their outgoing edges onto the exact cut line
+    acc = np.zeros((n, 3)); cnt = np.zeros(n)
+    for a in range(4):
+        u, w_ = faces[:, a], faces[:, (a + 1) % 4]
+        for s_, t_ in ((u, w_), (w_, u)):
+            sel = mask[s_] & (~mask[t_]) & (remap[s_] >= 0)
+            ss, tt = s_[sel], t_[sel]
+            t = np.clip(field[ss] / np.maximum(field[ss] - field[tt], 1e-9), 0.0, 0.95)
+            np.add.at(acc, ss, co[ss] + (co[tt] - co[ss]) * t[:, None]); np.add.at(cnt, ss, 1.0)
+    rim = cnt[used] > 0
+    p0[rim] = acc[used][rim] / cnt[used][rim][:, None]
+    nv = nrm[used]
+    P = p0 + nv * D_MIN
+    f2 = remap[fsel]
+    # umbrella smoothing over the bust so the cloth spans the cleavage instead of hugging it
+    ii = np.concatenate([f2[:, a] for a in range(4)]); jj = np.concatenate([f2[:, (a + 1) % 4] for a in range(4)])
+    A = sparse.coo_matrix((np.ones(len(ii) * 2), (np.concatenate([ii, jj]), np.concatenate([jj, ii]))),
+                          shape=(len(used), len(used))).tocsr()
+    A.data[:] = 1.0
+    deg = np.maximum(np.asarray(A.sum(axis=1)).ravel(), 1.0)
+    bust = (p0[:, 2] > z_apex - 0.075) & (p0[:, 2] < z_apex + 0.09) & (p0[:, 1] < -0.02) & (np.abs(p0[:, 0]) < 0.125)
+    Ps = P + nv * (0.013 * bust)[:, None]              # light padding so the cloth reads as a smooth cup
+    for _ in range(700):
+        avg = (A @ Ps) / deg[:, None]
+        Ps[bust] = 0.5 * Ps[bust] + 0.5 * avg[bust]
+    wm = bust.astype(np.float64)
     for _ in range(40):
-        new = Ps.copy()
-        for i in idx:
-            new[i] = 0.5 * Ps[i] + 0.5 * np.mean(Ps[list(nb[i])], axis=0)
-        Ps = new
-    d = np.maximum(D_MIN, ((Ps - p0) * nrm).sum(1))
-    P = p0 + nrm * d[:, None]
-    me = blcore.mesh_from_arrays("Top_Mesh", P, faces)
-    top = bpy.data.objects.new("Top", me)
+        wm = 0.5 * wm + 0.5 * (A @ wm) / deg
+    gap = ((Ps - p0) * nv).sum(1)
+    d = np.maximum(D_MIN, gap + 0.006 * wm)          # small even padding hides body detail under the cloth
+    P = p0 + nv * d[:, None]
+    # even out the cut edge: average every rim vertex with its two rim neighbours
+    e = np.sort(np.concatenate([np.stack([f2[:, a], f2[:, (a + 1) % 4]], axis=1) for a in range(4)]), axis=1)
+    ue, cnt_e = np.unique(e, axis=0, return_counts=True)
+    be = ue[cnt_e == 1]
+    for _ in range(12):
+        acc_r = np.zeros_like(P); n_r = np.zeros(len(P))
+        np.add.at(acc_r, be[:, 0], P[be[:, 1]]); np.add.at(acc_r, be[:, 1], P[be[:, 0]])
+        np.add.at(n_r, be[:, 0], 1.0); np.add.at(n_r, be[:, 1], 1.0)
+        r_ = n_r > 0
+        P[r_] = 0.5 * P[r_] + 0.5 * acc_r[r_] / n_r[r_][:, None]
+    gm = blcore.mesh_from_arrays("Top_Mesh", P, f2.tolist())
+    top = bpy.data.objects.new("Top", gm)
     blcore.link(top, col)
-    for bname, pairs in weights.items():
-        sel = [(remap[vi], w) for vi, w in pairs if vi in remap and w > 0]
-        if sel:
-            vg = top.vertex_groups.new(name=bname)
-            for k, w in sel:
-                vg.add([k], w, 'REPLACE')
+    groups = {}
+    for k, vi in enumerate(used):
+        for g, w in vw.get(int(vi), ()):
+            if w > 0:
+                groups.setdefault(g, []).append((k, w))
+    for g, pairs in groups.items():
+        vg = top.vertex_groups.new(name=names[g])
+        for k, w in pairs:
+            vg.add([k], w, 'REPLACE')
+    ev.to_mesh_clear()
+    sub.levels = old
     blcore.bind(top, rig)
-    sub = top.modifiers.new("Subdiv", 'SUBSURF'); sub.levels, sub.render_levels = 1, 2
     sol = top.modifiers.new("Thickness", 'SOLIDIFY'); sol.thickness = 0.0016; sol.offset = 1.0
-    me.materials.append(fabric_material())
-    print("top faces", len(faces), "apex z", round(z_apex, 3), "hem z", round(z_hem, 3))
+    gm.materials.append(fabric_material())
+    top["z_apex"] = z_apex
+    print("top faces", len(f2), "apex z", round(z_apex, 3), "hem z", round(z_hem, 3))
     return {"top": top, "z_apex": z_apex}

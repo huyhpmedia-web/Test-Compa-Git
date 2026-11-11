@@ -34,7 +34,7 @@ def skin_material(albedo_path):
     tex = nt.nodes.new("ShaderNodeTexImage")
     tex.image = bpy.data.images.load(albedo_path)
     nt.links.new(tex.outputs["Color"], bsdf.inputs["Base Color"])
-    bsdf.inputs["Subsurface Weight"].default_value = 0.32
+    bsdf.inputs["Subsurface Weight"].default_value = 0.18
     bsdf.inputs["Subsurface Radius"].default_value = (1.0, 0.36, 0.20)
     bsdf.inputs["Subsurface Scale"].default_value = 0.0045
     bsdf.inputs["Roughness"].default_value = 0.44
@@ -75,9 +75,9 @@ def setup_world(scene):
     world.use_nodes = True
     bg = world.node_tree.nodes["Background"]
     bg.inputs[0].default_value = (0.74, 0.83, 1.0, 1.0)
-    bg.inputs[1].default_value = 1.15
+    bg.inputs[1].default_value = 1.35
     sun = bpy.data.lights.new("Sun", 'SUN')
-    sun.energy = 3.4
+    sun.energy = 6.4
     sun.angle = math.radians(9.0)
     sun.color = (1.0, 0.96, 0.9)
     so = bpy.data.objects.new("Sun", sun)
@@ -102,8 +102,11 @@ def main():
     for side, grp in (("L", "helper-l-eye"), ("R", "helper-r-eye")):
         p = v[base.group_indices(grp)]
         centers[side] = p.mean(0)
-        radii[side] = 0.0122
-    eyeballs = eyelib.build_eyes(centers, radii, col=c_char)
+        radii[side] = float(np.linalg.norm(p - centers[side], axis=1).mean())
+    tex = {k: os.path.join(ROOT, "textures", f"eye_{k}.png") for k in ("L", "R")}
+    projected = all(os.path.exists(t) for t in tex.values())
+    eyeballs = (eyelib.build_projected_eyes(centers, radii, tex, col=c_char) if projected
+                else eyelib.build_eyes(centers, radii, col=c_char))
     extra = {}
     for modname in ("hairgen", "outfit"):
         try:
@@ -156,7 +159,7 @@ def main():
         target.location = Vector(look.tolist())
         target.keyframe_insert("location", frame=frame)
     scene.frame_set(1)
-    for ob in eyeballs.values():
+    for ob in ([] if projected else eyeballs.values()):      # projected eyes keep the photographed gaze
         con = ob.constraints.new('DAMPED_TRACK')
         con.target = target
         con.track_axis = 'TRACK_NEGATIVE_Y'
@@ -172,6 +175,11 @@ def main():
 
     blcore.setup_cycles(scene, samples=160, res=(charlib.RES, charlib.RES))
     scene.view_settings.view_transform = 'AgX'
+    scene.view_settings.exposure = 0.35
+    try:
+        scene.view_settings.look = 'AgX - Medium High Contrast'
+    except TypeError:
+        pass
     scene.frame_set(1)
     bpy.ops.file.pack_all()
     out = os.path.join(ROOT, "character.blend")

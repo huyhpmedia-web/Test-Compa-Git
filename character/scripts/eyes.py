@@ -136,3 +136,33 @@ def build_eyes(centers, radii, col=None, iris_rgb=(0.30, 0.40, 0.46)):
         oc.parent = ob
         out[side] = ob
     return out
+
+
+def build_projected_eyes(centers, radius, tex_paths, col=None):
+    """Eyeballs textured by projection from the reference photos (see 03_bake_skin.bake_eyes)."""
+    out = {}
+    for side in ("L", "R"):
+        me = bpy.data.meshes.new(f"Eyeball_{side}_Mesh")
+        bm = bmesh.new()
+        bm.loops.layers.uv.new("UVMap")
+        bmesh.ops.create_uvsphere(bm, u_segments=48, v_segments=24, radius=float(radius[side]), calc_uvs=True)
+        bm.to_mesh(me); bm.free()
+        me.polygons.foreach_set("use_smooth", [True] * len(me.polygons))
+        mat = bpy.data.materials.new(f"Eye_{side}")
+        mat.use_nodes = True
+        nt = mat.node_tree
+        b = nt.nodes["Principled BSDF"]
+        tex = nt.nodes.new("ShaderNodeTexImage")
+        tex.image = bpy.data.images.load(tex_paths[side])
+        nt.links.new(tex.outputs["Color"], b.inputs["Base Color"])
+        b.inputs["Roughness"].default_value = 0.35
+        b.inputs["Specular IOR Level"].default_value = 0.3
+        if "Coat Weight" in b.inputs:
+            b.inputs["Coat Weight"].default_value = 1.0
+            b.inputs["Coat Roughness"].default_value = 0.03
+        me.materials.append(mat)
+        ob = bpy.data.objects.new(f"Eyeball_{side}", me)
+        blcore.link(ob, col)
+        ob.location = Vector(centers[side])
+        out[side] = ob
+    return out

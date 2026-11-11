@@ -11,10 +11,10 @@ import numpy as np
 import blcore
 import mhlib
 
-N_GUIDES = 1700
-CHILDREN = 34
+N_GUIDES = 2600
+CHILDREN = 22
 K = 22                       # points per strand
-PART_ANGLE = math.radians(24.0)   # part sits on her left (towards +X) of the top of the head
+PART_ANGLE = math.radians(33.0)   # part sits on her left (towards +X) of the top of the head
 
 
 def _smooth(x, lo, hi):
@@ -50,95 +50,76 @@ def scalp_roots(fit, base, c, r, n, rng):
 
 
 def comb(roots, c, r, z_eye, rng, ear_y):
-    """Integrate guide strands.  Returns (n, K, 3)."""
+    """Guide strands.  Every strand runs from its root over the skull (great arc on the
+    offset ellipsoid) to a release point at temple height whose azimuth is restricted to the
+    sides / back of the head, then hangs with waves and a flipped end.  Returns (n, K, 3)."""
     n = len(roots)
-    # part line on the unit sphere: from the front hairline back to the crown
-    pa = np.array([math.sin(PART_ANGLE) * 0.85, -0.78, 0.50]); pa /= np.linalg.norm(pa)
-    pb = np.array([math.sin(PART_ANGLE) * 0.55, 0.38, 0.92]); pb /= np.linalg.norm(pb)
-    seg = np.linspace(0, 1, 24)[:, None]
-    part = pa[None] * (1 - seg) + pb[None] * seg
-    part /= np.linalg.norm(part, axis=1, keepdims=True)
-
-    layer = rng.random(n)                                   # 0 = inner, 1 = outer layer
-    u0 = (roots - c) / r
-    u0n = u0 / np.linalg.norm(u0, axis=1, keepdims=True)
-    side = np.where(u0n[:, 0] < np.interp(u0n[:, 1], [-0.78, 0.38], [pa[0], pb[0]]), -1.0, 1.0)   # -1: her right
-    thick = np.where(side < 0, 0.036, 0.020)                # hair body is fuller on her right
-    z_end = z_eye - np.where(side < 0, 0.112, 0.100) + rng.normal(0, 0.006, n) + 0.012 * (1 - layer)
-    step = 0.0105
-    p = roots.copy()
-    out = np.zeros((n, K, 3))
-    out[:, 0] = p
-    free = np.zeros(n, dtype=bool)
-    phase = 5.0 * np.arctan2(u0n[:, 0], -u0n[:, 1]) + rng.normal(0, 0.5, n)
-    done_len = np.zeros(n)
-    for k in range(1, K):
-        u = (p - c) / r
-        rad = np.linalg.norm(u, axis=1, keepdims=True)
-        un = u / rad
-        nrm = un / r
-        nrm /= np.linalg.norm(nrm, axis=1, keepdims=True)
-        # away from the nearest point of the part line
-        d2 = ((un[:, None, :] - part[None]) ** 2).sum(2)
-        q = part[d2.argmin(1)]
-        away = (un - q) * r
-        away -= nrm * (away * nrm).sum(1, keepdims=True)
-        away /= np.maximum(np.linalg.norm(away, axis=1, keepdims=True), 1e-6)
-        grav = np.array([0.0, 0.0, -1.0])[None] - nrm * (-nrm[:, 2:3])
-        gl = np.linalg.norm(grav, axis=1, keepdims=True)
-        grav /= np.maximum(gl, 1e-6)
-        g = np.clip(gl[:, 0] * 1.25 + 0.03 * k, 0.0, 1.0)[:, None]
-        d = away * (1 - g) + grav * g
-        # sweep slightly backwards on the top so the fringe opens away from the face
-        d[:, 1] += 0.18 * (un[:, 2] > 0.5)
-        frontal = un[:, 1] < -0.05
-        d[frontal, 1] = np.maximum(d[frontal, 1], 0.30)
-        d /= np.maximum(np.linalg.norm(d, axis=1, keepdims=True), 1e-6)
-        newly = (~free) & ((un[:, 2] < -0.02) | (p[:, 2] < z_eye - 0.005))
-        free |= newly
-        # on the head: step along the surface, then snap to the offset ellipsoid
-        lift = 0.004 + thick * layer * _smooth(done_len, 0.0, 0.07)
-        pn = p + d * step
-        un2 = (pn - c) / r
-        un2 /= np.linalg.norm(un2, axis=1, keepdims=True)
-        on = c + un2 * (r + lift[:, None])
-        # free hang: straight down with a gentle outward flare
-        horiz = np.stack([p[:, 0] - c[0], p[:, 1] - c[1], np.zeros(n)], axis=1)
-        horiz /= np.maximum(np.linalg.norm(horiz, axis=1, keepdims=True), 1e-6)
-        fall = np.array([0.0, 0.0, -1.0])[None] + horiz * 0.10
-        fall /= np.linalg.norm(fall, axis=1, keepdims=True)
-        fr = p + fall * step
-        p = np.where(free[:, None], fr, on)
-        # curtain: below the hairline the hair may not come in front of this line
-        ylim = np.where(side < 0, c[1] - 0.052, c[1] - 0.012) - 0.02 * layer
-        low = _smooth(z_eye + 0.05 - p[:, 2], 0.0, 0.03)
-        p[:, 1] = np.where(p[:, 1] < ylim, p[:, 1] + (ylim - p[:, 1]) * low, p[:, 1])
-        # stop growing below the bob line
-        stop = p[:, 2] < z_end
-        p[stop] = out[stop, k - 1] + (p[stop] - out[stop, k - 1]) * 0.02
-        done_len += step * (~stop)
-        out[:, k] = p
-    # tuck behind the ears: strands hanging right over the ear column move behind (or in front on her right)
-    for kk in range(K):
-        q = out[:, kk]
-        near = _smooth(z_eye + 0.01 - q[:, 2], 0.0, 0.03) * (np.abs(q[:, 0]) > r[0] * 0.80)
-        dy = q[:, 1] - ear_y
-        left_side = q[:, 0] > 0
-        push_back = np.where(left_side, dy < 0.022, (dy < 0.020) & (dy > -0.006))
-        push_fwd = (~left_side) & (dy <= -0.006) & (dy > -0.030)
-        q[:, 1] += near * (push_back * (0.024 - dy) * 0.9 - push_fwd * (dy + 0.032) * 0.5)
-    # waves + flipped ends on the lower part of every strand
-    s = np.concatenate([np.zeros((n, 1)), np.cumsum(np.linalg.norm(np.diff(out, axis=1), axis=2), axis=1)], axis=1)
-    L = s[:, -1:]
-    horiz = out[:, :, :2] - c[None, None, :2]
-    horiz /= np.maximum(np.linalg.norm(horiz, axis=2, keepdims=True), 1e-6)
-    tang = np.stack([-horiz[:, :, 1], horiz[:, :, 0]], axis=2)
-    amp = 0.0060 * _smooth(s, 0.03, 0.10)
-    wave = np.sin(2 * math.pi * s / 0.062 + phase[:, None])
-    out[:, :, :2] += horiz * (amp * wave)[:, :, None] + tang * (amp * 0.6 * np.cos(2 * math.pi * s / 0.062 + phase[:, None]))[:, :, None]
-    flip = _smooth(s / np.maximum(L, 1e-6), 0.80, 1.0) ** 2
-    out[:, :, :2] += horiz * (0.010 * flip)[:, :, None]
-    out[:, :, 2] += 0.006 * flip
+    u = (roots - c) / r
+    un = u / np.linalg.norm(u, axis=1, keepdims=True)
+    layer = rng.random(n)                                    # 0 = inner, 1 = outer layer
+    part_x = np.interp(un[:, 1], [-0.9, 0.5], [math.sin(PART_ANGLE) * 0.80, math.sin(PART_ANGLE) * 0.55])
+    side = np.where(un[:, 0] < part_x, -1.0, 1.0)            # -1: swept to her right
+    uy = un[:, 1]
+    # release azimuth (degrees): 0 = front, +90 = her left, -90 = her right, 180 = back.
+    # right: a face-framing lock in front of the ear, the rest behind it; left: all tucked behind the ear
+    phi_r = np.where(uy < -0.25, np.interp(uy, [-0.9, -0.25], [-50.0, -66.0]),
+                     np.interp(uy, [-0.25, 0.9], [-120.0, -180.0]))
+    phi_l = np.interp(uy, [-0.9, 0.9], [110.0, 180.0])
+    phi = np.radians(np.where(side < 0, phi_r, phi_l) + rng.normal(0, 3.0, n))
+    z_rel = z_eye + 0.014 + rng.normal(0, 0.004, n)
+    own = roots[:, 2] < z_rel + 0.012                        # low roots simply hang from where they are
+    thick = np.where(side < 0, 0.030, 0.018)
+    off = 0.004 + thick * layer
+    q = np.sqrt(np.clip(1.0 - ((z_rel - c[2]) / r[2]) ** 2, 0.05, 1.0))
+    rho = q / np.sqrt((np.sin(phi) / r[0]) ** 2 + (np.cos(phi) / r[1]) ** 2)
+    rel = np.stack([c[0] + rho * np.sin(phi), c[1] - rho * np.cos(phi), z_rel], axis=1)
+    rel[own] = roots[own]
+    b_un = (rel - c) / r
+    b_un /= np.linalg.norm(b_un, axis=1, keepdims=True)
+    # ---- over the skull: slerp between the root direction and the release direction
+    K1, K2 = 12, 16
+    t1 = np.linspace(0, 1, K1)[None, :, None]
+    om = np.arccos(np.clip((un * b_un).sum(1), -1, 1))[:, None, None]
+    so = np.maximum(np.sin(om), 1e-4)
+    d = (np.sin((1 - t1) * om) * un[:, None, :] + np.sin(t1 * om) * b_un[:, None, :]) / so
+    d = np.where(om < 1e-3, un[:, None, :], d)
+    d /= np.linalg.norm(d, axis=2, keepdims=True)
+    lift = 0.0025 + (off[:, None, None] - 0.0025) * (t1 * t1 * (3 - 2 * t1))
+    head = c[None, None, :] + d * (r[None, None, :] + lift)
+    # ---- hanging part
+    z_end = z_eye - np.where(side < 0, 0.140, 0.122) + rng.normal(0, 0.006, n) + 0.014 * (1 - layer)
+    start = head[:, -1]
+    hz = start[:, :2] - c[None, :2]
+    hz /= np.maximum(np.linalg.norm(hz, axis=1, keepdims=True), 1e-6)
+    t2 = np.linspace(0, 1, K2 + 1)[None, 1:, None]
+    flare = np.where(side < 0, 0.040, 0.022)[:, None, None] * (0.4 + 0.6 * layer[:, None, None])
+    hang = np.empty((n, K2, 3))
+    hang[:, :, :2] = start[:, None, :2] + hz[:, None, :] * (flare * t2 ** 1.6)
+    hang[:, :, 2:] = start[:, None, 2:] + (z_end[:, None, None] - start[:, None, 2:]) * t2
+    path = np.concatenate([head, hang], axis=1)
+    # ---- waves + flipped ends on the hanging part (phase coherent between neighbours)
+    seg = np.linalg.norm(np.diff(path, axis=1), axis=2)
+    s_all = np.concatenate([np.zeros((n, 1)), np.cumsum(seg, axis=1)], axis=1)
+    s_h = np.clip(s_all - s_all[:, K1 - 1:K1], 0.0, None)
+    L_h = np.maximum(s_h[:, -1:], 1e-6)
+    phase = 4.0 * phi + rng.normal(0, 0.45, n)
+    tang = np.stack([-hz[:, 1], hz[:, 0]], axis=1)
+    amp = 0.0080 * _smooth(s_h, 0.0, 0.05)
+    wv = np.sin(2 * math.pi * s_h / 0.058 + phase[:, None])
+    wc = np.cos(2 * math.pi * s_h / 0.058 + phase[:, None])
+    path[:, :, :2] += hz[:, None, :] * (amp * wv)[:, :, None] + tang[:, None, :] * (amp * 0.7 * wc)[:, :, None]
+    flip = _smooth(s_h / L_h, 0.78, 1.0) ** 2
+    path[:, :, :2] += hz[:, None, :] * (0.014 * flip)[:, :, None]
+    path[:, :, 2] += 0.007 * flip
+    # ---- resample every strand to K points, uniform in arc length
+    seg = np.linalg.norm(np.diff(path, axis=1), axis=2)
+    s_all = np.concatenate([np.zeros((n, 1)), np.cumsum(seg, axis=1)], axis=1)
+    out = np.empty((n, K, 3))
+    tt = np.linspace(0, 1, K)
+    for i in range(n):
+        si = s_all[i]
+        for k in range(3):
+            out[i, :, k] = np.interp(tt * si[-1], si, path[i, :, k])
     return out, side
 
 
@@ -147,8 +128,8 @@ def children(guides, rng):
     g = np.repeat(guides, CHILDREN, axis=0)
     m = len(g)
     t = np.linspace(0, 1, K)[None, :, None]
-    off = rng.normal(0, 1, (m, 1, 3)) * (0.0032 * (1 - 0.6 * t))          # clump: tighter at the tips
-    frizz = np.cumsum(rng.normal(0, 0.00013, (m, K, 3)), axis=1)
+    off = rng.normal(0, 1, (m, 1, 3)) * (0.0025 * (1 - 0.6 * t))          # clump: tighter at the tips
+    frizz = np.cumsum(rng.normal(0, 0.00009, (m, K, 3)), axis=1)
     stray = (rng.random(m) < 0.015)[:, None, None]
     fly = np.cumsum(rng.normal(0, 0.0011, (m, K, 3)), axis=1) * stray
     out = g + off + frizz + fly
@@ -167,12 +148,12 @@ def hair_material():
     ramp = nt.nodes.new("ShaderNodeValToRGB")          # melanin along the strand
     e = ramp.color_ramp.elements
     e[0].position = 0.0; e[0].color = (0.74, 0.74, 0.74, 1)
-    e[1].position = 0.30; e[1].color = (0.115, 0.115, 0.115, 1)
-    mid = e.new(0.13); mid.color = (0.42, 0.42, 0.42, 1)
+    e[1].position = 0.20; e[1].color = (0.045, 0.045, 0.045, 1)
+    mid = e.new(0.085); mid.color = (0.30, 0.30, 0.30, 1)
     nt.links.new(info.outputs["Intercept"], ramp.inputs[0])
     # a few darker / more golden strands
     rnd = nt.nodes.new("ShaderNodeMapRange")
-    rnd.inputs["To Min"].default_value = 0.75; rnd.inputs["To Max"].default_value = 1.55
+    rnd.inputs["To Min"].default_value = 0.55; rnd.inputs["To Max"].default_value = 2.1
     nt.links.new(info.outputs["Random"], rnd.inputs["Value"])
     mul = nt.nodes.new("ShaderNodeMath"); mul.operation = 'MULTIPLY'
     nt.links.new(ramp.outputs["Color"], mul.inputs[0]); nt.links.new(rnd.outputs["Result"], mul.inputs[1])
@@ -186,7 +167,7 @@ def hair_material():
     return mat
 
 
-def make_curves(name, strands, mat, col, root_r=0.000055, tip_r=0.000022):
+def make_curves(name, strands, mat, col, root_r=0.00008, tip_r=0.00003):
     n, k, _ = strands.shape
     cu = bpy.data.hair_curves.new(name)
     cu.add_curves([k] * n)

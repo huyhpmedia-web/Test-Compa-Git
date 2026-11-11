@@ -80,7 +80,7 @@ def build(base, fit, body, rig, M_head):
     h0 = np.array(mw @ rig.pose.bones["head"].head)
     axis = (h0 - n0) / np.linalg.norm(h0 - n0)
     cen = n0 + (h0 - n0) * 0.50
-    e1 = np.cross(axis, [0.0, 1.0, 0.0]); e1 /= np.linalg.norm(e1)       # ~ +X
+    e1 = np.cross([0.0, 1.0, 0.0], axis); e1 /= np.linalg.norm(e1)       # ~ +X (her left)
     e2 = np.cross(axis, e1)                                               # ~ front (-Y)
     if e2[1] > 0:
         e2 = -e2
@@ -125,14 +125,15 @@ def build(base, fit, body, rig, M_head):
         return pts
 
     z_apex = float(fit["verts"][:, 2].max()) - 0.385
-    tail_end = np.array([knot[0] - 0.045, knot[1] - 0.02, knot[2] - 0.185])
+    tail_end = np.array([knot[0] - 0.050, knot[1] - 0.02, knot[2] - 0.205])
     objs.append(curve_obj("Bow_Tail_Long", drape(knot.copy(), tail_end, n=18), mat, col, width=0.0032, depth=0.0010))
     short_end = np.array([knot[0] + 0.022, knot[1] - 0.01, knot[2] - 0.060])
     objs.append(curve_obj("Bow_Tail_Short", drape(knot.copy(), short_end, n=8), mat, col, width=0.0032, depth=0.0010))
     # halter strings: choker -> corners of the neckline
     for name, deg, sx in (("String_R", -52.0, -1.0), ("String_L", 58.0, 1.0)):
         start, _, _ = ring_at(deg)
-        corner = cast((sx * 0.122, -0.6, start[2] - 0.085), (0, 1, 0))
+        z_c = (float(top["z_apex"]) + 0.050) if top is not None else start[2] - 0.085
+        corner = cast((sx * 0.120, -0.6, z_c), (0, 1, 0))
         if corner is None:
             continue
         corner = corner + np.array([0, -0.004, 0])

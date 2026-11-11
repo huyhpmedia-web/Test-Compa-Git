@@ -33,8 +33,16 @@ commit `.blend` + scripts + renders to branch `claude/lucid-hypatia-0ft2mr`.
 - Macros: female, young, cup 1.0, firmness 0.7, proportions 0.9 (see MACROS in 02_fit_head.py).
 - Light in the photos: sun from her front-left (image right in frontal shots), soft.
 
+## Known issue to fix first
+- `data/fit_head.npz` (8 rounds; closeup 3.45 px, front 2.59 px, profile 0.89 mm) matches the photos in
+  the frontal overlay and the profile silhouette, BUT the clay views show a V-shaped ridge on the
+  forehead/glabella: the profile step moves the midline while the lateral anchors (|x| > 32 mm, zero
+  displacement) hold the rest. Fix in `HeadFit.profile_step`: drop the lateral anchors above brow height
+  (forehead should move as one broad surface) and/or widen the falloff, then re-run 02_fit_head.py.
+  Check with `scripts/view_fit.py data/fit_head.npz build/view.png`.
+
 ## Next steps (in order)
-1. Check `data/fit_head.npz` visually (view_fit.py); ear position / jaw from profile if needed.
+1. Fix the forehead ridge (above), re-check; ear position / jaw from profile if needed.
 2. `03_build_character.py`: body mesh from fitted verts + rig (rig.default.json, weights),
    pose (arms down, head roll/yaw like the photo), subdivision.
 3. Skin: project the 3 photos into the MakeHuman UV atlas (4096²) using the fitted cameras,

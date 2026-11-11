@@ -177,7 +177,10 @@ class HeadFit:
             self.mm_a = 0.001 / s
         delta = (A @ R.T) * s + t - Bm
         wgt = np.where(lab == "neck", 0.5, 1.0)[:, None] * GAIN_PROFILE
-        lateral = self.H[(np.abs(self.H[:, 0]) > 0.032) & self.okH]
+        # cheeks / jaw sides stay put; the forehead (above the brows) is free so that it
+        # follows the midline as one broad surface instead of forming a ridge
+        z_brow = self.eyes[:, 2].mean() + 0.016
+        lateral = self.H[(np.abs(self.H[:, 0]) > 0.032) & self.okH & (self.H[:, 2] < z_brow)]
         ctrl = np.concatenate([np.stack([np.zeros(len(Bm)), -Bm[:, 0], Bm[:, 1]], axis=1), lateral, v[self.anchors]])
         disp = np.concatenate([np.stack([np.zeros(len(Bm)), -delta[:, 0], delta[:, 1]], axis=1) * wgt,
                                np.zeros((len(lateral), 3)), np.zeros((len(self.anchors), 3))])

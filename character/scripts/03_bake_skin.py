@@ -27,9 +27,10 @@ ROOT = charlib.ROOT
 B = charlib.B
 SIZE = int(os.environ.get("ATLAS", "4096"))
 EYE_RADIUS = 0.0122
-EYE_TEX = 512
+EYE_TEX = 1024
 VIS_DIV = 2                      # visibility is ray-cast on a SIZE/VIS_DIV grid
 DELIGHT = float(os.environ.get("DELIGHT", "0.5"))
+BASE = [None]                    # body skin tone (bgr), set in main()
 Z_CUT = [0.0, 1.0]               # set in main(): projection fades out below the jaw
 PHOTOS = {"closeup": ("ref_closeup.jpg", "seg_3.npy", 1.0),
           "profile": ("ref_profile.jpg", "seg_2.npy", 0.8),
@@ -112,9 +113,14 @@ def sample_photo(name, cams, pos, nrm, valid, bvh):
     img = cv2.imread(os.path.join(ROOT, "reference", fn)).astype(np.float32) / 255.0
     seg = np.load(os.path.join(B, segfn)).astype(np.float32)
     skin = seg[:, :, 2] + seg[:, :, 3]
-    hair = cv2.dilate(seg[:, :, 1], np.ones((19, 19), np.uint8))
+    hair = cv2.dilate(seg[:, :, 1], np.ones((41, 41), np.uint8))
     mask = cv2.erode((skin > 0.6).astype(np.float32), np.ones((7, 7), np.uint8)) * (hair < 0.2)
     mask = cv2.GaussianBlur(mask, (0, 0), 1.5)
+    if BASE[0] is not None:
+        sig = 40.0 if name == "closeup" else 28.0
+        low = cv2.GaussianBlur(img * mask[:, :, None], (0, 0), sig) / np.maximum(cv2.GaussianBlur(mask, (0, 0), sig), 1e-3)[:, :, None]
+        gain = np.clip(BASE[0][None, None, :] / np.maximum(low, 1e-3), 0.7, 2.4)
+        img = np.clip(img * (1.0 + DELIGHT * (gain - 1.0)), 0, 1)
     cam = cams[name]
     fpx = fitlib.focal_px(charlib.LENS, charlib.RES)
     P = pos.reshape(-1, 3).astype(np.float64)
@@ -187,9 +193,15 @@ def main():
     bvh = BVHTree.FromObject(body, bpy.context.evaluated_depsgraph_get())
     cams = charlib.photo_cameras(fit)
     chin_z = float(fit["H"][152][2])
-    Z_CUT[0], Z_CUT[1] = chin_z - 0.050, chin_z - 0.018
+    Z_CUT[0], Z_CUT[1] = chin_z - 0.080, chin_z - 0.012
 
     os.makedirs(os.path.join(ROOT, "textures"), exist_ok=True)
+    # body tone: well-lit body skin of the front photo (chest / shoulders)
+    ph0 = cv2.imread(os.path.join(ROOT, "reference", "ref_front.jpg")).astype(np.float32) / 255.0
+    sg0 = np.load(os.path.join(B, "seg_1.npy")).astype(np.float32)
+    bm0 = cv2.erode((sg0[:, :, 2] > 0.8).astype(np.uint8), np.ones((15, 15), np.uint8)) > 0
+    bm0[:700] = False
+    BASE[0] = np.median(ph0[bm0], axis=0).astype(np.float32)
     bake_eyes(fit, base, cams, bvh)
     direct = {k: sample_photo(k, cams, pos, nrm, valid, bvh) for k in PHOTOS}
     # per-photo colour gain relative to the close-up, measured where both see the surface
@@ -202,6 +214,16 @@ def main():
             gain = np.clip(gain, 0.5, 1.6)
             direct[k] = (np.clip(c * gain, 0, 1), w)
             print(k, "gain (bgr)", np.round(gain, 3), "overlap", int(both.sum()))
+    # body tone first (needed by the per-source de-lighting below)
+    ph = cv2.imread(os.path.join(ROOT, "reference", "ref_front.jpg")).astype(np.float32) / 255.0
+    sg = np.load(os.path.join(B, "seg_1.npy")).astype(np.float32)
+    bm = cv2.erode((sg[:, :, 2] > 0.8).astype(np.uint8), np.ones((15, 15), np.uint8)) > 0
+    bm[:700] = False
+    base_col = np.median(ph[bm], axis=0).astype(np.float32)
+
+    delight = lambda col, alpha: col       # de-lighting now happens in image space (sample_photo)
+
+    direct = {k: (delight(c, np.clip(w / 0.12, 0, 1)), w) for k, (c, w) in direct.items()}
     col_d, w_d = blend(list(direct.values()))
 
     # mirrored pass: what the other half of the face looks like at the mirrored position
@@ -210,33 +232,11 @@ def main():
     mirrored = []
     for k in PHOTOS:
         c, w = sample_photo(k, cams, mpos, mnrm, valid, bvh)
-        if k != "closeup" and k in direct:
-            pass
-        mirrored.append((c, w))
+        mirrored.append((delight(c, np.clip(w / 0.12, 0, 1)), w))
     col_m, w_m = blend(mirrored)
-
-    # body tone: well-lit body skin of the front photo (chest / shoulders)
-    ph = cv2.imread(os.path.join(ROOT, "reference", "ref_front.jpg")).astype(np.float32) / 255.0
-    sg = np.load(os.path.join(B, "seg_1.npy")).astype(np.float32)
-    bm = cv2.erode((sg[:, :, 2] > 0.8).astype(np.uint8), np.ones((15, 15), np.uint8)) > 0
-    bm[:700] = False
-    base_col = np.median(ph[bm], axis=0).astype(np.float32)
-    print("base skin (bgr)", np.round(base_col, 3))
-    def delight(col, alpha):
-        """Bring the low-frequency colour of projected skin to the body tone (removes the baked
-        hair shadow / sun gradient; real shading comes from the scene lights)."""
-        q = 4
-        small = cv2.resize(col * alpha[:, :, None], (SIZE // q, SIZE // q), interpolation=cv2.INTER_AREA)
-        smallw = cv2.resize(alpha, (SIZE // q, SIZE // q), interpolation=cv2.INTER_AREA)
-        sig = SIZE / 4096 * 80 / q
-        low = cv2.GaussianBlur(small, (0, 0), sig) / np.maximum(cv2.GaussianBlur(smallw, (0, 0), sig), 1e-4)[:, :, None]
-        low = cv2.resize(low, (SIZE, SIZE), interpolation=cv2.INTER_LINEAR)
-        gain = np.clip(base_col[None, None, :] / np.maximum(low, 1e-3), 0.7, 2.4)
-        return np.clip(col * (1.0 + DELIGHT * (gain - 1.0)), 0, 1)
 
     a_d = np.clip(w_d / 0.12, 0, 1)
     a_mm = np.clip(w_m / 0.12, 0, 1)
-    col_d, col_m = delight(col_d, a_d), delight(col_m, a_mm)
     a_d = np.minimum(a_d, cv2.GaussianBlur(cv2.erode(a_d, np.ones((7, 7), np.uint8)), (0, 0), SIZE / 4096 * 45))
     a_m = a_mm * (1 - a_d)
     tot = np.clip(a_d + a_m, 0, 1)

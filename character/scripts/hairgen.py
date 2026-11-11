@@ -65,7 +65,7 @@ def comb(roots, c, r, z_eye, rng, ear_y):
     phi_r = np.where(uy < -0.25, np.interp(uy, [-0.9, -0.25], [-50.0, -66.0]),
                      np.interp(uy, [-0.25, 0.9], [-120.0, -180.0]))
     phi_l = np.interp(uy, [-0.9, 0.9], [110.0, 180.0])
-    phi = np.radians(np.where(side < 0, phi_r, phi_l) + rng.normal(0, 3.0, n))
+    phi = np.radians(np.where(side < 0, phi_r, phi_l) + rng.normal(0, 6.0, n))
     z_rel = z_eye + 0.014 + rng.normal(0, 0.004, n)
     own = roots[:, 2] < z_rel + 0.012                        # low roots simply hang from where they are
     thick = np.where(side < 0, 0.030, 0.018)
@@ -104,7 +104,7 @@ def comb(roots, c, r, z_eye, rng, ear_y):
     L_h = np.maximum(s_h[:, -1:], 1e-6)
     phase = 4.0 * phi + rng.normal(0, 0.45, n)
     tang = np.stack([-hz[:, 1], hz[:, 0]], axis=1)
-    amp = 0.0080 * _smooth(s_h, 0.0, 0.05)
+    amp = 0.0080 * _smooth(s_h, 0.0, 0.05) * rng.uniform(0.6, 1.6, (n, 1))
     wv = np.sin(2 * math.pi * s_h / 0.058 + phase[:, None])
     wc = np.cos(2 * math.pi * s_h / 0.058 + phase[:, None])
     path[:, :, :2] += hz[:, None, :] * (amp * wv)[:, :, None] + tang[:, None, :] * (amp * 0.7 * wc)[:, :, None]
@@ -128,9 +128,9 @@ def children(guides, rng):
     g = np.repeat(guides, CHILDREN, axis=0)
     m = len(g)
     t = np.linspace(0, 1, K)[None, :, None]
-    off = rng.normal(0, 1, (m, 1, 3)) * (0.0025 * (1 - 0.6 * t))          # clump: tighter at the tips
+    off = rng.normal(0, 1, (m, 1, 3)) * (0.0031 * (1 - 0.6 * t))          # clump: tighter at the tips
     frizz = np.cumsum(rng.normal(0, 0.00009, (m, K, 3)), axis=1)
-    stray = (rng.random(m) < 0.015)[:, None, None]
+    stray = (rng.random(m) < 0.03)[:, None, None]
     fly = np.cumsum(rng.normal(0, 0.0011, (m, K, 3)), axis=1) * stray
     out = g + off + frizz + fly
     out[:, 0] = g[:, 0] + off[:, 0] * 0.6

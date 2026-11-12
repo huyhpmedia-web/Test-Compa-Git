@@ -47,6 +47,8 @@ func _ready() -> void:
 		"inventory":
 			Game.set_objective("Re-close feeder KF-2. Find the hot stick and a 60A fuse, then follow the switching order.")
 			UI.open_inventory()
+			if args.has("sel"):
+				UI._select_slot(int(args.sel))
 		"files":
 			Game.set_flag("files", ["f1"])
 			Game.set_flag("file:f1", {"title": _msg("Operator's switching order"), "body": _msg("[b]SWITCHING ORDER - RESTORE KF-2[/b]")})
@@ -60,7 +62,7 @@ func _ready() -> void:
 		"options":
 			UI.open_options()
 		"itemget":
-			UI.show_item_get("rosary")
+			UI.show_item_get(str(args.get("item", "rosary")))
 		"pause":
 			UI.open_pause()
 		"save":

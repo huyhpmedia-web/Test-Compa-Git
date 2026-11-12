@@ -14,6 +14,7 @@ const FONT_ITALIC := "res://fonts/BeVietnamPro-Italic.ttf"
 
 const Items = preload("res://core/items.gd")
 const BloodScreen = preload("res://ui/blood_screen.gd")
+const ItemView = preload("res://ui/item_view.gd")
 
 const C_TEXT := Color(0.86, 0.87, 0.84)
 const C_DIM := Color(0.55, 0.57, 0.56)
@@ -618,17 +619,31 @@ func show_note(title: String, body: String) -> void:
 
 func show_item_get(id: String) -> void:
 	var d := Items.get_def(id)
-	var p := _panel(560, 220)
+	var p := _panel(980, 500)
 	var bg: Control = p.get_meta("bg")
 	bg.name = "ItemGet"
+	var hb := HBoxContainer.new()
+	hb.add_theme_constant_override("separation", 28)
+	p.add_child(hb)
+	var stage := ItemView.new()
+	stage.custom_minimum_size = Vector2(460, 460)
+	stage.setup(id)
+	hb.add_child(stage)
 	var v := VBoxContainer.new()
-	p.add_child(v)
+	v.add_theme_constant_override("separation", 12)
+	v.custom_minimum_size = Vector2(440, 0)
+	hb.add_child(v)
 	v.add_child(_label("OBTAINED", 14, C_DIM))
-	v.add_child(_label(d.name, 26, Color(0.95, 0.9, 0.7)))
-	var desc := _label(d.desc, 16)
+	v.add_child(_label(d.name, 28, Color(0.95, 0.9, 0.7)))
+	var desc := _label(d.desc, 17)
 	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	desc.custom_minimum_size = Vector2(520, 0)
+	desc.custom_minimum_size = Vector2(420, 0)
 	v.add_child(desc)
+	if ItemView.has_model(id):
+		v.add_child(_label("Drag to rotate · Wheel to zoom", 14, C_DIM))
+	var sp := Control.new()
+	sp.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	v.add_child(sp)
 	var b := _button("OK", close_modal, v)
 	_open_modal(bg)
 	b.grab_focus()
@@ -689,21 +704,45 @@ func _items_view(v: VBoxContainer) -> void:
 	var first: Button = null
 	for i in Game.inv_slots:
 		var b := Button.new()
-		b.custom_minimum_size = Vector2(120, 92)
+		b.custom_minimum_size = Vector2(112, 112)
 		b.clip_text = true
 		if i < Game.inventory.size():
 			var s = Game.inventory[i]
 			var d := Items.get_def(s.id)
-			var txt: String = d.name
+			var tex := ItemView.icon(s.id)
+			if tex != null:
+				var ic := TextureRect.new()
+				ic.texture = tex
+				ic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+				ic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+				ic.set_anchors_preset(Control.PRESET_FULL_RECT)
+				ic.offset_left = 4; ic.offset_top = 4; ic.offset_right = -4; ic.offset_bottom = -4
+				ic.mouse_filter = Control.MOUSE_FILTER_IGNORE
+				b.add_child(ic)
+			var badge := ""
 			if d.kind == "weapon" and s.id != "knife":
-				txt += "\n[%d]" % Game.ammo_loaded(s.id)
+				badge = "%d" % Game.ammo_loaded(s.id)
 			elif d.get("stack", 1) > 1:
-				txt += "\nx%d" % s.count
+				badge = "x%d" % s.count
+			if badge != "":
+				var bl := _label(badge, 17, Color(0.95, 0.92, 0.8))
+				bl.add_theme_color_override("font_outline_color", Color(0, 0, 0))
+				bl.add_theme_constant_override("outline_size", 5)
+				bl.set_anchors_preset(Control.PRESET_FULL_RECT)
+				bl.offset_right = -8
+				bl.offset_bottom = -4
+				bl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+				bl.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+				bl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+				b.add_child(bl)
 			if s.id == Game.equipped:
-				txt = "E  " + txt
-			b.text = txt
-			b.add_theme_color_override("font_color", d.color.lightened(0.3))
-			b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+				var eq := _label("E", 16, Color(0.4, 0.9, 0.5))
+				eq.position = Vector2(8, 4)
+				b.add_child(eq)
+			if tex == null:
+				b.text = d.name
+				b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			b.tooltip_text = d.name
 			var idx := i
 			b.pressed.connect(func(): _select_slot(idx))
 			b.mouse_entered.connect(func(): b.grab_focus())
@@ -724,6 +763,10 @@ func _items_view(v: VBoxContainer) -> void:
 	elif _inv_sel >= 0 and _inv_sel < Game.inventory.size():
 		var s = Game.inventory[_inv_sel]
 		var d := Items.get_def(s.id)
+		var stage := ItemView.new()
+		stage.custom_minimum_size = Vector2(420, 250)
+		stage.setup(s.id)
+		info.add_child(stage)
 		info.add_child(_label(d.name, 24, Color(0.95, 0.92, 0.85)))
 		var desc := _label(d.desc, 16)
 		desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

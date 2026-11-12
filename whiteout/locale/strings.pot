@@ -127,7 +127,7 @@ msgstr ""
 msgid "Combine it with something."
 msgstr ""
 
-#: core/game.gd:277 levels/l1_substation.gd:1370 levels/l4_meridian.gd:1141
+#: core/game.gd:277 levels/l1_substation.gd:1374 levels/l4_meridian.gd:1141
 msgid "There is nothing to use it on here."
 msgstr ""
 
@@ -424,220 +424,220 @@ msgstr ""
 msgid "MERIDIAN"
 msgstr ""
 
-#: levels/dressing/l4_art.gd:479 levels/l2_school.gd:863
+#: levels/dressing/l4_art.gd:479 levels/l2_school.gd:869
 msgid "EXIT"
 msgstr ""
 
-#: levels/l1_substation.gd:69 levels/l1_substation.gd:1321
+#: levels/l1_substation.gd:73 levels/l1_substation.gd:1325
 msgid "Reach the school. Gran's shelter. Follow Highway 53 north."
 msgstr ""
 
-#: levels/l1_substation.gd:73
+#: levels/l1_substation.gd:77
 msgid "Get into Kettle Falls. Follow Highway 53 north on foot."
 msgstr ""
 
-#: levels/l1_substation.gd:74
+#: levels/l1_substation.gd:78
 msgid "HIGHWAY 53"
 msgstr ""
 
-#: levels/l1_substation.gd:74
+#: levels/l1_substation.gd:78
 msgid "Kettle Falls, Minnesota  -  Dec 21, 2026  22:14  -  -40 degrees"
 msgstr ""
 
-#: levels/l1_substation.gd:76
+#: levels/l1_substation.gd:80
 msgid "WASD - move     SHIFT - sprint"
 msgstr ""
 
-#: levels/l1_substation.gd:120
+#: levels/l1_substation.gd:124
 msgid "Power is back. Go north up Highway 53 to the school gate."
 msgstr ""
 
-#: levels/l1_substation.gd:123
+#: levels/l1_substation.gd:127
 msgid "Walk north up Highway 53 to the power substation."
 msgstr ""
 
-#: levels/l1_substation.gd:127
+#: levels/l1_substation.gd:131
 msgid "The gate is chained. Follow the fence: there is a gap beside the burning barrel."
 msgstr ""
 
-#: levels/l1_substation.gd:130
+#: levels/l1_substation.gd:134
 msgid "Find the night operator at the back of the yard. He has the control house key."
 msgstr ""
 
-#: levels/l1_substation.gd:133
+#: levels/l1_substation.gd:137
 msgid "Unlock the control house door (small brick building, door with the sign)."
 msgstr ""
 
-#: levels/l1_substation.gd:136
+#: levels/l1_substation.gd:140
 msgid "Inside the control house, read the green computer screen."
 msgstr ""
 
-#: levels/l1_substation.gd:139
+#: levels/l1_substation.gd:143
 msgid "Get the insulated pole (hot stick) from the white bucket truck at the yard entrance."
 msgstr ""
 
-#: levels/l1_substation.gd:142
+#: levels/l1_substation.gd:146
 msgid "Get the spare fuse: metal cabinet in the storage container (break the padlock with your hatchet)."
 msgstr ""
 
-#: levels/l1_substation.gd:145
+#: levels/l1_substation.gd:149
 msgid "Put the fuse into the grey cabinet beside the big breaker in the switchyard."
 msgstr ""
 
-#: levels/l1_substation.gd:150
+#: levels/l1_substation.gd:154
 msgid "Turn on the switches IN ORDER. Step 1 of 3: switch DS-2A (left)."
 msgstr ""
 
-#: levels/l1_substation.gd:153
+#: levels/l1_substation.gd:157
 msgid "Step 2 of 3: switch DS-2B (right). Never touch DS-2C."
 msgstr ""
 
-#: levels/l1_substation.gd:156
+#: levels/l1_substation.gd:160
 msgid "Step 3 of 3: switch on the big breaker BKR-KF2 (middle)."
 msgstr ""
 
-#: levels/l1_substation.gd:319 levels/l1_substation.gd:320 levels/l1_substation.gd:452
+#: levels/l1_substation.gd:323 levels/l1_substation.gd:324 levels/l1_substation.gd:456
 msgid "LAKESHORE ELECTRIC CO-OP"
 msgstr ""
 
-#: levels/l1_substation.gd:321
+#: levels/l1_substation.gd:325
 msgid "UNIT 14"
 msgstr ""
 
-#: levels/l1_substation.gd:426 ui/main_menu.gd:27
+#: levels/l1_substation.gd:430 ui/main_menu.gd:27
 msgid "KETTLE FALLS"
 msgstr ""
 
-#: levels/l1_substation.gd:427
+#: levels/l1_substation.gd:431
 msgid "pop. 1,204"
 msgstr ""
 
-#: levels/l1_substation.gd:428
+#: levels/l1_substation.gd:432
 msgid "Home of the Iron Range Miners"
 msgstr ""
 
-#: levels/l1_substation.gd:441
+#: levels/l1_substation.gd:445
 msgid "EXTREME COLD"
 msgstr ""
 
-#: levels/l1_substation.gd:442
+#: levels/l1_substation.gd:446
 msgid "TRAVEL NOT ADVISED"
 msgstr ""
 
-#: levels/l1_substation.gd:453
+#: levels/l1_substation.gd:457
 msgid "KETTLE FALLS SUBSTATION"
 msgstr ""
 
-#: levels/l1_substation.gd:454
+#: levels/l1_substation.gd:458
 msgid "AUTHORIZED PERSONNEL ONLY"
 msgstr ""
 
-#: levels/l1_substation.gd:502
+#: levels/l1_substation.gd:506
 msgid "MnDOT  SAND / SALT"
 msgstr ""
 
-#: levels/l1_substation.gd:546 levels/l1_substation.gd:627
+#: levels/l1_substation.gd:550 levels/l1_substation.gd:631
 msgid "DANGER  HIGH VOLTAGE"
 msgstr ""
 
-#: levels/l1_substation.gd:547
+#: levels/l1_substation.gd:551
 msgid "KEEP OUT"
 msgstr ""
 
-#: levels/l1_substation.gd:548
+#: levels/l1_substation.gd:552
 msgid "Check gate"
 msgstr ""
 
-#: levels/l1_substation.gd:562
+#: levels/l1_substation.gd:566
 msgid "Chained and padlocked. The fence is cut open further north."
 msgstr ""
 
-#: levels/l1_substation.gd:596 levels/l1_substation.gd:628
+#: levels/l1_substation.gd:600 levels/l1_substation.gd:632
 msgid "KETTLE FALLS     69/12.47 kV"
 msgstr ""
 
-#: levels/l1_substation.gd:730 levels/l1_substation.gd:777 levels/l1_substation.gd:1221
+#: levels/l1_substation.gd:734 levels/l1_substation.gd:781 levels/l1_substation.gd:1225
 msgid "OPEN"
 msgstr ""
 
-#: levels/l1_substation.gd:740 levels/l1_substation.gd:790 levels/l1_substation.gd:1221
+#: levels/l1_substation.gd:744 levels/l1_substation.gd:794 levels/l1_substation.gd:1225
 msgid "CLOSED"
 msgstr ""
 
-#: levels/l1_substation.gd:744
+#: levels/l1_substation.gd:748
 #, c-format
 msgid "Operate %s (hot stick)"
 msgstr ""
 
-#: levels/l1_substation.gd:764
+#: levels/l1_substation.gd:768
 msgid "BKR-KF2 CONTROL"
 msgstr ""
 
-#: levels/l1_substation.gd:770
+#: levels/l1_substation.gd:774
 msgid "BKR-KF2  FEEDER BREAKER"
 msgstr ""
 
-#: levels/l1_substation.gd:793
+#: levels/l1_substation.gd:797
 msgid "Control cabinet: fuse block"
 msgstr ""
 
-#: levels/l1_substation.gd:794
+#: levels/l1_substation.gd:798
 msgid "Operate BKR-KF2"
 msgstr ""
 
-#: levels/l1_substation.gd:795
+#: levels/l1_substation.gd:799
 msgid "OPEN  TRIP  CLOSE"
 msgstr ""
 
-#: levels/l1_substation.gd:799
+#: levels/l1_substation.gd:803
 msgid "The breaker control circuit is live."
 msgstr ""
 
-#: levels/l1_substation.gd:802
+#: levels/l1_substation.gd:806
 msgid "Fuse block: 60A installed. Control power is up."
 msgstr ""
 
-#: levels/l1_substation.gd:808
+#: levels/l1_substation.gd:812
 msgid "Installed the 60A fuse. The breaker's control circuit is alive."
 msgstr ""
 
-#: levels/l1_substation.gd:810
+#: levels/l1_substation.gd:814
 msgid "The control fuse block is empty. Needs a 60A cartridge fuse."
 msgstr ""
 
-#: levels/l1_substation.gd:815
+#: levels/l1_substation.gd:819
 msgid "DS-2A  BUS ISOLATOR"
 msgstr ""
 
-#: levels/l1_substation.gd:817
+#: levels/l1_substation.gd:821
 msgid "DS-2B  LINE ISOLATOR"
 msgstr ""
 
-#: levels/l1_substation.gd:818
+#: levels/l1_substation.gd:822
 msgid "DS-2C  BYPASS - MAINT ONLY"
 msgstr ""
 
-#: levels/l1_substation.gd:825
+#: levels/l1_substation.gd:829
 msgid "KF-2 BAY  -  FOLLOW THE SWITCHING ORDER"
 msgstr ""
 
-#: levels/l1_substation.gd:849
+#: levels/l1_substation.gd:853
 msgid "Locked. Brass key tag: KF SUBSTATION - CONTROL HOUSE."
 msgstr ""
 
-#: levels/l1_substation.gd:849
+#: levels/l1_substation.gd:853
 msgid "Open control house"
 msgstr ""
 
-#: levels/l1_substation.gd:850
+#: levels/l1_substation.gd:854
 msgid "CONTROL HOUSE"
 msgstr ""
 
-#: levels/l1_substation.gd:851
+#: levels/l1_substation.gd:855
 msgid "NO ENTRY - HV"
 msgstr ""
 
-#: levels/l1_substation.gd:862
+#: levels/l1_substation.gd:866
 msgid ""
 "KETTLE FALLS SUB  -  SCADA  (UPS)\n"
 "BUS 1   69 kV   DEAD\n"
@@ -647,208 +647,208 @@ msgid ""
 "ORDER 0417 ACTIVE - DO NOT RESTORE"
 msgstr ""
 
-#: levels/l1_substation.gd:890
+#: levels/l1_substation.gd:894
 msgid "SAFETY IS A CHOICE"
 msgstr ""
 
-#: levels/l1_substation.gd:893
+#: levels/l1_substation.gd:897
 msgid "ONE-LINE  KF-2:  BUS-DS2A-BKR-DS2B-LINE"
 msgstr ""
 
-#: levels/l1_substation.gd:897
+#: levels/l1_substation.gd:901
 msgid "Read SCADA screen"
 msgstr ""
 
-#: levels/l1_substation.gd:915
+#: levels/l1_substation.gd:919
 msgid "Bus 1 dead. KF-1 and KF-2 open. KF-3 closed: priority load."
 msgstr ""
 
-#: levels/l1_substation.gd:921 levels/l1_substation.gd:922 levels/l1_substation.gd:923
+#: levels/l1_substation.gd:925 levels/l1_substation.gd:926 levels/l1_substation.gd:927
 msgid "ELIAS"
 msgstr ""
 
-#: levels/l1_substation.gd:921
+#: levels/l1_substation.gd:925
 msgid "UPS is still holding the screen. Bus dead. KF-1 open. KF-2 open. KF-3 closed."
 msgstr ""
 
-#: levels/l1_substation.gd:922
+#: levels/l1_substation.gd:926
 msgid "KF-3. Lake Road. That's the only feeder in the whole county still carrying load."
 msgstr ""
 
-#: levels/l1_substation.gd:923
+#: levels/l1_substation.gd:927
 msgid "Shed order from Dispatch. 'MERIDIAN load protected.' Three nights. Three nights in the cold, for a data centre."
 msgstr ""
 
-#: levels/l1_substation.gd:924
+#: levels/l1_substation.gd:928
 msgid "This isn't a fault. Someone opened these on purpose. And someone sat here and held them open."
 msgstr ""
 
-#: levels/l1_substation.gd:925
+#: levels/l1_substation.gd:929
 msgid "KF-2 feeds the school. If I can close it by the book, Gran's shelter gets heat."
 msgstr ""
 
-#: levels/l1_substation.gd:928
+#: levels/l1_substation.gd:932
 msgid "Re-close feeder KF-2. Find the hot stick and a 60A fuse, then follow the switching order."
 msgstr ""
 
-#: levels/l1_substation.gd:944
+#: levels/l1_substation.gd:948
 msgid "KF SUBSTATION  -  STORES"
 msgstr ""
 
-#: levels/l1_substation.gd:955
+#: levels/l1_substation.gd:959
 msgid "Open locked cabinet"
 msgstr ""
 
-#: levels/l1_substation.gd:962
+#: levels/l1_substation.gd:966
 msgid "The cabinet is open. Empty shelves and rust."
 msgstr ""
 
-#: levels/l1_substation.gd:965
+#: levels/l1_substation.gd:969
 msgid "Padlock frozen solid. You need something to pry it with."
 msgstr ""
 
-#: levels/l1_substation.gd:971
+#: levels/l1_substation.gd:975
 msgid "You wedge the hatchet under the hasp and lean. The frozen padlock shears."
 msgstr ""
 
-#: levels/l1_substation.gd:1001
+#: levels/l1_substation.gd:1005
 msgid "LAKESHORE ELEC. 22"
 msgstr ""
 
-#: levels/l1_substation.gd:1047
+#: levels/l1_substation.gd:1051
 msgid "Downed conductor. Still live. Stay clear of the arcing end."
 msgstr ""
 
-#: levels/l1_substation.gd:1059
+#: levels/l1_substation.gd:1063
 msgid "The live conductor arcs across your boots!"
 msgstr ""
 
-#: levels/l1_substation.gd:1074
+#: levels/l1_substation.gd:1078
 msgid "KETTLE FALLS CONSOLIDATED SCHOOLS"
 msgstr ""
 
-#: levels/l1_substation.gd:1075
+#: levels/l1_substation.gd:1079
 msgid "WINTER ROAD CLOSURE  -  SHELTER OPEN"
 msgstr ""
 
-#: levels/l1_substation.gd:1077
+#: levels/l1_substation.gd:1081
 msgid "The road barrier is chained, and the gate motor is dead. No power in the whole town."
 msgstr ""
 
-#: levels/l1_substation.gd:1077 levels/l3_church.gd:1204
+#: levels/l1_substation.gd:1081 levels/l3_church.gd:1254
 msgid "Go through the gate"
 msgstr ""
 
-#: levels/l1_substation.gd:1122 levels/l2_school.gd:87 levels/l2_school.gd:675
+#: levels/l1_substation.gd:1126 levels/l2_school.gd:88 levels/l2_school.gd:681
 msgid "KETTLE FALLS CONSOLIDATED SCHOOL"
 msgstr ""
 
-#: levels/l1_substation.gd:1188
+#: levels/l1_substation.gd:1192
 msgid "KF-2 is already energised. Leave it alone."
 msgstr ""
 
-#: levels/l1_substation.gd:1192
+#: levels/l1_substation.gd:1196
 msgid "Already closed."
 msgstr ""
 
-#: levels/l1_substation.gd:1195
+#: levels/l1_substation.gd:1199
 msgid "You are not touching a disconnect bare-handed. You need an insulated hot stick."
 msgstr ""
 
-#: levels/l1_substation.gd:1199
+#: levels/l1_substation.gd:1203
 msgid "No control power. The breaker's control fuse is missing."
 msgstr ""
 
-#: levels/l1_substation.gd:1210
+#: levels/l1_substation.gd:1214
 #, c-format
 msgid "%s closed."
 msgstr ""
 
-#: levels/l1_substation.gd:1257
+#: levels/l1_substation.gd:1261
 msgid "ARC FLASH! The disconnect flashes over and trips the bay. Everything drops open."
 msgstr ""
 
-#: levels/l1_substation.gd:1267 levels/l1_substation.gd:1268 levels/l1_substation.gd:1316
+#: levels/l1_substation.gd:1271 levels/l1_substation.gd:1272 levels/l1_substation.gd:1320
 msgid "JUNE (radio)"
 msgstr ""
 
-#: levels/l1_substation.gd:1267
+#: levels/l1_substation.gd:1271
 msgid "Dad? ...I heard a bang. Are you okay? Do the thing from the manual. Dad, I know it by heart."
 msgstr ""
 
-#: levels/l1_substation.gd:1268
+#: levels/l1_substation.gd:1272
 msgid "Bus side first. Then the line side. The breaker last. Never touch the bypass. Never switch a disconnect under load."
 msgstr ""
 
-#: levels/l1_substation.gd:1269
+#: levels/l1_substation.gd:1273
 msgid "Bus side, line side, breaker. Right. Thanks, kiddo."
 msgstr ""
 
-#: levels/l1_substation.gd:1272
+#: levels/l1_substation.gd:1276
 msgid "Check the switching order in the control house."
 msgstr ""
 
-#: levels/l1_substation.gd:1315
+#: levels/l1_substation.gd:1319
 msgid "KF-2 is hot. Look at that."
 msgstr ""
 
-#: levels/l1_substation.gd:1316
+#: levels/l1_substation.gd:1320
 msgid "Dad! Dad, the school just lit up. The gym, the hall, everything. Gran's shelter is there."
 msgstr ""
 
-#: levels/l1_substation.gd:1317
+#: levels/l1_substation.gd:1321
 msgid "People are crying. Gran's saying your name. Please hurry. Please, before they come toward the light."
 msgstr ""
 
-#: levels/l1_substation.gd:1318
+#: levels/l1_substation.gd:1322
 msgid "Hold on, June. I'm coming. Stay inside, stay warm."
 msgstr ""
 
-#: levels/l1_substation.gd:1351
+#: levels/l1_substation.gd:1355
 msgid "The control house is already unlocked."
 msgstr ""
 
-#: levels/l1_substation.gd:1356
+#: levels/l1_substation.gd:1360
 msgid "Used Control House Key. The door will open now."
 msgstr ""
 
-#: levels/l1_substation.gd:1358
+#: levels/l1_substation.gd:1362
 msgid "The key tag reads KF SUBSTATION - CONTROL HOUSE."
 msgstr ""
 
-#: levels/l1_substation.gd:1362
+#: levels/l1_substation.gd:1366
 msgid "The fuse block already has its fuse."
 msgstr ""
 
-#: levels/l1_substation.gd:1366
+#: levels/l1_substation.gd:1370
 msgid "A 60A cartridge fuse. It belongs in the breaker's control cabinet."
 msgstr ""
 
-#: levels/l1_substation.gd:1368
+#: levels/l1_substation.gd:1372
 msgid "Walk up to a disconnect and operate it with the hot stick."
 msgstr ""
 
-#: levels/l1_substation.gd:1376
+#: levels/l1_substation.gd:1380
 msgid "Get into the control house. Find the SCADA room by the spur."
 msgstr ""
 
-#: levels/l1_substation.gd:1380
+#: levels/l1_substation.gd:1384
 msgid "TAB: select the Road Flare and USE. It burns and drives the Rimebound back."
 msgstr ""
 
-#: levels/l1_substation.gd:1382
+#: levels/l1_substation.gd:1386
 msgid "Insulated hot stick. Now you can work the disconnects."
 msgstr ""
 
-#: levels/l1_substation.gd:1384
+#: levels/l1_substation.gd:1388
 msgid "A 60A cartridge fuse. The breaker's control cabinet is in the switchyard."
 msgstr ""
 
-#: levels/l1_substation.gd:1398
+#: levels/l1_substation.gd:1402
 msgid "Phone: messages with Deb"
 msgstr ""
 
-#: levels/l1_substation.gd:1399
+#: levels/l1_substation.gd:1403
 msgid ""
 "[b]RUSS (Dec 19, 04:41)[/b]\n"
 "Deb the line's dead at the house too?\n"
@@ -884,11 +884,11 @@ msgid ""
 "please"
 msgstr ""
 
-#: levels/l1_substation.gd:1408
+#: levels/l1_substation.gd:1412
 msgid "Printout: Load-Shed Order 0417"
 msgstr ""
 
-#: levels/l1_substation.gd:1409
+#: levels/l1_substation.gd:1413
 msgid ""
 "[b]LAKESHORE ELECTRIC COOPERATIVE - SYSTEM OPERATIONS[/b]\n"
 "[b]EMERGENCY LOAD-SHED ORDER 0417[/b]\n"
@@ -914,11 +914,11 @@ msgid ""
 "\"There will not be a release. - R.\""
 msgstr ""
 
-#: levels/l1_substation.gd:1410
+#: levels/l1_substation.gd:1414
 msgid "Operator's switching order and log"
 msgstr ""
 
-#: levels/l1_substation.gd:1411
+#: levels/l1_substation.gd:1415
 msgid ""
 "[b]SWITCHING ORDER - RESTORE KF-2[/b]\n"
 "(copy from the manual, for my own sake)\n"
@@ -940,11 +940,11 @@ msgid ""
 "12/21 21:50  Going out to check T2. Back in five."
 msgstr ""
 
-#: levels/l1_substation.gd:1412
+#: levels/l1_substation.gd:1416
 msgid "Flyer: MERIDIAN community benefits"
 msgstr ""
 
-#: levels/l1_substation.gd:1413
+#: levels/l1_substation.gd:1417
 msgid ""
 "[b]CORVANE SYSTEMS[/b]\n"
 "[b]MERIDIAN: Powering Tomorrow, Warming Kettle Falls[/b]\n"
@@ -962,258 +962,258 @@ msgid ""
 "[i]Priority Load Agreement terms apply. In a declared grid emergency, curtailment order is determined by contract. Subject to grid availability.[/i]"
 msgstr ""
 
-#: levels/l1_substation.gd:1442
+#: levels/l1_substation.gd:1446
 msgid "L - flashlight on/off. The Rimebound see light from far away. Dark means safer."
 msgstr ""
 
-#: levels/l1_substation.gd:1446
+#: levels/l1_substation.gd:1450
 msgid "Brake line froze solid. At minus forty, steel cracks like candy."
 msgstr ""
 
-#: levels/l1_substation.gd:1447
+#: levels/l1_substation.gd:1451
 msgid "Town limits. Quarter mile to the first house. Walk it."
 msgstr ""
 
-#: levels/l1_substation.gd:1452
+#: levels/l1_substation.gd:1456
 msgid "E - pick up / interact.   TAB - inventory, files and combining items."
 msgstr ""
 
-#: levels/l1_substation.gd:1454
+#: levels/l1_substation.gd:1458
 msgid "RIGHT MOUSE - aim.  LEFT MOUSE - fire.  R - reload.  F - hatchet.  Something lies in the snow ahead."
 msgstr ""
 
-#: levels/l1_substation.gd:1456
+#: levels/l1_substation.gd:1460
 msgid "Ammo is scarce. A Road Flare (TAB, USE) burns and repels the Rimebound. Light is a tool."
 msgstr ""
 
-#: levels/l1_substation.gd:1458
+#: levels/l1_substation.gd:1462
 msgid "Pop. 1,204. Not a single light on. Not one."
 msgstr ""
 
-#: levels/l1_substation.gd:1466
+#: levels/l1_substation.gd:1470
 msgid "Substation's up the spur. Gate's chained. Someone cut the fence further along."
 msgstr ""
 
-#: levels/l1_substation.gd:1469
+#: levels/l1_substation.gd:1473
 msgid "A burning barrel. The Rimebound keep off the fire."
 msgstr ""
 
-#: levels/l1_substation.gd:1472
+#: levels/l1_substation.gd:1476
 msgid "Russ Pelletier. Night operator. Never met him. Tag says he's the only one they left out here."
 msgstr ""
 
-#: levels/l1_substation.gd:1473
+#: levels/l1_substation.gd:1477
 msgid "Frozen where he knelt. Key's in his hand. Sorry, friend."
 msgstr ""
 
-#: levels/l1_substation.gd:1480
+#: levels/l1_substation.gd:1484
 msgid "June? Come in. It's Dad. Come in, kiddo."
 msgstr ""
 
-#: levels/l1_substation.gd:1481
+#: levels/l1_substation.gd:1485
 msgid "...Dad? You're LATE. You said Tuesday. It's been three days."
 msgstr ""
 
-#: levels/l1_substation.gd:1482
+#: levels/l1_substation.gd:1486
 msgid "I know. Truck went in the ditch at the town limits. I'm on foot. Where are you?"
 msgstr ""
 
-#: levels/l1_substation.gd:1483
+#: levels/l1_substation.gd:1487
 msgid "School. Gran's shelter. It's so cold, the power's been out since the storm and there are people who sleep and don't..."
 msgstr ""
 
-#: levels/l1_substation.gd:1484
+#: levels/l1_substation.gd:1488
 msgid "Don't use your light. They see it. They come to the light, Dad. Dad, I can hear the hum again, it sounds like"
 msgstr ""
 
-#: levels/l1_substation.gd:1489
+#: levels/l1_substation.gd:1493
 msgid "June? June!"
 msgstr ""
 
-#: levels/l1_substation.gd:1490
+#: levels/l1_substation.gd:1494
 msgid "Dead grid, and the school's on the KF-2 feeder. The co-op substation is on the way up. If it's open I can close it."
 msgstr ""
 
-#: levels/l1_substation.gd:1493
+#: levels/l1_substation.gd:1497
 msgid "Reach the Kettle Falls co-op substation, north on Highway 53."
 msgstr ""
 
-#: levels/l2_school.gd:87
+#: levels/l2_school.gd:88
 msgid "The longest night"
 msgstr ""
 
-#: levels/l2_school.gd:93
+#: levels/l2_school.gd:94
 msgid "Dad? The school lights just came on. Gran ran the warming shelter there. Check the gym."
 msgstr ""
 
-#: levels/l2_school.gd:94
+#: levels/l2_school.gd:95
 msgid "Stay where you are, June."
 msgstr ""
 
-#: levels/l2_school.gd:95
+#: levels/l2_school.gd:96
 msgid "I don't stay anywhere. You'd know that if you ever called."
 msgstr ""
 
-#: levels/l2_school.gd:96
+#: levels/l2_school.gd:97
 msgid "...Fair."
 msgstr ""
 
-#: levels/l2_school.gd:488
+#: levels/l2_school.gd:494
 msgid "Iron gate"
 msgstr ""
 
-#: levels/l2_school.gd:488
+#: levels/l2_school.gd:494
 msgid "Locked behind you. Frozen solid. No going back."
 msgstr ""
 
-#: levels/l2_school.gd:490
+#: levels/l2_school.gd:496
 msgid "The gate is chained. Not yet — there is still the school to get through."
 msgstr ""
 
-#: levels/l2_school.gd:490
+#: levels/l2_school.gd:496
 msgid "Go through the east gate"
 msgstr ""
 
-#: levels/l2_school.gd:493
+#: levels/l2_school.gd:499
 msgid "ST. BRENDAN'S  ->  MAIN ST"
 msgstr ""
 
-#: levels/l2_school.gd:541
+#: levels/l2_school.gd:547
 msgid "FRONT DOORS CLOSED"
 msgstr ""
 
-#: levels/l2_school.gd:542
+#: levels/l2_school.gd:548
 msgid ""
 "SHELTER ENTRANCE:\n"
 "WEST DOOR (CUSTODIAL)\n"
 "KNOCK. ASK FOR RUTH."
 msgstr ""
 
-#: levels/l2_school.gd:594
+#: levels/l2_school.gd:600
 msgid "Open shed door"
 msgstr ""
 
-#: levels/l2_school.gd:684 levels/l2_school.gd:1377
+#: levels/l2_school.gd:690 levels/l2_school.gd:1383
 msgid "CUSTODIAL"
 msgstr ""
 
-#: levels/l2_school.gd:685
+#: levels/l2_school.gd:691
 msgid "Locked. The sign says CUSTODIAL — the janitor's keyring would open it."
 msgstr ""
 
-#: levels/l2_school.gd:685
+#: levels/l2_school.gd:691
 msgid "Open custodial door"
 msgstr ""
 
-#: levels/l2_school.gd:735
+#: levels/l2_school.gd:741
 msgid "Front doors"
 msgstr ""
 
-#: levels/l2_school.gd:747
+#: levels/l2_school.gd:753
 msgid "Chained shut from the inside, and the glass is frosted over. Another way in."
 msgstr ""
 
-#: levels/l2_school.gd:751
+#: levels/l2_school.gd:757
 msgid "The mag-lock strike won't release on a brownout. It needs steady building power."
 msgstr ""
 
-#: levels/l2_school.gd:755
+#: levels/l2_school.gd:761
 msgid "Not yet. June's homeroom was 2B. If she left anything, it's there."
 msgstr ""
 
-#: levels/l2_school.gd:786 levels/l2_school.gd:1844
+#: levels/l2_school.gd:792 levels/l2_school.gd:1850
 msgid "Get out of the school. Make for St. Brendan's church — the east gate."
 msgstr ""
 
-#: levels/l2_school.gd:842
+#: levels/l2_school.gd:848
 msgid "The keypad is dead — the electric strike has no power. Brownout. Needs the heat plant back on."
 msgstr ""
 
-#: levels/l2_school.gd:842
+#: levels/l2_school.gd:848
 msgid "Classroom 2B"
 msgstr ""
 
-#: levels/l2_school.gd:843
+#: levels/l2_school.gd:849
 msgid "SHOP — locked. The custodian's keyring opens this."
 msgstr ""
 
-#: levels/l2_school.gd:843
+#: levels/l2_school.gd:849
 msgid "SHOP"
 msgstr ""
 
-#: levels/l2_school.gd:844
+#: levels/l2_school.gd:850
 msgid "NURSE"
 msgstr ""
 
-#: levels/l2_school.gd:845
+#: levels/l2_school.gd:851
 msgid "COACH"
 msgstr ""
 
-#: levels/l2_school.gd:846
+#: levels/l2_school.gd:852
 msgid "Gym doors. Padlocked. Hung on a chain through the handles."
 msgstr ""
 
-#: levels/l2_school.gd:846
+#: levels/l2_school.gd:852
 msgid "GYM"
 msgstr ""
 
-#: levels/l2_school.gd:848
+#: levels/l2_school.gd:854
 msgid ""
 "BASEMENT\n"
 "BOILER · CUSTODIAL"
 msgstr ""
 
-#: levels/l2_school.gd:871
+#: levels/l2_school.gd:877
 msgid ""
 "WARMING SHELTER\n"
 "GYM -> DOWN THE HALL"
 msgstr ""
 
-#: levels/l2_school.gd:872
+#: levels/l2_school.gd:878
 msgid ""
 "DO NOT SLEEP\n"
 "OUTSIDE THE GYM"
 msgstr ""
 
-#: levels/l2_school.gd:873
+#: levels/l2_school.gd:879
 msgid "RULE 2: NOBODY SLEEPS ALONE"
 msgstr ""
 
-#: levels/l2_school.gd:938
+#: levels/l2_school.gd:944
 msgid "KETTLE FALLS — IRON FEEDS A NATION · 1954"
 msgstr ""
 
-#: levels/l2_school.gd:960
+#: levels/l2_school.gd:966
 msgid ""
 "WELCOME TO KETTLE FALLS\n"
 "WEST DOOR: SHELTER INTAKE"
 msgstr ""
 
-#: levels/l2_school.gd:977
+#: levels/l2_school.gd:983
 msgid ""
 "SIGN-IN\n"
 "63 / 41 / 38 ..."
 msgstr ""
 
-#: levels/l2_school.gd:978
+#: levels/l2_school.gd:984
 msgid ""
 "DO NOT SLEEP OUTSIDE\n"
 "THE GYM"
 msgstr ""
 
-#: levels/l2_school.gd:1001
+#: levels/l2_school.gd:1007
 msgid "WARMING SHELTER ->"
 msgstr ""
 
-#: levels/l2_school.gd:1002 levels/l2_school.gd:1140
+#: levels/l2_school.gd:1008 levels/l2_school.gd:1146
 msgid "DO NOT SLEEP OUTSIDE THE GYM"
 msgstr ""
 
-#: levels/l2_school.gd:1016
+#: levels/l2_school.gd:1022
 msgid "HAPPY HOLIDAYS KETTLE FALLS"
 msgstr ""
 
-#: levels/l2_school.gd:1032
+#: levels/l2_school.gd:1038
 msgid ""
 "DAD —\n"
 "Gran walked out at 3am. Said Grandpa\n"
@@ -1223,207 +1223,207 @@ msgid ""
 "P.S. you're late."
 msgstr ""
 
-#: levels/l2_school.gd:1033
+#: levels/l2_school.gd:1039
 msgid "2B — MS. PELTO"
 msgstr ""
 
-#: levels/l2_school.gd:1034
+#: levels/l2_school.gd:1040
 msgid "Read the blackboard"
 msgstr ""
 
-#: levels/l2_school.gd:1058
+#: levels/l2_school.gd:1064
 msgid "SHOP — NO ENTRY WITHOUT SUPERVISION"
 msgstr ""
 
-#: levels/l2_school.gd:1069
+#: levels/l2_school.gd:1075
 msgid "HEALTH OFFICE"
 msgstr ""
 
-#: levels/l2_school.gd:1080
+#: levels/l2_school.gd:1086
 msgid "COACH  H. BERGSTROM"
 msgstr ""
 
-#: levels/l2_school.gd:1093
+#: levels/l2_school.gd:1099
 msgid "KETTLE FALLS  ·  HOME OF THE MINERS"
 msgstr ""
 
-#: levels/l2_school.gd:1132
+#: levels/l2_school.gd:1138
 msgid "SIGN IN"
 msgstr ""
 
-#: levels/l2_school.gd:1139
+#: levels/l2_school.gd:1145
 msgid ""
 "FAMILIES: WEST SIDE\n"
 "BLANKETS: STAGE"
 msgstr ""
 
-#: levels/l2_school.gd:1141
+#: levels/l2_school.gd:1147
 msgid "LOCKER ROOMS  v"
 msgstr ""
 
-#: levels/l2_school.gd:1180
+#: levels/l2_school.gd:1186
 msgid "Dozens of cots. Some of them are moving, slightly. The light is what wakes them. (L)"
 msgstr ""
 
-#: levels/l2_school.gd:1181
+#: levels/l2_school.gd:1187
 msgid "Cross the gym to the locker-room stairs. Don't wake them — keep the flashlight off."
 msgstr ""
 
-#: levels/l2_school.gd:1228
+#: levels/l2_school.gd:1234
 msgid "BOILER ROOM — AUTHORIZED PERSONNEL ONLY. The custodian's keyring opens it."
 msgstr ""
 
-#: levels/l2_school.gd:1228
+#: levels/l2_school.gd:1234
 msgid "BOILER"
 msgstr ""
 
-#: levels/l2_school.gd:1242
+#: levels/l2_school.gd:1248
 msgid "BOILER ROOM ->"
 msgstr ""
 
-#: levels/l2_school.gd:1243
+#: levels/l2_school.gd:1249
 msgid "CUSTODIAL ->"
 msgstr ""
 
-#: levels/l2_school.gd:1331
+#: levels/l2_school.gd:1337
 msgid "HEATING PLANT — BURNER CONTROL"
 msgstr ""
 
-#: levels/l2_school.gd:1335 levels/l2_school.gd:1343
+#: levels/l2_school.gd:1341 levels/l2_school.gd:1349
 msgid "PURGE"
 msgstr ""
 
-#: levels/l2_school.gd:1337 levels/l2_school.gd:1344
+#: levels/l2_school.gd:1343 levels/l2_school.gd:1350
 msgid "IGNITE"
 msgstr ""
 
-#: levels/l2_school.gd:1339
+#: levels/l2_school.gd:1345
 msgid "FEED"
 msgstr ""
 
-#: levels/l2_school.gd:1342
+#: levels/l2_school.gd:1348
 msgid "Fuse holder (F2 60A)"
 msgstr ""
 
-#: levels/l2_school.gd:1345
+#: levels/l2_school.gd:1351
 msgid "Feed valve"
 msgstr ""
 
-#: levels/l2_school.gd:1362
+#: levels/l2_school.gd:1368
 msgid "PURGE · IGNITE · FEED"
 msgstr ""
 
-#: levels/l2_school.gd:1378
+#: levels/l2_school.gd:1384
 msgid ""
 "DECEMBER 2026\n"
 "W. Dubois — heat + hearts"
 msgstr ""
 
-#: levels/l2_school.gd:1386
+#: levels/l2_school.gd:1392
 msgid "SAFE — WARM"
 msgstr ""
 
-#: levels/l2_school.gd:1465
+#: levels/l2_school.gd:1471
 msgid "Break the ice (hatchet)"
 msgstr ""
 
-#: levels/l2_school.gd:1478
+#: levels/l2_school.gd:1484
 msgid "The 60-amp fuse is seated. The controller's standby lamp is lit."
 msgstr ""
 
-#: levels/l2_school.gd:1484
+#: levels/l2_school.gd:1490
 msgid "F2 — 60A. The holder is empty. Somebody pulled it, or it blew."
 msgstr ""
 
-#: levels/l2_school.gd:1491
+#: levels/l2_school.gd:1497
 msgid "Seated the 60A fuse. The controller wakes: standby lamp on."
 msgstr ""
 
-#: levels/l2_school.gd:1497 levels/l2_school.gd:1523
+#: levels/l2_school.gd:1503 levels/l2_school.gd:1529
 msgid "The burner is running."
 msgstr ""
 
-#: levels/l2_school.gd:1501
+#: levels/l2_school.gd:1507
 msgid "Nothing happens. The burner controller has no power — no fuse."
 msgstr ""
 
-#: levels/l2_school.gd:1504
+#: levels/l2_school.gd:1510
 msgid "The blower is still running. Wait for the lamp."
 msgstr ""
 
-#: levels/l2_school.gd:1507
+#: levels/l2_school.gd:1513
 msgid "Already purged. Light the pilot before the hearth cools: IGNITE."
 msgstr ""
 
-#: levels/l2_school.gd:1511
+#: levels/l2_school.gd:1517
 msgid "PURGE: blower running. Hold on for one full cycle..."
 msgstr ""
 
-#: levels/l2_school.gd:1517
+#: levels/l2_school.gd:1523
 msgid "PURGE COMPLETE. The green lamp is lit."
 msgstr ""
 
-#: levels/l2_school.gd:1527
+#: levels/l2_school.gd:1533
 msgid "Dead. No control power."
 msgstr ""
 
-#: levels/l2_school.gd:1530
+#: levels/l2_school.gd:1536
 msgid "Flame proven. Steady blue. Now the feed valve."
 msgstr ""
 
-#: levels/l2_school.gd:1538
+#: levels/l2_school.gd:1544
 msgid "FLAME FAILURE — LOCKOUT. Fired it before a full purge. Purge first, then ignite."
 msgstr ""
 
-#: levels/l2_school.gd:1545
+#: levels/l2_school.gd:1551
 msgid "IGNITE: pilot lit, main flame proven. Steady blue."
 msgstr ""
 
-#: levels/l2_school.gd:1559
+#: levels/l2_school.gd:1565
 msgid "The valve stem is bare. Somebody took the wheel off."
 msgstr ""
 
-#: levels/l2_school.gd:1562
+#: levels/l2_school.gd:1568
 msgid "The feed valve is open. Pipes are ticking."
 msgstr ""
 
-#: levels/l2_school.gd:1565
+#: levels/l2_school.gd:1571
 msgid "Don't open the feed on a dead boiler. Purge, ignite — then feed."
 msgstr ""
 
-#: levels/l2_school.gd:1575
+#: levels/l2_school.gd:1581
 msgid "Fitted the valve wheel. The feed is still closed."
 msgstr ""
 
-#: levels/l2_school.gd:1593
+#: levels/l2_school.gd:1599
 msgid "Hear that? Pipes ticking all the way up. That's heat in the walls."
 msgstr ""
 
-#: levels/l2_school.gd:1594
+#: levels/l2_school.gd:1600
 msgid "And the building bus is steady again. No more brownout."
 msgstr ""
 
-#: levels/l2_school.gd:1597 levels/l2_school.gd:1848
+#: levels/l2_school.gd:1603 levels/l2_school.gd:1854
 msgid "The boiler is running. Find June's trail — her homeroom, Classroom 2B."
 msgstr ""
 
-#: levels/l2_school.gd:1600
+#: levels/l2_school.gd:1606
 msgid "JUNE (radio): \"Dad? The school's lit up like a Christmas tree. Is that you?\""
 msgstr ""
 
-#: levels/l2_school.gd:1642
+#: levels/l2_school.gd:1648
 msgid "Solid ice. You'd need something with an edge. Your hatchet."
 msgstr ""
 
-#: levels/l2_school.gd:1655
+#: levels/l2_school.gd:1661
 msgid "The ice cracks away. A cast-iron valve wheel drops out."
 msgstr ""
 
-#: levels/l2_school.gd:1800
+#: levels/l2_school.gd:1806
 msgid "Shelter Log — R. Kade"
 msgstr ""
 
-#: levels/l2_school.gd:1801
+#: levels/l2_school.gd:1807
 msgid ""
 "[b]KETTLE FALLS WARMING SHELTER — LOG[/b]\n"
 "KFCS Gym · R. Kade, coordinator\n"
@@ -1442,11 +1442,11 @@ msgid ""
 "I'm going to the front doors to listen."
 msgstr ""
 
-#: levels/l2_school.gd:1803
+#: levels/l2_school.gd:1809
 msgid "Drawing: \"the man with the light on his head\""
 msgstr ""
 
-#: levels/l2_school.gd:1804
+#: levels/l2_school.gd:1810
 msgid ""
 "[b]Crayon on construction paper.[/b]\n"
 "\n"
@@ -1458,11 +1458,11 @@ msgid ""
 "— Hannah W., grade 2"
 msgstr ""
 
-#: levels/l2_school.gd:1806
+#: levels/l2_school.gd:1812
 msgid "Email: \"Meridian Scholars\""
 msgstr ""
 
-#: levels/l2_school.gd:1807
+#: levels/l2_school.gd:1813
 msgid ""
 "[b]From:[/b] Office of the Superintendent, KFCSD\n"
 "[b]To:[/b] All staff\n"
@@ -1479,11 +1479,11 @@ msgid ""
 "240 laptops. 63 cots. Do the math."
 msgstr ""
 
-#: levels/l2_school.gd:1809
+#: levels/l2_school.gd:1815
 msgid "Printout: parents' group text"
 msgstr ""
 
-#: levels/l2_school.gd:1810
+#: levels/l2_school.gd:1816
 msgid ""
 "[b]GROUP: KF Parents (Gr. 2–5) — printed at the library, 12/19[/b]\n"
 "\n"
@@ -1499,11 +1499,11 @@ msgid ""
 "[i](no further messages)[/i]"
 msgstr ""
 
-#: levels/l2_school.gd:1812
+#: levels/l2_school.gd:1818
 msgid "Boiler Light-Up Card"
 msgstr ""
 
-#: levels/l2_school.gd:1813
+#: levels/l2_school.gd:1819
 msgid ""
 "[b]KFCS HEATING PLANT — LIGHT-UP PROCEDURE[/b]\n"
 "(laminated · W. Dubois, Custodial)\n"
@@ -1519,11 +1519,11 @@ msgid ""
 "— Walt"
 msgstr ""
 
-#: levels/l2_school.gd:1815
+#: levels/l2_school.gd:1821
 msgid "Sticky note on the drawer"
 msgstr ""
 
-#: levels/l2_school.gd:1816
+#: levels/l2_school.gd:1822
 msgid ""
 "[i]In Ruth's handwriting, stuck to the desk drawer:[/i]\n"
 "\n"
@@ -1533,11 +1533,11 @@ msgid ""
 "\"If you're reading this you're not Tom. Be careful with it.\""
 msgstr ""
 
-#: levels/l2_school.gd:1821
+#: levels/l2_school.gd:1827
 msgid "Classroom 2B — Blackboard"
 msgstr ""
 
-#: levels/l2_school.gd:1821
+#: levels/l2_school.gd:1827
 msgid ""
 "[i]Chalk, in a hurry, in June's slanting capitals:[/i]\n"
 "\n"
@@ -1548,11 +1548,11 @@ msgid ""
 "P.S. you're late.[/b]"
 msgstr ""
 
-#: levels/l2_school.gd:1828
+#: levels/l2_school.gd:1834
 msgid "Blackboard — June"
 msgstr ""
 
-#: levels/l2_school.gd:1828
+#: levels/l2_school.gd:1834
 msgid ""
 "DAD —\n"
 "Gran walked out at 3am. Said Grandpa was calling her from the mine.\n"
@@ -1561,231 +1561,231 @@ msgid ""
 "P.S. you're late."
 msgstr ""
 
-#: levels/l2_school.gd:1834
+#: levels/l2_school.gd:1840
 msgid "\"Grandpa was calling her from the mine.\" Dad's been dead fifteen years."
 msgstr ""
 
-#: levels/l2_school.gd:1835
+#: levels/l2_school.gd:1841
 msgid "Ruth heard him too. The same hum that brought me home is walking my mother into the dark."
 msgstr ""
 
-#: levels/l2_school.gd:1836
+#: levels/l2_school.gd:1842
 msgid "\"P.S. you're late.\" ...Yeah. I know, kid."
 msgstr ""
 
-#: levels/l2_school.gd:1846
+#: levels/l2_school.gd:1852
 msgid "Leave through the front doors: unchain them from the inside."
 msgstr ""
 
-#: levels/l2_school.gd:1851
+#: levels/l2_school.gd:1857
 msgid "Restore the boiler: 60A fuse (shop), valve wheel (locker rooms)."
 msgstr ""
 
-#: levels/l2_school.gd:1853
+#: levels/l2_school.gd:1859
 msgid "Find a way into the school. The front doors are chained — try the tool shed."
 msgstr ""
 
-#: levels/l2_school.gd:1855
+#: levels/l2_school.gd:1861
 msgid "At the boiler panel: PURGE, then IGNITE, then open the FEED valve."
 msgstr ""
 
-#: levels/l2_school.gd:1857
+#: levels/l2_school.gd:1863
 msgid "Restore the boiler: 60A fuse (shop class), valve wheel (frozen in the locker room), then purge-ignite-feed."
 msgstr ""
 
-#: levels/l2_school.gd:1867
+#: levels/l2_school.gd:1873
 msgid "The fuse belongs in the boiler's control panel."
 msgstr ""
 
-#: levels/l2_school.gd:1873
+#: levels/l2_school.gd:1879
 msgid "It fits a valve stem. The boiler feed, maybe."
 msgstr ""
 
-#: levels/l2_school.gd:1876
+#: levels/l2_school.gd:1882
 msgid "Face a locked door and press interact — the key is used automatically."
 msgstr ""
 
-#: levels/l2_school.gd:1969 levels/l2_school.gd:1983
+#: levels/l2_school.gd:1975 levels/l2_school.gd:1989
 msgid "WALT"
 msgstr ""
 
-#: levels/l2_school.gd:1969
+#: levels/l2_school.gd:1975
 msgid "Kade? Elias Kade?! Get out of here, kid — don't look at the light!"
 msgstr ""
 
-#: levels/l2_school.gd:1970
+#: levels/l2_school.gd:1976
 msgid "Walt? Hold on, I'm —"
 msgstr ""
 
-#: levels/l2_school.gd:1983
+#: levels/l2_school.gd:1989
 msgid "He's got my — he's SAYING MY NAME — tell Ruth I kept the —"
 msgstr ""
 
-#: levels/l2_school.gd:1993
+#: levels/l2_school.gd:1999
 msgid "Dad, I heard someone shouting on the open channel. Was that you? Are you okay?"
 msgstr ""
 
-#: levels/l2_school.gd:1994
+#: levels/l2_school.gd:2000
 msgid "I'm okay. June — where are you?"
 msgstr ""
 
-#: levels/l2_school.gd:1995
+#: levels/l2_school.gd:2001
 msgid "Keep moving. Church first, Dad. The hum's loud, I can't stay on. I'll check in."
 msgstr ""
 
-#: levels/l2_school.gd:1996
+#: levels/l2_school.gd:2002
 msgid "Gil Arsenault. He's been dead since... no. That was him."
 msgstr ""
 
-#: levels/l2_school.gd:1998
+#: levels/l2_school.gd:2004
 msgid "Take the east gate to St. Brendan's church. Something walks the town with a light."
 msgstr ""
 
-#: levels/l3_church.gd:315
+#: levels/l3_church.gd:359
 msgid "KETTLE FALLS PHARMACY"
 msgstr ""
 
-#: levels/l3_church.gd:364
+#: levels/l3_church.gd:408
 msgid "IRON RANGE DINER"
 msgstr ""
 
-#: levels/l3_church.gd:373
+#: levels/l3_church.gd:417
 msgid "OPEN 24 HRS"
 msgstr ""
 
-#: levels/l3_church.gd:417
+#: levels/l3_church.gd:461
 msgid "NORTHLINE MINERAL"
 msgstr ""
 
-#: levels/l3_church.gd:418
+#: levels/l3_church.gd:462
 msgid "COMMUNITY RECRUITMENT OFFICE — CLOSED"
 msgstr ""
 
-#: levels/l3_church.gd:419
+#: levels/l3_church.gd:463
 msgid "NOW HIRING"
 msgstr ""
 
-#: levels/l3_church.gd:420
+#: levels/l3_church.gd:464
 msgid "NORTHLINE CARES"
 msgstr ""
 
-#: levels/l3_church.gd:427
+#: levels/l3_church.gd:471
 msgid "NORTHLINE"
 msgstr ""
 
-#: levels/l3_church.gd:428
+#: levels/l3_church.gd:472
 msgid "LITHIUM FOR A CLEANER TOMORROW"
 msgstr ""
 
-#: levels/l3_church.gd:429
+#: levels/l3_church.gd:473
 msgid "powering the future of Kettle Falls"
 msgstr ""
 
-#: levels/l3_church.gd:430
+#: levels/l3_church.gd:474
 msgid "TOMORROW FOR WHO?"
 msgstr ""
 
-#: levels/l3_church.gd:442
+#: levels/l3_church.gd:487 levels/l3_church.gd:489
 msgid "LAKESHORE SAVINGS & LOAN"
 msgstr ""
 
-#: levels/l3_church.gd:448
+#: levels/l3_church.gd:496 levels/l3_church.gd:498
 msgid "THE TAP ROOM"
 msgstr ""
 
-#: levels/l3_church.gd:476
+#: levels/l3_church.gd:526
 msgid "LAKESHORE CO-OP FUEL"
 msgstr ""
 
-#: levels/l3_church.gd:481
+#: levels/l3_church.gd:531
 msgid "PREPAY ONLY"
 msgstr ""
 
-#: levels/l3_church.gd:496
+#: levels/l3_church.gd:546
 msgid "LINDQVIST HARDWARE"
 msgstr ""
 
-#: levels/l3_church.gd:499
+#: levels/l3_church.gd:549
 msgid "SINCE 1954 — NAILS TO NEW ROOFS"
 msgstr ""
 
-#: levels/l3_church.gd:504
+#: levels/l3_church.gd:554
 msgid "Open office door"
 msgstr ""
 
-#: levels/l3_church.gd:505
+#: levels/l3_church.gd:555
 msgid "OFFICE"
 msgstr ""
 
-#: levels/l3_church.gd:528
+#: levels/l3_church.gd:578
 msgid "PROPANE — ASK DON"
 msgstr ""
 
-#: levels/l3_church.gd:529
+#: levels/l3_church.gd:579
 msgid "SPACE HEATERS: SOLD OUT"
 msgstr ""
 
-#: levels/l3_church.gd:530
+#: levels/l3_church.gd:580
 msgid "ROCK SALT: SOLD OUT   SHOVELS: SOLD OUT"
 msgstr ""
 
-#: levels/l3_church.gd:567
+#: levels/l3_church.gd:617
 msgid "WARM — COME IN — SHUT THE DOOR"
 msgstr ""
 
-#: levels/l3_church.gd:595
+#: levels/l3_church.gd:645
 msgid "KETTLE FALLS TOWN HALL"
 msgstr ""
 
-#: levels/l3_church.gd:601
+#: levels/l3_church.gd:651
 msgid "WINTER SOLSTICE CARNIVAL — DEC 21 — FREE COCOA"
 msgstr ""
 
-#: levels/l3_church.gd:633
+#: levels/l3_church.gd:683
 msgid "FREE COCOA"
 msgstr ""
 
-#: levels/l3_church.gd:672
+#: levels/l3_church.gd:722
 msgid "WELCOME TO KETTLE FALLS — POP. 1,812"
 msgstr ""
 
-#: levels/l3_church.gd:674
+#: levels/l3_church.gd:724
 msgid "HOME OF THE IRON RANGE HAWKS"
 msgstr ""
 
-#: levels/l3_church.gd:730
+#: levels/l3_church.gd:780
 msgid "SOUP OF THE DAY: NO"
 msgstr ""
 
-#: levels/l3_church.gd:896
+#: levels/l3_church.gd:946
 msgid "The doors are sealed shut by a half-metre of ice. There must be another way in."
 msgstr ""
 
-#: levels/l3_church.gd:902
+#: levels/l3_church.gd:952
 msgid "ST. BRENDAN'S"
 msgstr ""
 
-#: levels/l3_church.gd:903
+#: levels/l3_church.gd:953
 msgid "ADVENT SERVICES  —  ALL ARE WELCOME"
 msgstr ""
 
-#: levels/l3_church.gd:904
+#: levels/l3_church.gd:954
 msgid "Locked. A tag on the frame reads: 'Sacristy key — see D. Halloran'."
 msgstr ""
 
-#: levels/l3_church.gd:1000
+#: levels/l3_church.gd:1050
 msgid "HYMNS: 214  118  304"
 msgstr ""
 
-#: levels/l3_church.gd:1022
+#: levels/l3_church.gd:1072
 msgid "RING FOR VESPERS"
 msgstr ""
 
-#: levels/l3_church.gd:1031
+#: levels/l3_church.gd:1081
 msgid "Sermon Draft: Advent IV"
 msgstr ""
 
-#: levels/l3_church.gd:1032
+#: levels/l3_church.gd:1082
 msgid ""
 "[b]SERMON — ADVENT IV (draft, unfinished)[/b]\n"
 "\n"
@@ -1800,11 +1800,11 @@ msgid ""
 "[in a different hand] The singing started at three. It sounds like us. Ruth Kade stayed past midnight with the blankets. I told her to go home to the school. She said the lake was calling."
 msgstr ""
 
-#: levels/l3_church.gd:1033
+#: levels/l3_church.gd:1083
 msgid "Mom's Note"
 msgstr ""
 
-#: levels/l3_church.gd:1034
+#: levels/l3_church.gd:1084
 msgid ""
 "[b]Elias —[/b]\n"
 "\n"
@@ -1821,15 +1821,15 @@ msgid ""
 "— Mom"
 msgstr ""
 
-#: levels/l3_church.gd:1143
+#: levels/l3_church.gd:1193
 msgid "Burning barrels and flares keep the Rimebound back. Shops break their line of sight."
 msgstr ""
 
-#: levels/l3_church.gd:1154
+#: levels/l3_church.gd:1204
 msgid "Corvane Community Heat Credit"
 msgstr ""
 
-#: levels/l3_church.gd:1155
+#: levels/l3_church.gd:1205
 msgid ""
 "[b]CORVANE SYSTEMS — Community Partnerships[/b]\n"
 "\n"
@@ -1846,11 +1846,11 @@ msgid ""
 "Director, Community Partnerships"
 msgstr ""
 
-#: levels/l3_church.gd:1160
+#: levels/l3_church.gd:1210
 msgid "Pharmacy Cold-Exposure Log"
 msgstr ""
 
-#: levels/l3_church.gd:1161
+#: levels/l3_church.gd:1211
 msgid ""
 "[b]KETTLE FALLS PHARMACY — COLD EXPOSURE LOG[/b]\n"
 "\n"
@@ -1865,11 +1865,11 @@ msgid ""
 "[i]— D.H.[/i]  (the sacristy key is on my lanyard, if Father Okafor sends anyone)"
 msgstr ""
 
-#: levels/l3_church.gd:1168
+#: levels/l3_church.gd:1218
 msgid "Cardboard Sign: Lindqvist Hardware"
 msgstr ""
 
-#: levels/l3_church.gd:1169
+#: levels/l3_church.gd:1219
 msgid ""
 "[b](marker, on a flattened box)[/b]\n"
 "\n"
@@ -1887,15 +1887,15 @@ msgid ""
 "— Don Lindqvist. Open since 1954. Still open."
 msgstr ""
 
-#: levels/l3_church.gd:1172
+#: levels/l3_church.gd:1222
 msgid "NOTICE — READ ME"
 msgstr ""
 
-#: levels/l3_church.gd:1173
+#: levels/l3_church.gd:1223
 msgid "Notice on the Church Door"
 msgstr ""
 
-#: levels/l3_church.gd:1174
+#: levels/l3_church.gd:1224
 msgid ""
 "[b]ST. BRENDAN'S — NOTICE[/b]\n"
 "\n"
@@ -1910,148 +1910,148 @@ msgid ""
 "P.S. If you hear singing at night, it isn't us."
 msgstr ""
 
-#: levels/l3_church.gd:1178 levels/l3_church.gd:1235
+#: levels/l3_church.gd:1228 levels/l3_church.gd:1285
 msgid "Find the sacristy key — Kettle Falls Pharmacy, west end of Main Street."
 msgstr ""
 
-#: levels/l3_church.gd:1183 levels/l3_church.gd:1233
+#: levels/l3_church.gd:1233 levels/l3_church.gd:1283
 msgid "Unlock the side door of St. Brendan's (west wall)."
 msgstr ""
 
-#: levels/l3_church.gd:1186
+#: levels/l3_church.gd:1236
 msgid "The pharmacist's hand closes on your wrist."
 msgstr ""
 
-#: levels/l3_church.gd:1190
+#: levels/l3_church.gd:1240
 msgid "The Pump Shotgun spreads wide up close. It's loud, and they listen to loud."
 msgstr ""
 
-#: levels/l3_church.gd:1204
+#: levels/l3_church.gd:1254
 msgid "The lakeside gate is chained and frozen shut. You can't leave Mom behind."
 msgstr ""
 
-#: levels/l3_church.gd:1205
+#: levels/l3_church.gd:1255
 msgid "LAKESHORE ROAD — MERIDIAN SITE ACCESS — AUTHORIZED PERSONNEL ONLY"
 msgstr ""
 
-#: levels/l3_church.gd:1206
+#: levels/l3_church.gd:1256
 msgid "NO TRESPASSING — CORVANE SYSTEMS"
 msgstr ""
 
-#: levels/l3_church.gd:1224
+#: levels/l3_church.gd:1274
 msgid "MAIN STREET"
 msgstr ""
 
-#: levels/l3_church.gd:1224
+#: levels/l3_church.gd:1274
 msgid "St. Brendan's — Kettle Falls"
 msgstr ""
 
-#: levels/l3_church.gd:1227 levels/l3_church.gd:1362
+#: levels/l3_church.gd:1277 levels/l3_church.gd:1412
 msgid "Take the lakeside road to MERIDIAN (east gate)."
 msgstr ""
 
-#: levels/l3_church.gd:1229
+#: levels/l3_church.gd:1279
 msgid "Take Ruth's rosary from the altar of St. Brendan's."
 msgstr ""
 
-#: levels/l3_church.gd:1231
+#: levels/l3_church.gd:1281
 msgid "Silence the Choir. The bell in the tower stuns it."
 msgstr ""
 
-#: levels/l3_church.gd:1237
+#: levels/l3_church.gd:1287
 msgid "Cross Main Street to St. Brendan's church, at the far east end."
 msgstr ""
 
-#: levels/l3_church.gd:1248
+#: levels/l3_church.gd:1298
 msgid "A headlamp. Back at the roadblock. Walking like the road's too short for him."
 msgstr ""
 
-#: levels/l3_church.gd:1249
+#: levels/l3_church.gd:1299
 msgid "Light and heat. It's following the light. Get under cover."
 msgstr ""
 
-#: levels/l3_church.gd:1256
+#: levels/l3_church.gd:1306
 msgid "A thin, wet humming comes from behind the counter."
 msgstr ""
 
-#: levels/l3_church.gd:1291
+#: levels/l3_church.gd:1341
 msgid "...Is that singing?"
 msgstr ""
 
-#: levels/l3_church.gd:1294
+#: levels/l3_church.gd:1344
 msgid "'Lo, How a Rose E'er Blooming.' Mom sang it every Advent. In the kitchen. Out of tune."
 msgstr ""
 
-#: levels/l3_church.gd:1295
+#: levels/l3_church.gd:1345
 msgid "Halloran's cardigan. The Lindqvist boys' hockey jackets. They're all still here."
 msgstr ""
 
-#: levels/l3_church.gd:1296
+#: levels/l3_church.gd:1346
 msgid "All of them. Standing in one place. Singing the same note."
 msgstr ""
 
-#: levels/l3_church.gd:1302
+#: levels/l3_church.gd:1352
 msgid "Silence the Choir. The bell in the tower stuns it (find the bell-pull handle)."
 msgstr ""
 
-#: levels/l3_church.gd:1311
+#: levels/l3_church.gd:1361
 msgid "The singing cracks, and stops. Something in the chancel gives way."
 msgstr ""
 
-#: levels/l3_church.gd:1336
+#: levels/l3_church.gd:1386
 msgid "The hum stops. For the first time tonight, you can hear the wind."
 msgstr ""
 
-#: levels/l3_church.gd:1339
+#: levels/l3_church.gd:1389
 msgid "Take Ruth's rosary from the altar."
 msgstr ""
 
-#: levels/l3_church.gd:1355
+#: levels/l3_church.gd:1405
 msgid "Dad? ...Dad, I can hear bells. Are you at the church? Please say yes."
 msgstr ""
 
-#: levels/l3_church.gd:1356
+#: levels/l3_church.gd:1406
 msgid "Yes. It's over. I have Gran's rosary. June, where are you?"
 msgstr ""
 
-#: levels/l3_church.gd:1357
+#: levels/l3_church.gd:1407
 msgid "I followed her. I know, I know. She just kept walking toward the lake like she wasn't cold."
 msgstr ""
 
-#: levels/l3_church.gd:1358
+#: levels/l3_church.gd:1408
 msgid "There's a pipe from the data center going down into the mine. Gran went in through Meridian."
 msgstr ""
 
-#: levels/l3_church.gd:1359
+#: levels/l3_church.gd:1409
 msgid "Stay warm. Stay off the road. Don't follow anyone else. I'm coming."
 msgstr ""
 
-#: levels/l3_church.gd:1360
+#: levels/l3_church.gd:1410
 msgid "You said that about Christmas, too. ...Just hurry."
 msgstr ""
 
-#: levels/l3_church.gd:1363
+#: levels/l3_church.gd:1413
 msgid "The lakeside gate is open to you now."
 msgstr ""
 
-#: levels/l3_church.gd:1367
+#: levels/l3_church.gd:1417
 msgid "Ring the church bell"
 msgstr ""
 
-#: levels/l3_church.gd:1375
+#: levels/l3_church.gd:1425
 msgid "You fit the handle onto the pull-chain."
 msgstr ""
 
-#: levels/l3_church.gd:1377
+#: levels/l3_church.gd:1427
 msgid "The pull-chain hangs bare. The handle is missing."
 msgstr ""
 
-#: levels/l3_church.gd:1381
+#: levels/l3_church.gd:1431
 #, c-format
 msgid "The bell is still swaying. (%d s)"
 msgstr ""
 
-#: levels/l3_church.gd:1386
+#: levels/l3_church.gd:1436
 msgid "The bell tolls. The hum falters."
 msgstr ""
 
@@ -3866,15 +3866,15 @@ msgstr ""
 msgid "New Game"
 msgstr ""
 
-#: ui/main_menu.gd:41 ui/ui.gd:956 ui/ui.gd:1042
+#: ui/main_menu.gd:41 ui/ui.gd:997 ui/ui.gd:1083
 msgid "Load Game"
 msgstr ""
 
-#: ui/main_menu.gd:43 ui/main_menu.gd:43 ui/ui.gd:959
+#: ui/main_menu.gd:43 ui/main_menu.gd:43 ui/ui.gd:1000
 msgid "Controls"
 msgstr ""
 
-#: ui/main_menu.gd:44 ui/ui.gd:962
+#: ui/main_menu.gd:44 ui/ui.gd:1003
 msgid "Options"
 msgstr ""
 
@@ -3906,194 +3906,198 @@ msgstr ""
 msgid "Hardcore — every bullet counts"
 msgstr ""
 
-#: ui/ui.gd:301 core/game.gd:1
+#: ui/ui.gd:302 core/game.gd:1
 msgid "FINE"
 msgstr ""
 
-#: ui/ui.gd:615 ui/ui.gd:854
+#: ui/ui.gd:616 ui/ui.gd:895
 msgid "Close"
 msgstr ""
 
-#: ui/ui.gd:626
+#: ui/ui.gd:636
 msgid "OBTAINED"
 msgstr ""
 
-#: ui/ui.gd:655
+#: ui/ui.gd:643
+msgid "Drag to rotate · Wheel to zoom"
+msgstr ""
+
+#: ui/ui.gd:670
 msgid "ELIAS KADE"
 msgstr ""
 
-#: ui/ui.gd:661
+#: ui/ui.gd:676
 msgid "ITEMS"
 msgstr ""
 
-#: ui/ui.gd:662
+#: ui/ui.gd:677
 msgid "FILES"
 msgstr ""
 
-#: ui/ui.gd:664
+#: ui/ui.gd:679
 #, c-format
 msgid "Objective: %s"
 msgstr ""
 
-#: ui/ui.gd:720
+#: ui/ui.gd:757
 #, c-format
 msgid "Combine %s with...?"
 msgstr ""
 
-#: ui/ui.gd:721 ui/ui.gd:904
+#: ui/ui.gd:758 ui/ui.gd:945
 msgid "Cancel"
 msgstr ""
 
-#: ui/ui.gd:736
+#: ui/ui.gd:777
 msgid "Equip"
 msgstr ""
 
-#: ui/ui.gd:736
+#: ui/ui.gd:777
 msgid "Equipped"
 msgstr ""
 
-#: ui/ui.gd:740 ui/ui.gd:745
+#: ui/ui.gd:781 ui/ui.gd:786
 msgid "Use"
 msgstr ""
 
-#: ui/ui.gd:749
+#: ui/ui.gd:790
 msgid "Combine"
 msgstr ""
 
-#: ui/ui.gd:753
+#: ui/ui.gd:794
 msgid "Discard"
 msgstr ""
 
-#: ui/ui.gd:758
+#: ui/ui.gd:799
 msgid "Select an item."
 msgstr ""
 
-#: ui/ui.gd:759
+#: ui/ui.gd:800
 #, c-format
 msgid "Inventory: %d / %d slots"
 msgstr ""
 
-#: ui/ui.gd:760
+#: ui/ui.gd:801
 msgid "[Tab/Esc] Close"
 msgstr ""
 
-#: ui/ui.gd:774
+#: ui/ui.gd:815
 msgid "Need two of these."
 msgstr ""
 
-#: ui/ui.gd:797
+#: ui/ui.gd:838
 msgid "No files collected."
 msgstr ""
 
-#: ui/ui.gd:810
+#: ui/ui.gd:851
 msgid "SUPPLY CRATE — click to move items"
 msgstr ""
 
-#: ui/ui.gd:820
+#: ui/ui.gd:861
 #, c-format
 msgid "Inventory (%d/%d)"
 msgstr ""
 
-#: ui/ui.gd:821
+#: ui/ui.gd:862
 msgid "Box"
 msgstr ""
 
-#: ui/ui.gd:845
+#: ui/ui.gd:886
 msgid "Inventory full."
 msgstr ""
 
-#: ui/ui.gd:884
+#: ui/ui.gd:925
 msgid "RECORD PROGRESS"
 msgstr ""
 
-#: ui/ui.gd:884
+#: ui/ui.gd:925
 msgid "LOAD"
 msgstr ""
 
-#: ui/ui.gd:888
+#: ui/ui.gd:929
 #, c-format
 msgid "Slot %d — empty"
 msgstr ""
 
-#: ui/ui.gd:890
+#: ui/ui.gd:931
 #, c-format
 msgid "Slot %d — %s · %s · %s"
 msgstr ""
 
-#: ui/ui.gd:911
+#: ui/ui.gd:952
 msgid "L1 SUBSTATION"
 msgstr ""
 
-#: ui/ui.gd:912
+#: ui/ui.gd:953
 msgid "L2 SCHOOL"
 msgstr ""
 
-#: ui/ui.gd:913
+#: ui/ui.gd:954
 msgid "L3 CHURCH"
 msgstr ""
 
-#: ui/ui.gd:914
+#: ui/ui.gd:955
 msgid "L4 MERIDIAN"
 msgstr ""
 
-#: ui/ui.gd:915
+#: ui/ui.gd:956
 msgid "L5 MINE"
 msgstr ""
 
-#: ui/ui.gd:916
+#: ui/ui.gd:957
 msgid "L6 HEART"
 msgstr ""
 
-#: ui/ui.gd:927
+#: ui/ui.gd:968
 msgid "OPTIONS"
 msgstr ""
 
-#: ui/ui.gd:928
+#: ui/ui.gd:969
 msgid "Language"
 msgstr ""
 
-#: ui/ui.gd:939
+#: ui/ui.gd:980
 msgid "Back"
 msgstr ""
 
-#: ui/ui.gd:954
+#: ui/ui.gd:995
 msgid "PAUSED"
 msgstr ""
 
-#: ui/ui.gd:955
+#: ui/ui.gd:996
 msgid "Resume"
 msgstr ""
 
-#: ui/ui.gd:965 ui/ui.gd:1045
+#: ui/ui.gd:1006 ui/ui.gd:1086
 msgid "Quit to Title"
 msgstr ""
 
-#: ui/ui.gd:971
+#: ui/ui.gd:1012
 msgid ""
 "[center][b]WHITEOUT: KETTLE FALLS[/b]\n"
 "A fan-made survival-horror game built with Godot Engine 4.5 (MIT).[/center]"
 msgstr ""
 
-#: ui/ui.gd:971
+#: ui/ui.gd:1012
 msgid ""
 "[b]Characters[/b]\n"
 "Human models built from MakeHuman / MPFB assets (CC0), assembled in Blender."
 msgstr ""
 
-#: ui/ui.gd:971
+#: ui/ui.gd:1012
 msgid ""
 "[b]Textures[/b]\n"
 "ambientCG (CC0) and Poly Haven (CC0) materials. Full list: textures/LICENSES.md"
 msgstr ""
 
-#: ui/ui.gd:971
+#: ui/ui.gd:1012
 msgid ""
 "[b]Music[/b] — CC BY-SA 4.0\n"
 "\"Decoherence\", \"Helios\", \"Primal Carnage\" by Scott Buckley — www.scottbuckley.com.au\n"
 "Other music and ambience: CC0 sources (see audio/LICENSES.md)."
 msgstr ""
 
-#: ui/ui.gd:971
+#: ui/ui.gd:1012
 msgid ""
 "[b]Sound effects[/b] — CC BY 3.0 (attribution required)\n"
 "ermfilm — \"Rossi-Revolver\" · steveygos93 — \"Explosion2\" · Nicistarful — \"Fast Throttle Mechanic Lever\"\n"
@@ -4101,35 +4105,35 @@ msgid ""
 "(all via freesound.org)"
 msgstr ""
 
-#: ui/ui.gd:971
+#: ui/ui.gd:1012
 msgid ""
 "Plus CC0 sounds by Kenney, MrFossy, LeMudCrab, michorvath, artisticdude and many Freesound contributors.\n"
 "Full list: audio/LICENSES.md"
 msgstr ""
 
-#: ui/ui.gd:971
+#: ui/ui.gd:1012
 msgid ""
 "[b]3D models[/b]\n"
 "Environment props, furniture, trees, pistol and hatchet: Poly Haven artists (CC0, polyhaven.com). Vehicles, shotgun, revolver, flare launcher, transformer, server rack, steeple, ice formations, ore cart and reception desk: generated for this project with Higgsfield (Tripo H3.1)."
 msgstr ""
 
-#: ui/ui.gd:971
+#: ui/ui.gd:1012
 msgid ""
 "[b]Animation[/b]\n"
 "Motion capture: CMU Graphics Lab Motion Capture Database (mocap.cs.cmu.edu), funded by NSF EIA-0196217. Quaternius Universal Animation Library (CC0)."
 msgstr ""
 
-#: ui/ui.gd:971
+#: ui/ui.gd:1012
 msgid ""
 "[b]Typeface[/b]\n"
 "Be Vietnam Pro by the Be Vietnam Pro Project Authors (SIL Open Font License 1.1). Full text: fonts/OFL.txt"
 msgstr ""
 
-#: ui/ui.gd:971
+#: ui/ui.gd:1012
 msgid "Inspired by the late-90s survival-horror genre. Story, characters and setting are original."
 msgstr ""
 
-#: ui/ui.gd:1003
+#: ui/ui.gd:1044
 msgid ""
 "[b]WASD[/b] move   ·   [b]Shift[/b] run   ·   [b]Mouse[/b] look\n"
 "[b]Right mouse[/b] aim   ·   [b]Left mouse[/b] fire (while aiming)\n"
@@ -4139,77 +4143,77 @@ msgid ""
 "[b]Esc[/b] pause / close menus"
 msgstr ""
 
-#: ui/ui.gd:1003
+#: ui/ui.gd:1044
 msgid ""
 "Hold aim without moving to tighten the reticle — a focused shot does far more damage. Headshots deal double damage and stop the dead from getting back up.\n"
 "Zombies that fall may not stay down. Ammunition is scarce: avoid fights you don't need."
 msgstr ""
 
-#: ui/ui.gd:1036
+#: ui/ui.gd:1077
 msgid "YOU ARE DEAD"
 msgstr ""
 
-#: ui/ui.gd:1039
+#: ui/ui.gd:1080
 msgid "Continue (retry area)"
 msgstr ""
 
-#: ui/ui.gd:1093
+#: ui/ui.gd:1134
 #, c-format
 msgid "Clear time %s   ·   Saves %d   ·   Deaths %d   ·   Rank %s"
 msgstr ""
 
-#: ui/ui.gd:1094
+#: ui/ui.gd:1135
 msgid "Return to Title"
 msgstr ""
 
-#: ui/ui.gd:1101
+#: ui/ui.gd:1142
 msgid "[center][b]ENDING: DARK[/b][/center]"
 msgstr ""
 
-#: ui/ui.gd:1101
+#: ui/ui.gd:1142
 msgid "Elias pulled the last disconnect by hand. Somewhere on the lake, forty thousand servers went quiet, and the warm breath in the pipeline stopped."
 msgstr ""
 
-#: ui/ui.gd:1101
+#: ui/ui.gd:1142
 msgid "Down in the cavern, the hum fell an octave, and then another, until it was only the sound of the ice settling. The lattice grew dull. Whatever had worn his mother's face went still and stayed still."
 msgstr ""
 
-#: ui/ui.gd:1101
+#: ui/ui.gd:1142
 msgid "At 7:52 the sun came up over Kettle Falls for the first time in three days. The co-op's crews found the town's feeders closed, the school lit, and eighty-one people alive in its gym."
 msgstr ""
 
-#: ui/ui.gd:1101
+#: ui/ui.gd:1142
 msgid "Corvane Systems filed suit against Lakeshore Electric on December 28th. Elias was named personally. He kept the letter on the fridge, next to June's drawing of the substation, and never once regretted it."
 msgstr ""
 
-#: ui/ui.gd:1101
+#: ui/ui.gd:1142
 msgid "[i]\"Load shed: Meridian. Priority: Kettle Falls.\"[/i]"
 msgstr ""
 
-#: ui/ui.gd:1112
+#: ui/ui.gd:1153
 msgid "[center][b]ENDING: THAW[/b][/center]"
 msgstr ""
 
-#: ui/ui.gd:1112
+#: ui/ui.gd:1153
 msgid "Elias opened the pipeline to full. The brine boiled. The cavern screamed in a hundred voices and one of them was his mother's, and then all of them were steam."
 msgstr ""
 
-#: ui/ui.gd:1112
+#: ui/ui.gd:1153
 msgid "By morning nothing in the Lower Kettle mine was alive, and nothing in it ever would be again. Meridian never dropped a single request."
 msgstr ""
 
-#: ui/ui.gd:1112
+#: ui/ui.gd:1153
 msgid "Corvane's statement called it \"a tragic mining accident during an extreme weather event.\" Northline's insurers paid out. The data centre doubled its capacity the following spring."
 msgstr ""
 
-#: ui/ui.gd:1112
+#: ui/ui.gd:1153
 msgid "June doesn't talk about that night. Sometimes she leaves her radio on 146.52 and just listens to the static, as if someone down there might still answer."
 msgstr ""
 
-#: ui/ui.gd:1121
+#: ui/ui.gd:1162
 msgid "[center][b]THE END[/b][/center]"
 msgstr ""
 
-#: ui/ui.gd:1121
+#: ui/ui.gd:1162
 msgid "Kettle Falls is behind you. The cold is not."
 msgstr ""

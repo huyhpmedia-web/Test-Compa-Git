@@ -1,5 +1,6 @@
 extends "res://levels/level.gd"
 const FireFX = preload("res://world/fire_fx.gd")
+const Town = preload("res://world/town.gd")
 ## L3 — MAIN STREET / ST. BRENDAN'S.
 ## West -> east along Main Street (x from -70 to +72). Pharmacy (key) and diner on the north side,
 ## the boarded Northline office + billboard, the abandoned plow, Lindqvist Hardware (shotgun,
@@ -201,6 +202,11 @@ func _build_world() -> void:
 	var lake := _c(Color(0.16, 0.2, 0.28), 0.12, 0.2)
 	box(Vector3(190, -0.05, 0), Vector3(240, 0.1, 300), lake, false)
 	box(Vector3(85, -0.02, 0), Vector3(22, 0.05, 120), "snow", false)
+	# the rest of the town: real houses beyond the plowed banks (no collision; banks bound the level)
+	if Town.has("house_two_story"):
+		_town_row(-76.0, 70.0, 27.0, -1.0, TOWN_HOUSES, 11, 0.25, Vector2(26.5, 34.0))
+		_town_row(-78.0, 2.0, -26.0, 1.0, TOWN_HOUSES + TOWN_SHOPS, 23, 0.25, Vector2(-34.0, -25.5))
+		_town_row(6.0, 70.0, -51.0, 1.0, TOWN_HOUSES, 5, 0.2, Vector2(-58.0, -50.5))
 	# a few bare trees silhouetted behind the banks
 	for p in [Vector3(-52, 0, -27), Vector3(-20, 0, -26), Vector3(-66, 0, 27), Vector3(10, 0, 27), Vector3(48, 0, 27), Vector3(-30, 0, 27)]:
 		Props.tree(geo, p, randf_range(10.0, 13.0), int(p.x))
@@ -212,6 +218,44 @@ func _build_world() -> void:
 	glow.rotation_degrees = Vector3(-10, 90, 0)
 	add_child(glow)
 	light(Vector3(80, 7, -8), Color(0.5, 0.72, 1.0), 1.6, 55.0, false)
+
+# ------------------------------------------------------------------ real buildings (world/town.gd)
+const TOWN_SHOPS := [["shop_corner", 8.7, 9.1], ["hall_station", 9.5, 6.0], ["shop_wood_store", 5.9, 7.5],
+	["house_narrow", 5.4, 6.6], ["office_small", 9.3, 11.5], ["shop_diner", 8.0, 6.6], ["house_timber", 5.6, 5.2]]
+const TOWN_HOUSES := [["house_two_story", 7.9, 6.7], ["house_bungalow", 7.3, 6.7], ["house_ranch", 8.8, 6.3],
+	["house_split", 9.7, 6.9], ["house_duplex", 9.6, 6.9], ["house_farm", 8.5, 9.0]]
+
+## Fills a frontage x0..x1 with real buildings whose fronts sit on zf (facing +z when out = 1).
+## Keeps an invisible block collider so navigation and level bounds stay exactly as designed.
+func _town_row(x0: float, x1: float, zf: float, out: float, pool: Array, seed_v: int, lit := 0.35, collide_block := Vector2.ZERO) -> bool:
+	if not Town.has("shop_corner"):
+		return false
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_v
+	var x := x0 + 0.2
+	var yaw := 0.0 if out > 0.0 else PI
+	var guard := 0
+	while x < x1 - 4.0 and guard < 20:
+		guard += 1
+		var room := x1 - x
+		var fits: Array = pool.filter(func(b): return b[1] <= room + 0.3)
+		if fits.is_empty():
+			break
+		var b: Array = fits[rng.randi() % fits.size()]
+		var w: float = b[1]
+		var d: float = b[2]
+		Town.building(geo, b[0], Vector3(x + w * 0.5, 0, zf - out * d * 0.5), yaw, {"lit": lit, "collide": collide_block == Vector2.ZERO, "range": 140.0})
+		x += w + rng.randf_range(0.4, 1.6)
+	if collide_block != Vector2.ZERO:
+		var body := StaticBody3D.new()
+		var cs := CollisionShape3D.new()
+		var bs := BoxShape3D.new()
+		bs.size = Vector3(x1 - x0, 7.0, absf(collide_block.y - collide_block.x))
+		cs.shape = bs
+		body.position = Vector3((x0 + x1) * 0.5, 3.5, (collide_block.x + collide_block.y) * 0.5)
+		body.add_child(cs)
+		add_child(body)
+	return true
 
 # ------------------------------------------------------------------ shared storefront bits
 ## Builds a two-storey brick shop block. `north_side` true = faces +z (front wall at z1).
@@ -439,17 +483,23 @@ func _frost_corner(pos: Vector3, s: float) -> void:
 # ------------------------------------------------------------------ SOUTH ROW (dead shops, gas station)
 func _build_south_row() -> void:
 	# credit union
-	_block(-40.0, 6.0, -22.0, 20.0, false, "LAKESHORE SAVINGS & LOAN", -31.0, 5)
-	for wx in [-37.0, -33.0, -29.0, -25.0]:
-		Props.window(geo, Vector3(wx, 1.9, 5.97), PI, 2.0, 2.0, false)
-	_b(Vector3(1.9, 2.5, 0.12), Vector3(-31.0, 1.25, 5.93), _c(Color(0.1, 0.1, 0.12), 0.5), false)
-	_awning(-31.0, 6.0, -1.0, 3.0, Color(0.15, 0.2, 0.3))
+	if _town_row(-40.0, -22.0, 6.0, -1.0, TOWN_SHOPS, 41, 0.3, Vector2(6.3, 20.0)):
+		_sign(Vector3(-31.0, 3.4, 5.6), PI, "LAKESHORE SAVINGS & LOAN", 60, Color(0.88, 0.86, 0.78), true)
+	else:
+		_block(-40.0, 6.0, -22.0, 20.0, false, "LAKESHORE SAVINGS & LOAN", -31.0, 5)
+		for wx in [-37.0, -33.0, -29.0, -25.0]:
+			Props.window(geo, Vector3(wx, 1.9, 5.97), PI, 2.0, 2.0, false)
+		_b(Vector3(1.9, 2.5, 0.12), Vector3(-31.0, 1.25, 5.93), _c(Color(0.1, 0.1, 0.12), 0.5), false)
+		_awning(-31.0, 6.0, -1.0, 3.0, Color(0.15, 0.2, 0.3))
 	# tap room + bakery
-	_block(18.0, 6.0, 33.0, 20.0, false, "THE TAP ROOM", 25.5, 4)
-	for wx in [20.5, 23.5, 27.5, 30.5]:
-		Props.window(geo, Vector3(wx, 1.9, 5.97), PI, 2.2, 2.0, true)
-	_b(Vector3(1.9, 2.5, 0.12), Vector3(25.5, 1.25, 5.93), _c(Color(0.1, 0.1, 0.12), 0.5), false)
-	_awning(25.5, 6.0, -1.0, 3.0, Color(0.2, 0.3, 0.15))
+	if _town_row(18.0, 33.0, 6.0, -1.0, TOWN_SHOPS, 77, 0.7, Vector2(6.3, 20.0)):
+		_sign(Vector3(25.5, 3.4, 5.6), PI, "THE TAP ROOM", 60, Color(0.88, 0.86, 0.78), true)
+	else:
+		_block(18.0, 6.0, 33.0, 20.0, false, "THE TAP ROOM", 25.5, 4)
+		for wx in [20.5, 23.5, 27.5, 30.5]:
+			Props.window(geo, Vector3(wx, 1.9, 5.97), PI, 2.2, 2.0, true)
+		_b(Vector3(1.9, 2.5, 0.12), Vector3(25.5, 1.25, 5.93), _c(Color(0.1, 0.1, 0.12), 0.5), false)
+		_awning(25.5, 6.0, -1.0, 3.0, Color(0.2, 0.3, 0.15))
 	light(Vector3(25.5, 2.0, 4.8), Color(1.0, 0.75, 0.45), 0.5, 4.0, false, true)
 	# vacant lot between savings and hardware: bus shelter + dumpster
 	_b(Vector3(3.2, 0.12, 1.4), Vector3(-9.5, 2.5, 8.5), "metal_painted", true)

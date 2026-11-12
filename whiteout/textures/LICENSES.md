@@ -72,3 +72,7 @@ Sets: `splat_a-d`, `splat_wall`, `spray_a/b`, `pool_a-c`, `smear_a/b`, `drag_a/b
 `foot_r/l/bare`, `drips_a/b`, `puddle_a/b`, `ripple`, `outline` (chalk body outline), `write_help/run/sleep/out`
 (blood-written wall messages, rendered from FreeSans Bold, GNU FreeFont, then warped + shaded) and
 `screen_blood_a/n` (full-screen lens overlay used by `ui/blood_screen.gd`).
+
+## textures/town (ambientCG, CC0 1.0 — ambientcg.com)
+siding = WoodSiding005 (desaturated, tinted in game), roof = RoofingTiles013A, brick = Bricks059,
+stone = Bricks075A, trim = PaintedPlaster017, planks = Planks037A.

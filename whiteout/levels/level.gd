@@ -358,8 +358,8 @@ func guide(pos: Vector3) -> void:
 		add_child(_guide)
 		var lb := Label3D.new()
 		lb.text = "\u25C6"
-		lb.font_size = 96
-		lb.pixel_size = 0.004
+		lb.font_size = 48
+		lb.pixel_size = 0.0011
 		lb.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 		lb.no_depth_test = true
 		lb.fixed_size = true

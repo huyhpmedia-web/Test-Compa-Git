@@ -1,4 +1,5 @@
 extends "res://levels/level.gd"
+const Town = preload("res://world/town.gd")
 const FireFX = preload("res://world/fire_fx.gd")
 ## L1 — HIGHWAY 53 / KETTLE FALLS SUBSTATION. Dec 21 2026, 22:14, -40 degrees.
 ## Critical path:
@@ -59,6 +60,9 @@ func build() -> void:
 	_downed_line()
 	_exit_gate_and_school()
 	_pines()
+	# the edge of town beyond the exit gate: real houses either side of Highway 53 (backdrop, no collision)
+	Town.row(geo, -80.0, -18.0, -150.0, 1.0, Town.HOUSES, 53, {"collide": false, "lit": 0.0, "range": 160.0, "gap_min": 3.0, "gap_max": 7.0})
+	Town.row(geo, 18.0, 82.0, -150.0, 1.0, Town.HOUSES, 54, {"collide": false, "lit": 0.0, "range": 160.0, "gap_min": 3.0, "gap_max": 7.0})
 	_enemies()
 	_items_and_notes()
 	_triggers()

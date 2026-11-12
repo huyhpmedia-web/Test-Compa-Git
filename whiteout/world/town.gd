@@ -136,3 +136,33 @@ static func building(parent: Node, name: String, pos: Vector3, yaw := 0.0, opts 
 		body.add_child(cs)
 		root.add_child(body)
 	return root
+
+const SHOPS := [["shop_corner", 8.7, 9.1], ["hall_station", 9.5, 6.0], ["shop_wood_store", 5.9, 7.5],
+	["house_narrow", 5.4, 6.6], ["office_small", 9.3, 11.5], ["shop_diner", 8.0, 6.6], ["house_timber", 5.6, 5.2]]
+const HOUSES := [["house_two_story", 7.9, 6.7], ["house_bungalow", 7.3, 6.7], ["house_ranch", 8.8, 6.3],
+	["house_split", 9.7, 6.9], ["house_duplex", 9.6, 6.9], ["house_farm", 8.5, 9.0]]
+
+## A row of buildings along x (x0..x1) whose fronts sit on z = zf, facing +z when out > 0 (else -z).
+## Background rows: pass collide=false. Returns the number placed.
+static func row(parent: Node, x0: float, x1: float, zf: float, out: float, pool: Array, seed_v: int, opts := {}) -> int:
+	if not has("house_two_story"):
+		return 0
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_v
+	var x := x0 + 0.2
+	var yaw := 0.0 if out > 0.0 else PI
+	var n := 0
+	var gap_min: float = float(opts.get("gap_min", 0.4))
+	var gap_max: float = float(opts.get("gap_max", 1.6))
+	while x < x1 - 4.0 and n < 30:
+		var room := x1 - x
+		var fits: Array = pool.filter(func(b): return b[1] <= room + 0.3)
+		if fits.is_empty():
+			break
+		var b: Array = fits[rng.randi() % fits.size()]
+		var o := opts.duplicate()
+		o["lit"] = opts.get("lit", 0.3)
+		building(parent, b[0], Vector3(x + float(b[1]) * 0.5, 0, zf - out * float(b[2]) * 0.5), yaw + rng.randf_range(-0.04, 0.04), o)
+		x += float(b[1]) + rng.randf_range(gap_min, gap_max)
+		n += 1
+	return n

@@ -15,6 +15,8 @@ var _step := 0
 var _fails := 0
 var _busy := false
 var _hint_given := false
+var _guide_cd := 0.0
+var _guide_obj := ""
 # ambient FX
 var _beacons: Array = []          # [OmniLight3D, StandardMaterial3D]
 var _fires: Array = []            # world positions of burning barrels (repel the Rimebound)
@@ -75,6 +77,10 @@ func on_enter() -> void:
 
 func _process(delta: float) -> void:
 	super._process(delta)
+	_guide_cd -= delta
+	if _guide_cd <= 0.0:
+		_guide_cd = 0.4
+		_guide_step()
 	# amber beacons on the truck: alternating double flash
 	var ph := fmod(_t, 1.1)
 	for i in _beacons.size():
@@ -99,6 +105,61 @@ func _process(delta: float) -> void:
 				for fp in _fires:
 					if (e as Node3D).global_position.distance_to(fp) < 5.5:
 						e.fear(fp, 2.5)
+
+# =================================================================== step-by-step guidance
+## Works out the player's next concrete step from flags/items, keeps the objective text on that step
+## and moves the amber guide marker onto it. Plain wording: the owner got lost here.
+func _guide_step() -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	var pp: Vector3 = player.global_position
+	var obj := ""
+	var at := Vector3.ZERO
+	var inside_yard: bool = pp.x > YARD_X0 + 0.3 and pp.z < YARD_Z1 and pp.z > YARD_Z0
+	if Game.has_flag("feeder_closed"):
+		obj = "Power is back. Go north up Highway 53 to the school gate."
+		at = Vector3(0, 1.6, -137.0)
+	elif pp.z > -50.0 and not inside_yard:
+		obj = "Walk north up Highway 53 to the power substation."
+		at = Vector3(6.0, 1.2, -60.0)
+	elif not Game.has_item("control_key") and not Game.has_flag("unlocked:l1_ctrl_door") and not Game.has_flag("l1_saw_order"):
+		if not inside_yard:
+			obj = "The gate is chained. Follow the fence: there is a gap beside the burning barrel."
+			at = Vector3(YARD_X0, 1.2, -70.1)
+		else:
+			obj = "Find the night operator at the back of the yard. He has the control house key."
+			at = Vector3(36.6, 0.6, -90.0)
+	elif not Game.has_flag("unlocked:l1_ctrl_door") and not Game.has_flag("l1_saw_order"):
+		obj = "Unlock the control house door (small brick building, door with the sign)."
+		at = _ctrl_door_pos + Vector3(0.6, 1.4, 0)
+	elif not Game.has_flag("l1_saw_order"):
+		obj = "Inside the control house, read the green computer screen."
+		at = Vector3(24.2, 1.6, -85.2)
+	elif not Game.has_item("hot_stick") and _step == 0:
+		obj = "Get the insulated pole (hot stick) from the white bucket truck at the yard entrance."
+		at = Vector3(19.4, 1.4, -64.0)
+	elif not Game.has_flag("l1_fuse_in") and not Game.has_item("fuse_60a"):
+		obj = "Get the spare fuse: metal cabinet in the storage container (break the padlock with your hatchet)."
+		at = Vector3(18.2, 1.3, -95.6)
+	elif not Game.has_flag("l1_fuse_in"):
+		obj = "Put the fuse into the grey cabinet beside the big breaker in the switchyard."
+		at = _breaker_pos + Vector3(2.0, 1.6, 0.6)
+	else:
+		match _step:
+			0:
+				obj = "Turn on the switches IN ORDER. Step 1 of 3: switch DS-2A (left)."
+				at = Vector3(31.0, 2.4, -64.5)
+			1:
+				obj = "Step 2 of 3: switch DS-2B (right). Never touch DS-2C."
+				at = Vector3(46.5, 2.4, -64.5)
+			_:
+				obj = "Step 3 of 3: switch on the big breaker BKR-KF2 (middle)."
+				at = _breaker_pos + Vector3(-0.3, 2.0, 0.6)
+	guide(at)
+	if obj != _guide_obj:
+		_guide_obj = obj
+		if obj != Game.objective:
+			Game.set_objective(obj)
 
 # =================================================================== small helpers
 func _mat(c: Color, r := 0.7, m := 0.0) -> StandardMaterial3D:

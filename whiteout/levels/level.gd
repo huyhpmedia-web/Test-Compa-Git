@@ -62,6 +62,7 @@ func try_use_item(_id: String) -> bool:
 
 func _process(delta: float) -> void:
 	_t += delta
+	_guide_tick(delta)
 	if _snow != null and player != null:
 		_snow.global_position = player.global_position + Vector3(0, 9, 0)
 	for f in _flicker:
@@ -342,6 +343,57 @@ func ceiling_lamp(pos: Vector3, kind := "fluor", on := true, flicker := false, c
 		color = Color(1.0, 0.78, 0.5)
 	if on:
 		light(pos + Vector3(0, -0.4, 0), color, energy, 9.0, true, flicker)
+
+# =================================================================== objective guide marker
+## A soft amber marker (pulsing diamond + small light, visible through walls) that points at the
+## current objective. guide(pos) moves it; guide_off() hides it. Used for readable step-by-step puzzles.
+var _guide: Node3D = null
+var _guide_light: OmniLight3D = null
+var _guide_t := 0.0
+
+func guide(pos: Vector3) -> void:
+	if _guide == null:
+		_guide = Node3D.new()
+		_guide.name = "GuideMarker"
+		add_child(_guide)
+		var lb := Label3D.new()
+		lb.text = "\u25C6"
+		lb.font_size = 96
+		lb.pixel_size = 0.004
+		lb.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		lb.no_depth_test = true
+		lb.fixed_size = true
+		lb.modulate = Color(1.0, 0.72, 0.25, 0.9)
+		lb.outline_size = 10
+		lb.outline_modulate = Color(0, 0, 0, 0.6)
+		_guide.add_child(lb)
+		_guide_light = OmniLight3D.new()
+		_guide_light.light_color = Color(1.0, 0.7, 0.3)
+		_guide_light.omni_range = 3.0
+		_guide_light.light_energy = 0.8
+		_guide_light.shadow_enabled = false
+		_guide_light.position = Vector3(0, -0.6, 0)
+		_guide.add_child(_guide_light)
+	_guide.visible = true
+	_guide.position = pos + Vector3(0, 0.9, 0)
+
+func guide_off() -> void:
+	if _guide != null:
+		_guide.visible = false
+
+func _guide_tick(delta: float) -> void:
+	if _guide == null or not _guide.visible:
+		return
+	_guide_t += delta
+	var k := 0.5 + 0.5 * sin(_guide_t * 3.2)
+	var lb: Label3D = _guide.get_child(0)
+	lb.modulate.a = 0.45 + 0.5 * k
+	lb.position.y = 0.12 * sin(_guide_t * 1.6)
+	# fade out when the player is right on top of it
+	if player != null and is_instance_valid(player):
+		var d: float = (player as Node3D).global_position.distance_to(_guide.global_position)
+		lb.modulate.a *= clampf((d - 1.2) / 2.5, 0.15, 1.0)
+	_guide_light.light_energy = 0.4 + 0.6 * k
 
 # =================================================================== gameplay objects
 func add_spawn(name: String, pos: Vector3, yaw := 0.0) -> void:

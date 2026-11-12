@@ -303,9 +303,12 @@ void fragment(){
 	status.add_child(hp_label)
 	hp_bar = ColorRect.new()  # kept for compatibility (unused visual)
 
-	objective_label = _label("", 15, C_DIM)
-	objective_label.position = Vector2(24, 20)
-	objective_label.size = Vector2(700, 30)
+	objective_label = _label("", 19, Color(1.0, 0.82, 0.5))
+	objective_label.position = Vector2(24, 18)
+	objective_label.size = Vector2(900, 60)
+	objective_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	objective_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+	objective_label.add_theme_constant_override("outline_size", 6)
 	hud.add_child(objective_label)
 
 	prompt_label = _label("", 18, Color(0.95, 0.95, 0.9))

@@ -90,6 +90,49 @@ def siding_tint(c):
     return "%02x%02x%02x" % (q(r), q(g), q(b))
 
 
+def detail(bm, idx, H):
+    """Geometry pass that turns the stylised blockout into something with real depth:
+    recessed windows (frame + reveal + set-back glass) and a thick, rounded snow cap on the roofs."""
+    g, trim, dark, snow = idx.get("GLASS"), idx["TRIM"], idx["DARK"], idx["SNOW"]
+    if False and g is not None:
+        glass = [f for f in bm.faces if f.material_index == g and f.calc_area() > 0.04]
+        if glass:
+            # 1) frame ring
+            r = bmesh.ops.inset_individual(bm, faces=glass, thickness=0.045, depth=0.0, use_even_offset=True)
+            for f in r["faces"]:
+                f.material_index = trim
+            # 2) reveal: glass pushed 9 cm into the wall, the sides become dark reveal
+            r2 = bmesh.ops.inset_individual(bm, faces=glass, thickness=0.004, depth=-0.09, use_even_offset=True)
+            for f in r2["faces"]:
+                f.material_index = dark
+            # 3) a sill under each window
+            for f in glass:
+                if abs(f.normal.z) > 0.3:
+                    continue
+                zs = [v.co.z for v in f.verts]
+                if max(zs) - min(zs) < 0.25:
+                    continue
+    # thick snow cap: lift roof snow faces 14 cm along their normals (extruded so the edge reads as a slab)
+    def width(f):
+        el = max(e.calc_length() for e in f.edges)
+        return f.calc_area() / max(el, 1e-4)
+    sn = [f for f in bm.faces if f.material_index == snow and f.calc_area() > 0.6 and width(f) > 0.35]
+    if sn:
+        ex = bmesh.ops.extrude_face_region(bm, geom=sn)
+        verts = [e for e in ex["geom"] if isinstance(e, bmesh.types.BMVert)]
+        for v in verts:
+            nz = Vector((0, 0, 0))
+            for f in v.link_faces:
+                if f.material_index == snow:
+                    nz += f.normal
+            if nz.length > 0:
+                v.co += nz.normalized() * 0.14 + Vector((0, 0, 0.04))
+        for f in [e for e in ex["geom"] if isinstance(e, bmesh.types.BMFace)]:
+            f.material_index = snow
+        bmesh.ops.delete(bm, geom=sn, context="FACES") if False else None
+    bm.normal_update()
+
+
 def build(o, spec):
     out_name, H, yaw = spec
     me = o.data
@@ -116,6 +159,10 @@ def build(o, spec):
         zc = f.calc_center_median().z
         zmin = min(l.vert.co.z for l in f.loops)
         cat = classify(c, n.z, zc, H, zmin)
+        if cat == "SNOW":
+            el = max(e.calc_length() for e in f.edges)
+            if f.calc_area() / max(el, 1e-4) < 0.3 or f.calc_area() < 0.25:
+                cat = classify(c, 0.0, zc, H, zmin)
         if cat == "SIDING":
             cat = "SIDING_" + siding_tint(c)
         cats.append(cat)
@@ -148,7 +195,7 @@ def build(o, spec):
         for (i, _), j in zip(sid, lab):
             c = cent[j]
             cats[i] = "SIDING_%02x%02x%02x" % tuple(int(round(x * 255)) for x in c)
-    names = sorted(set(cats))
+    names = sorted(set(cats) | {"TRIM", "DARK", "SNOW"})
     me.materials.clear()
     for nm in names:
         m = bpy.data.materials.get(nm) or bpy.data.materials.new(nm)
@@ -156,6 +203,17 @@ def build(o, spec):
     idx = {nm: i for i, nm in enumerate(names)}
     for f, cat in zip(bm.faces, cats):
         f.material_index = idx[cat]
+    detail(bm, idx, H)
+    # metric box-projected UVs for every face (after detailing created new faces)
+    for f in bm.faces:
+        base = names[f.material_index].split("_")[0]
+        t = TILE.get(base, 2.0)
+        n = f.normal
+        ax = max(range(3), key=lambda i: abs(n[i]))
+        for l in f.loops:
+            p = l.vert.co
+            l[uv].uv = (p.x / t, p.y / t) if ax == 2 else ((p.y / t, p.z / t) if ax == 0 else (p.x / t, p.z / t))
+    cats = [names[f.material_index] for f in bm.faces]
     bm.to_mesh(me); bm.free()
     for ca in list(me.color_attributes):
         me.color_attributes.remove(ca)

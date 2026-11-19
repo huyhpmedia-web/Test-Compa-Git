@@ -28,7 +28,7 @@ func _ready() -> void:
 		Game.level_id = args.level
 		Game.spawn_id = args.get("spawn", "start")
 		Game._load_level()
-	elif scene != "sign":
+	elif scene != "sign" and scene != "itemsheet":
 		var bg := ColorRect.new()
 		bg.color = Color(0.09, 0.11, 0.14)
 		bg.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -63,6 +63,8 @@ func _ready() -> void:
 			UI.open_options()
 		"itemget":
 			UI.show_item_get(str(args.get("item", "rosary")))
+		"itemsheet":
+			_item_sheet(args)
 		"pause":
 			UI.open_pause()
 		"save":
@@ -121,3 +123,67 @@ func _unq(s: String) -> String:
 	s = s.strip_edges()
 	s = s.substr(1, s.length() - 2)
 	return s.replace("\\n", "\n").replace("\\\"", "\"").replace("\\\\", "\\")
+
+## Contact sheet of every item model, laid out exactly like the inspector stage (one 3D render).
+##   scene=itemsheet [ids=a,b,c] [cols=7]
+func _item_sheet(args: Dictionary) -> void:
+	var IV = preload("res://ui/item_view.gd")
+	var ids: Array = []
+	if args.has("ids"):
+		ids = str(args.ids).split(",")
+	else:
+		for k in Items.DEFS.keys():
+			if Items.DEFS[k].kind != "weapon":
+				ids.append(k)
+	var cols := int(args.get("cols", "7"))
+	var rows := int(ceil(float(ids.size()) / cols))
+	var cell := 2.1
+	var env := WorldEnvironment.new()
+	env.environment = Environment.new()
+	env.environment.background_mode = Environment.BG_COLOR
+	env.environment.background_color = Color(0.05, 0.055, 0.065)
+	var sm := ProceduralSkyMaterial.new()
+	sm.sky_top_color = Color(0.32, 0.38, 0.5)
+	sm.sky_horizon_color = Color(0.85, 0.78, 0.68)
+	sm.ground_horizon_color = Color(0.5, 0.45, 0.4)
+	sm.ground_bottom_color = Color(0.04, 0.04, 0.05)
+	sm.sky_energy_multiplier = 0.7
+	env.environment.sky = Sky.new()
+	env.environment.sky.sky_material = sm
+	env.environment.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
+	env.environment.ambient_light_energy = 0.55
+	env.environment.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
+	env.environment.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	add_child(env)
+	var key := DirectionalLight3D.new()
+	key.rotation_degrees = Vector3(-38, -42, 0)
+	key.light_energy = 1.7
+	key.light_color = Color(1.0, 0.94, 0.85)
+	add_child(key)
+	var rim := DirectionalLight3D.new()
+	rim.rotation_degrees = Vector3(-12, 150, 0)
+	rim.light_energy = 1.1
+	rim.light_color = Color(0.6, 0.75, 1.0)
+	add_child(rim)
+	var yaw := float(args.get("yaw", "0.6"))
+	for i in ids.size():
+		var id: String = ids[i]
+		var holder: Node3D = IV.fitted(id, 1.0)
+		holder.position = Vector3((i % cols - (cols - 1) * 0.5) * cell, -(i / cols - (rows - 1) * 0.5) * cell * 1.0, 0)
+		holder.rotation = Vector3(0.25, yaw, 0)
+		add_child(holder)
+		var l := Label3D.new()
+		l.text = id
+		l.font_size = 40
+		l.pixel_size = 0.0035
+		l.position = holder.position + Vector3(0, -0.95, 0.3)
+		l.modulate = Color(0.85, 0.88, 0.95)
+		add_child(l)
+	var cam := Camera3D.new()
+	cam.fov = 30
+	var w := cols * cell
+	var h := rows * cell
+	var dist := maxf(w / (2.0 * tan(deg_to_rad(15.0)) * (16.0 / 9.0)), h / (2.0 * tan(deg_to_rad(15.0)))) * 1.04
+	cam.position = Vector3(0, 0, dist)
+	add_child(cam)
+	cam.make_current()

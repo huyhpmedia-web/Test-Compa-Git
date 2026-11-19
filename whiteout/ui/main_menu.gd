@@ -42,7 +42,7 @@ func _ready() -> void:
 	lb.disabled = not has_save
 	UI._button("Controls", func(): UI.show_note("Controls", UI.CONTROLS_TEXT), v)
 	UI._button("Options", func(): UI.open_options(), v)
-	UI._button("Credits", func(): UI.show_note("Credits", UI.CREDITS_TEXT), v)
+	UI._button("Credits", func(): UI.show_note("Credits", UI.credits_text()), v)
 	UI._button("Quit", func(): get_tree().quit(), v)
 	nb.grab_focus()
 	var foot := UI._label("A fan-made survival horror homage. Built with Godot.", 13, UI.C_DIM)

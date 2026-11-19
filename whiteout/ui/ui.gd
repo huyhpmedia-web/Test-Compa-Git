@@ -1011,6 +1011,18 @@ func open_pause() -> void:
 	_open_modal(bg)
 	b.grab_focus()
 
+## Credits = the fixed text below + every Sketchfab model used (assets/CREDITS_SKETCHFAB.json, written by tools/sketchfab/sf.py).
+func credits_text() -> String:
+	var t := CREDITS_TEXT
+	var path := "res://assets/CREDITS_SKETCHFAB.json"
+	if FileAccess.file_exists(path):
+		var data = JSON.parse_string(FileAccess.get_file_as_string(path))
+		if data is Array and not data.is_empty():
+			t += "\n\n[b]" + tr("3D models from Sketchfab") + "[/b]\n"
+			for c in data:
+				t += "\"%s\" by %s (%s) — %s\n" % [c.get("title", ""), c.get("author", ""), c.get("license", ""), c.get("url", "")]
+	return t
+
 const CREDITS_TEXT := """[center][b]WHITEOUT: KETTLE FALLS[/b]
 A fan-made survival-horror game built with Godot Engine 4.5 (MIT).[/center]
 

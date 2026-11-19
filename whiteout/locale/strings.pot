@@ -3866,15 +3866,15 @@ msgstr ""
 msgid "New Game"
 msgstr ""
 
-#: ui/main_menu.gd:41 ui/ui.gd:997 ui/ui.gd:1083
+#: ui/main_menu.gd:41 ui/ui.gd:999 ui/ui.gd:1097
 msgid "Load Game"
 msgstr ""
 
-#: ui/main_menu.gd:43 ui/main_menu.gd:43 ui/ui.gd:1000
+#: ui/main_menu.gd:43 ui/main_menu.gd:43 ui/ui.gd:1002
 msgid "Controls"
 msgstr ""
 
-#: ui/main_menu.gd:44 ui/ui.gd:1003
+#: ui/main_menu.gd:44 ui/ui.gd:1005
 msgid "Options"
 msgstr ""
 
@@ -3910,7 +3910,7 @@ msgstr ""
 msgid "FINE"
 msgstr ""
 
-#: ui/ui.gd:616 ui/ui.gd:895
+#: ui/ui.gd:616 ui/ui.gd:897
 msgid "Close"
 msgstr ""
 
@@ -3939,165 +3939,169 @@ msgstr ""
 msgid "Objective: %s"
 msgstr ""
 
-#: ui/ui.gd:757
+#: ui/ui.gd:759
 #, c-format
 msgid "Combine %s with...?"
 msgstr ""
 
-#: ui/ui.gd:758 ui/ui.gd:945
+#: ui/ui.gd:760 ui/ui.gd:947
 msgid "Cancel"
 msgstr ""
 
-#: ui/ui.gd:777
+#: ui/ui.gd:779
 msgid "Equip"
 msgstr ""
 
-#: ui/ui.gd:777
+#: ui/ui.gd:779
 msgid "Equipped"
 msgstr ""
 
-#: ui/ui.gd:781 ui/ui.gd:786
+#: ui/ui.gd:783 ui/ui.gd:788
 msgid "Use"
 msgstr ""
 
-#: ui/ui.gd:790
+#: ui/ui.gd:792
 msgid "Combine"
 msgstr ""
 
-#: ui/ui.gd:794
+#: ui/ui.gd:796
 msgid "Discard"
 msgstr ""
 
-#: ui/ui.gd:799
+#: ui/ui.gd:801
 msgid "Select an item."
 msgstr ""
 
-#: ui/ui.gd:800
+#: ui/ui.gd:802
 #, c-format
 msgid "Inventory: %d / %d slots"
 msgstr ""
 
-#: ui/ui.gd:801
+#: ui/ui.gd:803
 msgid "[Tab/Esc] Close"
 msgstr ""
 
-#: ui/ui.gd:815
+#: ui/ui.gd:817
 msgid "Need two of these."
 msgstr ""
 
-#: ui/ui.gd:838
+#: ui/ui.gd:840
 msgid "No files collected."
 msgstr ""
 
-#: ui/ui.gd:851
+#: ui/ui.gd:853
 msgid "SUPPLY CRATE — click to move items"
 msgstr ""
 
-#: ui/ui.gd:861
+#: ui/ui.gd:863
 #, c-format
 msgid "Inventory (%d/%d)"
 msgstr ""
 
-#: ui/ui.gd:862
+#: ui/ui.gd:864
 msgid "Box"
 msgstr ""
 
-#: ui/ui.gd:886
+#: ui/ui.gd:888
 msgid "Inventory full."
 msgstr ""
 
-#: ui/ui.gd:925
+#: ui/ui.gd:927
 msgid "RECORD PROGRESS"
 msgstr ""
 
-#: ui/ui.gd:925
+#: ui/ui.gd:927
 msgid "LOAD"
-msgstr ""
-
-#: ui/ui.gd:929
-#, c-format
-msgid "Slot %d — empty"
 msgstr ""
 
 #: ui/ui.gd:931
 #, c-format
+msgid "Slot %d — empty"
+msgstr ""
+
+#: ui/ui.gd:933
+#, c-format
 msgid "Slot %d — %s · %s · %s"
 msgstr ""
 
-#: ui/ui.gd:952
+#: ui/ui.gd:954
 msgid "L1 SUBSTATION"
 msgstr ""
 
-#: ui/ui.gd:953
+#: ui/ui.gd:955
 msgid "L2 SCHOOL"
 msgstr ""
 
-#: ui/ui.gd:954
+#: ui/ui.gd:956
 msgid "L3 CHURCH"
 msgstr ""
 
-#: ui/ui.gd:955
+#: ui/ui.gd:957
 msgid "L4 MERIDIAN"
 msgstr ""
 
-#: ui/ui.gd:956
+#: ui/ui.gd:958
 msgid "L5 MINE"
 msgstr ""
 
-#: ui/ui.gd:957
+#: ui/ui.gd:959
 msgid "L6 HEART"
 msgstr ""
 
-#: ui/ui.gd:968
+#: ui/ui.gd:970
 msgid "OPTIONS"
 msgstr ""
 
-#: ui/ui.gd:969
+#: ui/ui.gd:971
 msgid "Language"
 msgstr ""
 
-#: ui/ui.gd:980
+#: ui/ui.gd:982
 msgid "Back"
 msgstr ""
 
-#: ui/ui.gd:995
+#: ui/ui.gd:997
 msgid "PAUSED"
 msgstr ""
 
-#: ui/ui.gd:996
+#: ui/ui.gd:998
 msgid "Resume"
 msgstr ""
 
-#: ui/ui.gd:1006 ui/ui.gd:1086
+#: ui/ui.gd:1008 ui/ui.gd:1100
 msgid "Quit to Title"
 msgstr ""
 
-#: ui/ui.gd:1012
+#: ui/ui.gd:1021
+msgid "3D models from Sketchfab"
+msgstr ""
+
+#: ui/ui.gd:1026
 msgid ""
 "[center][b]WHITEOUT: KETTLE FALLS[/b]\n"
 "A fan-made survival-horror game built with Godot Engine 4.5 (MIT).[/center]"
 msgstr ""
 
-#: ui/ui.gd:1012
+#: ui/ui.gd:1026
 msgid ""
 "[b]Characters[/b]\n"
 "Human models built from MakeHuman / MPFB assets (CC0), assembled in Blender."
 msgstr ""
 
-#: ui/ui.gd:1012
+#: ui/ui.gd:1026
 msgid ""
 "[b]Textures[/b]\n"
 "ambientCG (CC0) and Poly Haven (CC0) materials. Full list: textures/LICENSES.md"
 msgstr ""
 
-#: ui/ui.gd:1012
+#: ui/ui.gd:1026
 msgid ""
 "[b]Music[/b] — CC BY-SA 4.0\n"
 "\"Decoherence\", \"Helios\", \"Primal Carnage\" by Scott Buckley — www.scottbuckley.com.au\n"
 "Other music and ambience: CC0 sources (see audio/LICENSES.md)."
 msgstr ""
 
-#: ui/ui.gd:1012
+#: ui/ui.gd:1026
 msgid ""
 "[b]Sound effects[/b] — CC BY 3.0 (attribution required)\n"
 "ermfilm — \"Rossi-Revolver\" · steveygos93 — \"Explosion2\" · Nicistarful — \"Fast Throttle Mechanic Lever\"\n"
@@ -4105,35 +4109,35 @@ msgid ""
 "(all via freesound.org)"
 msgstr ""
 
-#: ui/ui.gd:1012
+#: ui/ui.gd:1026
 msgid ""
 "Plus CC0 sounds by Kenney, MrFossy, LeMudCrab, michorvath, artisticdude and many Freesound contributors.\n"
 "Full list: audio/LICENSES.md"
 msgstr ""
 
-#: ui/ui.gd:1012
+#: ui/ui.gd:1026
 msgid ""
 "[b]3D models[/b]\n"
 "Environment props, furniture, trees, pistol and hatchet: Poly Haven artists (CC0, polyhaven.com). Vehicles, shotgun, revolver, flare launcher, transformer, server rack, steeple, ice formations, ore cart and reception desk: generated for this project with Higgsfield (Tripo H3.1)."
 msgstr ""
 
-#: ui/ui.gd:1012
+#: ui/ui.gd:1026
 msgid ""
 "[b]Animation[/b]\n"
 "Motion capture: CMU Graphics Lab Motion Capture Database (mocap.cs.cmu.edu), funded by NSF EIA-0196217. Quaternius Universal Animation Library (CC0)."
 msgstr ""
 
-#: ui/ui.gd:1012
+#: ui/ui.gd:1026
 msgid ""
 "[b]Typeface[/b]\n"
 "Be Vietnam Pro by the Be Vietnam Pro Project Authors (SIL Open Font License 1.1). Full text: fonts/OFL.txt"
 msgstr ""
 
-#: ui/ui.gd:1012
+#: ui/ui.gd:1026
 msgid "Inspired by the late-90s survival-horror genre. Story, characters and setting are original."
 msgstr ""
 
-#: ui/ui.gd:1044
+#: ui/ui.gd:1058
 msgid ""
 "[b]WASD[/b] move   ·   [b]Shift[/b] run   ·   [b]Mouse[/b] look\n"
 "[b]Right mouse[/b] aim   ·   [b]Left mouse[/b] fire (while aiming)\n"
@@ -4143,77 +4147,77 @@ msgid ""
 "[b]Esc[/b] pause / close menus"
 msgstr ""
 
-#: ui/ui.gd:1044
+#: ui/ui.gd:1058
 msgid ""
 "Hold aim without moving to tighten the reticle — a focused shot does far more damage. Headshots deal double damage and stop the dead from getting back up.\n"
 "Zombies that fall may not stay down. Ammunition is scarce: avoid fights you don't need."
 msgstr ""
 
-#: ui/ui.gd:1077
+#: ui/ui.gd:1091
 msgid "YOU ARE DEAD"
 msgstr ""
 
-#: ui/ui.gd:1080
+#: ui/ui.gd:1094
 msgid "Continue (retry area)"
 msgstr ""
 
-#: ui/ui.gd:1134
+#: ui/ui.gd:1148
 #, c-format
 msgid "Clear time %s   ·   Saves %d   ·   Deaths %d   ·   Rank %s"
 msgstr ""
 
-#: ui/ui.gd:1135
+#: ui/ui.gd:1149
 msgid "Return to Title"
 msgstr ""
 
-#: ui/ui.gd:1142
+#: ui/ui.gd:1156
 msgid "[center][b]ENDING: DARK[/b][/center]"
 msgstr ""
 
-#: ui/ui.gd:1142
+#: ui/ui.gd:1156
 msgid "Elias pulled the last disconnect by hand. Somewhere on the lake, forty thousand servers went quiet, and the warm breath in the pipeline stopped."
 msgstr ""
 
-#: ui/ui.gd:1142
+#: ui/ui.gd:1156
 msgid "Down in the cavern, the hum fell an octave, and then another, until it was only the sound of the ice settling. The lattice grew dull. Whatever had worn his mother's face went still and stayed still."
 msgstr ""
 
-#: ui/ui.gd:1142
+#: ui/ui.gd:1156
 msgid "At 7:52 the sun came up over Kettle Falls for the first time in three days. The co-op's crews found the town's feeders closed, the school lit, and eighty-one people alive in its gym."
 msgstr ""
 
-#: ui/ui.gd:1142
+#: ui/ui.gd:1156
 msgid "Corvane Systems filed suit against Lakeshore Electric on December 28th. Elias was named personally. He kept the letter on the fridge, next to June's drawing of the substation, and never once regretted it."
 msgstr ""
 
-#: ui/ui.gd:1142
+#: ui/ui.gd:1156
 msgid "[i]\"Load shed: Meridian. Priority: Kettle Falls.\"[/i]"
 msgstr ""
 
-#: ui/ui.gd:1153
+#: ui/ui.gd:1167
 msgid "[center][b]ENDING: THAW[/b][/center]"
 msgstr ""
 
-#: ui/ui.gd:1153
+#: ui/ui.gd:1167
 msgid "Elias opened the pipeline to full. The brine boiled. The cavern screamed in a hundred voices and one of them was his mother's, and then all of them were steam."
 msgstr ""
 
-#: ui/ui.gd:1153
+#: ui/ui.gd:1167
 msgid "By morning nothing in the Lower Kettle mine was alive, and nothing in it ever would be again. Meridian never dropped a single request."
 msgstr ""
 
-#: ui/ui.gd:1153
+#: ui/ui.gd:1167
 msgid "Corvane's statement called it \"a tragic mining accident during an extreme weather event.\" Northline's insurers paid out. The data centre doubled its capacity the following spring."
 msgstr ""
 
-#: ui/ui.gd:1153
+#: ui/ui.gd:1167
 msgid "June doesn't talk about that night. Sometimes she leaves her radio on 146.52 and just listens to the static, as if someone down there might still answer."
 msgstr ""
 
-#: ui/ui.gd:1162
+#: ui/ui.gd:1176
 msgid "[center][b]THE END[/b][/center]"
 msgstr ""
 
-#: ui/ui.gd:1162
+#: ui/ui.gd:1176
 msgid "Kettle Falls is behind you. The cold is not."
 msgstr ""

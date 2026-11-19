@@ -262,13 +262,7 @@ static func _lobby() -> void:
 	# frozen coffee, bag, spilled cups
 	for p in [Vector3(lx + 0.15, 0.4, 5.55), Vector3(lx - 0.2, 0.4, 5.7)]:
 		Props.cyl(geo, 0.04, 0.1, p, Mats.color(Color(0.9, 0.9, 0.92), 0.5), false)
-	# ---- optical turnstiles: pedestals + glass flaps (the central lane stays 2.6 m clear)
-	for sx in [-1.5, 1.5]:
-		box(Vector3(sx, 0.5, -3.5), Vector3(0.22, 1.0, 1.5), metal(), true)
-		box(Vector3(sx, 1.02, -3.5), Vector3(0.24, 0.04, 1.52), Mats.color(Color(0.04, 0.045, 0.05), 0.3, 0.5), false)
-		box(Vector3(sx + (0.13 if sx < 0 else -0.13), 0.96, -3.5), Vector3(0.015, 0.03, 0.9), emi(Color(0.2, 1.0, 0.5), 4.0), false)
-		var gm := Mats.get_mat("glass")
-		box(Vector3(sx * 0.82, 0.98, -3.5), Vector3(0.02, 0.9, 1.0), gm, false)
+	# ---- optical turnstiles: real models (l4_real.gd), the central lane stays 2.6 m clear
 	# glass partition wings along both sides of the lobby with steel mullions
 	for sx in [-7.6, 7.6]:
 		pass

@@ -137,6 +137,68 @@ static func pipe(a: Vector3, b: Vector3, r: float, tint := Color(0.6, 0.64, 0.7)
 			var bd := Props.cyl(geo, r * 1.06, 0.14, p, Mats.color(Color(0.55, 0.57, 0.6), 0.5, 0.6), false, -1.0, Vector3.ZERO, 14)
 			bd.basis = mi.basis
 
+
+# ================================================================== grime decals (procedural, generated once)
+static var _decal_tex := {}
+
+static func _make_decal(kind: String) -> Texture2D:
+	if _decal_tex.has(kind):
+		return _decal_tex[kind]
+	var n := FastNoiseLite.new()
+	n.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
+	n.seed = 77 + kind.hash() % 1000
+	var W := 96
+	var H := 192 if kind == "streak" else 128
+	var img := Image.create(W, H, false, Image.FORMAT_RGBA8)
+	for y in H:
+		for x in W:
+			var fx := float(x) / W
+			var fy := float(y) / H
+			var a := 0.0
+			if kind == "streak":
+				var v := n.get_noise_2d(x * 5.5, y * 0.35) * 0.5 + 0.5
+				var v2 := n.get_noise_2d(x * 1.8 + 40.0, y * 0.12) * 0.5 + 0.5
+				a = clampf((v - 0.45) * 3.2, 0.0, 1.0) * clampf((v2 - 0.25) * 2.0, 0.0, 1.0)
+				a *= pow(1.0 - fy, 0.8) * smoothstep(0.0, 0.06, fy)
+			elif kind == "stain":
+				var d := Vector2(fx - 0.5, fy - 0.5).length() * 2.0
+				var v3 := n.get_noise_2d(x * 2.2, y * 2.2) * 0.5 + 0.5
+				a = clampf((1.0 - d) * 1.6 + (v3 - 0.5) * 1.3, 0.0, 1.0)
+				a = smoothstep(0.05, 0.8, a) * 0.9
+			else:   # oil / grease: dark irregular puddle with a thin bright rim
+				var d2 := Vector2(fx - 0.5, fy - 0.5).length() * 2.0
+				var v4 := n.get_noise_2d(x * 3.0, y * 3.0) * 0.5 + 0.5
+				a = clampf((0.95 - d2) * 2.2 + (v4 - 0.5) * 1.6, 0.0, 1.0)
+			img.set_pixel(x, y, Color(1, 1, 1, a))
+	var t := ImageTexture.create_from_image(img)
+	_decal_tex[kind] = t
+	return t
+
+## Projected grime: kind = streak | stain | oil.  `normal` points out of the surface; size = (width, height) on it.
+static func decal(kind: String, pos: Vector3, normal: Vector3, size: Vector2, tint := Color(0.05, 0.045, 0.04), strength := 0.8, depth := 0.7) -> Decal:
+	var d := Decal.new()
+	d.size = Vector3(size.x, depth, size.y)
+	d.texture_albedo = _make_decal(kind)
+	d.modulate = Color(tint.r, tint.g, tint.b, strength)
+	d.albedo_mix = 1.0
+	d.upper_fade = 0.3
+	d.lower_fade = 0.3
+	d.cull_mask = 1
+	var y_axis := normal.normalized()
+	var x_axis := Vector3.RIGHT
+	var z_axis := Vector3.BACK
+	if absf(y_axis.y) < 0.9:
+		z_axis = Vector3.DOWN                       # streaks run down the wall
+		x_axis = y_axis.cross(z_axis).normalized()
+		z_axis = x_axis.cross(y_axis).normalized()
+	else:
+		x_axis = Vector3.RIGHT
+		z_axis = x_axis.cross(y_axis).normalized()
+	d.basis = Basis(x_axis, y_axis, z_axis)
+	d.position = pos
+	geo.add_child(d)
+	return d
+
 # ================================================================== entry
 static func setup(level: Node3D) -> void:
 	host = level
@@ -151,6 +213,7 @@ static func dress(level: Node3D) -> void:
 	_mech_yard()
 	_fire_escape()
 	_yard_clutter()
+	_lobby()
 	_noc()
 	_break_room()
 	_plant_extras()
@@ -205,6 +268,19 @@ static func _facade() -> void:
 			# blinds half-drawn in a few
 			if rng.randf() < 0.35:
 				box(Vector3(wx + rf(-0.5, 0.5), yy + 0.4, fz + 0.08), Vector3(rf(1.0, 2.4), rf(0.3, 0.8), 0.03), Mats.color(Color(0.5, 0.5, 0.48), 0.9))
+	# grime: rain/dirt streaks under sills and the parapet, salt stains at the plinth
+	for i in range(-6, 10):
+		var gx := i * 5.0 - 1.0
+		if absf(gx) < 4.5:
+			continue
+		for yy in [2.4, 6.4]:
+			if rng.randf() < 0.75:
+				decal("streak", Vector3(gx + rf(-0.5, 0.5), yy - 2.1, fz + 0.2), Vector3(0, 0, 1), Vector2(rf(1.6, 2.8), 3.4), Color(0.04, 0.04, 0.035), rf(0.45, 0.8))
+	for gx2 in range(-30, 50, 7):
+		if absf(gx2) > 6.0:
+			decal("streak", Vector3(gx2 + rf(-1, 1), 8.0, fz + 0.2), Vector3(0, 0, 1), Vector2(rf(3.0, 5.0), 4.6), Color(0.05, 0.045, 0.035), rf(0.5, 0.9))
+	for gx3 in range(-32, 50, 5):
+		decal("stain", Vector3(gx3 + rf(-1, 1), 0.7, fz + 0.2), Vector3(0, 0, 1), Vector2(rf(2.0, 4.0), rf(1.2, 2.2)), Color(0.55, 0.55, 0.52), rf(0.25, 0.5))
 	# louvre intake grilles on the plant side (dark slats, blue standby glow)
 	for gx in [-22.5, 22.0, 41.5]:
 		box(Vector3(gx, 4.9, fz + 0.1), Vector3(3.4, 1.6, 0.12), Mats.color(Color(0.015, 0.018, 0.022), 0.5))
@@ -299,6 +375,9 @@ static func _docks() -> void:
 		var bx2 := x0 + bw * (i + 0.5)
 		box(Vector3(bx2, 4.82, fz + 3.6), Vector3(2.4, 0.05, 0.18), Mats.emissive(Color(0.85, 0.93, 1.0), 3.2))
 		omni(Vector3(bx2, 4.4, fz + 3.6), Color(0.8, 0.9, 1.0), 1.3, 7.5, i == 0)
+	# oil and tyre-rubber stains on the apron, black ice patches
+	for i in 7:
+		decal("oil", Vector3(x0 + rf(1, x1 - x0 - 1), 0.04, fz + rf(6.0, 13.0)), Vector3.UP, Vector2(rf(1.4, 3.0), rf(1.0, 2.4)), Color(0.02, 0.02, 0.025), rf(0.6, 0.95), 0.6)
 	# the live scene: truck at bay 3, forklift with a pallet on the platform, stretch-wrapped pallets, cardboard
 	Props.car(geo, Vector3(x0 + bw * 2.5, 0.0, fz + 12.0), PI, Color(0.82, 0.82, 0.8), true, "van")
 	isf("forklift", Vector3(x0 + 3.0, 1.25, fz + 2.6), 0.5, {"scale": 1.0, "snow": 0.0, "range": 120.0})
@@ -381,6 +460,19 @@ static func rack(pos: Vector3, yaw: float) -> void:
 	var r := sp("industrial_sf/rack_sf", pos, yaw, {"fit_box": Vector3(0.72, 2.25, 0.88), "shadow": false, "range": 60.0})
 	if r != null:
 		solid(pos + Vector3(0, 1.15, 0), Vector3(0.8, 2.3, 1.0), yaw)
+
+# ================================================================== lobby
+static func _lobby() -> void:
+	# optical turnstile banks either side of the 2.6 m central lane
+	for sx in [-3.45, 3.45]:
+		isf("turnstile", Vector3(sx, 0.0, -3.5), PI * 0.5 if sx < 0 else -PI * 0.5, {"collide": Vector3(1.9, 1.1, 1.1), "range": 60.0})
+	# visitor lounge: real sofa pair + water cooler by the reception
+	isf("water_cooler", Vector3(-7.2, 0.0, 3.0), PI * 0.5, {"collide": Vector3(0.4, 1.4, 0.4)})
+
+static func lobby_wall() -> void:
+	for i in 3:
+		var p := Vector3(-3.0 + i * 3.0, 1.55, -5.84)
+		isf("wall_tv", p, 0.0, {"scale": Vector3(1.75, 1.75, 1.75), "mats": {"TVS0001_Screen": screen_mat(Color(0.12, 0.45, 0.9), 1.5, float(i) * 2.3, 2)}, "shadow": false})
 
 # ================================================================== NOC
 static func _noc() -> void:

@@ -19,7 +19,7 @@ const SIZES := {
 	"shop_brick": [9.86, 8.32, 8.2], "shop_gray": [8.63, 8.63, 8.6], "shop_long": [19.16, 5.73, 7.6],
 	"shop_pair": [10.4, 30.66, 9.5], "block_tall": [11.77, 19.71, 13.5], "block_row": [19.86, 64.56, 15.0],
 	"block_nyc": [24.38, 21.49, 11.0], "gas_station": [13.72, 15.83, 6.0], "church_small": [11.42, 12.17, 17.0],
-	"garage_brick": [4.5, 28.43, 3.4], "warehouse_red": [24.91, 9.06, 8.0], "pole_utility": [3.02, 3.15, 10.5],
+	"warehouse_red": [24.91, 9.06, 8.0], "pole_utility": [3.02, 3.15, 10.5],
 	"dumpster_a": [1.53, 1.01, 1.5], "dumpster_b": [4.24, 1.7, 1.5], "mailbox_us": [0.92, 0.63, 1.4],
 }
 

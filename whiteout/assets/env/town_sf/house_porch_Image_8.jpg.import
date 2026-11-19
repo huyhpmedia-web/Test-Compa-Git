@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/house_porch_Image_8.jpg-f655e2e56e8a7cbf8e01d
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

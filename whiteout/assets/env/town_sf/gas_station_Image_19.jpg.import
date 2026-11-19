@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/gas_station_Image_19.jpg-2cc4d2b592fd7e192ff0
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

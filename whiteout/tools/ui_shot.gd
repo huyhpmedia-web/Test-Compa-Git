@@ -198,6 +198,11 @@ func _pickups_shot(args: Dictionary) -> void:
 	var lvl = Game.current_level
 	if lvl == null:
 		return
+	if str(args.get("night", "0")) == "1":
+		# bare snowy night stage (level=level): fast, clean ground, one cold moon + one warm lamp
+		lvl.env_exterior_night(false, 0.012, 0.3)
+		lvl.box(Vector3(0, -0.25, 0), Vector3(40, 0.5, 40), str(args.get("ground", "asphalt")))
+		lvl.light(Vector3(float(args.get("lx", "0")), 2.6, float(args.get("lz", "3.0"))), Color(1.0, 0.8, 0.55), float(args.get("lamp", "1.3")), 9.0)
 	var ids: Array = str(args.get("ids", "control_key,ammo_9mm,flare,gel,radio,tom_tag")).split(",")
 	var x0 := float(args.get("x", "-1.0"))
 	var z0 := float(args.get("z", "4.6"))

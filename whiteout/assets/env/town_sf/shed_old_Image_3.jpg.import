@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/shed_old_Image_3.jpg-a7fe1d0d8f288b417fe2f1d9
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

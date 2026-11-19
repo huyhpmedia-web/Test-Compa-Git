@@ -135,3 +135,29 @@ static func cavern_set(y: float) -> void:
 	_sp("industrial_sf/diesel_gen", Vector3(88.0, y, 12.0), -PI * 0.5, {"scale": 1.4, "collide": Vector3(1.6, 1.6, 2.6), "range": 80.0})
 	_sp("mine_sf/mine_cart", Vector3(95.0, y, 14.0), 2.0, {"collide": "none", "range": 80.0})
 	_sp("mine_sf/lantern", Vector3(106.0, y, 0.0), 0.0, {"scale": 1.0, "range": 40.0})
+
+## Grime decals: water streaks down the rock, rust + ore dust stains, oil under the machinery.
+static func grime() -> void:
+	var r := rng
+	# pipeline tunnel (x 1..25, walls at z = -1.8 / +1.8)
+	for i in 9:
+		var x := 2.0 + i * 2.8 + r.randf_range(-0.8, 0.8)
+		R4.decal("streak", Vector3(x, 1.7, 1.82), Vector3(0, 0, -1), Vector2(r.randf_range(1.2, 2.4), 3.0), Color(0.03, 0.035, 0.04), r.randf_range(0.5, 0.85))
+		R4.decal("streak", Vector3(x + 1.2, 1.7, -1.82), Vector3(0, 0, 1), Vector2(r.randf_range(1.2, 2.4), 3.0), Color(0.04, 0.035, 0.03), r.randf_range(0.5, 0.85))
+	for x in [4.0, 10.0, 17.0, 23.0]:
+		R4.decal("oil", Vector3(x, 0.04, r.randf_range(-0.9, 0.9)), Vector3.UP, Vector2(r.randf_range(1.2, 2.4), r.randf_range(1.0, 1.8)), Color(0.02, 0.025, 0.03), 0.8, 0.6)
+	# hoist hall: concrete walls (x=26 west, x=48 east, z=-10 north, z=+10 south)
+	for i in 8:
+		var z := -8.0 + i * 2.4
+		R4.decal("streak", Vector3(47.9, 4.8, z), Vector3(-1, 0, 0), Vector2(r.randf_range(1.8, 3.0), 7.0), Color(0.05, 0.04, 0.035), r.randf_range(0.5, 0.85))
+		R4.decal("streak", Vector3(26.2, 4.8, z), Vector3(1, 0, 0), Vector2(r.randf_range(1.8, 3.0), 7.0), Color(0.05, 0.04, 0.035), r.randf_range(0.4, 0.8))
+	for i in 8:
+		var x2 := 28.0 + i * 2.6
+		R4.decal("streak", Vector3(x2, 4.8, 9.9), Vector3(0, 0, -1), Vector2(r.randf_range(1.8, 3.0), 7.0), Color(0.05, 0.04, 0.035), r.randf_range(0.4, 0.8))
+	for p in [Vector3(44.0, 0.04, -4.0), Vector3(46.0, 0.04, 1.2), Vector3(32.0, 0.04, 6.0), Vector3(39.0, 0.04, -1.0)]:
+		R4.decal("oil", p, Vector3.UP, Vector2(r.randf_range(1.6, 3.2), r.randf_range(1.4, 2.6)), Color(0.02, 0.02, 0.025), 0.85, 0.6)
+	# pump cavern
+	for x in range(2, 19, 3):
+		R4.decal("streak", Vector3(x, 2.5, -31.9), Vector3(0, 0, 1), Vector2(r.randf_range(1.6, 3.0), 5.0), Color(0.03, 0.04, 0.045), r.randf_range(0.5, 0.9))
+	for px in [4.0, 9.5, 15.0]:
+		R4.decal("stain", Vector3(px, 0.04, -27.0), Vector3.UP, Vector2(3.4, 3.0), Color(0.18, 0.1, 0.06), 0.7, 0.6)

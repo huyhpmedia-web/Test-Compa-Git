@@ -99,3 +99,18 @@ static func pipeline_wall() -> void:
 	_sp("industrial_sf/storage_tank", Vector3(18.0, 0.0, 14.0), 0.0, {"scale": 0.9, "collide": "cyl", "range": 90.0})
 	_sp("industrial_sf/diesel_gen", Vector3(17.6, 0.0, -12.0), -PI * 0.5, {"scale": 1.6, "collide": Vector3(1.8, 1.7, 3.0), "range": 90.0})
 	_sp("mine_sf/steam_hammer", Vector3(-15.8, 0.0, 18.0), PI * 0.5, {"scale": 1.0, "collide": Vector3(2.2, 3.0, 1.0), "range": 90.0})
+
+## Grime decals: wet-rock streaks, pipe rust stains, oil at the station.
+static func grime() -> void:
+	var r := RandomNumberGenerator.new()
+	r.seed = 6161
+	for i in 12:
+		var z := -26.0 + i * 4.0
+		R4.decal("streak", Vector3(18.9, 3.5, z), Vector3(-1, 0, 0), Vector2(r.randf_range(2.0, 4.0), 7.0), Color(0.02, 0.03, 0.04), r.randf_range(0.5, 0.85))
+	for i in 7:
+		var z2 := 46.0 + i * 3.0
+		R4.decal("streak", Vector3(2.45, 2.0, z2), Vector3(-1, 0, 0), Vector2(r.randf_range(2.0, 3.0), 4.5), Color(0.03, 0.03, 0.035), r.randf_range(0.5, 0.8))
+	for pz in [-20.0, -4.0]:
+		R4.decal("oil", Vector3(16.5, 0.04, pz), Vector3.UP, Vector2(2.6, 2.2), Color(0.02, 0.025, 0.03), 0.8, 0.6)
+	for k in 5:
+		R4.decal("stain", Vector3(r.randf_range(-12.0, 14.0), 0.04, r.randf_range(-24.0, 14.0)), Vector3.UP, Vector2(r.randf_range(2.0, 3.6), r.randf_range(2.0, 3.0)), Color(0.02, 0.04, 0.05), 0.55, 0.6)

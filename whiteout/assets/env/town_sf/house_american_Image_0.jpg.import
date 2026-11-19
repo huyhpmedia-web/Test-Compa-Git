@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/house_american_Image_0.jpg-4f96d607c1afe9f753
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

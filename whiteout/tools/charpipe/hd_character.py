@@ -42,6 +42,7 @@ ap.add_argument("--face", default="auto")
 ap.add_argument("--voxel", type=float, default=0.012)
 ap.add_argument("--flipx", action="store_true")
 ap.add_argument("--decimate", type=int, default=0)
+ap.add_argument("--rest-pose", action="store_true")   # rigged source: reset to the armature rest pose first
 ap.add_argument("--tint", default="")      # r,g,b multiply on non-skin/hair/eye base colour textures
 ap.add_argument("--skin-tint", default="")
 ap.add_argument("--min-rough", type=float, default=0.62)
@@ -74,7 +75,10 @@ sarms = [o for o in new if o.type == "ARMATURE"]
 for a in bpy.data.actions:            # no imported clip may drive the pose
     pass
 for sa in sarms:
-    pass   # keep the pose the importer gives (frame-0 / bind): that is the pose the mesh was authored in
+    if args.rest_pose:
+        if sa.animation_data: sa.animation_data_clear()
+        for pb in sa.pose.bones:
+            pb.matrix_basis = Matrix.Identity(4)
 bpy.context.view_layer.update()
 
 # source rig joints (world, before any transform) by name heuristics or an explicit map

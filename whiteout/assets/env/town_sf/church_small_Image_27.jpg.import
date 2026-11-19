@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/church_small_Image_27.jpg-25b1617e7af49b4c66a
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

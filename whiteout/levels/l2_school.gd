@@ -453,7 +453,7 @@ func _build_courtyard() -> void:
 			[Vector3(-24, -0.2, -22), Vector3(4, 0.36, 24)], [Vector3(24, -0.2, -22), Vector3(4, 0.36, 24)]]:
 		box(spec[0], spec[1], "snow", false)
 	# the neighbourhood around the school: real houses across the road and beyond the side walls (backdrop)
-	Town.row(geo, -60.0, -8.0, 38.0, -1.0, Town.HOUSES, 201, {"collide": false, "lit": 0.15, "range": 150.0, "gap_min": 2.0, "gap_max": 5.0})
+	Town.row(geo, -60.0, -8.0, 38.0, -1.0, Town.HOUSES, 201, {"collide": false, "lit": 0.15, "range": 150.0, "gap_min": 2.0, "gap_max": 5.0, "poles": true})
 	Town.row(geo, 8.0, 62.0, 38.0, -1.0, Town.HOUSES, 202, {"collide": false, "lit": 0.15, "range": 150.0, "gap_min": 2.0, "gap_max": 5.0})
 	Town.row(geo, -70.0, -34.0, -30.0, 1.0, Town.HOUSES, 203, {"collide": false, "lit": 0.0, "range": 150.0, "gap_min": 3.0, "gap_max": 6.0})
 	Town.row(geo, 34.0, 72.0, -30.0, 1.0, Town.HOUSES, 204, {"collide": false, "lit": 0.0, "range": 150.0, "gap_min": 3.0, "gap_max": 6.0})

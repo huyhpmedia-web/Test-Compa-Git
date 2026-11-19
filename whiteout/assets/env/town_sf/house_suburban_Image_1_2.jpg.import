@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/house_suburban_Image_1_2.jpg-f1f3dcad6ee95c91
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

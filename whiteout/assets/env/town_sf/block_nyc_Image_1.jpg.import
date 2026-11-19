@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/block_nyc_Image_1.jpg-a953d29963502e9876ab955
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

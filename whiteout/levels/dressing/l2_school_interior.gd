@@ -32,6 +32,7 @@ static func dress(level: Node3D) -> void:
 	_basement()
 	_boiler_room()
 	_locker_room()
+	_fixtures()
 
 # ------------------------------------------------------------------ generic room dressing
 ## rect = inner wall faces (x0, z0, x1, z1); gaps = per wall list of [centre, width] along that wall.
@@ -255,3 +256,42 @@ static func pillow(parent: Node3D, pos: Vector3, col: Color, seed_v := 0) -> voi
 ## Blackboard for classroom 2B: Sketchfab chalkboard stretched to the wall, base at pos.
 static func chalkboard(pos: Vector3) -> void:
 	SF.prop(g, "chalkboard", pos, 0.0, {"collide": "none", "scale": Vector3(1.66, 1.38, 1.0), "shadow": false})
+
+# ------------------------------------------------------------------ ceilings, fixtures, wall furniture
+static func _beam(a: Vector3, b: Vector3, size := Vector2(0.3, 0.4), mat := "metal_painted") -> void:
+	var d := b - a
+	var m := Props.box(g, Vector3(d.length(), size.y, size.x), (a + b) * 0.5, Mats.get_mat(mat, 1.0), false)
+	m.rotation.y = atan2(-d.z, d.x)
+
+static func _fixtures() -> void:
+	# corridor ductwork + conduit
+	var cy := FY + HC - 0.32
+	_beam(Vector3(-21.5, cy, -22.75), Vector3(6.5, cy, -22.75), Vector2(0.55, 0.36), "metal")
+	Props.pipe(g, Vector3(-21.5, FY + HC - 0.16, -25.55), Vector3(6.5, FY + HC - 0.16, -25.55), 0.045, "metal_rust")
+	Props.pipe(g, Vector3(-21.5, FY + HC - 0.16, -25.35), Vector3(6.5, FY + HC - 0.16, -25.35), 0.03, "metal")
+	# gym roof steel
+	for z in [-12.0, -20.5, -29.0]:
+		_beam(Vector3(7.3, FY + 6.3, z), Vector3(21.7, FY + 6.3, z), Vector2(0.28, 0.5), "metal_painted")
+	Props.pipe(g, Vector3(7.3, FY + 6.1, -33.6), Vector3(21.7, FY + 6.1, -33.6), 0.07, "metal_rust")
+	Props.pipe(g, Vector3(7.3, FY + 6.1, -10.4), Vector3(21.7, FY + 6.1, -10.4), 0.07, "metal_rust")
+	# hall ceiling: cross beams
+	for z in [-16.0, -21.2]:
+		_beam(Vector3(-6.8, FY + HC - 0.18, z), Vector3(6.8, FY + HC - 0.18, z), Vector2(0.3, 0.3), "wood")
+	# wall furniture from the PH office set: clocks, extinguishers, alarm pull-stations
+	SF_env("interior/wall_clock", Vector3(-3.1, FY + 3.15, -21.86), 0.0, {"fit_h": 0.5})
+	SF_env("interior/wall_clock", Vector3(14.5, FY + 5.2, -10.2), PI, {"fit_h": 0.9})
+	SF_env("interior/extinguisher", Vector3(-6.8, FY + 1.1, -13.1), PI * 0.5, {"fit_h": 0.55})
+	SF_env("interior/extinguisher", Vector3(-3.0, FY + 1.1, -22.2), PI, {"fit_h": 0.55})
+	SF_env("interior/extinguisher", Vector3(7.25, FY + 1.1, -27.0), PI * 0.5, {"fit_h": 0.55})
+	SF_env("interior/fire_alarm", Vector3(-9.5, FY + 1.35, -22.17), PI, {"fit_h": 0.2})
+	SF_env("interior/fire_alarm", Vector3(-6.82, FY + 1.35, -20.2), PI * 0.5, {"fit_h": 0.2})
+	SF_env("interior/wheelchair", Vector3(-9.6, FY, -23.5), 2.3, {"fit_h": 0.95, "collide": "none"})
+	SF_env("interior/wheelchair", Vector3(-3.6, FY, -30.5), 0.6, {"fit_h": 0.95, "collide": "none"})
+	SF_env("interior/medical_box", Vector3(-4.7, FY + 1.36, -27.5), PI * 0.5, {"fit_h": 0.4, "collide": "none"})
+	SF_env("interior/wheelchair", Vector3(12.0, FY, -12.2), 0.4, {"fit_h": 0.95, "collide": "none"})
+
+static func SF_env(rel: String, pos: Vector3, yaw: float, opts := {}) -> Node3D:
+	var Env = load("res://world/env_assets.gd")
+	var o := {"snow": 0.0, "range": 40.0}
+	o.merge(opts, true)
+	return Env.spawn(g, rel, pos, yaw, o)

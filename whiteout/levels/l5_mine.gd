@@ -54,6 +54,7 @@ func build() -> void:
 	_build_shaft()
 	_build_enemies()
 	_build_hallucinations()
+	Real5.grime()
 	if Game.has_flag("mine_power"):
 		_hall_power_on(true)
 
@@ -859,7 +860,7 @@ func _build_pump_station() -> void:
 	Props.table(geo, Vector3(17.0, 0, -29.5), 0.0, Vector2(2.2, 0.9))
 	Props.box(geo, Vector3(0.28, 0.2, 0.18), Vector3(17.4, 0.88, -29.5), Mats.color(Color(0.3, 0.3, 0.2), 0.5, 0.4), false)
 	pickup("mn_battery", "lamp_battery", 1, Vector3(17.0, 0.9, -29.5))
-	Props.locker(geo, Vector3(1.0, 0, -21.5), PI * 0.5, 3)
+	Real5.R4.isf("lockers", Vector3(1.0, 0, -21.5), PI * 0.5, {"collide": Vector3(0.55, 2.0, 2.2)})
 	Props.barrel(geo, Vector3(18.8, 0, -20.0))
 	Props.barrel(geo, Vector3(18.8, 0, -21.0), 0.0, false)
 	Props.debris(geo, Vector3(7.0, 0, -21.0), 0.0, 6, "rock")

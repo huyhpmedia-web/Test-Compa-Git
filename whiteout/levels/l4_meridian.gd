@@ -428,7 +428,7 @@ func _lobby() -> void:
 	Props.chair(geo, Vector3(-4.5, 0, 2.0), 0.3, true)
 	note("l4_agreement", Vector3(-3.2, 1.115, 1.0), T.AGREEMENT_TITLE, T.AGREEMENT, 0.3)
 	# welcome wall
-	Props.box(geo, Vector3(5.5, 2.2, 0.08), Vector3(0, 2.2, -5.8), Mats.emissive(Color(0.1, 0.35, 0.65), 1.3), false)
+	Real.lobby_wall()    # three wall displays instead of the blue slab
 	label("WELCOME TO MERIDIAN\nUPTIME  99.9997%", Vector3(0, 2.6, -5.74), 0.0, 90, Color(0.85, 0.98, 1.3), 0.007)
 	label("Visitors must be escorted at all times.", Vector3(0, 1.5, -5.74), 0.0, 36, Color(0.6, 0.78, 0.95), 0.005)
 	# turnstiles and the lounge seating: levels/dressing/l4_art.gd

@@ -66,6 +66,7 @@ func build() -> void:
 	_build_lattice_wall()
 	_build_crystals()
 	Art6.dress(self)
+	Real6.grime()
 	_build_hanging_bodies()
 	_build_items()
 	_build_enemies()

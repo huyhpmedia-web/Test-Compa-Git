@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/dumpster_b_Image_3.jpg-a01ab0d2ed9b8620225203
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

@@ -26,7 +26,6 @@ CFG = {
  "block_nyc":       ("b_nyc", 11.0, 0, True, 12000),
  "gas_station":     ("gas_old2", 6.0, 0, True, 20000),
  "church_small":    ("church", 17.0, 0, True, 20000),
- "garage_brick":    ("s_brickgarage", 3.4, 0, True, 6000),
  "warehouse_red":   ("w_red", 8.0, 0, True, 4000),
  "pole_utility":    ("p_pole", 10.5, 0, False, 16000),
  "dumpster_a":      ("p_dumpster", 1.5, 0, False, 5000),

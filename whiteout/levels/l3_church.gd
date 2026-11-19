@@ -1,5 +1,6 @@
 extends "res://levels/level.gd"
 const FireFX = preload("res://world/fire_fx.gd")
+const L3I = preload("res://levels/dressing/l3_church_interior.gd")
 const Town = preload("res://world/town.gd")
 ## L3 — MAIN STREET / ST. BRENDAN'S.
 ## West -> east along Main Street (x from -70 to +72). Pharmacy (key) and diner on the north side,
@@ -187,6 +188,7 @@ func build() -> void:
 	_build_enemies()
 	_build_triggers()
 	_build_exit()
+	L3I.dress(self)
 
 # ------------------------------------------------------------------ ground & boundary
 func _build_world() -> void:
@@ -203,7 +205,7 @@ func _build_world() -> void:
 	box(Vector3(190, -0.05, 0), Vector3(240, 0.1, 300), lake, false)
 	box(Vector3(85, -0.02, 0), Vector3(22, 0.05, 120), "snow", false)
 	# the rest of the town: real houses beyond the plowed banks (no collision; banks bound the level)
-	if Town.has("house_two_story"):
+	if Town.has("house_ranch"):
 		_town_row(-76.0, 70.0, 27.0, -1.0, TOWN_HOUSES, 11, 0.25, Vector2(26.5, 34.0))
 		_town_row(-78.0, 2.0, -26.0, 1.0, TOWN_HOUSES + TOWN_SHOPS, 23, 0.25, Vector2(-34.0, -25.5))
 		_town_row(6.0, 70.0, -51.0, 1.0, TOWN_HOUSES, 5, 0.2, Vector2(-58.0, -50.5))
@@ -220,31 +222,36 @@ func _build_world() -> void:
 	light(Vector3(80, 7, -8), Color(0.5, 0.72, 1.0), 1.6, 55.0, false)
 
 # ------------------------------------------------------------------ real buildings (world/town.gd)
-const TOWN_SHOPS := [["shop_corner", 8.7, 9.1], ["hall_station", 9.5, 6.0], ["shop_wood_store", 5.9, 7.5],
-	["house_narrow", 5.4, 6.6], ["office_small", 9.3, 11.5], ["shop_diner", 8.0, 6.6], ["house_timber", 5.6, 5.2]]
-const TOWN_HOUSES := [["house_two_story", 7.9, 6.7], ["house_bungalow", 7.3, 6.7], ["house_ranch", 8.8, 6.3],
-	["house_split", 9.7, 6.9], ["house_duplex", 9.6, 6.9], ["house_farm", 8.5, 9.0]]
+const TOWN_SHOPS := Town.SHOPS
+const TOWN_HOUSES := Town.HOUSES
 
 ## Fills a frontage x0..x1 with real buildings whose fronts sit on zf (facing +z when out = 1).
 ## Keeps an invisible block collider so navigation and level bounds stay exactly as designed.
 func _town_row(x0: float, x1: float, zf: float, out: float, pool: Array, seed_v: int, lit := 0.35, collide_block := Vector2.ZERO) -> bool:
-	if not Town.has("shop_corner"):
+	if not Town.has("house_ranch"):
 		return false
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed_v
 	var x := x0 + 0.2
 	var yaw := 0.0 if out > 0.0 else PI
 	var guard := 0
+	var last_n := ""
 	while x < x1 - 4.0 and guard < 20:
 		guard += 1
 		var room := x1 - x
-		var fits: Array = pool.filter(func(b): return b[1] <= room + 0.3)
+		var fits: Array = pool.filter(func(b): return b[1] <= room + 0.3 and b[0] != last_n)
+		if fits.is_empty():
+			fits = pool.filter(func(b): return b[1] <= room + 0.3)
 		if fits.is_empty():
 			break
 		var b: Array = fits[rng.randi() % fits.size()]
+		last_n = b[0]
 		var w: float = b[1]
 		var d: float = b[2]
-		Town.building(geo, b[0], Vector3(x + w * 0.5, 0, zf - out * d * 0.5), yaw, {"lit": lit, "collide": collide_block == Vector2.ZERO, "range": 140.0})
+		var gt := 1.0 - rng.randf() * 0.2
+		Town.building(geo, b[0], Vector3(x + w * 0.5, 0, zf - out * d * 0.5), yaw + rng.randf_range(-0.03, 0.03), {"collide": collide_block == Vector2.ZERO, "range": 140.0, "tint": Color(gt, gt, gt * rng.randf_range(0.93, 1.0))})
+		if rng.randf() < 0.4 and x + w + 1.5 < x1:
+			Town.building(geo, "dumpster_a" if rng.randf() < 0.5 else "mailbox_us", Vector3(x + w + 0.7, 0, zf - out * 1.5), rng.randf() * TAU, {"collide": false, "range": 70.0})
 		x += w + rng.randf_range(0.4, 1.6)
 	if collide_block != Vector2.ZERO:
 		var body := StaticBody3D.new()
@@ -335,16 +342,7 @@ func _stool(pos: Vector3) -> void:
 	_cy(0.2, 0.07, pos + Vector3(0, 0.65, 0), _c(Color(0.5, 0.1, 0.1), 0.5), false)
 
 func _booth(pos: Vector3, yaw: float) -> void:
-	var r := Node3D.new()
-	r.position = pos
-	r.rotation.y = yaw
-	geo.add_child(r)
-	var vinyl := _c(Color(0.42, 0.08, 0.08), 0.45)
-	Props.box(r, Vector3(1.1, 0.05, 0.8), Vector3(0, 0.74, 0), Mats.get_mat("wood", 0.8), true)
-	Props.box(r, Vector3(0.1, 0.72, 0.1), Vector3(0, 0.36, 0), Mats.get_mat("metal"), false)
-	for s in [-1, 1]:
-		Props.box(r, Vector3(1.2, 0.45, 0.45), Vector3(0, 0.22, s * 0.78), vinyl, true)
-		Props.box(r, Vector3(1.2, 0.55, 0.1), Vector3(0, 0.72, s * 1.0), vinyl, false)
+	L3I.booth(self, pos, yaw)
 
 # ------------------------------------------------------------------ NORTH ROW (pharmacy, diner, Northline)
 func _build_north_row() -> void:
@@ -365,15 +363,13 @@ func _build_north_row() -> void:
 	_b(Vector3(0.28, 0.9, 0.12), Vector3(-30.9, 3.9, pz1 + 0.3), _c(Color(0.05, 0.3, 0.14), 0.4), false)
 	light(Vector3(-30.9, 3.9, pz1 + 1.4), Color(0.3, 1.0, 0.5), 0.35, 4.0, false, true)
 	# interior
-	_wshelf(-41.5, -9.0, PI * 0.5, 1.8)
-	_wshelf(-41.5, -11.2, PI * 0.5, 1.8)
-	_wshelf(-31.2, -9.5, -PI * 0.5, 1.8)
-	_wshelf(-31.2, -11.7, -PI * 0.5, 1.8)
+	L3I.shelf(self, Vector3(-41.45, 0, -10.2), PI * 0.5)
+	L3I.shelf(self, Vector3(-30.6, 0, -10.7), -PI * 0.5)
 	_b(Vector3(8.0, 1.05, 0.7), Vector3(-37.4, 0.55, -13.2), "wood_panel", true)       # dispensary counter
 	_b(Vector3(8.2, 0.05, 0.9), Vector3(-37.4, 1.1, -13.2), "marble", false)
-	for i in 4:
-		_wshelf(-40.6 + i * 2.0, -19.6, 0.0, 1.8)
-	_b(Vector3(0.5, 0.4, 0.4), Vector3(-39.6, 1.3, -13.2), _c(Color(0.7, 0.72, 0.7), 0.4), false)   # till
+	L3I.shelf(self, Vector3(-39.6, 0, -19.45), 0.0)
+	L3I.shelf(self, Vector3(-35.9, 0, -19.45), 0.0)
+	L3I.register(self, Vector3(-39.6, 1.13, -13.2), PI)   # till
 	Props.cabinet(geo, Vector3(-31.0, 0, -17.8), PI * 0.5)
 	# cots for the cold-exposure patients, and a sleeper on a mattress
 	Props.bed(geo, Vector3(-40.4, 0, -8.6), PI * 0.5, true)
@@ -430,6 +426,9 @@ func _build_north_row() -> void:
 	_b(Vector3(8.8, 0.06, 1.0), Vector3(-20.3, 1.1, -12.0), "marble", false)
 	for i in 6:
 		_stool(Vector3(-23.6 + i * 1.5, 0, -11.0))
+	L3I.coffee(self, Vector3(-17.2, 1.13, -12.1), PI)
+	L3I.coffee(self, Vector3(-16.6, 1.13, -12.1), PI)
+	L3I.register(self, Vector3(-21.4, 1.13, -12.0), PI)
 	_booth(Vector3(-24.0, 0, -8.2), 0.0)
 	_booth(Vector3(-14.3, 0, -8.2), 0.0)
 	_booth(Vector3(-24.6, 0, -15.0), PI * 0.5)
@@ -556,7 +555,7 @@ func _build_hardware() -> void:
 	# sales floor
 	_b(Vector3(9.0, 1.05, 0.8), Vector3(6.5, 0.55, 10.4), "wood_panel", true)    # counter x 2..11
 	_b(Vector3(9.2, 0.06, 1.0), Vector3(6.5, 1.1, 10.4), "wood", false)
-	_b(Vector3(0.5, 0.35, 0.4), Vector3(3.2, 1.3, 10.4), _c(Color(0.35, 0.34, 0.3), 0.4, 0.6), false)  # till
+	L3I.register(self, Vector3(3.2, 1.13, 10.4), PI * 0.5)  # till
 	Props.table(geo, Vector3(14.0, 0, 10.4), 0.1, Vector2(2.2, 0.9))
 	_wshelf(15.4, 8.0, -PI * 0.5, 1.8)
 	_wshelf(0.6, 8.0, PI * 0.5, 1.8)
@@ -853,15 +852,7 @@ func _cwall(a: Vector2, b: Vector2, gaps: Array = []) -> void:
 	wall(a, b, 5.6, "wood_panel", 1.4, 0.4, up)
 
 func _pew(x: float, z: float, yaw: float, length := 4.8, tilt := 0.0, lift := 0.0) -> void:
-	var r := Node3D.new()
-	r.position = Vector3(x, lift, z)
-	r.rotation = Vector3(0, yaw, tilt)
-	geo.add_child(r)
-	var w := Mats.get_mat("wood", 0.8)
-	Props.box(r, Vector3(length, 0.1, 0.5), Vector3(0, 0.45, 0), w, true)
-	Props.box(r, Vector3(length, 0.8, 0.07), Vector3(0, 0.9, -0.24), w, false)
-	for sx in [-1, 1]:
-		Props.box(r, Vector3(0.08, 1.0, 0.6), Vector3(sx * length * 0.5, 0.5, 0), w, false)
+	L3I.pew(self, x, z, yaw, length, tilt, lift)
 
 func _stained(pos: Vector3, along_z: bool, palette: Array, w := 1.3, h := 3.2) -> void:
 	# a glowing frost-rimed window pane set into the wall plane
@@ -992,19 +983,13 @@ func _build_church() -> void:
 	_b(Vector3(3.6, 0.9, 1.35), alt + Vector3(0, 0.5, 0.02), _c(Color(0.75, 0.75, 0.74, 1.0), 0.95), false)
 	_b(Vector3(0.28, 3.0, 0.2), Vector3(46.0, 3.5, ZB + 0.3), "wood", false)
 	_b(Vector3(1.4, 0.26, 0.2), Vector3(46.0, 4.2, ZB + 0.3), "wood", false)
-	_candles(alt + Vector3(-1.1, 1.06, 0), 5, 0.25, 0.8)
-	_candles(alt + Vector3(1.1, 1.06, 0), 5, 0.25, 0.8)
+	L3I.altar_fixtures(self)
 	_candles(Vector3(43.0, 0.4, -37.0), 9, 0.6, 0.6)
 	_candles(Vector3(49.0, 0.4, -37.0), 9, 0.6, 0.6)
 	Props.statue(geo, Vector3(41.2, 0.38, -40.0), 0.5)
-	# organ: console + pipes
-	_b(Vector3(1.9, 1.3, 1.1), Vector3(40.4, 0.65 + 0.38, -38.0), "wood_panel", true)
-	_b(Vector3(1.7, 0.08, 0.5), Vector3(40.9, 1.75, -38.0), _c(Color(0.9, 0.9, 0.85), 0.5), false)
+	# organ: Sketchfab pipe organ against the west wall
+	L3I.organ(self)
 	Props.bench(geo, Vector3(41.8, 0.38, -38.0), PI * 0.5)
-	for i in 11:
-		var ph := 2.0 + (i % 6) * 0.6 + (1.5 if i > 4 and i < 8 else 0.0)
-		_cy(0.09, ph, Vector3(38.7, 0.38 + ph * 0.5 + 1.0, -41.0 + i * 0.5), _c(Color(0.62, 0.58, 0.45), 0.35, 0.8), false, -1.0, Vector3.ZERO, 10)
-	_b(Vector3(0.3, 0.9, 5.6), Vector3(38.5, 1.0, -38.2), "wood_panel", false)
 	# pulpit
 	_b(Vector3(1.0, 1.3, 1.0), Vector3(51.8, 0.38 + 0.65, -36.4), "wood_panel", true)
 	_b(Vector3(1.2, 0.08, 1.2), Vector3(51.8, 0.38 + 1.34, -36.4), "wood", false)

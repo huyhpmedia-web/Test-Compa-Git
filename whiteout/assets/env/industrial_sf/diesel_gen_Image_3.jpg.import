@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/diesel_gen_Image_3.jpg-5c33908491567ccb56cd90
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

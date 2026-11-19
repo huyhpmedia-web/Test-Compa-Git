@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/pallets_Image_2.jpg-f5d90e99ccf7b517d8c52442f
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

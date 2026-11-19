@@ -128,12 +128,13 @@ func _unq(s: String) -> String:
 ##   scene=itemsheet [ids=a,b,c] [cols=7]
 func _item_sheet(args: Dictionary) -> void:
 	var IV = preload("res://ui/item_view.gd")
+	var ITEMS = preload("res://core/items.gd")
 	var ids: Array = []
 	if args.has("ids"):
 		ids = str(args.ids).split(",")
 	else:
-		for k in Items.DEFS.keys():
-			if Items.DEFS[k].kind != "weapon":
+		for k in ITEMS.DEFS.keys():
+			if ITEMS.DEFS[k].kind != "weapon":
 				ids.append(k)
 	var cols := int(args.get("cols", "7"))
 	var rows := int(ceil(float(ids.size()) / cols))
@@ -170,7 +171,7 @@ func _item_sheet(args: Dictionary) -> void:
 		var id: String = ids[i]
 		var holder: Node3D = IV.fitted(id, 1.0)
 		holder.position = Vector3((i % cols - (cols - 1) * 0.5) * cell, -(i / cols - (rows - 1) * 0.5) * cell * 1.0, 0)
-		holder.rotation = Vector3(0.25, yaw, 0)
+		holder.rotation = Vector3(-float(holder.get_meta("pitch", -0.25)), yaw, 0)
 		add_child(holder)
 		var l := Label3D.new()
 		l.text = id

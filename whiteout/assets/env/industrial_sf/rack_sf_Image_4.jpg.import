@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/rack_sf_Image_4.jpg-7c4cb3f4e83f17101f48583a8
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/forklift_Image_3.jpg-0fedd5ccb41f130f0ebc1e23
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

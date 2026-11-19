@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/ctrl_box_Image_9.jpg-519a6cc6b39aa4776f8fb7bd
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

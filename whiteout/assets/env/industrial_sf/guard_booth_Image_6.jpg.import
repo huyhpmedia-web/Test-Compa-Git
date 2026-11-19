@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/guard_booth_Image_6.jpg-b8787c7987c6bef4b8543
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

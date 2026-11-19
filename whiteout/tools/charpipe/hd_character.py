@@ -124,12 +124,10 @@ for o in new:
     meshes.append(o)
 for o in meshes:
     for m in list(o.modifiers):
-        if m.type == "ARMATURE":
-            bpy.context.view_layer.objects.active = o
-            try:
-                bpy.ops.object.modifier_apply(modifier=m.name)
-            except Exception:
-                o.modifiers.remove(m)
+        if m.type == "ARMATURE":          # the glb mesh is stored in bind pose already: just drop the skin
+            o.modifiers.remove(m)
+    if o.data.shape_keys:
+        o.shape_key_clear()
     mw = o.matrix_world.copy()
     o.parent = None
     o.data.transform(mw)
@@ -148,8 +146,7 @@ mesh = bpy.context.view_layer.objects.active
 mesh.name = tag
 for o in mesh.data.shape_keys.key_blocks if mesh.data.shape_keys else []:
     pass
-if mesh.data.shape_keys:
-    bpy.ops.object.shape_key_remove(all=True)
+
 
 # ------------------------------------------------------------------ normalise: z-up, feet on z=0, lateral axis = X, facing -Y, scale
 def verts():
@@ -223,6 +220,12 @@ for sign, sd in ((1, "l"), (-1, "r")):
     # shoulder y: the body centre line at that height
     sl = V[(np.abs(V[:, 2] - za) < 0.03 * Hh) & (np.abs(V[:, 0]) < abs(sx))]
     sy = 0.5 * (sl[:, 1].min() + sl[:, 1].max()) if len(sl) else H["upperarm_l"].y
+    if za < 0.72 * Hh:       # arms hanging down: shoulder from the rig proportions, tip = hand centre
+        rs = H["upperarm_" + sd]
+        sx = sign * abs(rs.x); sy = rs.y; za = rs.z
+        hand = V[(V[:, 2] < 0.62 * Hh) & (V[:, 2] > 0.30 * Hh) & ((V[:, 0] - edge) * sign > -0.06 * Hh)]
+        if len(hand): tip = Vector(hand.mean(0)) + Vector((0, 0, -0.06 * Hh))
+        log("arms-down source", sd, tip)
     L["tip_" + sd] = tip; L["sh_" + sd] = Vector((sx, sy, za + 0.0))
     # legs
     fl = V[(V[:, 2] < 0.05 * Hh) & (V[:, 0] * sign > 0.01)]
@@ -357,7 +360,26 @@ bpy.ops.object.select_all(action="DESELECT")
 mesh.select_set(True); bpy.context.view_layer.objects.active = mesh
 bpy.ops.object.modifier_apply(modifier="dt")
 bpy.data.objects.remove(proxy)
-log("mesh unweighted:", sum(1 for v in mesh.data.vertices if len(v.groups) == 0))
+nun = sum(1 for v in mesh.data.vertices if len(v.groups) == 0)
+log("mesh unweighted:", nun)
+if nun > 0.02 * len(mesh.data.vertices) or unw > 0.02 * len(mesh.data.vertices):
+    log("bone heat failed -> distance weights")
+    mesh.vertex_groups.clear()
+    Vv = verts()
+    names = [n for n in ORDER if n != "Root"]
+    D = np.empty((len(Vv), len(names)))
+    for j, n in enumerate(names):
+        a_, b_ = np.array(fit[n][0]), np.array(fit[n][1])
+        ab = b_ - a_; t = np.clip(((Vv - a_) @ ab) / max(ab @ ab, 1e-9), 0, 1)
+        D[:, j] = np.linalg.norm(Vv - (a_ + t[:, None] * ab), axis=1)
+    # finger bones are tiny: let them take weight only close to them (distance already handles it)
+    W = 1.0 / np.maximum(D, 0.004) ** 3
+    idx = np.argsort(-W, axis=1)[:, :4]
+    vg = {n: mesh.vertex_groups.new(name=n) for n in names}
+    for i in range(len(Vv)):
+        tot = W[i, idx[i]].sum()
+        for j in idx[i]:
+            vg[names[j]].add([i], float(W[i, j] / tot), "REPLACE")
 bpy.ops.object.mode_set(mode="WEIGHT_PAINT")
 bpy.ops.object.vertex_group_limit_total(group_select_mode="ALL", limit=4)
 bpy.ops.object.vertex_group_normalize_all(group_select_mode="ALL", lock_active=False)

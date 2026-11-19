@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/old_machinery_Image_0.jpg-56909db3fbd84f2aca5
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

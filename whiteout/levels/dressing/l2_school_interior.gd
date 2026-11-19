@@ -14,10 +14,15 @@ const HC := 4.2
 static var lv: Node3D     # the level (decals / lights parent)
 static var g: Node3D      # geo (props parent: carves the navmesh)
 
-static func dress(level: Node3D) -> void:
+## Call first thing in build() (props need the geo parent before dress() runs).
+static func begin(level: Node3D) -> void:
 	lv = level
 	var gg = level.get("geo")
 	g = gg if gg is Node3D else level
+	SF.rng.seed = hash("l2_interior_props")
+
+static func dress(level: Node3D) -> void:
+	begin(level)
 	SF.begin(hash("l2_interior"))
 	_hall()
 	_corridor()
@@ -145,7 +150,7 @@ static func lockers(pos: Vector3, yaw: float, count := 3, kind := "locker_b") ->
 	var dep := 0.33 if kind == "locker_b" else 1.04
 	for i in units:
 		var x := (i - (units - 1) * 0.5) * unit * sx
-		SF.prop(r, kind, Vector3(x, 0, -(0.25 - dep * 0.5 * (1.0 if kind == "locker_b" else 0.55))), 0.0, {"scale": Vector3(sx, sy, 1.0), "collide": "none", "range": 38.0})
+		SF.prop(r, kind, Vector3(x, 0, (-0.085 if kind == "locker_b" else 0.27)), 0.0, {"scale": Vector3(sx, sy, 1.0), "collide": "none", "range": 38.0})
 	var sb := StaticBody3D.new()
 	sb.collision_layer = 1
 	var cs := CollisionShape3D.new()
@@ -190,7 +195,6 @@ static func _hall() -> void:
 	SF.prop(g, "radiator", Vector3(-6.7, FY, -19.3), 0.0, {"collide": "none"})
 	SF.prop(g, "radiator", Vector3(-6.7, FY, -12.0), 0.0, {"collide": "none"})
 	SF.prop(g, "radiator", Vector3(4.5, FY, -21.7), PI * 0.5, {"collide": "none"})
-	SF.prop(g, "../interior/extinguisher", Vector3(-6.6, FY + 1.1, -17.4), 0.0, {"collide": "none", "fit_h": 0.55}) if false else null
 
 static func _corridor() -> void:
 	var gaps := {"n": [[-20.0, 2.4], [-14.5, 1.6], [-8.0, 1.6], [-2.0, 1.6], [4.0, 1.6]], "s": [[-18.0, 1.6], [-10.5, 1.6], [0.0, 3.4]], "e": [[-24.0, 2.2]]}
@@ -202,12 +206,10 @@ static func _gym() -> void:
 	# radiators along the west wall; wall clock
 	for z in [-14.0, -19.0, -31.0]:
 		SF.prop(g, "radiator", Vector3(7.3, FY, z), 0.0, {"collide": "none"})
-	# rolled gym mats against the east wall behind the bleachers' end
-	SF.prop(g, "gymmat", Vector3(14.5, FY, -11.1), 0.0, {"collide": Vector3(3.0, 0.5, 0.7), "scale": 1.0})
 
 static func _west_wing() -> void:
 	# lobby
-	room(Rect2(-21.875, -21.875, 7.75, 11.75), FY, HC, {"gaps": {"s": [[-18.5, 2.7]], "e": [[-18.0, 1.6]]}, "water": 3, "peel": 3, "mold": 2, "floor": 3, "ceil": 2})
+	room(Rect2(-21.875, -21.875, 7.75, 11.75), FY, HC, {"gaps": {"s": [[-18.5, 1.6]], "e": [[-18.0, 1.6]]}, "water": 3, "peel": 3, "mold": 2, "floor": 3, "ceil": 2})
 	# Ruth's office
 	room(Rect2(-13.875, -21.875, 6.75, 11.75), FY, HC, {"gaps": {"w": [[-18.0, 1.6]], "e": [[-14.5, 1.6]], "n": [[-10.5, 1.6]]}, "water": 2, "peel": 2, "mold": 1, "floor": 3, "ceil": 1})
 
@@ -227,15 +229,15 @@ static func _basement() -> void:
 
 static func _boiler_room() -> void:
 	var h := 3.2
-	room(Rect2(-11.875, -30.375, 9.75, 12.25), YB, h, {"gaps": {"s": [[-7.0, 1.6]], "e": [[-28.7, 1.6], [-21.3, 1.6]]}, "water": 3, "peel": 3, "mold": 3, "rust": 6, "floor": 5, "ceil": 3, "cracks": 1, "skip": ["w"]})
+	room(Rect2(-11.875, -30.375, 9.75, 12.25), YB, h, {"gaps": {"n": [[-7.0, 1.6]], "e": [[-28.7, 1.6], [-21.3, 1.6]]}, "water": 3, "peel": 3, "mold": 3, "rust": 6, "floor": 5, "ceil": 3, "cracks": 1, "skip": ["w"]})
 	# real boiler: shell with burner pipework (replaces the primitive cylinder)
 	SF.prop_solid(g, "boiler", Vector3(-9.9, YB, -24.5), 0.0, Vector3(2.7, 2.2, 1.45), {"range": 40.0})
 	# horizontal expansion tank, header pipes and valves on the feed run
 	SF.prop_solid(g, "tanks", Vector3(-10.2, YB, -20.9), 0.0, Vector3(2.9, 1.0, 0.9), {"scale": 0.9, "range": 40.0})
-	SF.prop(g, "valve", Vector3(-5.8, YB + 1.7, -25.2), 0.0, {"collide": "none", "scale": 1.1})
-	SF.prop(g, "valve", Vector3(-3.0, YB + 1.7, -25.2), PI * 0.5, {"collide": "none", "scale": 1.1})
-	SF.prop(g, "pipes", Vector3(-8.2, YB + 0.0, -30.1), 0.0, {"collide": "none", "scale": 1.3})
-	SF.prop(g, "radiator", Vector3(-2.35, YB, -28.0), PI, {"collide": "none"})
+	SF.prop(g, "valve", Vector3(-5.8, YB + 1.56, -25.2), 0.0, {"collide": "none", "scale": 1.1})
+	SF.prop(g, "valve", Vector3(-3.0, YB + 1.56, -25.2), PI * 0.5, {"collide": "none", "scale": 1.1})
+	SF.prop(g, "pipes", Vector3(-9.8, YB, -29.7), 0.0, {"collide": "none", "scale": 1.3})
+	SF.prop(g, "radiator", Vector3(-2.36, YB, -24.0), PI, {"collide": "none"})
 	# oily floor and drip stains under the machinery
 	SF.floor_dec(lv, "pool", Vector3(-9.0, YB + 0.02, -24.4), 3.6, 3.0, 0.9, 0.3)
 	SF.floor_dec(lv, "pool", Vector3(-5.5, YB + 0.02, -27.5), 2.4, 2.2, 0.8, 1.9)
@@ -243,3 +245,13 @@ static func _boiler_room() -> void:
 static func _locker_room() -> void:
 	var h := 3.2
 	room(Rect2(4.125, -33.875, 17.75, 21.75), YB, h, {"gaps": {"w": [[-21.3, 1.6], [-12.7, 1.6]]}, "water": 6, "peel": 4, "mold": 6, "rust": 6, "floor": 4, "ceil": 4, "cracks": 3, "skirt": false, "band": false})
+
+static func blanket(parent: Node3D, size: Vector2, pos: Vector3, col: Color, lump := 0.5, drop := 0.1, yaw := 0.0, seed_v := 0, body := 0.0) -> void:
+	SF.blanket(parent, size, pos, col, lump, drop, yaw, seed_v, body)
+
+static func pillow(parent: Node3D, pos: Vector3, col: Color, seed_v := 0) -> void:
+	Props.sphere(parent, 0.2, pos, SF.fabric(col), Vector3(1.15, 0.38, 0.78))
+
+## Blackboard for classroom 2B: Sketchfab chalkboard stretched to the wall, base at pos.
+static func chalkboard(pos: Vector3) -> void:
+	SF.prop(g, "chalkboard", pos, 0.0, {"collide": "none", "scale": Vector3(1.66, 1.38, 1.0), "shadow": false})

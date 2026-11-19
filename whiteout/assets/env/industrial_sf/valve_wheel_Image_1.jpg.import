@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/valve_wheel_Image_1.jpg-80ec9ed768f4f939a4044
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

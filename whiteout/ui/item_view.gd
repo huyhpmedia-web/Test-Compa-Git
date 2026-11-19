@@ -116,6 +116,7 @@ func setup(id: String) -> void:
 	if m != null:
 		_pivot.add_child(m)
 		var fit := _fit(m, aspect)
+		_pitch = fit.get("pitch", -0.25)
 		var cm: float = fit.get("longest_cm", 0.0)
 		if cm > 0.0:
 			_make_size_label(cm)
@@ -214,7 +215,8 @@ static func fitted(id: String, aspect := 1.0) -> Node3D:
 	if m == null:
 		return holder
 	holder.add_child(m)
-	_fit(m, aspect)
+	var f := _fit(m, aspect)
+	holder.set_meta("pitch", f.get("pitch", -0.25))
 	return holder
 
 static func _aabb_of(model_root: Node3D) -> AABB:
@@ -231,7 +233,7 @@ static func _aabb_of(model_root: Node3D) -> AABB:
 
 ## Centre the model on the pivot and scale it into the frame. Compact items: bounding sphere ~1.55.
 ## Elongated items (poles, flares, guns) lie on their side along X and may use the full stage width.
-## Returns {"longest_cm": real-world longest dimension}.
+## Returns {"longest_cm": real-world longest dimension, "pitch": suggested camera pitch}.
 static func _fit(model_root: Node3D, aspect := 1.0) -> Dictionary:
 	var ab := _aabb_of(model_root)
 	if ab.size == Vector3.ZERO:
@@ -251,12 +253,19 @@ static func _fit(model_root: Node3D, aspect := 1.0) -> Dictionary:
 		var view_w := 1.77 * clampf(aspect, 0.6, 2.0)
 		s = minf(view_w * 0.80, 2.3) / longest
 	orient.scale = Vector3.ONE * s
+	# lying-flat items (cards, boxes, keys): tilt the turntable towards the camera so the face is readable
+	var osz := (Basis.from_euler(orient.rotation) * sz).abs()
+	var pitch := -0.25
+	if osz.y < minf(osz.x, osz.z) * 0.55:
+		pitch = -0.95
+	elif elongated:
+		pitch = -0.45
 	var par := model_root.get_parent()
 	par.remove_child(model_root)
 	orient.add_child(model_root)
 	par.add_child(orient)
 	model_root.transform = Transform3D(Basis(), -ab.get_center())
-	return {"longest_cm": longest * 100.0}
+	return {"longest_cm": longest * 100.0, "pitch": pitch}
 
 static func _rel(root: Node3D, n: Node3D) -> Transform3D:
 	var t := Transform3D.IDENTITY

@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/hvac_unit_Image_0.png-0726844a743f5d5530ef1c0
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

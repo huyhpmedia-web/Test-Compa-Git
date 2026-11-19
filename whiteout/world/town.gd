@@ -1,92 +1,46 @@
 extends RefCounted
-## Real town buildings (assets/env/town/*.glb, built by tools/town/build_town.py from 3D Jutsu meshes).
-## The glbs carry category material names; this swaps them for shared PBR materials (textures/town).
+## Photoreal town buildings (Sketchfab CC-BY, assets/env/town_sf/*.glb, built by tools/town/build_town_sf.py).
+## Real-world metres, base at y=0, footprint centred on x/z, front = +Z. Credits: assets/CREDITS_SKETCHFAB.json.
 ##
-##   Town.building(parent, "house_two_story", Vector3(10, 0, -20), PI * 0.5, {lit = 0.3, collide = true})
+##   Town.building(parent, "house_colonial", Vector3(10, 0, -20), PI * 0.5, {collide = true})
 ##
-## opts: lit (0..1 chance a window material is warm-lit; default 0), collide (default true),
-##       tint (Color multiplier for siding), dirt (0..1 extra darkening, default 0.15), range (visibility end, 0 = always)
+## opts: collide (default true), tint (Color), snow (0..1 roof/ground cover, default 0.7), range (visibility end, 0 = always),
+##       scale (float), shadow (bool, default true when range <= 90 or 0)
 ## Returns the Node3D (or null when the glb is missing, so callers can fall back).
 
-const Mats = preload("res://core/mats.gd")
-const ROOT := "res://assets/env/town/"
-const TEX := "res://textures/town/"
-const NAMES := ["house_two_story", "house_bungalow", "house_ranch", "house_split", "house_duplex", "house_farm",
-	"house_timber", "house_narrow", "shop_corner", "office_small", "hall_station", "shop_diner", "shop_wood_store"]
+const Env = preload("res://world/env_assets.gd")
+const ROOT := "res://assets/env/town_sf/"
+
+## name -> [width (x), depth (z), height]
+const SIZES := {
+	"house_american": [17.15, 13.61, 7.6], "house_colonial": [15.65, 9.28, 8.4], "house_glen": [12.77, 12.87, 4.4],
+	"house_porch": [9.2, 14.56, 7.4], "house_ranch": [11.8, 11.19, 4.3], "house_suburban": [18.08, 17.15, 8.2],
+	"house_twostory": [9.42, 5.77, 7.8], "house_weathered": [5.48, 9.63, 8.4],
+	"shop_brick": [9.86, 8.32, 8.2], "shop_gray": [8.63, 8.63, 8.6], "shop_long": [19.16, 5.73, 7.6],
+	"shop_pair": [10.4, 30.66, 9.5], "block_tall": [11.77, 19.71, 13.5], "block_row": [19.86, 64.56, 15.0],
+	"block_nyc": [24.38, 21.49, 11.0], "gas_station": [13.72, 15.83, 6.0], "church_small": [11.42, 12.17, 17.0],
+	"garage_brick": [4.5, 28.43, 3.4], "warehouse_red": [24.91, 9.06, 8.0], "pole_utility": [3.02, 3.15, 10.5],
+	"dumpster_a": [1.53, 1.01, 1.5], "dumpster_b": [4.24, 1.7, 1.5], "mailbox_us": [0.92, 0.63, 1.4],
+}
+
+# [name, width, depth] pools used by Town.row and the level town rows (so rows never repeat visibly)
+const HOUSES := [["house_american", 17.15, 13.61], ["house_colonial", 15.65, 9.28], ["house_glen", 12.77, 12.87],
+	["house_porch", 9.2, 14.56], ["house_ranch", 11.8, 11.19], ["house_suburban", 18.08, 17.15],
+	["house_twostory", 9.42, 5.77], ["house_weathered", 5.48, 9.63]]
+const SHOPS := [["shop_brick", 9.86, 8.32], ["shop_gray", 8.63, 8.63], ["shop_long", 19.16, 5.73],
+	["shop_brick", 9.86, 8.32], ["house_twostory", 9.42, 5.77], ["house_weathered", 5.48, 9.63]]
+## large / far-only masses (>= 40 m away)
+const FAR := [["block_tall", 11.77, 19.71], ["warehouse_red", 24.91, 9.06], ["church_small", 11.42, 12.17],
+	["gas_station", 13.72, 15.83], ["block_nyc", 24.38, 21.49]]
 
 static var _scenes := {}
-static var _mats := {}
-static var _tex := {}
 
 static func has(name: String) -> bool:
-	return ResourceLoader.exists(ROOT + name + ".glb")
+	return SIZES.has(name) and ResourceLoader.exists(ROOT + name + ".glb")
 
-static func _t(n: String) -> Texture2D:
-	if not _tex.has(n):
-		_tex[n] = load(TEX + n + ".jpg") if ResourceLoader.exists(TEX + n + ".jpg") else null
-	return _tex[n]
-
-static func _pbr(key: String, tex: String, albedo: Color, rough := 1.0, metal := 0.0, nscale := 1.0) -> StandardMaterial3D:
-	if _mats.has(key):
-		return _mats[key]
-	var m := StandardMaterial3D.new()
-	m.albedo_color = albedo
-	if tex != "":
-		m.albedo_texture = _t(tex + "_a")
-		m.roughness_texture = _t(tex + "_r")
-		m.normal_enabled = _t(tex + "_n") != null
-		m.normal_texture = _t(tex + "_n")
-		m.normal_scale = nscale
-		m.roughness_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_GREEN
-	m.roughness = rough
-	m.metallic = metal
-	m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
-	_mats[key] = m
-	return m
-
-static func material(cat: String, lit := false, dirt := 0.15) -> Material:
-	var d := 1.0 - dirt
-	var base := cat.split("_")[0]
-	match base:
-		"SIDING":
-			var hex := cat.substr(7, 6)
-			var c := Color.html("#" + hex) if hex.length() == 6 else Color(0.6, 0.6, 0.6)
-			return _pbr("siding_%s_%.2f" % [hex, dirt], "siding", Color(c.r * d, c.g * d, c.b * d), 1.0, 0.0, 1.2)
-		"ROOF":
-			return _pbr("roof", "roof", Color(0.55, 0.55, 0.58), 1.0, 0.0, 1.0)
-		"SNOW":
-			return Mats.get_mat("snow", 3.0)
-		"TRIM":
-			return _pbr("trim_%.2f" % dirt, "trim", Color(0.78 * d, 0.78 * d, 0.76 * d), 1.0)
-		"BRICK":
-			return _pbr("brick_%.2f" % dirt, "brick", Color(0.85 * d, 0.8 * d, 0.78 * d), 1.0)
-		"STONE":
-			return _pbr("stone", "stone", Color(0.75, 0.75, 0.75), 1.0)
-		"WOOD":
-			return _pbr("wood_%.2f" % dirt, "planks", Color(0.8 * d, 0.76 * d, 0.7 * d), 1.0)
-		"GLASS":
-			if lit:
-				if not _mats.has("glass_lit"):
-					var g := StandardMaterial3D.new()
-					g.albedo_color = Color(0.25, 0.2, 0.12)
-					g.emission_enabled = true
-					g.emission = Color(1.0, 0.72, 0.42)
-					g.emission_energy_multiplier = 1.6
-					g.roughness = 0.15
-					_mats["glass_lit"] = g
-				return _mats["glass_lit"]
-			if not _mats.has("glass"):
-				var g2 := StandardMaterial3D.new()
-				g2.albedo_color = Color(0.04, 0.05, 0.065)
-				g2.metallic = 0.7
-				g2.roughness = 0.06
-				_mats["glass"] = g2
-			return _mats["glass"]
-		"DARK":
-			return _pbr("dark", "", Color(0.05, 0.05, 0.055), 0.7)
-		"METAL":
-			return _pbr("metal", "", Color(0.35, 0.36, 0.38), 0.45, 0.8)
-	return _pbr("siding_default", "siding", Color(0.5, 0.5, 0.5))
+static func size_of(name: String) -> Vector3:
+	var s: Array = SIZES.get(name, [8.0, 8.0, 6.0])
+	return Vector3(s[0], s[2], s[1])
 
 static func building(parent: Node, name: String, pos: Vector3, yaw := 0.0, opts := {}) -> Node3D:
 	if not has(name):
@@ -98,54 +52,48 @@ static func building(parent: Node, name: String, pos: Vector3, yaw := 0.0, opts 
 	root.name = "Town_" + name
 	root.position = pos
 	root.rotation.y = yaw
-	if opts.has("scale"):
-		root.scale = Vector3.ONE * float(opts.scale)
+	var sc: float = float(opts.get("scale", 1.0))
+	root.scale = Vector3.ONE * sc
 	parent.add_child(root)
 	root.add_child(inst)
-	var lit: bool = randf() < float(opts.get("lit", 0.0))
-	var dirt: float = float(opts.get("dirt", 0.15))
-	var aabb := AABB()
-	var first := true
-	for mi in inst.find_children("*", "MeshInstance3D", true, false):
+	var snow: float = float(opts.get("snow", 0.7))
+	var tint: Color = opts.get("tint", Color.WHITE)
+	var rng_end: float = float(opts.get("range", 0.0))
+	var shadow: bool = bool(opts.get("shadow", rng_end <= 0.0 or rng_end <= 90.0))
+	var meshes: Array = []
+	Env._meshes(inst, meshes)
+	for mi in meshes:
 		var m: MeshInstance3D = mi
-		var mesh := m.mesh
-		for s in mesh.get_surface_count():
-			var src := mesh.surface_get_material(s)
-			var cat := src.resource_name if src != null else "SIDING_888888"
-			var mat := material(cat, lit, dirt)
-			if opts.has("tint") and cat.begins_with("SIDING"):
-				var t := (mat as StandardMaterial3D).duplicate() as StandardMaterial3D
-				t.albedo_color *= opts.tint
-				mat = t
-			m.set_surface_override_material(s, mat)
-		var r := float(opts.get("range", 0.0))
-		if r > 0.0:
-			m.visibility_range_end = r
-			m.visibility_range_end_margin = 10.0
-		var ab := m.global_transform * mesh.get_aabb() if m.is_inside_tree() else mesh.get_aabb()
-		aabb = ab if first else aabb.merge(ab)
-		first = false
-	if bool(opts.get("collide", true)) and not first:
+		if m.mesh == null:
+			continue
+		for s in m.mesh.get_surface_count():
+			var src: Material = m.get_active_material(s)
+			var mat := Env.snowify(src, snow, tint)
+			if mat != src:
+				m.set_surface_override_material(s, mat)
+		if not shadow:
+			m.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		if rng_end > 0.0:
+			m.visibility_range_end = rng_end
+			m.visibility_range_end_margin = rng_end * 0.08
+	if bool(opts.get("collide", true)):
+		var sz := size_of(name) * sc
 		var body := StaticBody3D.new()
 		var cs := CollisionShape3D.new()
 		var bs := BoxShape3D.new()
-		var local := root.global_transform.affine_inverse() * aabb
-		bs.size = Vector3(local.size.x * 0.92, local.size.y, local.size.z * 0.92)
+		bs.size = Vector3(sz.x * 0.92, sz.y, sz.z * 0.92)
 		cs.shape = bs
-		cs.position = local.get_center()
+		cs.position = Vector3(0, sz.y * 0.5, 0)
 		body.add_child(cs)
 		root.add_child(body)
 	return root
 
-const SHOPS := [["shop_corner", 8.7, 9.1], ["hall_station", 9.5, 6.0], ["shop_wood_store", 5.9, 7.5],
-	["house_narrow", 5.4, 6.6], ["office_small", 9.3, 11.5], ["shop_diner", 8.0, 6.6], ["house_timber", 5.6, 5.2]]
-const HOUSES := [["house_two_story", 7.9, 6.7], ["house_bungalow", 7.3, 6.7], ["house_ranch", 8.8, 6.3],
-	["house_split", 9.7, 6.9], ["house_duplex", 9.6, 6.9], ["house_farm", 8.5, 9.0]]
-
 ## A row of buildings along x (x0..x1) whose fronts sit on z = zf, facing +z when out > 0 (else -z).
 ## Background rows: pass collide=false. Returns the number placed.
+## opts: gap_min/gap_max, tint_var (0..1 colour variation, default 0.18), poles (bool: utility poles along the row),
+##       clutter (bool: mailboxes / dumpsters between buildings, default true)
 static func row(parent: Node, x0: float, x1: float, zf: float, out: float, pool: Array, seed_v: int, opts := {}) -> int:
-	if not has("house_two_story"):
+	if not has("house_ranch"):
 		return 0
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed_v
@@ -154,15 +102,31 @@ static func row(parent: Node, x0: float, x1: float, zf: float, out: float, pool:
 	var n := 0
 	var gap_min: float = float(opts.get("gap_min", 0.4))
 	var gap_max: float = float(opts.get("gap_max", 1.6))
+	var tv: float = float(opts.get("tint_var", 0.18))
+	var last := ""
 	while x < x1 - 4.0 and n < 30:
 		var room := x1 - x
-		var fits: Array = pool.filter(func(b): return b[1] <= room + 0.3)
+		var fits: Array = pool.filter(func(b): return b[1] <= room + 0.3 and b[0] != last)
+		if fits.is_empty():
+			fits = pool.filter(func(b): return b[1] <= room + 0.3)
 		if fits.is_empty():
 			break
 		var b: Array = fits[rng.randi() % fits.size()]
+		last = b[0]
 		var o := opts.duplicate()
-		o["lit"] = opts.get("lit", 0.3)
+		var g := 1.0 - rng.randf() * tv
+		o["tint"] = Color(g, g * rng.randf_range(0.96, 1.0), g * rng.randf_range(0.92, 1.0))
 		building(parent, b[0], Vector3(x + float(b[1]) * 0.5, 0, zf - out * float(b[2]) * 0.5), yaw + rng.randf_range(-0.04, 0.04), o)
+		if bool(opts.get("clutter", true)) and rng.randf() < 0.45:
+			var cx := x + float(b[1]) + rng.randf_range(0.3, 1.0)
+			if cx < x1 - 1.0:
+				var nm := "dumpster_a" if rng.randf() < 0.5 else "mailbox_us"
+				building(parent, nm, Vector3(cx, 0, zf - out * 1.5), yaw + rng.randf_range(-0.5, 0.5), {"collide": false, "range": float(opts.get("range", 0.0)) * 0.5})
 		x += float(b[1]) + rng.randf_range(gap_min, gap_max)
 		n += 1
+	if bool(opts.get("poles", false)):
+		var px := x0 + 6.0
+		while px < x1:
+			building(parent, "pole_utility", Vector3(px, 0, zf - out * 1.0), 0.0, {"collide": false, "snow": 0.3, "range": 130.0})
+			px += rng.randf_range(24.0, 32.0)
 	return n

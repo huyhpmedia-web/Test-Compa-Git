@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/lockers_Image_1.jpg-f7c5664f53be0f50e82d4b72a
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

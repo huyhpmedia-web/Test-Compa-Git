@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/conveyor_Image_17.jpg-49ce18d5fcdb6b6798b2a82
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

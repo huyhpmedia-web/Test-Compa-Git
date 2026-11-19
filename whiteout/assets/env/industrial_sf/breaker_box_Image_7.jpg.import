@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/breaker_box_Image_7.jpg-bdebc6bdf50d765830424
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

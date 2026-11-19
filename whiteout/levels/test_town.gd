@@ -7,8 +7,8 @@ func build() -> void:
 	add_spawn("start", Vector3(0, 0.1, 14), PI)
 	floor_rect(-40, -80, 40, 30, 0.0, "snow")
 	floor_rect(-4, -80, 4, 30, 0.02, "asphalt_snow")
-	var left := ["house_two_story", "house_bungalow", "house_duplex", "shop_corner", "house_farm", "office_small", "house_timber"]
-	var right := ["house_ranch", "house_split", "shop_diner", "hall_station", "house_narrow", "shop_wood_store"]
+	var left := ["house_american", "house_colonial", "house_glen", "shop_brick", "house_porch", "shop_gray", "gas_station"]
+	var right := ["house_ranch", "house_suburban", "shop_long", "house_weathered", "house_twostory", "church_small"]
 	var z := 4.0
 	for n in left:
 		Town.building(geo, n, Vector3(-14, 0, z), PI * 0.5, {"lit": 0.5})
@@ -19,7 +19,7 @@ func build() -> void:
 		z -= 13.0
 	# a facing row across the end of the street (front = +Z) for the hero view
 	var xs := -22.0
-	for n in ["house_bungalow", "shop_corner", "house_two_story", "house_split"]:
+	for n in ["house_ranch", "shop_brick", "house_colonial", "shop_gray"]:
 		Town.building(geo, n, Vector3(xs, 0, -6), 0.0, {"lit": 0.6})
 		xs += 12.0
 	for i in 6:

@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/lantern_Image_0.png-6f3c7df8b2118fe16ed95718e
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

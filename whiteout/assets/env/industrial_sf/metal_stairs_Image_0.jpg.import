@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/metal_stairs_Image_0.jpg-b47b5c2c264553c30ae8
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

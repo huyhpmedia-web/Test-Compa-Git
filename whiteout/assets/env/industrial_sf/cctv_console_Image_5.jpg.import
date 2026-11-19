@@ -2,19 +2,12 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cu06wuxh0fyot"
-path="res://.godot/imported/cctv_console_Image_5.jpg-781327121173115a4b076994afe3aaed.ctex"
-metadata={
-"vram_texture": false
-}
-generator_parameters={
-"md5": "ecfaaeddb56af3b79fc604488e36bb8d"
-}
+uid="uid://2u2vdmclf0x7"
+valid=false
 
 [deps]
 
 source_file="res://assets/env/industrial_sf/cctv_console_Image_5.jpg"
-dest_files=["res://.godot/imported/cctv_console_Image_5.jpg-781327121173115a4b076994afe3aaed.ctex"]
 
 [params]
 
@@ -26,7 +19,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

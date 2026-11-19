@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/winch_Image_0.jpg-c525208a97fa0441b0e5d3a90bf
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

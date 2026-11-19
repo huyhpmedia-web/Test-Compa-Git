@@ -42,6 +42,8 @@ ap.add_argument("--face", default="auto")
 ap.add_argument("--voxel", type=float, default=0.012)
 ap.add_argument("--flipx", action="store_true")
 ap.add_argument("--decimate", type=int, default=0)
+ap.add_argument("--tint", default="")      # r,g,b multiply on non-skin/hair/eye base colour textures
+ap.add_argument("--skin-tint", default="")
 ap.add_argument("--min-rough", type=float, default=0.62)
 ap.add_argument("--forearm-bend", type=float, default=0.0)
 args = ap.parse_args(sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:])
@@ -72,10 +74,7 @@ sarms = [o for o in new if o.type == "ARMATURE"]
 for a in bpy.data.actions:            # no imported clip may drive the pose
     pass
 for sa in sarms:
-    if sa.animation_data:
-        sa.animation_data.action = None
-    for pb in sa.pose.bones:
-        pb.matrix_basis = Matrix.Identity(4)
+    pass   # keep the pose the importer gives (frame-0 / bind): that is the pose the mesh was authored in
 bpy.context.view_layer.update()
 
 # source rig joints (world, before any transform) by name heuristics or an explicit map
@@ -114,7 +113,7 @@ if sarms:
     log("source rig joints:", sorted(SRC))
 
 # meshes: drop junk, bake the pose-less skin (armature modifiers removed -> rest/bind pose), join
-drop = [d for d in args.drop.split(",") if d]
+drop = [d for d in args.drop.split(",") if d] + ["Icosphere"]
 meshes = []
 for o in new:
     if o.type != "MESH":
@@ -122,12 +121,17 @@ for o in new:
     if any(d in o.name for d in drop):
         bpy.data.objects.remove(o); continue
     meshes.append(o)
+bpy.context.view_layer.update()
 for o in meshes:
-    for m in list(o.modifiers):
-        if m.type == "ARMATURE":          # the glb mesh is stored in bind pose already: just drop the skin
-            o.modifiers.remove(m)
     if o.data.shape_keys:
         o.shape_key_clear()
+    bpy.context.view_layer.objects.active = o
+    for m in list(o.modifiers):
+        if m.type == "ARMATURE":
+            try:
+                bpy.ops.object.modifier_apply(modifier=m.name)
+            except Exception as e:
+                log("armature apply failed", o.name, e); o.modifiers.remove(m)
     mw = o.matrix_world.copy()
     o.parent = None
     o.data.transform(mw)
@@ -418,7 +422,7 @@ if args.decimate and len(mesh.data.polygons) > args.decimate:
     d = mesh.modifiers.new("dec", "DECIMATE"); d.ratio = args.decimate / len(mesh.data.polygons)
     d.use_collapse_triangulate = True
     bpy.ops.object.modifier_apply(modifier="dec")
-done_rough = set()
+done_rough = set(); done_tint = set()
 ren = dict(kv.split("=") for kv in args.mat.split(",") if "=" in kv)
 for i, m in enumerate(mesh.data.materials):
     if m is None:
@@ -445,6 +449,15 @@ for i, m in enumerate(mesh.data.materials):
                         img.pixels.foreach_set(px.reshape(-1)); img.update()
                 else:
                     ri.default_value = max(ri.default_value, args.min_rough)
+            if nd.type == "TEX_IMAGE" and nd.image and nd.image.name not in done_tint and nd.outputs["Color"].links and \
+                    any(l.to_socket.name == "Base Color" for l in nd.outputs["Color"].links):
+                tt = args.skin_tint if m.name.endswith("_skin") else (args.tint if not any(k in m.name for k in ("hair", "eye", "lash", "brow")) else "")
+                if tt:
+                    done_tint.add(nd.image.name)
+                    c = np.array([float(x) for x in tt.split(",")], dtype=np.float32)
+                    px = np.array(nd.image.pixels[:], dtype=np.float32).reshape(-1, 4)
+                    px[:, :3] *= c
+                    nd.image.pixels.foreach_set(px.reshape(-1)); nd.image.update()
             if nd.type == "TEX_IMAGE" and nd.image:
                 im = nd.image
                 if max(im.size) > args.tex:

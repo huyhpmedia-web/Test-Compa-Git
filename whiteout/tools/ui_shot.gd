@@ -65,6 +65,8 @@ func _ready() -> void:
 			UI.show_item_get(str(args.get("item", "rosary")))
 		"itemsheet":
 			_item_sheet(args)
+		"pickups":
+			_pickups_shot(args)
 		"pause":
 			UI.open_pause()
 		"save":
@@ -187,4 +189,31 @@ func _item_sheet(args: Dictionary) -> void:
 	var dist := maxf(w / (2.0 * tan(deg_to_rad(15.0)) * (16.0 / 9.0)), h / (2.0 * tan(deg_to_rad(15.0)))) * 1.04
 	cam.position = Vector3(0, 0, dist)
 	add_child(cam)
+	cam.make_current()
+
+## World-pickup evidence: spawns real pickups (Level.pickup) in a row on a level and frames them.
+##   scene=pickups level=test_yard ids=a,b,c [x=0 z=5 cam=x,y,z look=x,y,z fov=45]
+func _pickups_shot(args: Dictionary) -> void:
+	UI.show_hud(false)
+	var lvl = Game.current_level
+	if lvl == null:
+		return
+	var ids: Array = str(args.get("ids", "control_key,ammo_9mm,flare,gel,radio,tom_tag")).split(",")
+	var x0 := float(args.get("x", "-1.0"))
+	var z0 := float(args.get("z", "4.6"))
+	var step := float(args.get("step", "0.34"))
+	for i in ids.size():
+		lvl.pickup("shot_" + str(i), ids[i], 1, Vector3(x0 + i * step, 0.02, z0 + (i % 2) * 0.12))
+	if Game.player:
+		Game.player.global_position = Vector3(x0 - 3.0, 0.1, z0 + 4.0)
+	var cam := Camera3D.new()
+	cam.fov = float(args.get("fov", "42"))
+	var mid := x0 + (ids.size() - 1) * step * 0.5
+	var cp := Vector3(mid, 0.62, z0 + 0.95)
+	if args.has("cam"):
+		var c = str(args.cam).split(",")
+		cp = Vector3(float(c[0]), float(c[1]), float(c[2]))
+	lvl.add_child(cam)
+	cam.global_position = cp
+	cam.look_at(Vector3(mid, 0.0, z0 + 0.05))
 	cam.make_current()

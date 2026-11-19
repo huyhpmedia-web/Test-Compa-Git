@@ -10,6 +10,7 @@ extends "res://levels/level.gd"
 ##   lamp room (safe) x 31..43, z -19..-10
 ##   LOWER: landing x 56..68 / haulage tunnel x 68..84 / magazine / cavern x 84..120 / refuge z -34..-26 / shaft x 132..142
 
+const Real5 = preload("res://levels/dressing/l5_real.gd")
 const LY := -30.0
 const Humanoid = preload("res://actors/humanoid.gd")
 const CAGE_POS := Vector3(36.5, 0.0, 0.0)
@@ -33,6 +34,7 @@ var _plant_busy := false
 
 func build() -> void:
 	_rng.seed = 5150
+	Real5.setup(self)
 	footstep = "concrete"
 	env_interior(0.05, 0.022, Color(0.38, 0.48, 0.68))
 	Sfx.ambience("amb_mine")
@@ -93,6 +95,9 @@ func _rime() -> Material:
 		m.shader = load("res://world/shaders/env_ice.gdshader")
 		_rime_mat = m
 	return _rime_mat
+
+func R4c_solid(pos: Vector3, size: Vector3) -> void:
+	Real5.R4.solid(pos, size)
 
 func rk(a: float, b: float) -> float:
 	return _rng.randf_range(a, b)
@@ -186,6 +191,8 @@ func tunnel(a: Vector2, b: Vector2, width := 3.6, h := 3.4, y := 0.0, gl: Array 
 ## Timber set (two posts + cap beam) spanning a tunnel. c = floor point on the tunnel axis.
 func timber_set(c: Vector3, along_x: bool, width: float, height: float) -> void:
 	# hewn mine timbers: round posts with a bearing cap, diagonal knee braces, wedges and a bolt plate
+	if Real5.timber(c, along_x, width, height):
+		return
 	var m := _timber()
 	var half := width * 0.5 - 0.1
 	for s in [-1.0, 1.0]:
@@ -207,6 +214,8 @@ func timber_set(c: Vector3, along_x: bool, width: float, height: float) -> void:
 
 ## Rail track (along x or z). Sleepers + two rails.
 func rails(a: Vector3, b: Vector3, gauge := 0.9) -> void:
+	if Real5.rails(a, b, gauge):
+		return
 	var d := b - a
 	var L := d.length()
 	var dir := d / L
@@ -307,6 +316,8 @@ func cable_run(a: Vector3, b: Vector3, sag := 0.25, segs := 4) -> void:
 		prev = p
 
 func vent_duct(a: Vector3, b: Vector3, size := 0.7) -> void:
+	Real5.duct(a, b, size)
+	return
 	var d := b - a
 	var L := d.length()
 	var n := int(L / 2.0)
@@ -366,7 +377,7 @@ func _build_pipeline_tunnel() -> void:
 	Props.sign(geo, Vector3(0.1, 2.45, 0), PI * 0.5, "PIPELINE SERVICE TUNNEL\nMERIDIAN SITE - NO ACCESS", 36, Color(0.9, 0.75, 0.2))
 	box(Vector3(0.08, 1.1, 0), Vector3(0.1, 2.2, 1.5), "metal_painted", false)
 	# the heat pipeline: warm, with orange glow at the flanges, rime creeping along it
-	Props.pipe(geo, Vector3(0.1, 2.85, -1.42), Vector3(26.0, 2.85, -1.42), 0.3, "metal_painted")
+	Real5.tunnel_set()    # insulated PBR heat pipe, valves, lanterns, derailed cart (l5_real.gd)
 	for x in range(2, 26, 4):
 		Props.cyl(geo, 0.38, 0.14, Vector3(x, 2.85, -1.42), Mats.emissive(Color(1.0, 0.45, 0.1), 0.9), false, -1.0, Vector3(0, 0, PI * 0.5), 14).rotation = Vector3(0, 0, PI * 0.5)
 		Props.box(geo, Vector3(0.1, 0.5, 0.1), Vector3(x + 1.0, 3.1, -1.42), Mats.get_mat("metal", 1.0), false)
@@ -453,30 +464,30 @@ func _build_hoist_hall() -> void:
 	cage = Node3D.new()
 	cage.position = CAGE_POS
 	add_child(cage)
-	Props.box(cage, Vector3(3.8, 0.3, 3.8), Vector3(0, -0.15, 0), Mats.get_mat("metal_rust", 1.5), true)
+	Props.box(cage, Vector3(3.8, 0.3, 3.8), Vector3(0, -0.15, 0), Real5.rust(), true)
 	for sx in [-1.8, 1.8]:
 		for sz in [-1.8, 1.8]:
-			Props.box(cage, Vector3(0.12, 2.6, 0.12), Vector3(sx, 1.3, sz), Mats.get_mat("metal_painted", 1.0), false)
-	Props.box(cage, Vector3(3.9, 0.12, 3.9), Vector3(0, 2.6, 0), Mats.get_mat("metal_painted", 1.0), false)
+			Props.box(cage, Vector3(0.12, 2.6, 0.12), Vector3(sx, 1.3, sz), Real5.steel(), false)
+	Props.box(cage, Vector3(3.9, 0.12, 3.9), Vector3(0, 2.6, 0), Real5.steel(), false)
 	Props.box(cage, Vector3(0.06, 1.2, 3.6), Vector3(-1.8, 1.0, 0), Mats.get_mat("metal", 3.0), false).material_override = Mats.color(Color(0.4, 0.42, 0.45, 0.25), 0.4, 0.8)
 	Props.sign(cage, Vector3(0, 2.3, 1.95), 0.0, "CAGE NO. 1   MAX 6 MEN", 28, Color(0.9, 0.85, 0.7))
 	for sx in [-0.6, 0.6]:
 		Props.pipe(geo, Vector3(36.5 + sx, 2.6, 0), Vector3(36.5 + sx, hh - 0.8, 0), 0.035, "metal_rust")
 	# sheave wheel
-	Props.cyl(geo, 1.3, 0.25, Vector3(36.5, hh - 1.3, 0), Mats.get_mat("metal_rust", 1.5), false, -1.0, Vector3(0, 0, PI * 0.5), 20)
+	Props.cyl(geo, 1.3, 0.25, Vector3(36.5, hh - 1.3, 0), Real5.rust(), false, -1.0, Vector3(0, 0, PI * 0.5), 20)
 	# hoist drum, flanges, motor housing
-	Props.cyl(geo, 1.5, 3.2, Vector3(44.0, 2.0, -4.0), Mats.get_mat("metal_rust", 1.5), true, -1.0, Vector3(PI * 0.5, 0, 0), 24)
+	Props.cyl(geo, 1.5, 3.2, Vector3(44.0, 2.0, -4.0), Real5.rust(), true, -1.0, Vector3(PI * 0.5, 0, 0), 24)
 	for s in [-1.0, 1.0]:
-		Props.cyl(geo, 2.0, 0.15, Vector3(44.0, 2.0, -4.0 + s * 1.7), Mats.get_mat("metal_painted", 1.5), false, -1.0, Vector3(PI * 0.5, 0, 0), 24)
+		Props.cyl(geo, 2.0, 0.15, Vector3(44.0, 2.0, -4.0 + s * 1.7), Real5.steel(), false, -1.0, Vector3(PI * 0.5, 0, 0), 24)
 	box(Vector3(44.0, 0.6, -4.0), Vector3(2.6, 1.2, 4.4), "concrete")
-	box(Vector3(45.6, 1.2, -8.2), Vector3(3.6, 2.4, 3.0), "metal_painted")
+	Real5.hoist_hall()    # winding motors, cabinets, steam hammer, crane, tools (l5_real.gd)
 	Props.sign(geo, Vector3(45.6, 2.0, -6.66), 0.0, "ASEA HOIST  1953", 30, Color(0.8, 0.8, 0.75))
 	Props.pipe(geo, Vector3(44.0, 3.6, -4.0), Vector3(36.5 + 0.6, hh - 1.0, 0.0), 0.035, "metal_rust")
 	# brake lever station (needs hoist_lever + mine_power)
 	var st := Node3D.new()
 	st.position = Vector3(41.2, 0, -2.6)
 	geo.add_child(st)
-	Props.box(st, Vector3(0.9, 1.1, 0.6), Vector3(0, 0.55, 0), Mats.get_mat("metal_painted", 1.0), true)
+	Props.box(st, Vector3(0.9, 1.1, 0.6), Vector3(0, 0.55, 0), Real5.steel(), true)
 	Props.box(st, Vector3(0.8, 0.12, 0.7), Vector3(0, 1.15, 0.05), Mats.get_mat("metal", 1.0), false, Vector3(-0.3, 0, 0))
 	Props.box(st, Vector3(0.12, 0.3, 0.12), Vector3(0, 1.3, 0.12), Mats.color(Color(0.1, 0.1, 0.1), 0.6), false)
 	Props.sphere(st, 0.05, Vector3(-0.28, 1.28, 0.0), Mats.emissive(Color(1.0, 0.1, 0.05), 2.0))
@@ -534,7 +545,8 @@ func _build_furnace() -> void:
 	Props.box(f, Vector3(2.2, 1.9, 1.4), Vector3(0, 0.95, 0), Mats.get_mat("brick_dark", 1.5), true)
 	Props.box(f, Vector3(0.9, 0.8, 0.12), Vector3(0, 0.7, 0.72), Mats.color(Color(0.04, 0.04, 0.04), 0.6, 0.4), false)
 	Props.box(f, Vector3(0.7, 0.55, 0.05), Vector3(0, 0.7, 0.79), Mats.color(Color(0.2, 0.05, 0.02), 0.5), false)
-	Props.cyl(f, 0.25, 3.0, Vector3(0, 3.4, -0.2), Mats.get_mat("metal_rust", 1.0), false)
+	Props.cyl(f, 0.25, 3.0, Vector3(0, 3.4, -0.2), Real5.rust(), false)
+	Real5.furnace(f.position + Vector3(0, 1.9, -0.1))
 	Props.sign(f, Vector3(0, 1.75, 0.72), 0.0, "COAL FURNACE", 24, Color(0.85, 0.7, 0.5))
 	Props.crate(geo, Vector3(31.2, 0, -9.0), 0.2, 0.9)
 	Props.barrel(geo, Vector3(30.8, 0, -7.2), 0.0, true)
@@ -707,7 +719,6 @@ func _build_lamp_room() -> void:
 	Props.sign(geo, Vector3(31.3, 1.55, -14.5), PI * 0.5, "114  T. KADE", 20, Color(0.95, 0.8, 0.4), false)
 	interact(Vector3(32.0, 1.4, -14.5), "Brass tag 114", _take_tag, 1.7)
 	# Tom's letter on a little table below
-	Props.table(geo, Vector3(32.0, 0, -12.2), PI * 0.5, Vector2(1.2, 0.7))
 	note("mn_tom_letter", Vector3(32.0, 0.8, -12.2), "Letter: T. Kade to Ruth, March 2011",
 		"[b]Ruth,[/b]\n\nI started this three times at the kitchen table and you kept coming in to top up my coffee, so I'm finishing it here in the lamp room where nobody watches me think.\n\nThe top level has been making noises I don't like. I told Gil. Gil told the office. The office told Gil to stop telling them. You know how it goes. I'll be fine. Twenty-two years down here and the mountain and I have an understanding.\n\nHere's what I never manage at supper. I'm proud of you. I'm proud of how you sit with people when it's bad. And I'm proud of Eli, even when he looks at me like I'm the thing he's trying to get away from. He's got my hands and your head. He'll leave this town. Let him. Just don't let him leave angry.\n\nI hang my brass tag on the board like always. People think the tag is so they know who's down. It isn't. It's the only thing in this mine that comes back every single night.\n\nI'm going to quit in June. I mean it this time. We'll drive up to that lake in Michigan you keep talking about.\n\nLeave the porch light on.\n\n[i]- Tom[/i]", PI * 0.5)
 	# warm light, heater, cot
@@ -719,7 +730,7 @@ func _build_lamp_room() -> void:
 	Props.desk(geo, Vector3(41.4, 0, -17.2), PI)
 	save_point(Vector3(41.0, 0.82, -17.2), PI)
 	item_box(Vector3(42.55, 0, -12.8), -PI * 0.5)
-	Props.locker(geo, Vector3(42.6, 0, -15.6), -PI * 0.5, 3)
+	Real5.lamp_room()
 	Props.chair(geo, Vector3(41.2, 0, -16.0), 2.8)
 	Props.papers(geo, Vector3(38.0, 0.02, -13.0), 5)
 	Props.crate(geo, Vector3(32.0, 0, -17.8), 0.3, 0.7)
@@ -829,8 +840,8 @@ func _build_pump_station() -> void:
 	# Northline brine pumps: three big pump bodies with manifold
 	for i in 3:
 		var px := 4.0 + i * 5.5
-		Props.cyl(geo, 0.9, 2.2, Vector3(px, 1.1, -27.0), Mats.get_mat("metal_painted", 1.5), true)
-		Props.cyl(geo, 1.0, 0.2, Vector3(px, 2.3, -27.0), Mats.get_mat("metal", 1.5), false)
+		R4c_solid(Vector3(px, 1.1, -27.0), Vector3(1.8, 2.2, 1.8))
+		Real5.pump(px, -27.0)
 		Props.box(geo, Vector3(1.6, 0.6, 1.2), Vector3(px, 0.3, -27.0), Mats.get_mat("concrete", 1.5), false)
 		Props.pipe(geo, Vector3(px, 2.4, -27.0), Vector3(px, 2.4, -30.6), 0.18, "metal_rust")
 		Props.pipe(geo, Vector3(px - 1.0, 0.6, -27.0), Vector3(px - 1.0, 0.6, -30.6), 0.14, "metal_painted")
@@ -1014,6 +1025,7 @@ func _build_haulage() -> void:
 	cable_run(Vector3(68.5, y + 3.2, 1.2), Vector3(83.5, y + 3.2, 1.2), 0.35, 12)
 	vent_duct(Vector3(68.5, y + 3.0, -1.2), Vector3(83.5, y + 3.0, -1.2), 0.5)
 	ore_cart(Vector3(70.7, y, 0.55), PI * 0.5)        # QA: moved west, off the magazine entrance (was x=74.5/75.8)
+	Real5.haulage_set(y)
 	ore_cart(Vector3(71.9, y, 0.55), PI * 0.5, false)
 	body_in_rock(Vector3(70.5, y, -1.2), -0.2, Vector3(0, 0, -1))
 	body_in_rock(Vector3(81.0, y, 1.2), 3.0, Vector3(0, 0, 1))
@@ -1049,6 +1061,7 @@ func _build_cavern() -> void:
 	var y := LY
 	cave(84, -18, 120, 18, 12.0, y, {"w": [[18.0, 3.6, 3.4]], "n": [[26.0, 3.0, 3.0]], "e": [[18.0, 3.6, 3.4]]}, "dirt")
 	# fix: tunnel in from the west joins at z=0 (w gap at dist 18)
+	Real5.cavern_set(y)
 	# pillars
 	for p in [Vector3(94, 0, -9), Vector3(94, 0, 9), Vector3(100, 0, 0), Vector3(112, 0, 10), Vector3(110, 0, -11)]:
 		Props.cyl(geo, rk(1.2, 1.6), 12.0, Vector3(p.x, y + 6.0, p.z), _rmat("rock"), true, rk(1.5, 2.0), Vector3.ZERO, 12)

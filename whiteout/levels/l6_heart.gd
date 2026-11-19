@@ -9,6 +9,7 @@ extends "res://levels/level.gd"
 ## Flags read: mother_dead, found_june (optional)
 
 const Art6 = preload("res://levels/dressing/l6_art.gd")
+const Real6 = preload("res://levels/dressing/l6_real.gd")
 const CYAN := Color(0.3, 0.85, 1.0)
 const HEAT := Color(1.0, 0.5, 0.18)
 
@@ -36,6 +37,7 @@ var _hum := 0.0
 # ================================================================== build
 func build() -> void:
 	_rng.seed = 6606
+	Real6.R4.setup(self)
 	env_interior(0.16, 0.035, Color(0.35, 0.55, 0.75))
 	var e := env.environment
 	e.volumetric_fog_albedo = Color(0.45, 0.65, 0.78)
@@ -254,31 +256,17 @@ func _build_lake() -> void:
 
 func _build_mine_mouth() -> void:
 	# the service drift they came down through (south wall)
-	var wood := Mats.get_mat("wood", 1.0)
-	Props.box(geo, Vector3(0.4, 3.4, 0.4), Vector3(-1.9, 1.7, 66.6), wood, true)
-	Props.box(geo, Vector3(0.4, 3.4, 0.4), Vector3(2.4, 1.7, 66.6), wood, true)
-	Props.box(geo, Vector3(5.1, 0.45, 0.5), Vector3(0.25, 3.5, 66.6), wood, true)
+	# portal, track, cart and the dropped floodlight are real models: levels/dressing/l6_real.gd
+	Real6.mine_mouth()
 	# gap in wall reads as the tunnel: dark box behind with a small lamp
 	Props.box(geo, Vector3(4.2, 3.2, 0.2), Vector3(0.25, 1.6, 67.2), Mats.color(Color(0.01, 0.01, 0.015), 1.0), false)
 	Props.sign(geo, Vector3(0.25, 3.0, 66.3), PI, "LOWER KETTLE — LEVEL 6 — BRINE", 26, Color(0.85, 0.8, 0.5))
-	# ore-cart rails run a few metres into the cavern, then stop at the broken edge
-	for i in 6:
-		Props.box(geo, Vector3(0.08, 0.05, 1.0), Vector3(-0.6, 0.03, 65.0 - i * 1.1), Mats.get_mat("metal_rust"), false)
-		Props.box(geo, Vector3(0.08, 0.05, 1.0), Vector3(0.9, 0.03, 65.0 - i * 1.1), Mats.get_mat("metal_rust"), false)
-		Props.box(geo, Vector3(1.8, 0.05, 0.14), Vector3(0.15, 0.0, 65.0 - i * 1.1), wood, false)
-	Props.box(geo, Vector3(1.4, 0.7, 2.2), Vector3(0.15, 0.4, 59.4), Mats.get_mat("metal_rust"), true, Vector3(0, 0.15, 0.25))
-	# dropped Northline work light on a tripod: warm pool at the top of the descent
-	for k in 3:
-		var a := k * TAU / 3.0
-		Props.cyl(geo, 0.015, 1.5, Vector3(1.6 + cos(a) * 0.25, 0.7, 63.4 + sin(a) * 0.25), Mats.get_mat("metal"), false, -1.0, Vector3(sin(a) * 0.25, 0, -cos(a) * 0.25), 5)
-	Props.box(geo, Vector3(0.5, 0.35, 0.2), Vector3(1.6, 1.55, 63.4), Mats.emissive(Color(1.0, 0.85, 0.6), 2.5), false, Vector3(0.4, 0.5, 0))
 	spot(Vector3(1.6, 1.6, 63.4), Vector3(-0.5, 0.0, 56.0), Color(1.0, 0.82, 0.55), 9.0, 16.0, 40.0, true)
 	light(Vector3(0.2, 2.6, 64.0), Color(1.0, 0.8, 0.5), 0.8, 7.0, false)
 
 func _build_path_dressing() -> void:
 	# Ruth's resting place (sleeping bag, dead lantern) beside the path — her last note is here
 	Props.box(geo, Vector3(0.7, 0.12, 1.8), Vector3(-1.1, 0.07, 52.0), Mats.color(Color(0.3, 0.12, 0.12), 1.0), false, Vector3(0, 0.1, 0))
-	Props.cyl(geo, 0.1, 0.22, Vector3(-0.3, 0.12, 51.0), Mats.get_mat("metal_rust"), false)
 	Props.box(geo, Vector3(0.18, 0.04, 0.18), Vector3(-1.5, 0.08, 53.0), Mats.get_mat("paper"), false)
 	note("l6_ruth", Vector3(-1.5, 0.1, 53.0), "Ruth's Last Note", "[i]Pencil, on the back of a shelter sign-in sheet. The handwriting gets larger and looser toward the end.[/i]\n\nEli —\n\nIf you're reading this you came. I knew you would. You always came late but you always came.\n\nI can hear your father. I know what it is. I was a nurse for thirty-one years, I know what a voice in the dark is. I went anyway. I want you to know I chose it with my eyes open.\n\nThe cold isn't the worst part. The worst part is it's so kind. It doesn't want anything from you except to stop. It tells you that you've done enough. Nobody has ever told me that.\n\nDon't let it tell June that.\n\nTake her home. Tell her Gran was brave. Lie if you have to.\n\nI love you. I was never angry that you left. I was angry that you thought you had to.\n\n— Mom")
 	_crystal(Vector3(-1.5, 0, 50.0), 1.1, 0.14, Vector3(0.2, 0, -0.3))
@@ -288,12 +276,8 @@ func _build_path_dressing() -> void:
 	Props.corpse(geo, Vector3(3.6, 0.0, 33.0), 2.4, {})
 	Props.debris(geo, Vector3(1.2, 0, 56.0), 0.3, 4, "rock")
 	Props.debris(geo, Vector3(3.8, 0, 40.5), 1.1, 4, "rock")
-	# pipeline service pipes, running down the east wall of the path to the arena
-	Props.pipe(geo, Vector3(2.35, 3.4, 66.0), Vector3(2.35, 3.4, 47.0), 0.22, "metal_painted")
-	Props.pipe(geo, Vector3(2.35, 2.6, 66.0), Vector3(2.35, 2.6, 47.0), 0.12, "metal_rust")
-	Props.pipe(geo, Vector3(4.9, 3.6, 46.0), Vector3(4.9, 3.6, 31.0), 0.22, "metal_painted")
-	for i in 5:
-		Props.box(geo, Vector3(0.25, 0.4, 0.4), Vector3(2.3, 3.0, 64.0 - i * 4.0), Mats.get_mat("metal"), false)
+	# pipeline service pipes down the east wall + valve wheels, lantern, tools: real models (l6_real.gd)
+	Real6.path_dressing()
 	Props.sign(geo, Vector3(2.2, 2.2, 60.0), -PI * 0.5, "MERIDIAN HEAT RECOVERY — FEED 2 — DO NOT ENTER", 22, Color(1.0, 0.7, 0.3))
 	# crystals lining the path (cyan fills)
 	_crystal(Vector3(3.2, 0.0, 61.0), 2.4, 0.3, Vector3(0.0, 0, 0.2), false, true)
@@ -307,12 +291,10 @@ func _build_nook() -> void:
 	wall(Vector2(5.0, 30.0), Vector2(12.0, 30.0), 3.4, "rock", 0.0, 0.3)
 	light(Vector3(8.5, 2.7, 33.0), Color(1.0, 0.72, 0.4), 3.2, 9.5, true)
 	light(Vector3(6.0, 1.2, 33.0), Color(1.0, 0.65, 0.35), 0.8, 4.0, false)
-	Props.cyl(geo, 0.05, 0.4, Vector3(8.5, 3.15, 33.0), Mats.get_mat("metal"), false)
-	Props.sphere(geo, 0.12, Vector3(8.5, 2.85, 33.0), Mats.emissive(Color(1.0, 0.8, 0.5), 3.0))
-	Props.table(geo, Vector3(10.6, 0, 32.0), 0.0, Vector2(1.6, 0.8))
+	Real6.R4.sp("mine/hanging_lamp", Vector3(8.5, 3.4, 33.0), 0.3, {"scale": 0.7, "emissive": {"hanging_industrial_lamp_glass": [Color(1.0, 0.82, 0.55), 3.0]}})
+	Real6.nook()
 	save_point(Vector3(10.4, 0.78, 32.0), PI * 0.5)
 	item_box(Vector3(10.8, 0, 34.8), PI)
-	Props.box(geo, Vector3(2.0, 0.15, 0.9), Vector3(7.2, 0.2, 35.0), Mats.color(Color(0.22, 0.28, 0.2), 1.0), false)   # cot
 	Props.box(geo, Vector3(0.5, 0.1, 0.4), Vector3(6.4, 0.32, 35.0), Mats.color(Color(0.7, 0.7, 0.65), 1.0), false)
 	Props.crate(geo, Vector3(6.0, 0, 31.0), 0.4, 0.7)
 	Props.barrel(geo, Vector3(11.4, 0, 30.8), 0.0, true)
@@ -353,7 +335,7 @@ func _build_arena() -> void:
 func _build_pipeline() -> void:
 	# Northline/Meridian heat pipeline bursts through the east wall high up, venting steam
 	var pm := Mats.get_mat("metal_painted", 1.0)
-	Props.pipe(geo, Vector3(31.0, 9.0, -20.0), Vector3(19.0, 9.0, -20.0), 1.1, "metal_painted")
+	Real6.R4.pipe(Vector3(31.0, 9.0, -20.0), Vector3(19.0, 9.0, -20.0), 1.1, Color(0.55, 0.58, 0.62), true)
 	# ragged flange + breach glow
 	var ring := Mats.emissive(Color(1.0, 0.45, 0.12), 3.5)
 	Props.cyl(geo, 1.3, 0.35, Vector3(18.7, 9.0, -20.0), ring, false, -1.0, Vector3(0, 0, PI * 0.5), 14)
@@ -368,13 +350,13 @@ func _build_pipeline() -> void:
 		Props.box(geo, Vector3(0.1, _rng.randf_range(1.0, 3.0), 0.12), Vector3(18.92, sy, sz), Mats.emissive(Color(1.0, 0.4, 0.1), 2.2), false, Vector3(0, 0, _rng.randf_range(-0.4, 0.4)))
 	for i in 7:
 		_boulder(Vector3(17.5 + _rng.randf_range(-1.2, 1.0), 0, -20.0 + _rng.randf_range(-3, 3)), Vector3(_rng.randf_range(0.5, 1.2), _rng.randf_range(0.4, 0.9), _rng.randf_range(0.5, 1.2)), false)
-	# manifold across the cavern ceiling to the west wall + risers to the two valves
-	Props.pipe(geo, Vector3(19.0, 9.0, -20.0), Vector3(-16.0, 9.0, -20.0), 0.45, "metal_painted")
-	Props.pipe(geo, Vector3(18.0, 9.0, -20.0), Vector3(18.0, 1.4, -20.0), 0.3, "metal_painted")
-	Props.pipe(geo, Vector3(-15.2, 9.0, -20.0), Vector3(-15.2, 1.4, -20.0), 0.3, "metal_painted")
+	# manifold across the cavern ceiling to the west wall + risers to the two valves (insulated PBR pipe, flanges)
+	Real6.R4.pipe(Vector3(19.0, 9.0, -20.0), Vector3(-16.0, 9.0, -20.0), 0.45, Color(0.6, 0.64, 0.7), true)
+	Real6.R4.pipe(Vector3(18.0, 9.0, -20.0), Vector3(18.0, 1.4, -20.0), 0.3, Color(0.6, 0.64, 0.7), true)
+	Real6.R4.pipe(Vector3(-15.2, 9.0, -20.0), Vector3(-15.2, 1.4, -20.0), 0.3, Color(0.6, 0.64, 0.7), true)
 	# nozzle branches that point at the lattice wall (they spray when vented)
-	Props.pipe(geo, Vector3(8.0, 9.0, -20.0), Vector3(5.5, 7.0, -28.5), 0.2, "metal_painted")
-	Props.pipe(geo, Vector3(-7.0, 9.0, -20.0), Vector3(-5.5, 7.0, -28.5), 0.2, "metal_painted")
+	Real6.R4.pipe(Vector3(8.0, 9.0, -20.0), Vector3(5.5, 7.0, -28.5), 0.2, Color(0.6, 0.64, 0.7))
+	Real6.R4.pipe(Vector3(-7.0, 9.0, -20.0), Vector3(-5.5, 7.0, -28.5), 0.2, Color(0.6, 0.64, 0.7))
 	# flanges along the manifold
 	for i in 7:
 		Props.cyl(geo, 0.6, 0.18, Vector3(15.0 - i * 5.0, 9.0, -20.0), pm, false, -1.0, Vector3(0, 0, PI * 0.5), 12)
@@ -387,10 +369,7 @@ func _build_pipeline() -> void:
 	# steam valves (interactables)
 	for i in 2:
 		var vp: Vector3 = _vent_pos[i]
-		Props.box(geo, Vector3(0.7, 1.0, 0.7), vp + Vector3(0, 0.5, 0), Mats.get_mat("metal_painted"), true)
-		Props.cyl(geo, 0.4, 0.06, vp + Vector3(0, 1.4, 0), Mats.color(Color(0.7, 0.1, 0.08), 0.5, 0.5), false, -1.0, Vector3.ZERO, 16)
-		Props.box(geo, Vector3(0.9, 0.06, 0.06), vp + Vector3(0, 1.4, 0), Mats.color(Color(0.7, 0.1, 0.08), 0.5, 0.5), false)
-		Props.box(geo, Vector3(0.06, 0.06, 0.9), vp + Vector3(0, 1.4, 0), Mats.color(Color(0.7, 0.1, 0.08), 0.5, 0.5), false)
+		Real6.valve(vp, i)    # real valve wheel + flanged riser (replaces the box + red cross)
 		Props.sign(geo, vp + Vector3(0.0, 0.7, -0.38 if i == 0 else 0.38), 0.0 if i == 1 else PI, tr("STEAM RELIEF %d") % (i + 1), 20, Color(1.0, 0.75, 0.3))
 		light(vp + Vector3(0, 2.0, 0.6), Color(1.0, 0.55, 0.25), 1.0, 5.0, false)
 		var it := interact(vp + Vector3(0, 1.0, 0), "Vent steam valve", func(_p): _vent(i), 2.2)
@@ -402,9 +381,10 @@ func _build_station() -> void:
 	r.position = Vector3(18.8, 0, -4.0)
 	r.rotation.y = -PI * 0.5
 	geo.add_child(r)
-	Props.box(r, Vector3(3.0, 0.9, 0.8), Vector3(0, 0.45, -0.1), Mats.get_mat("metal_painted"), true)
-	Props.box(r, Vector3(2.6, 1.7, 0.28), Vector3(0, 1.75, -0.3), Mats.get_mat("metal_painted"), false)
-	Props.box(r, Vector3(2.4, 1.3, 0.04), Vector3(0, 1.8, -0.15), Mats.color(Color(0.05, 0.07, 0.07), 0.4, 0.2), false)
+	# cabinets, monitors, breaker gear and valve wheels: levels/dressing/l6_real.gd (collider only here)
+	Real6.station(r)
+	Props.box(r, Vector3(2.6, 1.0, 0.28), Vector3(0, 1.75, -0.3), Art6.A4.pbr("metal", 1.2, Color(0.16, 0.18, 0.2), 0.45, 0.6, 0.85), false)
+	Props.box(r, Vector3(2.4, 0.95, 0.04), Vector3(0, 2.1, -0.15), Mats.color(Color(0.05, 0.07, 0.07), 0.4, 0.2), false)
 	Props.sign(r, Vector3(-0.62, 2.2, -0.1), PI, "MERIDIAN TIE\nPOWER + HEAT", 22, Color(0.5, 0.9, 1.0), false)
 	Props.sign(r, Vector3(0.62, 2.2, -0.1), PI, "PIPELINE FEED\nMAIN / FULL", 22, Color(1.0, 0.6, 0.25), false)
 	# two big handles in slots
@@ -412,11 +392,12 @@ func _build_station() -> void:
 		var hx := -0.62 if i == 0 else 0.62
 		var hc := Color(0.2, 0.55, 0.85) if i == 0 else Color(0.85, 0.2, 0.1)
 		Props.box(r, Vector3(0.16, 1.0, 0.08), Vector3(hx, 1.45, -0.12), Mats.color(Color(0.02, 0.02, 0.02), 0.5), false)
-		Props.cyl(r, 0.05, 0.9, Vector3(hx, 1.7, 0.2), Mats.get_mat("metal"), false, -1.0, Vector3(-0.5, 0, 0), 8)
+		Props.cyl(r, 0.05, 0.9, Vector3(hx, 1.7, 0.2), Art6.A4.pbr("metal", 0.6, Color(0.6, 0.62, 0.66), 0.35, 0.5, 0.9), false, -1.0, Vector3(-0.5, 0, 0), 8)
 		Props.sphere(r, 0.12, Vector3(hx, 2.05, 0.4), Mats.color(hc, 0.4, 0.2))
 		Props.sphere(r, 0.04, Vector3(hx, 1.0, -0.12), Mats.emissive(hc, 3.0))
 	_station_light = light(Vector3(16.8, 3.2, -4.0), Color(1.0, 0.55, 0.28), 4.0, 12.0, false)
-	Props.box(geo, Vector3(1.6, 0.05, 1.6), Vector3(17.2, 0.02, -4.0), Mats.get_mat("metal"), false)
+	Props.box(geo, Vector3(1.6, 0.05, 1.6), Vector3(17.2, 0.02, -4.0), Art6.A4.pbr("diamond", 0.8, Color(0.55, 0.57, 0.6), 0.5, 0.6, 0.8), false)
+	Real6.pipeline_wall()
 	interact(Vector3(17.2, 1.0, -4.0), "Use pipeline control", func(_p): _station_use(), 2.4)
 
 func _build_lattice_wall() -> void:

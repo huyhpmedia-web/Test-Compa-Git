@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/lamp_battery_Image_0.jpg-3fd2abb63fc464fb7ae8
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

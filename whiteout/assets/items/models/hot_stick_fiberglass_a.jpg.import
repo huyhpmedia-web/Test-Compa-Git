@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/hot_stick_fiberglass_a.jpg-3fd52757f69b772096
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

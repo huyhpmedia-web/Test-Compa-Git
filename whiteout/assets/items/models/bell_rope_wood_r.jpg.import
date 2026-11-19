@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/bell_rope_wood_r.jpg-f596b0251e75fc4489cb0b7f
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

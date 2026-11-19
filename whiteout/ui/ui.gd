@@ -635,12 +635,14 @@ func show_item_get(id: String) -> void:
 	hb.add_child(v)
 	v.add_child(_label("OBTAINED", 14, C_DIM))
 	v.add_child(_label(d.name, 28, Color(0.95, 0.9, 0.7)))
+	var rule := ColorRect.new()
+	rule.color = Color(0.95, 0.9, 0.7, 0.35)
+	rule.custom_minimum_size = Vector2(0, 1)
+	v.add_child(rule)
 	var desc := _label(d.desc, 17)
 	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	desc.custom_minimum_size = Vector2(420, 0)
 	v.add_child(desc)
-	if ItemView.has_model(id):
-		v.add_child(_label("Drag to rotate · Wheel to zoom", 14, C_DIM))
 	var sp := Control.new()
 	sp.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	v.add_child(sp)

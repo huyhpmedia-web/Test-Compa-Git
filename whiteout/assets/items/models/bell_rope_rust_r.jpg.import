@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/bell_rope_rust_r.jpg-d4670d7e256eba622449b99a
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

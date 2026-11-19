@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/powder_Image_4.jpg-14a133b1ba69e5a063b33a8e33
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

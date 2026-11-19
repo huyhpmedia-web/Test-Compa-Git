@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/gym_key_Image_1.jpg-293789f1aeb4597be26a9da15
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/fuse_60a_brass_a.jpg-81ed440e5c705f4caafc41da
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

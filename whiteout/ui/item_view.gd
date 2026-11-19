@@ -136,7 +136,7 @@ func setup(id: String) -> void:
 ## Soft light pool under the item so it reads as sitting on a lit turntable, not floating in the void.
 func _pool() -> MeshInstance3D:
 	var g := Gradient.new()
-	g.set_color(0, Color(0.75, 0.82, 0.95, 0.22))
+	g.set_color(0, Color(0.75, 0.82, 0.95, 0.15))
 	g.set_color(1, Color(0.75, 0.82, 0.95, 0.0))
 	var gt := GradientTexture2D.new()
 	gt.gradient = g
@@ -146,7 +146,7 @@ func _pool() -> MeshInstance3D:
 	gt.width = 256
 	gt.height = 256
 	var qm := QuadMesh.new()
-	qm.size = Vector2(3.4, 3.4)
+	qm.size = Vector2(2.7, 2.7)
 	qm.orientation = PlaneMesh.FACE_Y
 	var mat := StandardMaterial3D.new()
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -208,6 +208,48 @@ func _model_for(id: String) -> Node3D:
 		return FX.weapon_mesh(id)
 	return null
 
+## World-pickup pose: real scale (metres), laid in its natural resting pose (flat things flat, long things
+## along X), centred on X/Z with its underside on y = 0. Returns {"node": Node3D, "size": Vector3 (resting
+## extents), "top": Vector3 (local point on the upper surface for the glint)}; node is null without a model.
+static func rest_pose(id: String) -> Dictionary:
+	var m := model(id)
+	if m == null:
+		return {"node": null}
+	var holder := Node3D.new()
+	holder.add_child(m)
+	var ab := _aabb_of(m)
+	var sz := ab.size
+	var longest := maxf(sz.x, maxf(sz.y, sz.z))
+	var thin := minf(sz.x, minf(sz.y, sz.z))
+	var mid := sz.x + sz.y + sz.z - longest - thin
+	var b := Basis()
+	if longest > mid * 2.2:
+		# long item: longest axis -> X
+		if sz.y >= sz.x and sz.y >= sz.z:
+			b = Basis(Vector3.BACK, PI * 0.5)
+		elif sz.z >= sz.x and sz.z >= sz.y:
+			b = Basis(Vector3.UP, PI * 0.5)
+		var s2 := (b * sz).abs()
+		if s2.y > s2.z * 1.3:
+			b = Basis(Vector3.RIGHT, PI * 0.5) * b
+	elif thin < mid * 0.4:
+		# flat item: thinnest axis -> Y
+		if sz.x <= sz.y and sz.x <= sz.z:
+			b = Basis(Vector3.BACK, PI * 0.5)
+		elif sz.z <= sz.x and sz.z <= sz.y:
+			b = Basis(Vector3.RIGHT, PI * 0.5)
+	# bounds in the rotated frame, then drop onto the ground
+	var lo := Vector3(1e9, 1e9, 1e9)
+	var hi := Vector3(-1e9, -1e9, -1e9)
+	for i in 8:
+		var c: Vector3 = b * ab.get_endpoint(i)
+		lo = lo.min(c)
+		hi = hi.max(c)
+	m.transform = Transform3D(b, Vector3(-(lo.x + hi.x) * 0.5, -lo.y + 0.002, -(lo.z + hi.z) * 0.5))
+	for mi in m.find_children("*", "MeshInstance3D", true, false):
+		(mi as MeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	return {"node": holder, "size": hi - lo, "top": Vector3(0, hi.y - lo.y + 0.002, 0)}
+
 ## Standalone fitted model (for contact sheets): laid out and scaled like the inspector stage.
 static func fitted(id: String, aspect := 1.0) -> Node3D:
 	var holder := Node3D.new()
@@ -251,15 +293,17 @@ static func _fit(model_root: Node3D, aspect := 1.0) -> Dictionary:
 		elif sz.z >= sz.x and sz.z >= sz.y:
 			orient.rotation.y = PI * 0.5
 		var view_w := 1.77 * clampf(aspect, 0.6, 2.0)
-		s = minf(view_w * 0.80, 2.3) / longest
+		s = minf(view_w * 0.82, 1.95) / longest
 	orient.scale = Vector3.ONE * s
 	# lying-flat items (cards, boxes, keys): tilt the turntable towards the camera so the face is readable
 	var osz := (Basis.from_euler(orient.rotation) * sz).abs()
 	var pitch := -0.25
-	if osz.y < minf(osz.x, osz.z) * 0.55:
+	if elongated and longest > maxf(others, 0.0001) * 5.0:
+		pitch = -0.42     # poles, flares, levers: keep them reading as long objects
+	elif osz.y < minf(osz.x, osz.z) * 0.55:
 		pitch = -0.95
 	elif elongated:
-		pitch = -0.45
+		pitch = -0.6
 	var par := model_root.get_parent()
 	par.remove_child(model_root)
 	orient.add_child(model_root)

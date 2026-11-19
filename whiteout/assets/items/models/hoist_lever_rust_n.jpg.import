@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/hoist_lever_rust_n.jpg-03483b219fb0e83036c500
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

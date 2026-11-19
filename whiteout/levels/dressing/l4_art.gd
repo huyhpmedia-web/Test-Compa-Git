@@ -194,6 +194,7 @@ static func dress(level: Node3D) -> void:
 	_plant_pipeline()
 	_exterior()
 	_signage_and_safety()
+	load("res://levels/dressing/l4_real.gd").dress(level)      # R7-C: real models over the remaining primitives (see l4_real.gd)
 
 # ------------------------------------------------------------------ ceilings
 static func _ceilings() -> void:
@@ -411,9 +412,6 @@ static func _noc_break() -> void:
 		for c in 3:
 			var x := -10.0 + c * 3.8
 			var z := -76.0 + r * 2.5
-			var sc: Color = cols[(r * 3 + c) % cols.size()]
-			box(Vector3(x - 0.45, 1.5, z - 0.1), Vector3(0.5, 0.32, 0.03), Mats.color(Color(0.03, 0.03, 0.035), 0.3), false, Vector3(0, PI + 0.3, 0))
-			box(Vector3(x - 0.44, 1.5, z - 0.12), Vector3(0.46, 0.27, 0.01), emi(sc, 1.2), false, Vector3(0, PI + 0.3, 0))
 			if (r + c) % 2 == 0:
 				Props.chair(geo, Vector3(x + rf(-0.4, 0.4), 0, z + rf(0.9, 1.4)), rf(0, TAU), (r * 3 + c) % 3 == 0)
 			Props.papers(geo, Vector3(x + rf(-0.3, 0.3), 0.03, z + rf(1.2, 1.8)), 5)
@@ -463,7 +461,9 @@ static func _exterior() -> void:
 	# MERIDIAN wordmark: big, floodlit, readable from the spawn
 	var l := label("MERIDIAN", Vector3(0, 8.4, 12.34), 0.0, 260, Color(0.85, 0.95, 1.3), 0.016, false)
 	l.render_priority = 2
-	box(Vector3(0, 8.4, 12.3), Vector3(34.0, 3.2, 0.06), emi(Color(0.05, 0.12, 0.2), 1.4), false)
+	box(Vector3(0, 8.4, 12.3), Vector3(34.0, 3.2, 0.1), pbr("metal", 1.4, Color(0.09, 0.1, 0.12), 0.35, 0.6, 0.9), false)
+	box(Vector3(0, 6.78, 12.36), Vector3(34.0, 0.04, 0.05), emi(Color(0.45, 0.75, 1.0), 2.5), false)
+	box(Vector3(0, 10.02, 12.36), Vector3(34.0, 0.04, 0.05), emi(Color(0.45, 0.75, 1.0), 2.5), false)
 	# the entrance's sidelights glow warm (the only warm light in town)
 	box(Vector3(-2.2, 1.7, 12.42), Vector3(0.9, 3.0, 0.05), emi(Color(1.0, 0.85, 0.65), 1.1), false)
 	box(Vector3(2.2, 1.7, 12.42), Vector3(0.9, 3.0, 0.05), emi(Color(1.0, 0.85, 0.65), 1.1), false)

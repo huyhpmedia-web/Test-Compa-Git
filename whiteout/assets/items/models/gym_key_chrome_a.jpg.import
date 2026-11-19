@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/gym_key_chrome_a.jpg-96f1eeba8d64d7292b83f294
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

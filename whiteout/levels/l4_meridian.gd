@@ -5,6 +5,7 @@ extends "res://levels/level.gd"
 
 const T = preload("res://levels/l4_meridian_text.gd")
 const Art = preload("res://levels/dressing/l4_art.gd")
+const Real = preload("res://levels/dressing/l4_real.gd")
 
 const HT := 4.5                 # ceiling height of most rooms
 const BH := 9.5                 # exterior building height
@@ -41,7 +42,8 @@ func build() -> void:
 	_m_front = Mats.color(Color(0.11, 0.12, 0.15), 0.35, 0.7)
 	_m_cold = Mats.emissive(Color(0.7, 0.88, 1.0), 3.2)
 	_m_tray = Mats.color(Color(0.45, 0.48, 0.52), 0.5, 0.8)
-	_m_insul = Mats.color(Color(0.74, 0.77, 0.8), 0.35, 0.7)
+	_m_insul = Art.pbr("clad", 1.5, Color(0.85, 0.87, 0.9), 0.65, 0.6, 0.3)
+	Real.setup(self)
 	_env()
 	_add_spawns()
 	_shell()
@@ -162,19 +164,14 @@ func _flush_leds() -> void:
 	add_child(mmi)
 
 func _rack(pos: Vector3, yaw: float, rng: RandomNumberGenerator, warm := 0.1) -> void:
-	var r := Node3D.new()
-	r.position = pos
-	r.rotation.y = yaw
-	geo.add_child(r)   # QA: under geo so racks are carved out of the navmesh (enemies/NPC paths)
-	Props.box(r, Vector3(0.8, 2.3, 1.0), Vector3(0, 1.15, 0), _m_rack, true)
-	Props.box(r, Vector3(0.74, 2.1, 0.03), Vector3(0, 1.15, 0.505), _m_front, false)
+	# real server cabinet model (industrial_sf/rack_sf) + hidden collider; blinking front LEDs stay in the MultiMesh
+	Real.rack(pos, yaw)
 	var b := Basis(Vector3.UP, yaw)
-	for u in 11:
-		if rng.randf() < 0.15:
+	for u in 14:
+		if rng.randf() < 0.45:
 			continue
-		var y := 0.22 + u * 0.18
-		var n := rng.randi_range(2, 4)
-		for i in n:
+		var y := 0.28 + u * 0.14
+		for i in rng.randi_range(1, 2):
 			var roll := rng.randf()
 			var c := Color(0.1, 1.0, 0.3)
 			if roll > 0.97 - warm * 0.4:
@@ -184,23 +181,14 @@ func _rack(pos: Vector3, yaw: float, rng: RandomNumberGenerator, warm := 0.1) ->
 			elif roll > 0.55:
 				c = Color(0.25, 0.55, 1.0)
 			c.a = rng.randf()
-			_led(pos + b * Vector3(-0.3 + i * 0.07, y, 0.527), c)
-		Props.box(r, Vector3(0.3, 0.04, 0.012), Vector3(0.18, y, 0.522), Mats.color(Color(0.03, 0.03, 0.04), 0.5), false)
+			_led(pos + b * Vector3(-0.27 + i * 0.06, y, 0.452), c)
 
 func _rack_row(x: float, z0: float, z1: float, face: int, seed_v: int = 1, warm := 0.1) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed_v
 	var n := int((z1 - z0) / 0.84)
-	var glb := Props.Env.has("props/server_rack")
 	var i := 0
 	while i < n:
-		# generated rack models (open door, real LEDs) every second slot; the boxy racks fill the rest
-		if glb and i % 4 == 0 and i + 1 < n:
-			var rk := Props.server_rack(geo, Vector3(x, 0, z0 + 0.84 + i * 0.84), PI * 0.5 * face)
-			if rk:
-				rk.scale = Vector3(0.86, 0.86, 0.86)
-				i += 2
-				continue
 		_rack(Vector3(x, 0, z0 + 0.42 + i * 0.84), PI * 0.5 * face, rng, warm)
 		i += 1
 
@@ -347,15 +335,7 @@ func _shell() -> void:
 	zone(-14, -84, 2, -66, HT, Art.floor_carpet())
 	zone(-30, -80, -14, -66, HT, Art.floor_carpet())
 	zone(6, -98, 30, -66, PH_H, Art.floor_conc(), Art.ceil_dark())
-	# facade: glowing windows, sign, entrance canopy
-	for i in range(-6, 10):
-		var x := i * 5.0 - 1.0
-		if absf(x) < 4.0:
-			continue
-		for yy in [2.4, 6.4]:
-			Props.box(geo, Vector3(2.6, 1.6, 0.1), Vector3(x, yy, 12.25), Mats.emissive(Color(0.62, 0.82, 1.0), 1.6), false)
-			Props.box(geo, Vector3(0.06, 1.6, 0.14), Vector3(x, yy, 12.27), Mats.get_mat("metal"), false)
-	Props.box(geo, Vector3(84, 0.3, 0.2), Vector3(8, 4.3, 12.3), Mats.emissive(Color(0.5, 0.75, 1.0), 2.0), false)
+	# facade: cladding fins, ribbon windows, plinth, docks, roof plant -> levels/dressing/l4_real.gd; sign + canopy here
 	label("MERIDIAN", Vector3(0, 7.6, 12.3), 0.0, 220, Color(0.8, 0.95, 1.4), 0.012)
 	label("CORVANE SYSTEMS  ·  SITE OPERATIONS  ·  AUTHORISED PERSONNEL ONLY", Vector3(0, 5.8, 12.3), 0.0, 60, Color(0.6, 0.78, 1.0), 0.008)
 	Props.box(geo, Vector3(8, 0.25, 3.2), Vector3(0, 3.4, 13.7), Mats.get_mat("metal"), true)
@@ -423,18 +403,8 @@ func _yard() -> void:
 func _booth() -> void:
 	var bx := 6.0
 	var bz := 44.0
-	W(bx - 1.6, bz - 1.8, bx + 1.6, bz - 1.8, [], "plaster_dirty", 2.7)
-	W(bx - 1.6, bz + 1.8, bx + 1.6, bz + 1.8, [], "plaster_dirty", 2.7)
-	W(bx + 1.6, bz - 1.8, bx + 1.6, bz + 1.8, [], "plaster_dirty", 2.7)
-	W(bx - 1.6, bz - 1.8, bx - 1.6, bz + 1.8, [[1.8, 1.4, 2.3]], "plaster_dirty", 2.7)
-	floor_rect(bx - 1.75, bz - 1.95, bx + 1.75, bz + 1.95, 0.0, "tile_floor", 0.3)
-	box(Vector3(bx, 2.8, bz), Vector3(3.8, 0.2, 4.2), "concrete")
-	Props.box(geo, Vector3(2.6, 0.9, 0.06), Vector3(bx, 1.5, bz + 1.76), Mats.get_mat("glass"), false)
-	Props.desk(geo, Vector3(bx + 0.6, 0, bz - 1.0), PI)
-	Props.chair(geo, Vector3(bx + 0.6, 0, bz - 0.2), 0.4, true)
-	Props.cabinet(geo, Vector3(bx + 1.3, 0, bz + 1.2), -PI * 0.5)
-	light(Vector3(bx, 2.5, bz), Color(1.0, 0.76, 0.5), 1.8, 7.5, true, false)
-	Props.sphere(geo, 0.08, Vector3(bx, 2.58, bz), Mats.emissive(Color(1.0, 0.8, 0.5), 3.0))
+	Real.booth(bx, bz)    # real guard-booth model + perimeter collision (door faces the road)
+	Props.chair(geo, Vector3(bx + 0.9, 0, bz + 0.5), 0.4, true)
 	_corpse(Vector3(bx - 0.4, 0, bz + 0.4), 1.2, {"vest": true, "vest_color": Color(0.8, 0.5, 0.05), "shirt": Color(0.1, 0.12, 0.22), "pants": Color(0.08, 0.1, 0.18), "headgear": "cap", "bloody": 0.0, "skin": Color(0.6, 0.66, 0.72)})
 	pickup("l4_badge", "badge_meridian", 1, Vector3(bx - 1.0, 0.04, bz + 0.3))
 	pickup("l4_booth_9mm", "ammo_9mm", 4, Vector3(bx + 1.0, 0.82, bz - 1.0))
@@ -561,14 +531,8 @@ func _electrical() -> void:
 	_total_label = label("LOAD REDUCTION: 0 kW", Vector3(-23, 3.1, -31.5), 0.0, 56, Color(0.5, 1.0, 0.6), 0.008)
 	label("OPEN REQUESTS\nHALL C ... 40 kW\nNOC ...... 54 kW", Vector3(-28.5, 1.9, -31.5), 0.0, 28, Color(0.9, 0.9, 0.95), 0.004, true)
 	# transformers + cable reels + lockers
-	for x in [-29.0]:
-		for z in [-28.0, -24.0, -20.0]:
-			Props.box(geo, Vector3(1.4, 1.9, 1.4), Vector3(x + 0.1, 0.95, z), Mats.color(Color(0.3, 0.34, 0.32), 0.6, 0.4), true)
-			Props.cyl(geo, 0.1, 0.5, Vector3(x + 0.1, 2.15, z), Mats.color(Color(0.8, 0.8, 0.82), 0.3, 0.5), false)
-			em(Vector3(x + 0.82, 1.6, z), Vector3(0.03, 0.08, 0.5), Color(0.2, 1.0, 0.4), 2.5)
 	Props.cyl(geo, 0.6, 0.6, Vector3(-18.5, 0.3, -14.0), Mats.get_mat("wood"), true)
 	Props.cyl(geo, 0.6, 0.6, Vector3(-18.5, 0.3, -15.2), Mats.get_mat("wood"), true)
-	Props.locker(geo, Vector3(-26.0, 0, -12.6), PI, 4)
 	Props.desk(geo, Vector3(-18.0, 0, -28.0), -PI * 0.5)
 	Props.chair(geo, Vector3(-19.2, 0, -28.0), -PI * 0.5, false)
 	Props.pipe(geo, Vector3(-29.8, 3.9, -31.8), Vector3(-29.8, 3.9, -12.2), 0.12, "metal")
@@ -730,12 +694,7 @@ func _plant() -> void:
 	for i in 3:
 		var x: float = cx[i]
 		Props.box(geo, Vector3(6.4, 0.4, 3.2), Vector3(x, 0.2, -41.8), Mats.get_mat("concrete"), true)
-		Props.cyl(geo, 1.45, 6.0, Vector3(x, 2.05, -41.8), tank, true, -1.0, Vector3(0, 0, PI * 0.5), 24)
-		for s in [-1, 1]:
-			Props.sphere(geo, 1.45, Vector3(x + s * 3.0, 2.05, -41.8), tank, Vector3(0.35, 1.0, 1.0))
-		for k in 4:
-			Props.cyl(geo, 1.5, 0.12, Vector3(x - 2.1 + k * 1.4, 2.05, -41.8), Mats.color(Color(0.3, 0.33, 0.37), 0.4, 0.7), false, -1.0, Vector3(0, 0, PI * 0.5), 24)
-		Props.cyl(geo, 0.3, 1.4, Vector3(x, 4.1 - 0.2, -42.4), _m_insul, false)
+		Real.solid(Vector3(x, 1.9, -41.8), Vector3(6.2, 3.0, 2.8))    # chiller package: real model in l4_real.gd
 		Props.box(geo, Vector3(1.0, 1.3, 0.5), Vector3(x + 1.5, 1.05, -39.8), Mats.get_mat("metal_painted"), true)
 		label(names[i], Vector3(x, 3.75, -40.4), 0.0, 60, Color(0.7, 0.9, 1.2), 0.006)
 		var lm := Mats.emissive(Color(0.2, 1.0, 0.4), 3.0)
@@ -757,12 +716,9 @@ func _plant() -> void:
 	_icicles(Vector3(30, 3.25, -57.5), 10, 12.0)
 	# heat exchangers (north)
 	for x in [21.0, 29.0]:
-		Props.box(geo, Vector3(5.0, 2.8, 2.6), Vector3(x, 1.4, -56.0), Mats.color(Color(0.4, 0.45, 0.5), 0.5, 0.6), true)
-		for k in 3:
-			Props.cyl(geo, 0.7, 0.08, Vector3(x - 1.6 + k * 1.6, 2.85, -56.0), Mats.color(Color(0.1, 0.1, 0.12), 0.4, 0.6), false)
+		Real.solid(Vector3(x, 1.4, -56.0), Vector3(5.0, 2.8, 2.6))    # tank pair: real models in l4_real.gd
 		_frost(Vector3(x, 0, -53.8), Vector2(4.4, 1.1))
-	Props.box(geo, Vector3(2.0, 1.6, 1.4), Vector3(34.5, 0.8, -55.5), Mats.get_mat("metal_painted"), true)
-	Props.cyl(geo, 0.5, 1.4, Vector3(34.5, 2.2, -55.5), _m_insul, true)
+	Real.isf("diesel_gen", Vector3(34.5, 0.0, -55.5), 0.0, {"scale": 1.2, "collide": Vector3(2.2, 1.6, 1.2)})
 	for p in [Vector3(25, 0, -46), Vector3(36, 0, -47), Vector3(18.5, 0, -51)]:
 		_frost(p, Vector2(3.0, 2.2))
 	Props.barrel(geo, Vector3(18.4, 0, -37.2), 0.3)
@@ -770,7 +726,7 @@ func _plant() -> void:
 	Props.crate(geo, Vector3(49.0, 0, -51.0), 0.2, 0.8)
 	label("COOLING PLANT 1\nWATCH FOR ICE ON PIPEWORK", Vector3(16.2, 2.6, -53), PI * 0.5, 34, Color(1.0, 0.85, 0.3), 0.005, true)
 	# override cabinet + containment door
-	Props.box(geo, Vector3(1.6, 2.2, 0.4), Vector3(38.0, 1.1, -59.7), Mats.color(Color(0.5, 0.1, 0.08), 0.5, 0.4), true)
+	Real.solid(Vector3(38.0, 1.1, -59.6), Vector3(1.6, 2.2, 0.5))    # override cabinets: real models (l4_real.gd)
 	label("CHILLER OVERRIDE\nKEY REQUIRED", Vector3(38.0, 1.5, -59.47), 0.0, 32, Color(1.0, 0.9, 0.8), 0.004, true)
 	Props.box(geo, Vector3(0.2, 0.2, 0.05), Vector3(38.0, 1.1, -59.48), Mats.emissive(Color(1.0, 0.15, 0.1), 3.0), false)
 	interact(Vector3(38.0, 1.2, -58.9), "Chiller override cabinet", func(_p): _override_cabinet(), 1.8)
@@ -834,8 +790,8 @@ func _armory() -> void:
 	door("l4_armory", Vector3(46, 0, -36), 0.0, {"width": 1.8, "height": 2.6, "mat": "metal_painted", "lock_item": "badge_meridian", "keep_key": true,
 		"locked_msg": "SECURITY ARMORY. Badge reader: ACCESS DENIED."})
 	label("SECURITY ARMORY", Vector3(46, 3.0, -35.78), 0.0, 36, Color(1.0, 0.4, 0.3), 0.005)
-	Props.locker(geo, Vector3(41, 0, -22.4), PI, 3)
-	Props.locker(geo, Vector3(46, 0, -22.4), PI, 3)
+	Real.isf("lockers", Vector3(41.2, 0, -22.4), PI, {"collide": Vector3(2.2, 2.0, 0.5)})
+	Real.isf("lockers", Vector3(45.0, 0, -22.4), PI, {"collide": Vector3(2.2, 2.0, 0.5)})
 	Props.shelf(geo, Vector3(49.6, 0, -29), -PI * 0.5, 3.0, 2.0, false)
 	Props.crate(geo, Vector3(35.0, 0, -35.0), 0.4, 0.8)
 	Props.table(geo, Vector3(42, 0, -26.5), 0.0, Vector2(2.2, 0.9))
@@ -892,21 +848,16 @@ func _noc() -> void:
 	glow(Vector3(-6, 2.2, -82), Color(0.3, 0.6, 1.0), 2.5, 12.0)
 	pass
 	pass
-	# video wall
-	var cols := [Color(0.1, 0.35, 0.7), Color(0.05, 0.5, 0.45), Color(0.15, 0.25, 0.6), Color(0.6, 0.35, 0.05), Color(0.05, 0.4, 0.65)]
-	for r in 2:
-		for c in 5:
-			var col: Color = cols[(r * 2 + c) % cols.size()]
-			Props.box(geo, Vector3(2.7, 1.5, 0.08), Vector3(-6 + (c - 2) * 2.85, 1.2 + r * 1.65, -83.78), Mats.emissive(col, 1.4), false)
+	# video wall: real wall TVs, see levels/dressing/l4_real.gd
 	label("UPTIME 99.9997%", Vector3(-6, 3.0, -83.7), 0.0, 100, Color(0.9, 1.0, 1.3), 0.008)
 	label("GRID: KETTLE FALLS FEEDER  — SHED\nSITE LOAD 40.2 MW  ·  PRIORITY: 1", Vector3(-11.0, 1.4, -83.7), 0.0, 24, Color(0.8, 0.95, 1.0), 0.004)
 	label("HR-1 SUPPLY 96 °C\nRETURN  −2 °C  (!)", Vector3(-1.6, 1.4, -83.7), 0.0, 24, Color(1.0, 0.7, 0.4), 0.004)
-	# consoles
+	# consoles: steel desks (real model) + monitors/chairs from l4_real.gd
 	for r in 2:
 		for c in 3:
 			var x := -10.0 + c * 3.8
 			var z := -76.0 + r * 2.5
-			Props.desk(geo, Vector3(x, 0, z), PI)
+			Props.Env.spawn(geo, "interior/desk", Vector3(x, 0, z), PI, {"name": "Desk", "snow": 0.0, "collide": Vector3(2.0, 0.8, 0.95)})
 	glass_mullions()
 	var taken := Game.has_flag("imogen_taken")
 	if taken:
@@ -989,10 +940,7 @@ func _break_room() -> void:
 	Props.table(geo, Vector3(-24.0, 0, -74.0), 0.0, Vector2(1.8, 0.9))
 	Props.chair(geo, Vector3(-24.0, 0, -72.9), PI, false)
 	Props.chair(geo, Vector3(-25.0, 0, -75.2), 0.3, false)
-	Props.vending(geo, Vector3(-29.1, 0, -77.5), PI * 0.5, true)
-	Props.vending(geo, Vector3(-29.1, 0, -76.0), PI * 0.5, true)
 	Props.cabinet(geo, Vector3(-16.5, 0, -67.2), PI)
-	Props.locker(geo, Vector3(-19.0, 0, -79.5), 0.0, 3)
 	Props.bed(geo, Vector3(-28.4, 0, -68.0), 0.0)
 	Props.box(geo, Vector3(0.35, 0.4, 0.3), Vector3(-23.0, 0.95, -74.0), Mats.color(Color(0.8, 0.8, 0.82), 0.3, 0.5), false)
 	save_point(Vector3(-24.8, 0.76, -74.0), 0.0)

@@ -14,6 +14,7 @@ const FX = preload("res://world/fx.gd")
 const Interactable = preload("res://world/interactable.gd")
 const Trigger = preload("res://world/trigger.gd")
 const PlayerScript = preload("res://actors/player.gd")
+const ItemView = preload("res://ui/item_view.gd")
 
 var footstep := "concrete"         # step_<footstep> sound
 var spawns := {}                   # name -> [pos, yaw]
@@ -436,6 +437,8 @@ func pickup(uid: String, item: String, count: int, pos: Vector3) -> Node3D:
 	if d.kind == "weapon":
 		vis.rotation = Vector3(PI * 0.5, randf() * TAU, 0)
 		vis.position.y = 0.04
+	else:
+		vis.rotation.y = float(hash(uid) % 628) / 100.0   # stable per pickup, looks hand-placed
 	root.add_child(vis)
 	var glint := OmniLight3D.new()
 	glint.light_color = Color(1.0, 0.95, 0.8)
@@ -502,25 +505,61 @@ func make_room_for_key(item: String) -> bool:
 func on_pickup(_item: String, _uid: String) -> void:
 	pass
 
+static var _glint_tex: Texture2D
+
 func _item_mesh(item: String, d: Dictionary) -> Node3D:
 	var r := Node3D.new()
+	# real photoreal model at real-world scale, lying in its resting pose (assets/items/models/<id>.glb)
+	var rp: Dictionary = ItemView.rest_pose(item)
+	if rp.node != null:
+		r.add_child(rp.node)
+		var sz: Vector3 = rp.size
+		_add_glint(r, Vector3(sz.x * 0.2, sz.y + 0.012, sz.z * 0.1), clampf(maxf(sz.x, sz.z) * 0.55, 0.05, 0.22))
+		return r
+	# no model (should not happen): primitive stand-in
 	var c: Color = d.get("color", Color.WHITE)
-	match d.kind:
-		"ammo":
-			Props.box(r, Vector3(0.14, 0.08, 0.1), Vector3(0, 0.04, 0), Mats.color(c.darkened(0.3), 0.6), false)
-			Props.box(r, Vector3(0.145, 0.02, 0.105), Vector3(0, 0.075, 0), Mats.color(Color(0.1, 0.1, 0.1), 0.6), false)
-		"heal":
-			if item == "spray":
-				Props.cyl(r, 0.035, 0.2, Vector3(0, 0.1, 0), Mats.color(Color(0.9, 0.9, 0.92), 0.3, 0.4), false)
-				Props.cyl(r, 0.02, 0.03, Vector3(0, 0.215, 0), Mats.color(Color(0.1, 0.5, 0.2), 0.4), false)
-			else:
-				Props.box(r, Vector3(0.1, 0.12, 0.05), Vector3(0, 0.06, 0), Mats.color(c, 0.5), false)
-				Props.box(r, Vector3(0.06, 0.02, 0.052), Vector3(0, 0.07, 0), Mats.color(Color(0.95, 0.95, 0.95), 0.5), false)
-		"resource":
-			Props.cyl(r, 0.04, 0.1, Vector3(0, 0.05, 0), Mats.color(c, 0.5), false)
-		_:
-			Props.box(r, Vector3(0.14, 0.04, 0.1), Vector3(0, 0.02, 0), Mats.color(c, 0.4, 0.5), false)
+	Props.box(r, Vector3(0.12, 0.04, 0.09), Vector3(0, 0.02, 0), Mats.color(c, 0.4, 0.5), false)
 	return r
+
+## Subtle twinkle on a pickup so it catches the eye in the dark without looking like a UI marker.
+func _add_glint(parent: Node3D, at: Vector3, size: float) -> void:
+	if _glint_tex == null:
+		var g := Gradient.new()
+		g.set_color(0, Color(1.0, 0.96, 0.85, 1.0))
+		g.set_color(1, Color(1.0, 0.9, 0.7, 0.0))
+		var gt := GradientTexture2D.new()
+		gt.gradient = g
+		gt.fill = GradientTexture2D.FILL_RADIAL
+		gt.fill_from = Vector2(0.5, 0.5)
+		gt.fill_to = Vector2(1.0, 0.5)
+		gt.width = 64
+		gt.height = 64
+		_glint_tex = gt
+	var sp := Sprite3D.new()
+	sp.texture = _glint_tex
+	sp.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	sp.shaded = false
+	sp.transparent = true
+	sp.double_sided = true
+	sp.pixel_size = size / 64.0
+	sp.modulate = Color(1, 1, 1, 0.0)
+	sp.position = at
+	sp.visibility_range_end = 12.0
+	sp.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	mat.albedo_texture = _glint_tex
+	mat.vertex_color_use_as_albedo = true
+	sp.material_override = mat
+	parent.add_child(sp)
+	var tw := sp.create_tween().set_loops()
+	tw.tween_interval(randf() * 2.5)
+	tw.tween_property(sp, "modulate:a", 0.55, 0.9).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(sp, "modulate:a", 0.0, 1.4).set_trans(Tween.TRANS_SINE)
+	tw.tween_interval(1.2 + randf() * 1.5)
 
 ## Door. opts:
 ##  to_level / to_spawn : RE-style transition door (loads another level)

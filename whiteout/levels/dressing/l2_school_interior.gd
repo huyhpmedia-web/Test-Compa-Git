@@ -10,6 +10,7 @@ const Mats = preload("res://core/mats.gd")
 const FY := 0.45
 const YB := -3.05
 const HC := 4.2
+const K := 0.7      # decal density multiplier (clustered decal budget)
 
 static var lv: Node3D     # the level (decals / lights parent)
 static var g: Node3D      # geo (props parent: carves the navmesh)
@@ -23,6 +24,8 @@ static func begin(level: Node3D) -> void:
 
 static func dress(level: Node3D) -> void:
 	begin(level)
+	if OS.get_environment("R7B_OFF") == "1":
+		return
 	SF.begin(hash("l2_interior"))
 	_hall()
 	_corridor()
@@ -83,7 +86,7 @@ static func room(r: Rect2, fy: float, h: float, o := {}) -> void:
 		if o.get("band", true):
 			for sp in spans:
 				var seg_len: float = sp[1] - sp[0]
-				var cnt := maxi(1, int(round(seg_len / 5.0)))
+				var cnt := maxi(1, int(round(seg_len / 6.5)))
 				for i in cnt:
 					var t0: float = sp[0] + seg_len * i / cnt
 					var t1: float = sp[0] + seg_len * (i + 1) / cnt
@@ -91,7 +94,7 @@ static func room(r: Rect2, fy: float, h: float, o := {}) -> void:
 					SF.decal(lv, "band", c, nrm, t1 - t0 + 0.2, 1.1, o.get("band_op", 0.75), 0.0, 0.3)
 		# stains hanging from the ceiling, peeling paint, mould, rust
 		for kind in [["water", "water", 2.6], ["peel", "peel", 2.2], ["mold", "mold", 1.6], ["rust", "rust", 2.0]]:
-			var cnt: int = o.get(kind[0], 0)
+			var cnt: int = int(round(o.get(kind[0], 0) * K))
 			for i in cnt:
 				if spans.is_empty():
 					break
@@ -109,11 +112,11 @@ static func room(r: Rect2, fy: float, h: float, o := {}) -> void:
 				var c := a + along * t + Vector3(0, yy - fy, 0)
 				SF.decal(lv, kind[1], c, nrm, sz, sz * (1.15 if kind[0] == "water" else 1.0), SF.rf(0.55, 0.85), 0.0, 0.3)
 	# floor grime: tracked-in muck and wear
-	for i in o.get("floor", 0):
+	for i in int(round(o.get("floor", 0) * K)):
 		var p := Vector3(SF.rf(x0 + 0.5, x1 - 0.5), fy + 0.01, SF.rf(z0 + 0.5, z1 - 0.5))
 		SF.floor_dec(lv, "grime" if SF.rng.randf() < 0.75 else "pool", p, SF.rf(2.0, 3.6), SF.rf(2.0, 3.4), SF.rf(0.5, 0.85))
 	# ceiling stains
-	for i in o.get("ceil", 0):
+	for i in int(round(o.get("ceil", 0) * K)):
 		var p := Vector3(SF.rf(x0 + 1.0, x1 - 1.0), fy + h - 0.02, SF.rf(z0 + 1.0, z1 - 1.0))
 		SF.decal(lv, "water", p, Vector3.DOWN, SF.rf(2.2, 3.4), SF.rf(2.0, 3.2), SF.rf(0.5, 0.8), SF.rf(0, TAU), 0.3)
 	for i in o.get("cracks", 0):

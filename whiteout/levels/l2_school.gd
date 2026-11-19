@@ -1,6 +1,5 @@
 extends "res://levels/level.gd"
 const Town = preload("res://world/town.gd")
-const L2I = preload("res://levels/dressing/l2_school_interior.gd")
 ## L2 — KETTLE FALLS CONSOLIDATED SCHOOL  (target ~14 min)
 ##
 ## Layout (x east, z south; the school faces +Z toward the courtyard and the road):
@@ -56,7 +55,6 @@ var _cot_toggle := 0
 
 # ====================================================================== build
 func build() -> void:
-	L2I.begin(self)
 	_powered = Game.has_flag("boiler_on")
 	env_exterior_night(true, 0.028, 0.42)
 	add_spawn("from_road", Vector3(0, 0.05, 20.0), PI)
@@ -78,7 +76,6 @@ func build() -> void:
 	_place_notes()
 	_build_breath()
 	_build_indoor_fx()
-	L2I.dress(self)
 	if Game.has_flag("l2_front_open") and not Game.has_flag("met_foreman"):
 		_make_finale_trigger()
 	_apply_power_visuals(true)
@@ -365,20 +362,26 @@ func _cot(pos: Vector3, yaw: float, shade: Color, state := 0) -> void:
 	r.position = pos
 	r.rotation.y = yaw
 	add_child(r)
-	L2I.cot(r)
-	var sd := int(pos.x * 7.0 + pos.z * 13.0)
-	var pc := Color(0.74, 0.72, 0.66)
-	L2I.pillow(r, Vector3(0, 0.33, -0.78), pc, sd)
+	var frame := _m("cot_frame", Color(0.25, 0.27, 0.26), 0.5, 0.6)
+	Props.box(r, Vector3(0.8, 0.045, 1.9), Vector3(0, 0.33, 0), _m("cot_canvas", Color(0.3, 0.33, 0.22), 0.95), false)
+	for sx in [-1, 1]:
+		Props.box(r, Vector3(0.045, 0.045, 1.95), Vector3(sx * 0.4, 0.31, 0), frame, false)
+		for sz in [-1, 1]:
+			Props.box(r, Vector3(0.04, 0.3, 0.04), Vector3(sx * 0.38, 0.15, sz * 0.85), frame, false)
+	Props.box(r, Vector3(0.45, 0.1, 0.3), Vector3(0, 0.42, -0.75), _m("pillow", Color(0.78, 0.78, 0.74), 0.95), false)
+	var bm := _m("blk%d" % int(shade.r * 100 + shade.g * 10), shade, 0.97)
 	match state:
 		0:
-			L2I.blanket(r, Vector2(0.62, 1.15), Vector3(0, 0.3, 0.22), shade, 0.35, 0.09, 0.0, sd)
+			Props.box(r, Vector3(0.74, 0.07, 1.2), Vector3(0, 0.42, 0.2), bm, false)
 		1:
-			L2I.blanket(r, Vector2(0.66, 0.95), Vector3(0.03, 0.3, 0.12), shade, 0.9, 0.1, 0.25, sd)
-			L2I.blanket(r, Vector2(0.4, 0.5), Vector3(-0.15, 0.3, 0.78), shade * 0.9, 0.9, 0.08, 0.6, sd + 3)
+			Props.box(r, Vector3(0.7, 0.12, 0.9), Vector3(0.04, 0.44, 0.15), bm, false, Vector3(0.1, 0.25, 0.05))
+			Props.box(r, Vector3(0.4, 0.1, 0.5), Vector3(-0.2, 0.4, 0.75), bm, false, Vector3(0, 0.6, 0))
 		2:
-			L2I.blanket(r, Vector2(0.66, 1.78), Vector3(0, 0.3, 0.02), shade, 0.3, 0.12, 0.0, sd, 0.15)
+			Props.box(r, Vector3(0.62, 0.22, 1.7), Vector3(0, 0.46, 0.05), bm, false)
+			Props.sphere(r, 0.14, Vector3(0, 0.55, -0.82), bm, Vector3(1, 0.8, 1.1))
+			_deco_local(r, Vector3(0.64, 0.02, 1.72), Vector3(0, 0.575, 0.05), _m("frost_blk", Color(0.85, 0.9, 1.0, 0.35), 0.4))
 		3:
-			L2I.blanket(r, Vector2(0.5, 0.42), Vector3(0.1, 0.3, 0.8), shade, 0.8, 0.08, 0.5, sd)
+			Props.box(r, Vector3(0.5, 0.1, 0.4), Vector3(0.1, 0.42, 0.8), bm, false, Vector3(0, 0.5, 0))
 	# solid footprint (invisible), low enough to look like a cot but too tall to step over
 	var b := Props.box(r, Vector3(0.84, 0.4, 1.95), Vector3(0, 0.2, 0), Mats.get_mat("metal"), true)
 	b.visible = false
@@ -389,9 +392,23 @@ func _deco_local(r: Node3D, size: Vector3, pos: Vector3, mat: Material) -> void:
 func _chair_s(pos: Vector3, yaw: float, toppled := false) -> void:
 	Props.chair(geo, pos, yaw, toppled)
 
-## School desk (Sketchfab model, chair behind it, students face -Z).
+## School desk: table-ish with chair attached.
 func _school_desk(pos: Vector3, yaw: float, topple := false) -> void:
-	L2I.school_desk(pos, yaw, topple)
+	var r := Node3D.new()
+	r.position = pos
+	r.rotation.y = yaw
+	if topple:
+		r.rotation.x = randf_range(-1.2, 1.2)
+		r.position.y += 0.25
+	add_child(r)
+	var w := Mats.get_mat("wood", 0.8)
+	var mm := _m("desk_metal", Color(0.3, 0.3, 0.32), 0.5, 0.6)
+	Props.box(r, Vector3(0.62, 0.035, 0.48), Vector3(0, 0.72, 0), w, not topple)
+	for sx in [-1, 1]:
+		for sz in [-1, 1]:
+			Props.box(r, Vector3(0.025, 0.7, 0.025), Vector3(sx * 0.28, 0.35, sz * 0.2), mm, false)
+	Props.box(r, Vector3(0.38, 0.03, 0.36), Vector3(0, 0.44, 0.52), mm, false)
+	Props.box(r, Vector3(0.38, 0.3, 0.03), Vector3(0, 0.62, 0.7), mm, false)
 
 func _lantern(pos: Vector3, energy := 0.9, rng := 5.0) -> void:
 	var r := Node3D.new()
@@ -453,7 +470,7 @@ func _build_courtyard() -> void:
 			[Vector3(-24, -0.2, -22), Vector3(4, 0.36, 24)], [Vector3(24, -0.2, -22), Vector3(4, 0.36, 24)]]:
 		box(spec[0], spec[1], "snow", false)
 	# the neighbourhood around the school: real houses across the road and beyond the side walls (backdrop)
-	Town.row(geo, -60.0, -8.0, 38.0, -1.0, Town.HOUSES, 201, {"collide": false, "lit": 0.15, "range": 150.0, "gap_min": 2.0, "gap_max": 5.0, "poles": true})
+	Town.row(geo, -60.0, -8.0, 38.0, -1.0, Town.HOUSES, 201, {"collide": false, "lit": 0.15, "range": 150.0, "gap_min": 2.0, "gap_max": 5.0})
 	Town.row(geo, 8.0, 62.0, 38.0, -1.0, Town.HOUSES, 202, {"collide": false, "lit": 0.15, "range": 150.0, "gap_min": 2.0, "gap_max": 5.0})
 	Town.row(geo, -70.0, -34.0, -30.0, 1.0, Town.HOUSES, 203, {"collide": false, "lit": 0.0, "range": 150.0, "gap_min": 3.0, "gap_max": 6.0})
 	Town.row(geo, 34.0, 72.0, -30.0, 1.0, Town.HOUSES, 204, {"collide": false, "lit": 0.0, "range": 150.0, "gap_min": 3.0, "gap_max": 6.0})
@@ -939,8 +956,8 @@ func _build_west_wing() -> void:
 	Props.bench(geo, Vector3(-21.0, FY, -15.2), PI * 0.5)
 	Props.bench(geo, Vector3(-16.0, FY, -21.2), PI)
 	# cubbies (lockers) along the divider
-	L2I.lockers(Vector3(-14.4, FY, -12.6), PI * 0.5, 4)
-	L2I.lockers(Vector3(-14.4, FY, -20.0), PI * 0.5, 3)
+	Props.locker(geo, Vector3(-14.4, FY, -12.6), PI * 0.5, 4)
+	Props.locker(geo, Vector3(-14.4, FY, -20.0), PI * 0.5, 3)
 	# bulletin board of children's art + notices
 	_deco(Vector3(-21.85, FY + 1.7, -19.0), Vector3(0.04, 1.4, 2.6), _m("cork", Color(0.45, 0.32, 0.2), 0.95))
 	for i in 6:
@@ -978,13 +995,13 @@ func _build_corridor() -> void:
 		_fluor(Vector3(x, FY + HC, -24.0), PI * 0.5, 1.4, 8.0, false, "weak" if x < -8.0 else "late")
 	_red_lamp(Vector3(5.8, FY + 3.4, -24.0), 1.2, 6.0)
 	# lockers: south wall (faces -z) and north wall (faces +z)
-	L2I.lockers(Vector3(-20.2, FY, -22.4), PI, 5)
-	L2I.lockers(Vector3(-14.2, FY, -22.4), PI, 9)
-	L2I.lockers(Vector3(-5.3, FY, -22.4), PI, 8)
-	L2I.lockers(Vector3(-16.6, FY, -25.6), 0.0, 4)
-	L2I.lockers(Vector3(-11.25, FY, -25.6), 0.0, 10)
-	L2I.lockers(Vector3(-4.8, FY, -25.6), 0.0, 4)
-	L2I.lockers(Vector3(1.0, FY, -25.6), 0.0, 8)
+	Props.locker(geo, Vector3(-20.2, FY, -22.4), PI, 5)
+	Props.locker(geo, Vector3(-14.2, FY, -22.4), PI, 9)
+	Props.locker(geo, Vector3(-5.3, FY, -22.4), PI, 8)
+	Props.locker(geo, Vector3(-16.6, FY, -25.6), 0.0, 4)
+	Props.locker(geo, Vector3(-11.25, FY, -25.6), 0.0, 10)
+	Props.locker(geo, Vector3(-4.8, FY, -25.6), 0.0, 4)
+	Props.locker(geo, Vector3(1.0, FY, -25.6), 0.0, 8)
 	# vending machine + signs at the gym end
 	Props.vending(geo, Vector3(6.35, FY, -22.8), -PI * 0.5, false)
 	_sign("WARMING SHELTER ->", Vector3(0.0, FY + 3.3, -22.15), 0.0, 36, Color(0.95, 0.9, 0.7), true)
@@ -1015,14 +1032,16 @@ func _build_rear_rooms() -> void:
 	# ---- classroom 2B
 	_fluor(Vector3(-14.5, FY + HC, -29.0), PI * 0.5, 1.5, 8.5, false, "late")
 	_fluor(Vector3(-14.5, FY + HC, -32.0), PI * 0.5, 1.2, 8.0, false, "late")
-	L2I.chalkboard(Vector3(-14.5, FY + 1.1, -33.83))
+	_deco(Vector3(-14.5, FY + 1.75, -33.82), Vector3(5.3, 1.3, 0.05), _m("blackboard", Color(0.05, 0.1, 0.07), 0.9))
+	_deco(Vector3(-14.5, FY + 1.05, -33.75), Vector3(5.3, 0.06, 0.15), "wood")
+	_deco(Vector3(-14.5, FY + 1.7, -33.84), Vector3(5.5, 1.5, 0.03), "wood")
 	_label("DAD —\nGran walked out at 3am. Said Grandpa\nwas calling her from the mine.\nI'm going after her. Church first.\n— J.\nP.S. you're late.", Vector3(-14.5, FY + 1.8, -33.77), 0.0, 36, Color(0.92, 0.93, 0.88), 0.0042)
 	_label("2B — MS. PELTO", Vector3(-17.2, FY + 2.55, -33.77), 0.0, 22, Color(0.9, 0.9, 0.8), 0.004)
 	interact(Vector3(-14.5, FY + 1.2, -33.0), "Read the blackboard", func(_p): _read_blackboard(), 2.4)
 	for row in 3:
 		for col in 4:
 			var p := Vector3(-17.0 + col * 1.5, FY, -29.6 + row * 1.3)
-			_school_desk(p, 0.0, (row * 4 + col) in [2, 7, 10])
+			_school_desk(p, PI, (row * 4 + col) in [2, 7, 10])
 	Props.desk(geo, Vector3(-12.2, FY, -27.2), PI * 0.5)
 	_paper_chain(Vector3(-17.8, FY + 3.7, -27.0), Vector3(-11.2, FY + 3.7, -27.0), 0.4, 18)
 	_paper_chain(Vector3(-17.8, FY + 3.7, -30.5), Vector3(-11.2, FY + 3.7, -30.5), 0.4, 18)
@@ -1060,7 +1079,7 @@ func _build_rear_rooms() -> void:
 	Props.desk(geo, Vector3(4.0, FY, -31.8), 0.0)
 	Props.chair(geo, Vector3(4.0, FY, -30.6), PI, true)
 	Props.shelf(geo, Vector3(1.8, FY, -29.0), PI * 0.5, 2.0, 2.0, false)
-	L2I.lockers(Vector3(6.55, FY, -28.5), -PI * 0.5, 3)
+	Props.locker(geo, Vector3(6.55, FY, -28.5), -PI * 0.5, 3)
 	Props.bed(geo, Vector3(5.2, FY, -29.0), 0.0)  # coach's camp cot
 	for i in 6:
 		Props.cyl(geo, 0.07, 0.35, Vector3(1.9, FY + 1.15 + (i % 2) * 0.01 + (i / 2) * 0.0, -28.2 - i * 0.28), _m("trophy2", Color(0.75, 0.6, 0.2), 0.3, 0.9), false, 0.09)
@@ -1256,7 +1275,12 @@ func _build_boiler() -> void:
 	_fluor(Vector3(-9.0, YB + h, -20.0), PI * 0.5, 1.1, 7.0, false, "late", Color(0.7, 0.85, 1.0))
 	# boiler shell (vertical cylinder), burner box, flue
 	var steel := _m("boiler_steel", Color(0.28, 0.3, 0.3), 0.45, 0.7)
-	Props.cyl(geo, 0.28, 1.0, Vector3(-9.9, YB + 2.7, -24.5), steel, false)       # flue stub (the boiler itself: L2I.dress)
+	Props.cyl(geo, 1.15, 2.7, Vector3(-9.0, YB + 1.35, -24.5), steel, true, -1.0, Vector3.ZERO, 24)
+	Props.cyl(geo, 1.2, 0.12, Vector3(-9.0, YB + 2.74, -24.5), steel, false, -1.0, Vector3.ZERO, 24)
+	Props.cyl(geo, 1.2, 0.12, Vector3(-9.0, YB + 0.06, -24.5), steel, false, -1.0, Vector3.ZERO, 24)
+	for yy in [0.5, 1.4, 2.3]:
+		Props.cyl(geo, 1.19, 0.08, Vector3(-9.0, YB + yy, -24.5), _m("boiler_band", Color(0.2, 0.2, 0.2), 0.5, 0.7), false, -1.0, Vector3.ZERO, 24)
+	Props.cyl(geo, 0.28, 1.0, Vector3(-9.0, YB + 3.2, -24.5), steel, false)       # flue stub
 	# burner / firebox on the east face
 	Props.box(geo, Vector3(1.2, 1.0, 1.1), Vector3(-7.5, YB + 0.85, -24.5), _m("burner", Color(0.18, 0.2, 0.22), 0.5, 0.6), true)
 	Props.box(geo, Vector3(0.5, 0.5, 0.6), Vector3(-6.7, YB + 0.95, -24.5), _m("burner_motor", Color(0.12, 0.25, 0.4), 0.5, 0.5), true)
@@ -1300,11 +1324,11 @@ func _build_boiler() -> void:
 	var stm := Mats.color(Color(0.9, 0.92, 0.95, 0.12), 1.0)
 	stm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	_steam.material_override = stm
-	_steam.position = Vector3(-9.9, YB + 3.0, -23.8)
+	_steam.position = Vector3(-9.0, YB + 3.0, -23.8)
 	_steam.emitting = false
 	add_child(_steam)
 	# gauges
-	for g in [[Vector3(-10.9, YB + 2.0, -23.78), PI], [Vector3(-9.1, YB + 1.5, -23.78), PI]]:
+	for g in [[Vector3(-9.0, YB + 2.0, -23.35), PI], [Vector3(-8.3, YB + 1.5, -23.5), PI]]:
 		Props.cyl(geo, 0.12, 0.05, g[0], Mats.get_mat("metal"), false, -1.0, Vector3(PI * 0.5, 0, 0))
 		Props.cyl(geo, 0.1, 0.02, g[0] + Vector3(0, 0, 0.03), Mats.emissive(Color(0.5, 0.9, 0.6), 0.5), false, -1.0, Vector3(PI * 0.5, 0, 0))
 	# control cabinet on the south wall
@@ -1403,12 +1427,12 @@ func _build_locker_room() -> void:
 	# locker banks (rows) and benches
 	for z in [-33.3, -12.7]:
 		for xx in [7.0, 12.0, 17.0]:
-			L2I.lockers(Vector3(xx, YB, z), PI if z < -20.0 else 0.0, 6, "locker_a")
+			Props.locker(geo, Vector3(xx, YB, z), PI if z < -20.0 else 0.0, 6)
 	for xx in [8.2, 13.2, 18.2]:
 		Props.bench(geo, Vector3(xx, YB, -27.6), PI * 0.5)
 		Props.bench(geo, Vector3(xx, YB, -17.6), PI * 0.5)
-	L2I.lockers(Vector3(21.5, YB, -26.0), -PI * 0.5, 6, "locker_a")
-	L2I.lockers(Vector3(21.5, YB, -19.0), -PI * 0.5, 6, "locker_a")
+	Props.locker(geo, Vector3(21.5, YB, -26.0), -PI * 0.5, 6)
+	Props.locker(geo, Vector3(21.5, YB, -19.0), -PI * 0.5, 6)
 	# shower area on the east: pipes, heads, ice cones
 	for i in 5:
 		var sz := -30.5 + i * 0.9

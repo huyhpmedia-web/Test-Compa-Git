@@ -264,7 +264,7 @@ def subtree(n):
     return out
 
 # global z-fit for the spine chain: pelvis/hip at the crotch-derived height
-hip_z = cz + 0.045 * Hh
+hip_z = H["thigh_l"].z + max(-0.03 * Hh, min(0.03 * Hh, 0.5 * (cz + 0.045 * Hh - H["thigh_l"].z)))
 for sd, sign in (("l", 1), ("r", -1)):
     ua, la, ha = CH_ARM(sd)
     sh = L["sh_" + sd]

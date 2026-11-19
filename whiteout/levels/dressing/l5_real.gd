@@ -34,7 +34,9 @@ static func _sp(rel: String, pos: Vector3, yaw := 0.0, opts := {}) -> Node3D:
 # ------------------------------------------------------------------ structural kit (called from l5_mine.gd helpers)
 ## Hewn-timber portal set spanning a tunnel (real A-frame model), c = floor point on the axis.
 static func timber(c: Vector3, along_x: bool, width: float, height: float) -> bool:
-	var n := _sp("mine_sf/timber_beam", c, PI * 0.5 if along_x else 0.0, {"fit_box": Vector3(width + 0.5, height + 0.32, 0.46), "range": 80.0, "shadow": false})
+	if width > 4.2:
+		return false          # wide pump-cavern spans keep the log-post kit (a stretched A-frame would turn to slabs)
+	var n := _sp("mine_sf/timber_beam", c, PI * 0.5 if along_x else 0.0, {"fit_box": Vector3(width + 0.25, height + 0.3, 0.42), "range": 80.0, "shadow": false})
 	return n != null
 
 ## Narrow-gauge track as 4 m rail sections laid along a->b (long axis X of the model, yaw aligns it).

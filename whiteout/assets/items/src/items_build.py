@@ -206,7 +206,7 @@ def b_gym_key():
     k = make_key_aligned("e_key9", 0.05)
     k.location = (0.03, -0.03, 0.0)
     sel([k]); bpy.ops.object.transform_apply(location=True)
-    ch = chrome()
+    ch = M("whistle", "chrome_a.png", "metal_r.png", None, color=(0.9, 0.9, 0.92, 1), rv=0.4, metal=0.6)
     body = cyl("w_body", 0.0125, 0.040, 28, (-0.03, 0.03, 0.0125), "X", mat=ch)
     mp = box("w_mouth", 0.034, 0.0145, 0.0085, (-0.0585, 0.03, 0.0095), ch, bevel=0.0012)
     cap = sphere("w_cap", 0.0125, (-0.010, 0.03, 0.0125), ch, 20, 12)

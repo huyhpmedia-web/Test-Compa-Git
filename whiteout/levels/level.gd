@@ -514,7 +514,7 @@ func _item_mesh(item: String, d: Dictionary) -> Node3D:
 	if rp.node != null:
 		r.add_child(rp.node)
 		var sz: Vector3 = rp.size
-		_add_glint(r, Vector3(sz.x * 0.2, sz.y + 0.012, sz.z * 0.1), clampf(maxf(sz.x, sz.z) * 0.55, 0.05, 0.22))
+		_add_glint(r, Vector3(sz.x * 0.2, sz.y + 0.012, sz.z * 0.1), clampf(maxf(sz.x, sz.z) * 0.32, 0.035, 0.1))
 		return r
 	# no model (should not happen): primitive stand-in
 	var c: Color = d.get("color", Color.WHITE)
@@ -524,17 +524,18 @@ func _item_mesh(item: String, d: Dictionary) -> Node3D:
 ## Subtle twinkle on a pickup so it catches the eye in the dark without looking like a UI marker.
 func _add_glint(parent: Node3D, at: Vector3, size: float) -> void:
 	if _glint_tex == null:
-		var g := Gradient.new()
-		g.set_color(0, Color(1.0, 0.96, 0.85, 1.0))
-		g.set_color(1, Color(1.0, 0.9, 0.7, 0.0))
-		var gt := GradientTexture2D.new()
-		gt.gradient = g
-		gt.fill = GradientTexture2D.FILL_RADIAL
-		gt.fill_from = Vector2(0.5, 0.5)
-		gt.fill_to = Vector2(1.0, 0.5)
-		gt.width = 64
-		gt.height = 64
-		_glint_tex = gt
+		# tight hot core + faint cross streaks (a catch-light, not a fog puff)
+		var im := Image.create(64, 64, false, Image.FORMAT_RGBA8)
+		for y in 64:
+			for x in 64:
+				var dx := (x - 31.5) / 32.0
+				var dy := (y - 31.5) / 32.0
+				var core := exp(-(dx * dx + dy * dy) * 38.0)
+				var sx := exp(-dy * dy * 700.0) * exp(-absf(dx) * 3.2)
+				var sy := exp(-dx * dx * 700.0) * exp(-absf(dy) * 3.2)
+				var a := clampf(core + (sx + sy) * 0.55, 0.0, 1.0)
+				im.set_pixel(x, y, Color(1.0, 0.95, 0.82, a))
+		_glint_tex = ImageTexture.create_from_image(im)
 	var sp := Sprite3D.new()
 	sp.texture = _glint_tex
 	sp.billboard = BaseMaterial3D.BILLBOARD_ENABLED
@@ -557,7 +558,7 @@ func _add_glint(parent: Node3D, at: Vector3, size: float) -> void:
 	parent.add_child(sp)
 	var tw := sp.create_tween().set_loops()
 	tw.tween_interval(randf() * 2.5)
-	tw.tween_property(sp, "modulate:a", 0.55, 0.9).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(sp, "modulate:a", 0.7, 0.8).set_trans(Tween.TRANS_SINE)
 	tw.tween_property(sp, "modulate:a", 0.0, 1.4).set_trans(Tween.TRANS_SINE)
 	tw.tween_interval(1.2 + randf() * 1.5)
 

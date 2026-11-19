@@ -55,7 +55,7 @@ static func valve(vp: Vector3, i: int) -> void:
 	_sp("industrial_sf/pipe_manifold", vp + Vector3(0, 0.2, 0), 0.0 if i == 1 else PI, {"scale": 0.55, "range": 80.0, "collide": "none"})
 	_sp("industrial_sf/valve_wheel", vp + Vector3(0, 0.95, 0), 0.0, {"scale": 1.8, "range": 80.0, "collide": "none", "tint": Color(1.0, 0.55, 0.5)})
 	R4.solid(vp + Vector3(0, 0.6, 0), Vector3(0.9, 1.2, 0.9))
-	R4.pipe(vp + Vector3(0, 0.0, 0), vp + Vector3(0, 9.0, 0), 0.3, Color(0.55, 0.6, 0.66), true)
+	R4.pipe(vp + Vector3(0, 0.0, 0), vp + Vector3(0, 1.4, 0), 0.3, Color(0.55, 0.6, 0.66), true)
 
 ## Pipeline control station: replaces the slab-and-box console with cabinets, monitors, breaker gear and valve wheels.
 ## `r` is the station root (east wall, local +z points into the cavern).

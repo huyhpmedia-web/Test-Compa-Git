@@ -174,7 +174,7 @@ func _add_film_overlay() -> void:
 
 func _make_hint() -> void:
 	_hint = Label.new()
-	_hint.text = "⟲  DRAG TO ROTATE   ·   WHEEL TO ZOOM"
+	_hint.text = "⟲  " + tr("Drag to rotate · Wheel to zoom")
 	_hint.add_theme_font_size_override("font_size", 11)
 	_hint.add_theme_color_override("font_color", Color(0.78, 0.8, 0.85, 0.55))
 	_hint.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)

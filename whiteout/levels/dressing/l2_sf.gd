@@ -10,7 +10,7 @@ const Mats = preload("res://core/mats.gd")
 const Props = preload("res://world/props.gd")
 
 const DEC := "res://assets/env/interior_sf/decals/"
-const MAX_DECALS := 150
+const MAX_DECALS := 210
 
 static var n_dec := 0
 static var _tex := {}

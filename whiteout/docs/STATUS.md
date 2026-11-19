@@ -56,3 +56,6 @@ reception_desk 6ee68acf-44a6-4f13-be8f-2e2a0d47a9be. Agent F = L4/L6 environment
 | Vietnamese | - | 8.5 | 889/889 strings, Be Vietnam Pro font, language toggle |
 Known gaps: no jaw bone in the MPFB rig (jaw layer is a no-op), L4 NOC/break room light dressing,
 L6 control station primitives, far L3 blocks, foot IK, leg-loss crawl.
+RE7 round (Nov 19): Sketchfab CC-BY via tools/sketchfab/sf.py (token in scratchpad only). Higgsfield budget 100 cr:
+NPC concepts + Tripo 3D: june 9ab75cd1-78c9-4272-98a9-a1a1f64ccfbf, ruth 1584e7aa-02f0-4f19-b098-d3c18d817c8a,
+caretaker b4491e8d-c009-49ed-bd29-b066417cf44c (~28 cr). Pipeline: tools/charpipe/hd_character.py.

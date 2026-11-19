@@ -6,6 +6,7 @@ const Props = preload("res://world/props.gd")
 const Mats = preload("res://core/mats.gd")
 const R4 = preload("res://levels/dressing/l4_real.gd")
 const Art = preload("res://levels/dressing/l4_art.gd")
+const Gore = preload("res://world/gore.gd")
 
 static func _sp(rel: String, pos: Vector3, yaw := 0.0, opts := {}) -> Node3D:
 	return R4.sp(rel, pos, yaw, opts)
@@ -102,6 +103,9 @@ static func pipeline_wall() -> void:
 
 ## Grime decals: wet-rock streaks, pipe rust stains, oil at the station.
 static func grime() -> void:
+	for vp in [Vector3(-15.2, 1.7, -20.0), Vector3(18.0, 1.7, -20.0)]:
+		Gore.steam_vent(R4.host, vp, Vector3(0, 0.8, 0.3), 0.7, 0.12)
+	Gore.steam_vent(R4.host, Vector3(2.4, 3.1, 56.0), Vector3(-1, 0.2, 0), 0.7, 0.1)
 	var r := RandomNumberGenerator.new()
 	r.seed = 6161
 	for i in 12:

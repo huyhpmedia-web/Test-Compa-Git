@@ -20,3 +20,8 @@ stethoscope, beanie, hard hat, headphones, stubble/weathering baked into the ski
 zombie_attack/attack, grab, roar, crawl, sit).  `walk` and `run` are retargeted CMU mocap (see above).
 
 Not used (license incompatible): MakeHuman's bundled `zombieWalk1.bvh` (AGPL-3.0).
+
+## R7-D photoreal replacements (Sketchfab, CC BY 4.0; credits also in assets/CREDITS_SKETCHFAB.json)
+Built with tools/charpipe/hd_character.py onto the MPFB rig. rimebound_tee_m/miner: "Zombie (Male 1)"; rimebound_tee_f: "Zombie (Female 1)";
+rimebound_parka_f: "Zombie (Type Female 2)"; flannel_m/cop/parka_m/fat_m: "ZOMBIE MALE"; jacket_m/hivis_m: "Male Zombie"; patient: "A male zombie";
+nurse: "Medic undead | Zombie medic"; teen_f: "Zombie Worker"; old_m: "Dr Monty"; imogen: "Claudia Rigged 002" (Renderpeople-style).

@@ -8,6 +8,7 @@ const Props = preload("res://world/props.gd")
 const Mats = preload("res://core/mats.gd")
 const Env = preload("res://world/env_assets.gd")
 const Art = preload("res://levels/dressing/l4_art.gd")
+const Gore = preload("res://world/gore.gd")
 
 static var geo: Node3D
 static var host: Node3D
@@ -220,6 +221,7 @@ static func dress(level: Node3D) -> void:
 	_electrical_extras()
 	_pipeline_extras()
 	_halls_extras()
+	_steam()
 
 # ================================================================== facade
 static func _facade() -> void:
@@ -567,3 +569,14 @@ static func _halls_extras() -> void:
 	isf("pallets", Vector3(-14.0, 0.0, -13.5), 0.4, {"scale": 0.7})
 	isf("exhaust_fan", Vector3(0.0, 3.2, -35.7), 0.0, {"scale": 1.2, "range": 50.0})
 	isf("water_cooler", Vector3(14.9, 0, -6.8), -PI * 0.5, {"collide": Vector3(0.4, 1.4, 0.4)})
+
+## Practical atmosphere: steam off the rooftop plant (visible from the yard), leaking plant pipework, drips.
+static func _steam() -> void:
+	for p in [Vector3(-21.0, 11.6, 8.4), Vector3(4.6, 11.6, 8.4), Vector3(30.0, 11.6, 8.4)]:
+		Gore.steam_vent(host, p, Vector3(0.3, 1, 0.5), 1.6, 0.2)
+	for p in [Vector3(25.0, 3.9, -38.2), Vector3(44.0, 3.9, -38.2)]:
+		Gore.steam_vent(host, p, Vector3(0, 0.6, 1), 0.8, 0.14)
+		Gore.drip_emitter(host, p + Vector3(0.5, -0.1, 0.3), "water", 1.5)
+	Gore.steam_vent(host, Vector3(18.0, 7.4, -88.0), Vector3.UP, 1.2, 0.16)
+	Gore.drip_emitter(host, Vector3(22.0, 7.6, -92.0), "water", 1.1)
+	Gore.steam_vent(host, Vector3(-17.0, 0.4, 14.5), Vector3.UP, 0.9, 0.14)      # condenser pad

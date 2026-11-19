@@ -7,6 +7,7 @@ const Props = preload("res://world/props.gd")
 const Mats = preload("res://core/mats.gd")
 const R4 = preload("res://levels/dressing/l4_real.gd")
 const Art = preload("res://levels/dressing/l4_art.gd")
+const Gore = preload("res://world/gore.gd")
 
 static var rng := RandomNumberGenerator.new()
 static var _rust: StandardMaterial3D
@@ -140,6 +141,11 @@ static func cavern_set(y: float) -> void:
 
 ## Grime decals: water streaks down the rock, rust + ore dust stains, oil under the machinery.
 static func grime() -> void:
+	Gore.steam_vent(R4.host, Vector3(43.2, 7.6, 8.8), Vector3(0, 1, 0.2), 0.9, 0.16)
+	Gore.steam_vent(R4.host, Vector3(46.0, 1.3, -6.4), Vector3.UP, 0.7, 0.12)
+	Gore.drip_emitter(R4.host, Vector3(33.0, 8.4, 2.0), "melt", 1.8)
+	Gore.drip_emitter(R4.host, Vector3(41.0, 8.4, -6.0), "melt", 2.2)
+	Gore.steam_vent(R4.host, Vector3(9.0, 0.5, -27.8), Vector3.UP, 0.8, 0.12)
 	var r := rng
 	# pipeline tunnel (x 1..25, walls at z = -1.8 / +1.8)
 	for i in 9:

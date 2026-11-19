@@ -1,0 +1,245 @@
+extends RefCounted
+## L2 school interiors (R7-B): grimy wall/floor decals, skirting, Sketchfab props.  Called from
+## levels/l2_school.gd build() after the shell exists:  L2I.dress(self).
+## Does not touch walls / doors / triggers / items; every solid prop sits on already-clear floor.
+
+const SF = preload("res://levels/dressing/l2_sf.gd")
+const Props = preload("res://world/props.gd")
+const Mats = preload("res://core/mats.gd")
+
+const FY := 0.45
+const YB := -3.05
+const HC := 4.2
+
+static var lv: Node3D     # the level (decals / lights parent)
+static var g: Node3D      # geo (props parent: carves the navmesh)
+
+static func dress(level: Node3D) -> void:
+	lv = level
+	var gg = level.get("geo")
+	g = gg if gg is Node3D else level
+	SF.begin(hash("l2_interior"))
+	_hall()
+	_corridor()
+	_gym()
+	_west_wing()
+	_rear_rooms()
+	_basement()
+	_boiler_room()
+	_locker_room()
+
+# ------------------------------------------------------------------ generic room dressing
+## rect = inner wall faces (x0, z0, x1, z1); gaps = per wall list of [centre, width] along that wall.
+## walls: "w" (x0, normal +x), "e" (x1, normal -x), "n" (z0, normal +z), "s" (z1, normal -z).
+static func room(r: Rect2, fy: float, h: float, o := {}) -> void:
+	var x0 := r.position.x
+	var z0 := r.position.y
+	var x1 := r.end.x
+	var z1 := r.end.y
+	var gaps: Dictionary = o.get("gaps", {})
+	var skirt: bool = o.get("skirt", true)
+	var skip: Array = o.get("skip", [])     # walls without skirting / decals ("w","e","n","s")
+	var walls := {
+		"w": [Vector3(x0, fy, z0), Vector3(x0, fy, z1), Vector3(1, 0, 0)],
+		"e": [Vector3(x1, fy, z0), Vector3(x1, fy, z1), Vector3(-1, 0, 0)],
+		"n": [Vector3(x0, fy, z0), Vector3(x1, fy, z0), Vector3(0, 0, 1)],
+		"s": [Vector3(x0, fy, z1), Vector3(x1, fy, z1), Vector3(0, 0, -1)],
+	}
+	for k in walls:
+		if k in skip:
+			continue
+		var a: Vector3 = walls[k][0]
+		var b: Vector3 = walls[k][1]
+		var nrm: Vector3 = walls[k][2]
+		var along := (b - a).normalized()
+		var L := a.distance_to(b)
+		# free spans between gaps
+		var spans: Array = [[0.0, L]]
+		for gp in gaps.get(k, []):
+			var c: float = (gp[0] - a.x) if absf(along.x) > 0.5 else (gp[0] - a.z)
+			var w: float = gp[1] * 0.5 + 0.02
+			var nsp: Array = []
+			for sp in spans:
+				if c + w <= sp[0] or c - w >= sp[1]:
+					nsp.append(sp)
+				else:
+					if c - w > sp[0] + 0.15:
+						nsp.append([sp[0], c - w])
+					if c + w < sp[1] - 0.15:
+						nsp.append([c + w, sp[1]])
+			spans = nsp
+		if skirt:
+			for sp in spans:
+				SF.skirting(g, a + along * sp[0], a + along * sp[1], nrm)
+				if o.get("rail", false):
+					SF.rail(g, a + along * sp[0], a + along * sp[1], nrm, 1.05)
+		# soot band at the foot
+		if o.get("band", true):
+			for sp in spans:
+				var seg_len: float = sp[1] - sp[0]
+				var cnt := maxi(1, int(round(seg_len / 5.0)))
+				for i in cnt:
+					var t0: float = sp[0] + seg_len * i / cnt
+					var t1: float = sp[0] + seg_len * (i + 1) / cnt
+					var c := a + along * ((t0 + t1) * 0.5) + Vector3(0, 0.55, 0) + nrm * 0.0
+					SF.decal(lv, "band", c, nrm, t1 - t0 + 0.2, 1.1, o.get("band_op", 0.75), 0.0, 0.3)
+		# stains hanging from the ceiling, peeling paint, mould, rust
+		for kind in [["water", "water", 2.6], ["peel", "peel", 2.2], ["mold", "mold", 1.6], ["rust", "rust", 2.0]]:
+			var cnt: int = o.get(kind[0], 0)
+			for i in cnt:
+				if spans.is_empty():
+					break
+				var sp: Array = spans[SF.rng.randi() % spans.size()]
+				var t: float = SF.rf(sp[0], sp[1])
+				var sz: float = kind[2] * SF.rf(0.8, 1.25)
+				var yy: float
+				match kind[0]:
+					"water":
+						yy = fy + h - sz * 0.5 + 0.1
+					"mold":
+						yy = fy + SF.rf(0.5, 1.2)
+					_:
+						yy = fy + SF.rf(1.0, h - 1.0)
+				var c := a + along * t + Vector3(0, yy - fy, 0)
+				SF.decal(lv, kind[1], c, nrm, sz, sz * (1.15 if kind[0] == "water" else 1.0), SF.rf(0.55, 0.85), 0.0, 0.3)
+	# floor grime: tracked-in muck and wear
+	for i in o.get("floor", 0):
+		var p := Vector3(SF.rf(x0 + 0.5, x1 - 0.5), fy + 0.01, SF.rf(z0 + 0.5, z1 - 0.5))
+		SF.floor_dec(lv, "grime" if SF.rng.randf() < 0.75 else "pool", p, SF.rf(2.0, 3.6), SF.rf(2.0, 3.4), SF.rf(0.5, 0.85))
+	# ceiling stains
+	for i in o.get("ceil", 0):
+		var p := Vector3(SF.rf(x0 + 1.0, x1 - 1.0), fy + h - 0.02, SF.rf(z0 + 1.0, z1 - 1.0))
+		SF.decal(lv, "water", p, Vector3.DOWN, SF.rf(2.2, 3.4), SF.rf(2.0, 3.2), SF.rf(0.5, 0.8), SF.rf(0, TAU), 0.3)
+	for i in o.get("cracks", 0):
+		if spans_ok(walls):
+			var kk: String = ["w", "e", "n", "s"][SF.rng.randi() % 4]
+			if kk in skip:
+				continue
+			var a2: Vector3 = walls[kk][0]
+			var b2: Vector3 = walls[kk][1]
+			var al: Vector3 = (b2 - a2).normalized()
+			var t2 := SF.rf(1.0, a2.distance_to(b2) - 1.0)
+			SF.decal(lv, "cracks", a2 + al * t2 + Vector3(0, SF.rf(1.0, h - 1.5), 0), walls[kk][2], 2.4, 2.4, 0.8, 0.0, 0.3)
+
+static func spans_ok(_w) -> bool:
+	return true
+
+# ------------------------------------------------------------------ props
+static func _root(pos: Vector3, yaw: float) -> Node3D:
+	var r := Node3D.new()
+	r.position = pos
+	r.rotation.y = yaw
+	g.add_child(r)
+	return r
+
+## A row of lockers (replaces Props.locker): `count` lockers 0.42 m apart, centred on pos, front toward local +Z.
+static func lockers(pos: Vector3, yaw: float, count := 3, kind := "locker_b") -> Node3D:
+	var r := _root(pos, yaw)
+	var width := count * 0.42
+	var unit := 1.367 if kind == "locker_b" else 2.41
+	var per := 3.0 if kind == "locker_b" else 5.0
+	var units := maxi(1, int(round(width / unit)))
+	var sx := width / (units * unit)
+	var uh := 1.85 if kind == "locker_b" else 1.75
+	var sy := 1.0
+	var dep := 0.33 if kind == "locker_b" else 1.04
+	for i in units:
+		var x := (i - (units - 1) * 0.5) * unit * sx
+		SF.prop(r, kind, Vector3(x, 0, -(0.25 - dep * 0.5 * (1.0 if kind == "locker_b" else 0.55))), 0.0, {"scale": Vector3(sx, sy, 1.0), "collide": "none", "range": 38.0})
+	var sb := StaticBody3D.new()
+	sb.collision_layer = 1
+	var cs := CollisionShape3D.new()
+	var bs := BoxShape3D.new()
+	bs.size = Vector3(width, 1.9, 0.5)
+	cs.shape = bs
+	cs.position = Vector3(0, 0.95, 0)
+	sb.add_child(cs)
+	r.add_child(sb)
+	var _u := uh
+	return r
+
+static func school_desk(pos: Vector3, yaw: float, topple := false) -> void:
+	var r := Node3D.new()
+	r.position = pos
+	r.rotation.y = yaw
+	if topple:
+		r.rotation.x = SF.rf(-1.2, 1.2)
+		r.position.y += 0.25
+	g.add_child(r)
+	SF.prop(r, "desk", Vector3.ZERO, -PI * 0.5, {"collide": "none", "range": 30.0})
+	if not topple:
+		var sb := StaticBody3D.new()
+		sb.collision_layer = 1
+		var cs := CollisionShape3D.new()
+		var bs := BoxShape3D.new()
+		bs.size = Vector3(0.62, 0.8, 0.5)
+		cs.shape = bs
+		cs.position = Vector3(0, 0.4, -0.2)
+		sb.add_child(cs)
+		r.add_child(sb)
+
+## Cot frame (replaces the primitive frame + canvas of _cot).
+static func cot(r: Node3D) -> void:
+	SF.prop(r, "cot", Vector3.ZERO, 0.0, {"collide": "none", "scale": 1.15, "range": 34.0, "shadow": false})
+
+# ------------------------------------------------------------------ rooms
+static func _hall() -> void:
+	var gaps := {"n": [[0.0, 3.4]], "s": [[0.0, 2.7]], "w": [[-14.5, 1.6]]}
+	room(Rect2(-6.875, -21.875, 13.75, 11.75), FY, HC, {"gaps": gaps, "water": 4, "peel": 3, "mold": 2, "rust": 0, "floor": 4, "ceil": 3, "cracks": 2, "rail": true, "band_op": 0.8})
+	# cast-iron radiators under the notice wall and by the doors; extinguisher, clock
+	SF.prop(g, "radiator", Vector3(-6.7, FY, -19.3), 0.0, {"collide": "none"})
+	SF.prop(g, "radiator", Vector3(-6.7, FY, -12.0), 0.0, {"collide": "none"})
+	SF.prop(g, "radiator", Vector3(4.5, FY, -21.7), PI * 0.5, {"collide": "none"})
+	SF.prop(g, "../interior/extinguisher", Vector3(-6.6, FY + 1.1, -17.4), 0.0, {"collide": "none", "fit_h": 0.55}) if false else null
+
+static func _corridor() -> void:
+	var gaps := {"n": [[-20.0, 2.4], [-14.5, 1.6], [-8.0, 1.6], [-2.0, 1.6], [4.0, 1.6]], "s": [[-18.0, 1.6], [-10.5, 1.6], [0.0, 3.4]], "e": [[-24.0, 2.2]]}
+	room(Rect2(-21.875, -25.875, 28.75, 3.75), FY, HC, {"gaps": gaps, "water": 4, "peel": 4, "mold": 2, "rust": 2, "floor": 5, "ceil": 3, "cracks": 2})
+
+static func _gym() -> void:
+	var gaps := {"w": [[-24.0, 2.2]]}
+	room(Rect2(7.125, -33.875, 14.75, 23.75), FY, 6.5, {"gaps": gaps, "water": 6, "peel": 5, "mold": 3, "rust": 2, "floor": 8, "ceil": 4, "cracks": 3, "skip": ["n"], "band_op": 0.7})
+	# radiators along the west wall; wall clock
+	for z in [-14.0, -19.0, -31.0]:
+		SF.prop(g, "radiator", Vector3(7.3, FY, z), 0.0, {"collide": "none"})
+	# rolled gym mats against the east wall behind the bleachers' end
+	SF.prop(g, "gymmat", Vector3(14.5, FY, -11.1), 0.0, {"collide": Vector3(3.0, 0.5, 0.7), "scale": 1.0})
+
+static func _west_wing() -> void:
+	# lobby
+	room(Rect2(-21.875, -21.875, 7.75, 11.75), FY, HC, {"gaps": {"s": [[-18.5, 2.7]], "e": [[-18.0, 1.6]]}, "water": 3, "peel": 3, "mold": 2, "floor": 3, "ceil": 2})
+	# Ruth's office
+	room(Rect2(-13.875, -21.875, 6.75, 11.75), FY, HC, {"gaps": {"w": [[-18.0, 1.6]], "e": [[-14.5, 1.6]], "n": [[-10.5, 1.6]]}, "water": 2, "peel": 2, "mold": 1, "floor": 3, "ceil": 1})
+
+static func _rear_rooms() -> void:
+	# classroom 2B, shop, nurse, coach
+	room(Rect2(-17.875, -33.875, 6.75, 7.75), FY, HC, {"gaps": {"s": [[-14.5, 1.6]]}, "water": 3, "peel": 3, "mold": 2, "floor": 4, "ceil": 2, "skip": ["n"], "rail": true})
+	room(Rect2(-10.875, -33.875, 5.75, 7.75), FY, HC, {"gaps": {"s": [[-8.0, 1.6]]}, "water": 2, "peel": 2, "rust": 2, "floor": 4, "ceil": 1, "skip": ["n"]})
+	room(Rect2(-4.875, -33.875, 5.75, 7.75), FY, HC, {"gaps": {"s": [[-2.0, 1.6]]}, "water": 2, "peel": 2, "mold": 1, "floor": 3, "ceil": 1, "skip": ["n"]})
+	room(Rect2(1.125, -33.875, 5.75, 7.75), FY, HC, {"gaps": {"s": [[4.0, 1.6]]}, "water": 2, "peel": 2, "floor": 3, "ceil": 1, "skip": ["n"]})
+
+static func _basement() -> void:
+	var h := 3.2
+	# stair foot + corridor
+	room(Rect2(-21.875, -33.875, 19.75, 3.25), YB, h, {"gaps": {"s": [[-15.0, 1.6], [-7.0, 1.6]], "e": [[-32.2, 1.6]]}, "water": 3, "peel": 3, "mold": 4, "rust": 4, "floor": 4, "ceil": 3, "skip": []})
+	# pipe chase
+	room(Rect2(-17.875, -30.375, 5.75, 10.25), YB, h, {"gaps": {"s": [[-15.0, 1.6]]}, "water": 2, "mold": 4, "rust": 3, "floor": 3, "ceil": 2})
+
+static func _boiler_room() -> void:
+	var h := 3.2
+	room(Rect2(-11.875, -30.375, 9.75, 12.25), YB, h, {"gaps": {"s": [[-7.0, 1.6]], "e": [[-28.7, 1.6], [-21.3, 1.6]]}, "water": 3, "peel": 3, "mold": 3, "rust": 6, "floor": 5, "ceil": 3, "cracks": 1, "skip": ["w"]})
+	# real boiler: shell with burner pipework (replaces the primitive cylinder)
+	SF.prop_solid(g, "boiler", Vector3(-9.9, YB, -24.5), 0.0, Vector3(2.7, 2.2, 1.45), {"range": 40.0})
+	# horizontal expansion tank, header pipes and valves on the feed run
+	SF.prop_solid(g, "tanks", Vector3(-10.2, YB, -20.9), 0.0, Vector3(2.9, 1.0, 0.9), {"scale": 0.9, "range": 40.0})
+	SF.prop(g, "valve", Vector3(-5.8, YB + 1.7, -25.2), 0.0, {"collide": "none", "scale": 1.1})
+	SF.prop(g, "valve", Vector3(-3.0, YB + 1.7, -25.2), PI * 0.5, {"collide": "none", "scale": 1.1})
+	SF.prop(g, "pipes", Vector3(-8.2, YB + 0.0, -30.1), 0.0, {"collide": "none", "scale": 1.3})
+	SF.prop(g, "radiator", Vector3(-2.35, YB, -28.0), PI, {"collide": "none"})
+	# oily floor and drip stains under the machinery
+	SF.floor_dec(lv, "pool", Vector3(-9.0, YB + 0.02, -24.4), 3.6, 3.0, 0.9, 0.3)
+	SF.floor_dec(lv, "pool", Vector3(-5.5, YB + 0.02, -27.5), 2.4, 2.2, 0.8, 1.9)
+
+static func _locker_room() -> void:
+	var h := 3.2
+	room(Rect2(4.125, -33.875, 17.75, 21.75), YB, h, {"gaps": {"w": [[-21.3, 1.6], [-12.7, 1.6]]}, "water": 6, "peel": 4, "mold": 6, "rust": 6, "floor": 4, "ceil": 4, "cracks": 3, "skirt": false, "band": false})

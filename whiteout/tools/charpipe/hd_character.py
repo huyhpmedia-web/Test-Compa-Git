@@ -42,6 +42,7 @@ ap.add_argument("--face", default="auto")
 ap.add_argument("--voxel", type=float, default=0.012)
 ap.add_argument("--flipx", action="store_true")
 ap.add_argument("--decimate", type=int, default=0)
+ap.add_argument("--min-rough", type=float, default=0.62)
 ap.add_argument("--forearm-bend", type=float, default=0.0)
 args = ap.parse_args(sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:])
 tag = args.tag or os.path.splitext(os.path.basename(args.out))[0]
@@ -395,6 +396,7 @@ if args.decimate and len(mesh.data.polygons) > args.decimate:
     d = mesh.modifiers.new("dec", "DECIMATE"); d.ratio = args.decimate / len(mesh.data.polygons)
     d.use_collapse_triangulate = True
     bpy.ops.object.modifier_apply(modifier="dec")
+done_rough = set()
 ren = dict(kv.split("=") for kv in args.mat.split(",") if "=" in kv)
 for i, m in enumerate(mesh.data.materials):
     if m is None:
@@ -406,6 +408,21 @@ for i, m in enumerate(mesh.data.materials):
             if nd.type == "BSDF_PRINCIPLED":
                 if not nd.inputs["Metallic"].links and nd.inputs["Metallic"].default_value > 0.35 and "metal" not in m.name:
                     nd.inputs["Metallic"].default_value = 0.1
+            if nd.type == "BSDF_PRINCIPLED" and "eye" not in m.name:
+                ri = nd.inputs["Roughness"]; mi = nd.inputs["Metallic"]
+                nd.inputs["Metallic"].default_value = min(mi.default_value, 0.05) if not mi.links else mi.default_value
+                if ri.links:
+                    n1 = ri.links[0].from_node
+                    img = n1.inputs[0].links[0].from_node.image if n1.inputs and n1.inputs[0].links and hasattr(n1.inputs[0].links[0].from_node, "image") else None
+                    if img is not None and img.name not in done_rough:
+                        done_rough.add(img.name)
+                        w, hh = img.size
+                        px = np.array(img.pixels[:], dtype=np.float32).reshape(-1, 4)
+                        px[:, 1] = np.maximum(px[:, 1], args.min_rough)
+                        px[:, 2] = np.minimum(px[:, 2], 0.05)
+                        img.pixels.foreach_set(px.reshape(-1)); img.update()
+                else:
+                    ri.default_value = max(ri.default_value, args.min_rough)
             if nd.type == "TEX_IMAGE" and nd.image:
                 im = nd.image
                 if max(im.size) > args.tex:

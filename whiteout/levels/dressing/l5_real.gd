@@ -97,6 +97,19 @@ static func hoist_hall() -> void:
 	_sp("mine_sf/sledge", Vector3(32.4, 0.05, -6.2), 2.0, {"rot": Vector3(PI * 0.5, 0, 0), "range": 40.0})
 	_sp("industrial_sf/exhaust_fan", Vector3(47.8, 6.0, 4.0), -PI * 0.5, {"scale": 2.4, "range": 80.0})
 	_sp("industrial_sf/welder", Vector3(43.4, 0.0, 9.0), PI, {"collide": Vector3(1.0, 0.9, 1.7)})
+	# motivated lighting: caged work lamps on cables over the machinery, a sodium flood from the headframe
+	for lp in [Vector3(44.0, 5.0, -4.0), Vector3(45.0, 4.2, 2.0), Vector3(31.0, 4.5, 5.5), Vector3(40.5, 3.6, -2.0), Vector3(36.5, 6.5, -4.0)]:
+		_sp("mine/hanging_lamp", lp + Vector3(0, 0.0, 0), rng.randf() * 6.0, {"scale": 0.9, "emissive": {"hanging_industrial_lamp_glass": [Color(1.0, 0.8, 0.5), 3.5]}, "range": 80.0})
+		R4.omni(lp + Vector3(0, -0.9, 0), Color(1.0, 0.72, 0.4), 3.2, 11.0, lp.x > 40.0 and lp.z < 0.0)
+	var fl := SpotLight3D.new()
+	fl.light_color = Color(1.0, 0.7, 0.35)
+	fl.light_energy = 9.0
+	fl.spot_range = 24.0
+	fl.spot_angle = 48.0
+	fl.shadow_enabled = false
+	fl.position = Vector3(30.0, 7.8, 8.0)
+	R4.host.add_child(fl)
+	fl.look_at_from_position(Vector3(30.0, 7.8, 8.0), Vector3(42.0, 0.5, -2.0))
 	# lantern on the brake desk
 	_sp("mine_sf/lantern", Vector3(41.2, 1.18, -2.3), 0.5, {"range": 40.0})
 	# steel pipework off the drum to the sheave
@@ -125,7 +138,6 @@ static func tunnel_set() -> void:
 	for x in [3.0, 12.0, 20.0]:
 		_sp("mine_sf/lantern", Vector3(x, 2.25, 1.55), rng.randf() * 6.0, {"scale": 1.0, "range": 40.0, "snow": 0.0})
 	_sp("mine_sf/pickaxe", Vector3(8.6, 0.05, -1.3), 0.7, {"rot": Vector3(PI * 0.5, 0, 0), "range": 40.0})
-	_sp("industrial_sf/breaker_box", Vector3(1.0, 1.0, 1.72), PI, {"scale": 1.0, "range": 50.0})
 
 static func haulage_set(y: float) -> void:
 	_sp("mine_sf/mine_cart", Vector3(74.5, y, -0.7), PI * 0.5 + 0.1, {"collide": "none", "range": 70.0})

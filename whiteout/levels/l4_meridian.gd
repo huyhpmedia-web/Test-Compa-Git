@@ -376,7 +376,7 @@ func _yard() -> void:
 	Props.lamp_post(geo, Vector3(5.5, 0, 36), 0.0, true, Color(0.7, 0.85, 1.0))
 	Props.lamp_post(geo, Vector3(-6.0, 0, 22), PI, true, Color(0.7, 0.85, 1.0))
 	for p in [Vector3(-12, 0, 70), Vector3(12, 0, 74), Vector3(-18, 0, 30), Vector3(20, 0, 32)]:
-		Props.box(geo, Vector3(7, 1.0 + randf(), 5), p + Vector3(0, 0.4, 0), Mats.get_mat("snow"), false, Vector3(0, randf() * 3, 0))
+		Props.drift(geo, p, 4.2, 0.55 + randf() * 0.25, 2.6, randf() * 3.0)     # plough berm (mound, not a slab)
 	# wrecked cars on the lake road, people who did not get in
 	Props.car(geo, Vector3(-4.2, 0, 62), 0.2, Color(0.2, 0.25, 0.3), true)
 	Props.car(geo, Vector3(3.8, 0, 55), PI - 0.3, Color(0.35, 0.1, 0.1), true, "van")

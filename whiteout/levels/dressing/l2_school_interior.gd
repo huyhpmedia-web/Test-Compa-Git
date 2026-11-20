@@ -181,9 +181,9 @@ static func school_desk(pos: Vector3, yaw: float, topple := false) -> void:
 		sb.collision_layer = 1
 		var cs := CollisionShape3D.new()
 		var bs := BoxShape3D.new()
-		bs.size = Vector3(0.62, 0.8, 0.5)
+		bs.size = Vector3(0.34, 0.035, 0.3)
 		cs.shape = bs
-		cs.position = Vector3(0, 0.4, -0.2)
+		cs.position = Vector3(0, 0.72, -0.2)
 		sb.add_child(cs)
 		r.add_child(sb)
 
@@ -295,6 +295,6 @@ static func _fixtures() -> void:
 
 static func SF_env(rel: String, pos: Vector3, yaw: float, opts := {}) -> Node3D:
 	var Env = load("res://world/env_assets.gd")
-	var o := {"snow": 0.0, "range": 40.0}
+	var o := {"snow": 0.0, "range": 40.0, "collide": "none"}
 	o.merge(opts, true)
 	return Env.spawn(g, rel, pos, yaw, o)

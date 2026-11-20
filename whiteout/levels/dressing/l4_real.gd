@@ -177,8 +177,6 @@ static func _make_decal(kind: String) -> Texture2D:
 
 ## Projected grime: kind = streak | stain | oil.  `normal` points out of the surface; size = (width, height) on it.
 static func decal(kind: String, pos: Vector3, normal: Vector3, size: Vector2, tint := Color(0.05, 0.045, 0.04), strength := 0.8, depth := 0.7) -> Decal:
-	if kind == "streak" and normal.y == 0.0 and pos.y < 3.0 and pos.z < 3.0 and pos.z > -3.0 and pos.x < 30.0 and pos.y > 1.0:
-		return null
 	var d := Decal.new()
 	d.size = Vector3(size.x, depth, size.y)
 	d.texture_albedo = _make_decal(kind)

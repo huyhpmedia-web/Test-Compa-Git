@@ -37,7 +37,7 @@ static func _sp(rel: String, pos: Vector3, yaw := 0.0, opts := {}) -> Node3D:
 static func timber(c: Vector3, along_x: bool, width: float, height: float) -> bool:
 	if width > 4.2:
 		return false          # wide pump-cavern spans keep the log-post kit (a stretched A-frame would turn to slabs)
-	var n := _sp("mine_sf/timber_beam", c, PI * 0.5 if along_x else 0.0, {"fit_box": Vector3(width + 0.25, height + 0.3, 0.42), "range": 80.0, "shadow": false})
+	var n := _sp("mine_sf/timber_beam", c, PI * 0.5 if along_x else 0.0, {"fit_box": Vector3(width - 0.3, height + 0.3, 0.34), "range": 80.0, "shadow": false, "tint": Color(1.7, 1.3, 1.0)})
 	return n != null
 
 ## Narrow-gauge track as 4 m rail sections laid along a->b (long axis X of the model, yaw aligns it).

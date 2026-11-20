@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/candelabra_Image_0.jpg-96bbdc4e0362c8cc984a56
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

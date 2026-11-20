@@ -15,7 +15,7 @@ dest_files=["res://.godot/imported/trim_a.jpg-a863f7ad44c15539a86f9193b1075912.c
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

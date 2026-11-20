@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/pew_b_Image_11.jpg-218d02bd051bcd9483eb744556
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

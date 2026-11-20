@@ -15,7 +15,7 @@ dest_files=["res://.godot/imported/control_key.jpg-8ff2553857a44049d0016a2a164cd
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

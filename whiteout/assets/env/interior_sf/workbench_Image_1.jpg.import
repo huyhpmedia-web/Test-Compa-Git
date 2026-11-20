@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/workbench_Image_1.jpg-de0b213d1e40c1f98fb9852
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

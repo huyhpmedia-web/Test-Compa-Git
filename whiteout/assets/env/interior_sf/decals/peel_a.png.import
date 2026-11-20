@@ -15,7 +15,7 @@ dest_files=["res://.godot/imported/peel_a.png-535b52dc82728c5cc33e010e0a7aa7a5.c
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

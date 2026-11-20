@@ -15,7 +15,7 @@ dest_files=["res://.godot/imported/school_key.jpg-bf17c1b208cf254e5c9ecb78fee704
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/radiator_Image_1.jpg-b994c995a407b74efa9d6531
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

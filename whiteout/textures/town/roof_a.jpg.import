@@ -15,7 +15,7 @@ dest_files=["res://.godot/imported/roof_a.jpg-689a213d3dda92e46cf64bac3ddc90db.c
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

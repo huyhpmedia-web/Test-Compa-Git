@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/rimebound_old_m_Image_3.png-409a54b70e38a0ad0
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

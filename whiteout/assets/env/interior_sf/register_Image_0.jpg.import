@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/register_Image_0.jpg-2144b71e7ef6829565886186
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

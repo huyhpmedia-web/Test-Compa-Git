@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/hoop_Image_0.jpg-54b0d9fbe67a84ea9032f26a216d
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

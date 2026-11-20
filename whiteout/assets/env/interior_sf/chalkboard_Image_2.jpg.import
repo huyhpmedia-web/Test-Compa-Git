@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/chalkboard_Image_2.jpg-ce66c5425ef5f4d5204403
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

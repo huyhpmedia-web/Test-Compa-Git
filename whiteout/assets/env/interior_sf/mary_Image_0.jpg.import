@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/mary_Image_0.jpg-a857c41427aff60ce5a1a0409e0c
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/rimebound_fat_m_Image_7.jpg-3d81b2f2ea01ff258
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

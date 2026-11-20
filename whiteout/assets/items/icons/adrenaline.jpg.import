@@ -15,7 +15,7 @@ dest_files=["res://.godot/imported/adrenaline.jpg-69ccece02b4b954bf7a58ed527e47b
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

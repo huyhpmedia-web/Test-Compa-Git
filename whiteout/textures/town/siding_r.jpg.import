@@ -15,7 +15,7 @@ dest_files=["res://.godot/imported/siding_r.jpg-a409740efab84210b8a3013caaa5eee1
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

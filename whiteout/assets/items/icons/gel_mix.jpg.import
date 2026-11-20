@@ -15,7 +15,7 @@ dest_files=["res://.godot/imported/gel_mix.jpg-f8d2a53f1bdca0eca6b5f8a6fbebfe00.
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

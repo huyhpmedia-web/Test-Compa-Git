@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/organ_Image_6.jpg-a439b5bd7cb25bc783ae5ecf0d2
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/pipes_Image_7.jpg-7c3844a4808ca7a96e12fecbbf2
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

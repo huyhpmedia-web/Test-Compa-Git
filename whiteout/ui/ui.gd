@@ -15,6 +15,7 @@ const FONT_ITALIC := "res://fonts/BeVietnamPro-Italic.ttf"
 const Items = preload("res://core/items.gd")
 const BloodScreen = preload("res://ui/blood_screen.gd")
 const ItemView = preload("res://ui/item_view.gd")
+var post_fx: CanvasLayer
 
 const C_TEXT := Color(0.86, 0.87, 0.84)
 const C_DIM := Color(0.55, 0.57, 0.56)
@@ -51,6 +52,9 @@ var language := "en"
 
 func _ready() -> void:
 	layer = 10
+	post_fx = load("res://ui/post_fx.gd").new()
+	post_fx.name = "PostFX"
+	get_tree().root.add_child.call_deferred(post_fx)
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_init_language()
 	theme_res = _make_theme()
@@ -68,7 +72,12 @@ func _ready() -> void:
 	root.add_child(fade)
 	Game.health_changed.connect(func(_a, _b): _refresh_hud())
 	Game.inventory_changed.connect(_refresh_hud)
-	Game.objective_changed.connect(func(t): objective_label.text = tr_fmt(t))
+	Game.objective_changed.connect(func(t):
+		objective_label.text = tr_fmt(t)
+		# new objective: a short warm pulse instead of a second copy of the text in a toast
+		objective_label.modulate = Color(1.6, 1.35, 0.9)
+		var tw := create_tween()
+		tw.tween_property(objective_label, "modulate", Color.WHITE, 1.2))
 	show_hud(false)
 
 # ================================================================= language

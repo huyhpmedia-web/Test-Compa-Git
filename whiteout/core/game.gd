@@ -147,7 +147,7 @@ func get_flag(key: String, default = null):
 func set_objective(text: String) -> void:
 	objective = text
 	objective_changed.emit(text)
-	UI.toast(tr("OBJECTIVE: %s") % tr(text), 4.0)
+	Sfx.play("ui_select")
 
 # ---------------------------------------------------------------- health
 func damage(amount: int) -> void:

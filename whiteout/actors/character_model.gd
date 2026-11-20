@@ -134,6 +134,9 @@ func _build() -> void:
 	var ps: PackedScene = load(path)
 	model_root = ps.instantiate()
 	add_child(model_root)
+	# Blender bone-display helper meshes (e.g. "Icosphere") exported with the MPFB rig: never render them
+	for mi in model_root.find_children("Icosphere*", "MeshInstance3D", true, false):
+		mi.queue_free()
 	skeleton = _find(model_root, "Skeleton3D") as Skeleton3D
 	player = _find(model_root, "AnimationPlayer") as AnimationPlayer
 	_load_meta()

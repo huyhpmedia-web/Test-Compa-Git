@@ -145,7 +145,7 @@ allowed = {"spine_02", "spine_03", "neck_01", "head"}
 gid = {g.index: g.name for g in mesh.vertex_groups}
 fixed = 0
 for v in mesh.data.vertices:
-    if v.co.z < sh_z or ((v.co.x - cx) ** 2 + (v.co.y - cy) ** 2) ** 0.5 > 0.2:
+    if v.co.z < sh_z or ((v.co.x - cx) ** 2 + (v.co.y - cy) ** 2) ** 0.5 > 0.34:
         continue
     bad = [g.group for g in v.groups if gid[g.group] not in allowed and g.weight > 0.0]
     if bad:

@@ -137,6 +137,24 @@ bpy.data.objects.remove(proxy)
 mesh.parent = rig
 am = mesh.modifiers.new("Armature", "ARMATURE"); am.object = rig
 print("mesh unweighted:", sum(1 for v in mesh.data.vertices if len(v.groups) == 0))
+# hood/collar clean-up: anything above the shoulders and near the spine axis may only follow spine/neck/head
+# (heat weighting leaked arm/clavicle influence into the hood peak -> a spike in motion)
+sh_z = min(R["upperarm_l"][0].z, R["upperarm_r"][0].z) - 0.04
+cx, cy = R["neck_01"][0].x, R["neck_01"][0].y
+allowed = {"spine_02", "spine_03", "neck_01", "head"}
+gid = {g.index: g.name for g in mesh.vertex_groups}
+fixed = 0
+for v in mesh.data.vertices:
+    if v.co.z < sh_z or ((v.co.x - cx) ** 2 + (v.co.y - cy) ** 2) ** 0.5 > 0.2:
+        continue
+    bad = [g.group for g in v.groups if gid[g.group] not in allowed and g.weight > 0.0]
+    if bad:
+        for gi in bad:
+            mesh.vertex_groups[gi].remove([v.index])
+        if not any(gid[g.group] in allowed for g in v.groups):
+            mesh.vertex_groups["neck_01"].add([v.index], 1.0, "REPLACE")
+        fixed += 1
+print("hood clean-up verts:", fixed)
 bpy.context.view_layer.objects.active = mesh
 bpy.ops.object.mode_set(mode="WEIGHT_PAINT")
 bpy.ops.object.vertex_group_limit_total(group_select_mode="ALL", limit=4)
@@ -144,6 +162,8 @@ bpy.ops.object.vertex_group_normalize_all(group_select_mode="ALL", lock_active=F
 bpy.ops.object.mode_set(mode="OBJECT")
 
 # ------------------------------------------------------------------ parent to the MPFB rig and export
+for o in [o for o in bpy.data.objects if o.type == "MESH" and o is not mesh]:
+    bpy.data.objects.remove(o)   # Meshy ships a helper Icosphere that ended up skinned to the rig (the 'head spike')
 for m in mesh.data.materials:
     m.name = "elias_hd_body"
 bpy.ops.object.select_all(action="DESELECT")

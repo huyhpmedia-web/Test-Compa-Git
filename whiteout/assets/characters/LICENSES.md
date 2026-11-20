@@ -25,3 +25,7 @@ Not used (license incompatible): MakeHuman's bundled `zombieWalk1.bvh` (AGPL-3.0
 Built with tools/charpipe/hd_character.py onto the MPFB rig. rimebound_tee_m/miner: "Zombie (Male 1)"; rimebound_tee_f: "Zombie (Female 1)";
 rimebound_parka_f: "Zombie (Type Female 2)"; flannel_m/cop/parka_m/fat_m: "ZOMBIE MALE"; jacket_m/hivis_m: "Male Zombie"; patient: "A male zombie";
 nurse: "Medic undead | Zombie medic"; teen_f: "Zombie Worker"; old_m: "Dr Monty"; imogen: "Claudia Rigged 002" (Renderpeople-style).
+
+## Photoreal NPCs (Nov 2026)
+june.glb, ruth.glb, caretaker.glb, elias.glb: generated for this project with Higgsfield (gpt-image concept -> Tripo H3.1 / Meshy 7 image-to-3D),
+fitted onto the MPFB game skeleton with tools/charpipe/hd_character.py / hd_elias.py. Owned output, no third-party licence.

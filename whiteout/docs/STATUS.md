@@ -59,3 +59,10 @@ L6 control station primitives, far L3 blocks, foot IK, leg-loss crawl.
 RE7 round (Nov 19): Sketchfab CC-BY via tools/sketchfab/sf.py (token in scratchpad only). Higgsfield budget 100 cr:
 NPC concepts + Tripo 3D: june 9ab75cd1-78c9-4272-98a9-a1a1f64ccfbf, ruth 1584e7aa-02f0-4f19-b098-d3c18d817c8a,
 caretaker b4491e8d-c009-49ed-bd29-b066417cf44c (~28 cr). Pipeline: tools/charpipe/hd_character.py.
+
+## RE7 round result (Nov 20 2026) — lead scores vs RE7 (director baseline before this round: 3.8 overall)
+Town exteriors 6.5 (23 Sketchfab CC-BY types, no lit windows yet) | L2/L3 interiors 6.5-7 | L4 6.5 | L5 7 | L6 6.5
+Elias 7.5 (photoreal, no facial rig) | June/Ruth/caretaker/Imogen 7 | zombies 6 (mixed styles) | items 7.5, inspector 8
+Post: grain/CA/vignette/shadow grade + SSIL; objective shown once. Chain l1->ending 155/155 PASS. Windows zip 412 MB.
+Open (from docs/RE7_GAP_REVIEW.md): baked GI/reflection probes, per-room interior lighting L2/L4, decal density L1/L3 exteriors,
+facial animation, cutscene system, voice-over, audio reverb zones, zombie style unification, guard/grab mechanics.

@@ -173,14 +173,6 @@ func _set_env(e: Environment) -> void:
 		env.queue_free()
 	env = WorldEnvironment.new()
 	env.environment = e
-	# eye adaptation: stepping from snow into a dark room (and back) re-exposes over ~1 s, like RE7
-	var ca := CameraAttributesPractical.new()
-	ca.auto_exposure_enabled = true
-	ca.auto_exposure_scale = 0.16
-	ca.auto_exposure_speed = 0.9
-	ca.auto_exposure_min_sensitivity = 60.0
-	ca.auto_exposure_max_sensitivity = 250.0
-	env.camera_attributes = ca
 	add_child(env)
 
 func snowfall(amount := 2500) -> void:

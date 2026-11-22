@@ -66,3 +66,7 @@ Elias 7.5 (photoreal, no facial rig) | June/Ruth/caretaker/Imogen 7 | zombies 6 
 Post: grain/CA/vignette/shadow grade + SSIL; objective shown once. Chain l1->ending 155/155 PASS. Windows zip 412 MB.
 Open (from docs/RE7_GAP_REVIEW.md): baked GI/reflection probes, per-room interior lighting L2/L4, decal density L1/L3 exteriors,
 facial animation, cutscene system, voice-over, audio reverb zones, zombie style unification, guard/grab mechanics.
+R8 zombie unification (Higgsfield, lead): Tripo jobs z_flannel 92ea7ee7-4340-4fe5-a9d8-824f0341234f, z_woman 93c9fd47-a123-4311-9d2f-892805253e6e,
+z_hivis cf5a26f2-2aa2-4719-9d4e-687e4209c2f3, z_cop 7f207a47-bebb-49eb-9ca2-c1042bdaba28, z_nurse 3c61ae6b-2161-4cd5-a75e-44d8e1965ff4;
+miner concept 3b22b974-7aac-4659-825d-ad23fb1bc306. Container reset 2026-11-22 wiped the scratchpad: tools/setup_env.sh rebuilds it.
+MakeHuman data cache for rigs (anim_rigfile.py) must be re-fetched with tools/charpipe/fetch_assets.py.

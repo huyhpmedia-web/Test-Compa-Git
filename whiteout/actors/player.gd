@@ -104,7 +104,7 @@ func _ready() -> void:
 	flashlight.shadow_blur = 1.2
 	flashlight.light_volumetric_fog_energy = 0.6
 	# R8-B: textured beam (hot centre, reflector rings, lens dust) — res://textures/lighting/flashlight_cookie.png
-	if ResourceLoader.exists("res://textures/lighting/flashlight_cookie.png"):
+	if ResourceLoader.exists("res://textures/lighting/flashlight_cookie.png") and OS.get_environment("WHITEOUT_NOCOOKIE") == "":
 		flashlight.light_projector = load("res://textures/lighting/flashlight_cookie.png")
 	flashlight.position = Vector3(0.35, 1.45, 0.1)
 	add_child(flashlight)

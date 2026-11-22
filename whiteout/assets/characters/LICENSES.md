@@ -29,3 +29,8 @@ nurse: "Medic undead | Zombie medic"; teen_f: "Zombie Worker"; old_m: "Dr Monty"
 ## Photoreal NPCs (Nov 2026)
 june.glb, ruth.glb, caretaker.glb, elias.glb: generated for this project with Higgsfield (gpt-image concept -> Tripo H3.1 / Meshy 7 image-to-3D),
 fitted onto the MPFB game skeleton with tools/charpipe/hd_character.py / hd_elias.py. Owned output, no third-party licence.
+
+## Unified zombie set (Nov 22 2026)
+All rimebound_*.glb bodies are now one photoreal style: Higgsfield concepts (gpt-image) -> Tripo H3.1 image-to-3D,
+fitted onto the MPFB game skeleton with tools/charpipe/hd_character.py. Generated for this project (owned output).
+Variants reuse the six bodies (flannel, parka_f, hivis, cop, nurse, miner).

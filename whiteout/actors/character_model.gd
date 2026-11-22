@@ -286,9 +286,15 @@ func _fix_materials() -> void:
 			var mat := m.mesh.surface_get_material(s)
 			if not (mat is StandardMaterial3D):
 				continue
-			if not _mat_cache.has(mat):
-				_mat_cache[mat] = _fixed(mat as StandardMaterial3D)
-			m.set_surface_override_material(s, _mat_cache[mat])
+			var key = [mat, model_name]
+			if not _mat_cache.has(key):
+				var fm := _fixed(mat as StandardMaterial3D)
+				# zombie files that share a body get a per-file grade so a crowd doesn't read as clones
+				if model_name.begins_with("rimebound"):
+					var h := float(hash(model_name) % 1000) / 1000.0
+					fm.albedo_color = fm.albedo_color * Color(0.82 + 0.3 * h, 0.82 + 0.25 * fmod(h * 7.0, 1.0), 0.84 + 0.22 * fmod(h * 13.0, 1.0))
+				_mat_cache[key] = fm
+			m.set_surface_override_material(s, _mat_cache[key])
 
 func _fixed(src: StandardMaterial3D) -> StandardMaterial3D:
 	var sm := src.duplicate() as StandardMaterial3D

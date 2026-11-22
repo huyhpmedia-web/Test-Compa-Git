@@ -365,11 +365,11 @@ func _process(delta: float) -> void:
 	# depth of field: focus on the look target, shallow for close shots, gentle for wide ones
 	var focus := float(_cur.get("focus", cam.global_position.distance_to(look)))
 	attrs.dof_blur_amount = float(_cur.get("dof", 0.1))
-	attrs.dof_blur_far_distance = focus + maxf(1.2, focus * 0.3)
-	attrs.dof_blur_far_transition = maxf(2.0, focus * 0.9)
+	attrs.dof_blur_far_distance = focus + maxf(1.5, focus * 0.6)
+	attrs.dof_blur_far_transition = maxf(2.5, focus * 1.2)
 	attrs.dof_blur_near_enabled = focus < 30.0
-	attrs.dof_blur_near_distance = maxf(0.2, focus * 0.5)
-	attrs.dof_blur_near_transition = maxf(0.2, focus * 0.35)
+	attrs.dof_blur_near_distance = maxf(0.2, focus * 0.4)
+	attrs.dof_blur_near_transition = maxf(0.2, focus * 0.3)
 	# key light rides with the camera, slightly to its side and above, only on close shots
 	var want := 0.55 if (bool(_cur.get("key", false)) and focus < 4.0) else 0.0
 	_key.light_energy = lerpf(_key.light_energy, want, clampf(delta * 3.0, 0.0, 1.0))

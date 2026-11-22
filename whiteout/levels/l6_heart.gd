@@ -694,12 +694,12 @@ func _reveal_beat(_p) -> void:
 	var mom := Vector3(0.0, 0.0, -27.0)
 	if player != null:
 		cs.ots(player, mom + Vector3(0, 3.0, 0), 6.0, 1.0, {"fov": 24.0, "dof": 0.05, "blend": 1.0})
-	cs.shot({"from": mom + Vector3(1.5, 1.2, 13.0), "to": mom + Vector3(0.6, 3.6, 7.5), "look": mom + Vector3(0, 2.0, 0), "look_to": mom + Vector3(0, 3.4, 0), "dur": 9.0, "fov": 36.0, "dof": 0.09})
+	cs.shot({"from": mom + Vector3(1.5, 1.2, 13.0), "to": mom + Vector3(0.6, 3.6, 7.5), "look": mom + Vector3(0, 2.0, 0), "look_to": mom + Vector3(0, 3.4, 0), "dur": 9.0, "fov": 36.0, "dof": 0.03})
 	if player != null:
 		cs.close(player, mom, 7.0, 1.25, 0.4)
 	if _june != null and is_instance_valid(_june) and player != null:
 		cs.close(_june, player.global_position, 6.0, 1.1, -0.35, {"look_h": 1.45})
-	cs.orbit(mom, 11.0, 2.0, -25.0, 20.0, 12.0, {"look_y": 3.0, "fov": 40.0, "dof": 0.06})
+	cs.orbit(mom, 11.0, 2.0, -25.0, 20.0, 12.0, {"look_y": 3.0, "fov": 40.0, "dof": 0.02})
 	if player != null:
 		cs.close(player, mom, 12.0, 1.1, -0.4, {"fov": 30.0})
 	await say([
@@ -776,7 +776,7 @@ func _mother_down() -> void:
 	# R8-C: Ruth's last words. Slow push onto the dimming lattice, Elias close.
 	var cs = cine()
 	var bpos := Vector3(0.0, 0.0, -24.0)
-	cs.shot({"from": bpos + Vector3(-3.0, 1.6, 10.0), "to": bpos + Vector3(-1.2, 2.2, 6.0), "look": bpos + Vector3(0, 2.6, 0), "dur": 10.0, "fov": 34.0, "dof": 0.1, "blend": 1.2})
+	cs.shot({"from": bpos + Vector3(-3.0, 1.6, 10.0), "to": bpos + Vector3(-1.2, 2.2, 6.0), "look": bpos + Vector3(0, 2.6, 0), "dur": 10.0, "fov": 34.0, "dof": 0.03, "blend": 1.2})
 	if player != null:
 		cs.close(player, bpos, 14.0, 1.2, 0.4)
 	await get_tree().create_timer(1.5).timeout

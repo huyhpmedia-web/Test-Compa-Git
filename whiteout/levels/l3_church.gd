@@ -1354,8 +1354,9 @@ func _choir_reveal(_p) -> void:
 	if player != null:
 		cs.ots(player, ch + Vector3(0, 1.4, 0), 2.6, 1.0, {"fov": 36.0, "blend": 1.0})
 		cs.close(player, ch, 3.6, 1.2, 0.4)
-	cs.shot({"from": ch + Vector3(0.0, 5.5, 15.0), "to": ch + Vector3(0.0, 2.6, 7.5), "look": ch + Vector3(0, 1.7, 0), "dur": 7.0, "fov": 34.0, "dof": 0.1})
-	cs.orbit(ch, 5.0, 0.7, -35.0, 25.0, 9.0, {"look_y": 1.8, "fov": 38.0, "dof": 0.12})
+	cs.shot({"from": ch + Vector3(0.0, 5.5, 15.0), "to": ch + Vector3(0.0, 2.6, 7.5), "look": ch + Vector3(0, 1.7, 0), "dur": 7.0, "fov": 34.0, "dof": 0.03})
+	# (the Choir's ice shader is transparent and writes no depth: keep the DOF light on it)
+	cs.orbit(ch, 6.5, 1.0, -35.0, 25.0, 9.0, {"look_y": 2.0, "fov": 40.0, "dof": 0.02})
 	if player != null:
 		cs.close(player, ch, 10.0, 1.15, -0.4, {"fov": 30.0})
 	Sfx.play("stinger_a")

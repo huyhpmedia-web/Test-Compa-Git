@@ -181,8 +181,24 @@ func _r8_lighting() -> void:
 	Lighting.probe(self, Vector3(-14.5, FY, -30.0), Vector3(6.8, HC, 7.8), Color(0.03, 0.035, 0.03), 0.3)
 	Lighting.probe(self, Vector3(13.0, YB, -23.0), Vector3(17.8, 3.4, 21.8), Color(0.04, 0.03, 0.02), 0.3)
 	# hero shafts: moonlight through the two high gym windows across the cots
-	Lighting.shaft(self, Vector3(13.0, FY + 4.6, -10.0), Vector3(12.4, FY, -17.5), Color(0.55, 0.66, 0.95), 2.2, 16.0, 5.0)
-	Lighting.shaft(self, Vector3(20.0, FY + 4.6, -10.0), Vector3(19.0, FY, -18.0), Color(0.55, 0.66, 0.95), 1.8, 15.0, 4.5)
+	Lighting.shaft(self, Vector3(13.0, FY + 4.8, -10.05), Vector3(12.4, FY, -18.5), Color(0.55, 0.66, 0.95), 3.0, 14.0, 9.0)
+	Lighting.shaft(self, Vector3(20.0, FY + 4.8, -10.05), Vector3(19.0, FY, -19.0), Color(0.55, 0.66, 0.95), 2.6, 13.0, 8.0)
+	e_gym.volumetric_fog_density = 0.03
+	# one motivated, shadowed key per space: the hall's back fluorescent, the gym stage pars stay warm fill
+	for e in _lamps:
+		var l: Light3D = e[0]
+		if is_instance_valid(l) and l.global_position.distance_to(Vector3(0.0, FY + HC - 0.7, -19.0)) < 0.5:
+			l.shadow_enabled = true
+	# classroom 2B: battery emergency light over the door (twin heads) keys the chalkboard before power returns
+	var eb := Node3D.new()
+	eb.position = Vector3(-14.5, FY + 3.35, -26.25)
+	add_child(eb)
+	Props.box(eb, Vector3(0.42, 0.16, 0.12), Vector3.ZERO, Mats.color(Color(0.82, 0.8, 0.74), 0.6), false)
+	for sx in [-0.16, 0.16]:
+		Props.sphere(eb, 0.05, Vector3(sx, -0.08, -0.06), Mats.emissive(Color(1.0, 0.93, 0.8), 2.5))
+	var ek := spot(Vector3(-14.5, FY + 3.2, -26.45), Vector3(-14.5, FY + 0.8, -33.5), Color(1.0, 0.92, 0.78), 2.6, 11.0, 38.0, true)
+	ek.light_volumetric_fog_energy = 3.0
+	ek.set_meta("hero", true)
 	# wet / glossy floors: lacquered gym boards, polished hall marble, melt-water under the doors,
 	# the flooded locker room and the sweating boiler-room slab
 	for n in geo.get_children():

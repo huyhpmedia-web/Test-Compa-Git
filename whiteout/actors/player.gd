@@ -96,7 +96,7 @@ func _ready() -> void:
 
 	flashlight = SpotLight3D.new()
 	flashlight.light_color = Color(1.0, 0.95, 0.85)
-	flashlight.light_energy = 5.2
+	flashlight.light_energy = 6.0
 	flashlight.spot_range = 22.0
 	flashlight.spot_angle = 26.0
 	flashlight.spot_angle_attenuation = 0.8
@@ -104,7 +104,7 @@ func _ready() -> void:
 	flashlight.shadow_blur = 1.2
 	flashlight.light_volumetric_fog_energy = 0.6
 	# R8-B: textured beam (hot centre, reflector rings, lens dust) — res://textures/lighting/flashlight_cookie.png
-	if ResourceLoader.exists("res://textures/lighting/flashlight_cookie.png") and OS.get_environment("WHITEOUT_NOCOOKIE") == "":
+	if ResourceLoader.exists("res://textures/lighting/flashlight_cookie.png"):
 		flashlight.light_projector = load("res://textures/lighting/flashlight_cookie.png")
 	flashlight.position = Vector3(0.35, 1.45, 0.1)
 	add_child(flashlight)

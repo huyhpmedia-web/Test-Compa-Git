@@ -4801,3 +4801,7 @@ msgstr "Chiếu sáng toàn cục: Bật"
 #: ui/ui.gd
 msgid "Global illumination: Off"
 msgstr "Chiếu sáng toàn cục: Tắt"
+
+#: world/cutscene.gd
+msgid "HOLD E TO SKIP"
+msgstr "GIỮ E ĐỂ BỎ QUA"

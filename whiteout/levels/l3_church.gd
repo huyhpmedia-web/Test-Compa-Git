@@ -1351,6 +1351,17 @@ func _choir_reveal(_p) -> void:
 		return
 	Game.set_flag("l3_fight_started")
 	lock_player(true)
+	# R8-C: the Choir reveal. Over the shoulder down the nave as the candles gutter, close on Elias,
+	# then a slow crane down the aisle onto the figures in the chancel and a low orbit around them.
+	var cs := cine()
+	var ch := Vector3(46.0, 0.4, -37.0)
+	if player != null:
+		cs.ots(player, ch + Vector3(0, 1.4, 0), 2.6, 1.0, {"fov": 36.0, "blend": 1.0})
+		cs.close(player, ch, 3.6, 1.2, 0.4)
+	cs.shot({"from": ch + Vector3(0.0, 5.5, 15.0), "to": ch + Vector3(0.0, 2.6, 7.5), "look": ch + Vector3(0, 1.7, 0), "dur": 7.0, "fov": 34.0, "dof": 0.1})
+	cs.orbit(ch, 5.0, 0.7, -35.0, 25.0, 9.0, {"look_y": 1.8, "fov": 38.0, "dof": 0.12})
+	if player != null:
+		cs.close(player, ch, 10.0, 1.15, -0.4, {"fov": 30.0})
 	Sfx.play("stinger_a")
 	# the vigil candles gutter and drop as the hum builds
 	var tw := create_tween()
@@ -1362,6 +1373,7 @@ func _choir_reveal(_p) -> void:
 	await say([["ELIAS", "'Lo, How a Rose E'er Blooming.' Mom sang it every Advent. In the kitchen. Out of tune."],
 		["ELIAS", "Halloran's cardigan. The Lindqvist boys' hockey jackets. They're all still here."],
 		["ELIAS", "All of them. Standing in one place. Singing the same note."]])
+	cs.finish()
 	Sfx.play("stinger_b")
 	var tw2 := create_tween()
 	tw2.tween_property(self, "_nave_dim", 1.5, 1.0)

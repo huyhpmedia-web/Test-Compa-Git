@@ -58,8 +58,8 @@ static func automated() -> bool:
 
 static func start(lvl: Node3D, opts := {}) -> Node:
 	if active != null and is_instance_valid(active):
-		active.finish()
-	var c: Node3D = load("res://world/cutscene.gd").new()
+		active.call("finish")
+	var c = load("res://world/cutscene.gd").new()
 	c.name = "Cutscene"
 	c.level = lvl
 	c.inert = automated()

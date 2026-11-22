@@ -79,8 +79,16 @@ func on_enter() -> void:
 	if not Game.has_flag("l1_intro"):
 		Game.set_flag("l1_intro")
 		Game.set_objective("Get into Kettle Falls. Follow Highway 53 north on foot.")
+		# R8-C opening: crane down over the bucket truck nose-first in the ditch, beacons pulsing, onto Elias
+		var cs := cine()
+		cs.shot({"from": Vector3(-17.0, 8.5, 27.0), "to": Vector3(-12.5, 3.2, 21.5), "look": Vector3(-6.4, 0.4, 13.0),
+			"look_to": Vector3(-4.6, 0.9, 15.0), "dur": 5.5, "fov": 34.0, "blend": 0.0, "dof": 0.06})
+		if player != null:
+			cs.close(player, player.global_position + Vector3(-2.0, 0.0, -6.0), 3.6, 1.4, 0.45)
 		UI.title_card("HIGHWAY 53", "Kettle Falls, Minnesota  -  Dec 21, 2026  22:14  -  -40 degrees")
 		await get_tree().create_timer(3.5).timeout
+		await cs.wait_shots()
+		cs.finish()
 		UI.toast("WASD - move     SHIFT - sprint", 5.0)
 
 func _process(delta: float) -> void:
@@ -1283,6 +1291,15 @@ func _close_feeder_sequence() -> void:
 	_busy = true
 	Game.set_flag("feeder_closed")
 	lock_player(true)
+	# R8-C: the school lights up. Breaker close-up -> yard floods on -> long lens on the school windows.
+	var cs := cine()
+	var bp: Vector3 = (_sw["BKR"].pivot as Node3D).global_position
+	cs.shot({"from": bp + Vector3(1.6, 0.5, 2.2), "to": bp + Vector3(1.2, 0.35, 1.7), "look": bp, "dur": 1.3, "fov": 38.0, "dof": 0.16, "blend": 0.6})
+	if player != null:
+		cs.ots(player, Vector3(0.0, 4.0, -172.0), 5.0, 1.0, {"fov": 34.0, "dof": 0.05})
+		cs.shot({"from": player.global_position + Vector3(-1.2, 2.2, 1.5), "to": player.global_position + Vector3(-0.8, 2.4, 0.2),
+			"look": Vector3(0.0, 4.0, -170.0), "dur": 9.0, "fov": 16.0, "fov_to": 12.0, "dof": 0.03, "ease": "linear"})
+		cs.close(player, Vector3(0.0, 2.0, -170.0), 12.0, 1.3, 0.4)
 	Sfx.play("unlock")
 	Sfx.play("door_locked", 0.0, 0.5)
 	Sfx.play("alarm", -18.0, 0.4)
@@ -1325,6 +1342,7 @@ func _close_feeder_sequence() -> void:
 		["JUNE (radio)", "People are crying. Gran's saying your name. Please hurry. Please, before they come toward the light."],
 		["ELIAS", "Hold on, June. I'm coming. Stay inside, stay warm."],
 	])
+	cs.finish()
 	lock_player(false)
 	Game.set_objective("Reach the school. Gran's shelter. Follow Highway 53 north.")
 	# the town's lights draw them
@@ -1483,6 +1501,13 @@ func _triggers() -> void:
 
 func _radio_call() -> void:
 	lock_player(true)
+	# R8-C: radio call staged. Close on Elias at the radio, over the shoulder up the dead road, push back in.
+	var cs := cine()
+	if player != null:
+		var pp := player.global_position
+		cs.close(player, pp + Vector3(1.5, 0.0, -8.0), 7.0, 1.3, 0.4)
+		cs.ots(player, Vector3(0.0, 2.0, -70.0), 8.0, 1.0, {"fov": 28.0, "dof": 0.07})
+		cs.close(player, pp + Vector3(-1.5, 0.0, -8.0), 9.0, 1.05, -0.35, {"fov": 30.0})
 	Sfx.play("radio_squelch")
 	await say([
 		["ELIAS", "June? Come in. It's Dad. Come in, kiddo."],
@@ -1492,10 +1517,15 @@ func _radio_call() -> void:
 		["JUNE (radio)", "Don't use your light. They see it. They come to the light, Dad. Dad, I can hear the hum again, it sounds like"],
 	])
 	Sfx.play("radio_squelch", -4.0, 0.6)
+	# the line goes dead: cut wide and high, one man alone on the highway in the snow
+	if player != null:
+		var pp2 := player.global_position
+		cs.cut({"from": pp2 + Vector3(7.0, 8.0, 7.0), "to": pp2 + Vector3(5.0, 6.0, 4.5), "look": player, "look_h": 1.0, "dur": 9.0, "fov": 40.0, "dof": 0.05})
 	await get_tree().create_timer(0.8).timeout
 	await say([
 		["ELIAS", "June? June!"],
 		["ELIAS", "Dead grid, and the school's on the KF-2 feeder. The co-op substation is on the way up. If it's open I can close it."],
 	])
+	cs.finish()
 	lock_player(false)
 	Game.set_objective("Reach the Kettle Falls co-op substation, north on Highway 53.")

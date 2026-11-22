@@ -1965,6 +1965,13 @@ func _foreman_scene() -> void:
 	var yaw := atan2(-dir.x, -dir.z)
 	var tw := create_tween()
 	tw.tween_property(pl, "cam_yaw", _near_angle(pl.cam_yaw, yaw), 1.4).set_trans(Tween.TRANS_SINE)
+	# R8-C: meeting the Foreman, staged. OTS toward the west yard -> long lens on the headlamp sweep ->
+	# low angle on the Foreman -> tracking the drag -> Elias alone.
+	var cs := cine()
+	cs.ots(pl, Vector3(-17.5, 1.6, 9.0), 1.3, 1.0, {"fov": 40.0, "blend": 0.8})
+	cs.shot({"from": pl.global_position + Vector3(-5.0, 1.3, 2.5), "to": pl.global_position + Vector3(-6.5, 1.4, 2.8),
+		"look": fm, "look_h": 2.3, "dur": 4.6, "fov": 26.0, "dof": 0.08})
+	cs.shot({"from": Vector3(-13.2, 0.45, 6.4), "to": Vector3(-13.8, 0.5, 6.9), "look": fm, "look_h": 2.3, "dur": 5.0, "fov": 34.0, "dof": 0.12})
 	await get_tree().create_timer(1.2).timeout
 	# headlamp sweeps across the snow, then finds Elias
 	var sw := create_tween()
@@ -1980,6 +1987,9 @@ func _foreman_scene() -> void:
 		["ELIAS", "Walt? Hold on, I'm —"],
 	])
 	Sfx.play("hurt_m")
+	# tracking shot alongside the drag (camera rides with the Foreman, offset toward the school)
+	cs.cut({"from": fm, "to": fm, "off": Vector3(5.5, 1.3, -4.5), "look": cp, "look_h": 0.6, "look_to": fm, "dur": 6.0, "fov": 38.0, "dof": 0.1})
+	cs.shot({"from": fm, "to": fm, "off": Vector3(6.5, 1.6, -3.5), "look": fm, "look_h": 1.8, "dur": 6.0, "fov": 32.0, "dof": 0.08})
 	# dragging: Foreman walks backward-ish toward the collapsed wall, hauling Walt behind him
 	hum.move_speed = 1.2
 	fm.rotation.y = atan2(-26.0 - fm.position.x, 11.0 - fm.position.z)
@@ -1992,6 +2002,9 @@ func _foreman_scene() -> void:
 	await get_tree().create_timer(2.4).timeout
 	await say([["WALT", "He's got my — he's SAYING MY NAME — tell Ruth I kept the —"]])
 	await get_tree().create_timer(2.8).timeout
+	cs.cut({"from": pl.global_position + Vector3(-1.0, 1.8, 2.0), "look": Vector3(-28.5, 1.4, 11.0), "dur": 3.0, "fov": 30.0, "dof": 0.06})
+	if is_instance_valid(pl):
+		cs.close(pl, Vector3(-28.0, 0.0, 11.0), 14.0, 1.3, 0.4)
 	Sfx.play("glass_break")
 	fm.queue_free()
 	cp.queue_free()
@@ -2005,6 +2018,7 @@ func _foreman_scene() -> void:
 		["JUNE (radio)", "Keep moving. Church first, Dad. The hum's loud, I can't stay on. I'll check in."],
 		["ELIAS", "Gil Arsenault. He's been dead since... no. That was him."],
 	])
+	cs.finish()
 	Game.set_objective("Take the east gate to St. Brendan's church. Something walks the town with a light.")
 	lock_player(false)
 	_scene_running = false

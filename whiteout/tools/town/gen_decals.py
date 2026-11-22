@@ -149,3 +149,15 @@ poster("curfew", [("EMERGENCY\nORDER", 76, RED, True), ("CITY OF KETTLE FALLS", 
 poster("meridian", [("MERIDIAN", 92, (20, 60, 110), True), ("NOW HIRING", 62, INK, True), ("Data center techs\nCooling plant operators\n$31/hr + heat bonus", 38, INK, False)], seed=15, tint=(220, 232, 242))
 poster("xmas", [("Merry\nChristmas", 96, RED, True), ("from all of us at\nKETTLE FALLS", 40, (20, 100, 40), True)], seed=17, tint=(250, 245, 235))
 print("signage done")
+
+# ---------------------------------------------------------------- light spill under a lit window (emission decal)
+W = H = 256
+y, x = np.mgrid[0:H, 0:W]
+u = (x + 0.5) / W; v = (y + 0.5) / H          # v = 0 at the wall
+spread = 0.16 + 0.22 * v
+b = np.exp(-((u - 0.5) / spread) ** 2 * 2.2) * (1 - v) ** 1.6
+b *= 1 - 0.45 * np.exp(-((u - 0.5) / (0.012 + 0.03 * v)) ** 2)        # mullion shadow
+b *= 0.85 + 0.15 * fbm(H, W, (8, 8), 3, 61)
+img = np.dstack([b, b, b, np.clip(b * 1.4, 0, 1)])
+Image.fromarray((np.clip(img, 0, 1) * 255).astype(np.uint8), "RGBA").save(os.path.join(OUT, "spill_a.png"))
+print("spill")

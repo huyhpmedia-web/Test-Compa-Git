@@ -652,7 +652,7 @@ static func _storefronts(g: Node3D) -> void:
 	shopfront(g, 0.0, 6.0, -1.0, hg, Color(0.12, 0.18, 0.12))
 	awning(g, Vector3(3.0, 3.35, 5.95), PI, 3.4, 1.3, Color(0.14, 0.3, 0.16), Color(0.75, 0.62, 0.2))
 	awning(g, Vector3(13.0, 3.35, 5.95), PI, 3.4, 1.3, Color(0.14, 0.3, 0.16), Color(0.75, 0.62, 0.2))
-	fascia(g, Vector3(8.0, 4.05, 5.96), PI, 14.0, "LINDQVIST HARDWARE", Color(0.12, 0.2, 0.13), Color(0.86, 0.7, 0.32), 130)
+	fascia(g, Vector3(8.0, 4.05, 5.96), PI, 14.0, "LINDQVIST HARDWARE", Color(0.8, 0.76, 0.64), Color(0.1, 0.22, 0.12), 130)
 	window_display(g, 3.0, 6.0, -1.0, 3.0, 0.9, "hardware")
 	window_display(g, 13.0, 6.0, -1.0, 3.0, 0.9, "hardware")
 	poster(g, "closed", Vector3(8.0, 1.6, 5.9), PI, 0.4, 0.03)

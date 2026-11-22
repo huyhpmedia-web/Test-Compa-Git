@@ -44,6 +44,7 @@ static var _win_mat: ShaderMaterial
 static var _quad: QuadMesh
 static var _bulb_mat: StandardMaterial3D
 static var _xmas_mat: ShaderMaterial
+static var _spill: Texture2D
 
 static func has(name: String) -> bool:
 	return SIZES.has(name) and ResourceLoader.exists(ROOT + name + ".glb")
@@ -226,6 +227,30 @@ static func _light_up(root: Node3D, name: String, lit: float, opts: Dictionary) 
 		mi.set_instance_shader_parameter("win_size", Vector2(w[3], w[4]))
 		mi.set_instance_shader_parameter("win_power", 1.0 if powered else 0.0)
 		cards.append(mi)
+		# warm light thrown onto the snow under a lit ground-floor window (emissive decal, no light cost)
+		if float(w[1]) < 3.2 and mode != 1.0:
+			if _spill == null and ResourceLoader.exists("res://textures/town_decals/spill_a.png"):
+				_spill = load("res://textures/town_decals/spill_a.png")
+			if _spill != null:
+				var dc := Decal.new()
+				dc.name = "WindowSpill"
+				var L: float = 2.2 + float(w[1]) * 0.6
+				dc.size = Vector3(float(w[3]) * 2.2, 3.0, L)
+				dc.position = Vector3(w[0], 0.0, float(w[2]) + L * 0.5)
+				dc.texture_albedo = _spill
+				dc.texture_emission = _spill
+				dc.albedo_mix = 0.0
+				dc.emission_energy = e * 0.35
+				dc.modulate = col
+				dc.normal_fade = 0.6
+				dc.upper_fade = 0.1
+				dc.lower_fade = 0.1
+				dc.cull_mask = 1
+				dc.distance_fade_enabled = true
+				dc.distance_fade_begin = 70.0
+				dc.distance_fade_length = 20.0
+				root.add_child(dc)
+				lights.append(dc)
 	if cards.is_empty():
 		return
 	var door: Array = TW.DOOR.get(name, [])

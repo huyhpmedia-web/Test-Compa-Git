@@ -42,6 +42,8 @@ var _ckv := Vector2.ZERO
 var _fovk := 0.0                 # FOV punch spring (degrees)
 var _fovv := 0.0
 var _flash_t := 0.0
+var _fl_dir := Vector3.ZERO      # lagged flashlight aim (R8-B: hand lag + breathing/walk sway)
+var _fl_t := 0.0
 var _held_id := "?"
 var _shots_burst := 0
 var _burst_t := 0.0
@@ -94,12 +96,16 @@ func _ready() -> void:
 
 	flashlight = SpotLight3D.new()
 	flashlight.light_color = Color(1.0, 0.95, 0.85)
-	flashlight.light_energy = 4.0
+	flashlight.light_energy = 5.2
 	flashlight.spot_range = 22.0
-	flashlight.spot_angle = 24.0
+	flashlight.spot_angle = 26.0
 	flashlight.spot_angle_attenuation = 0.8
 	flashlight.shadow_enabled = true
+	flashlight.shadow_blur = 1.2
 	flashlight.light_volumetric_fog_energy = 0.6
+	# R8-B: textured beam (hot centre, reflector rings, lens dust) — res://textures/lighting/flashlight_cookie.png
+	if ResourceLoader.exists("res://textures/lighting/flashlight_cookie.png"):
+		flashlight.light_projector = load("res://textures/lighting/flashlight_cookie.png")
 	flashlight.position = Vector3(0.35, 1.45, 0.1)
 	add_child(flashlight)
 	flashlight.visible = Game.get_flag("flashlight_on", true)
@@ -285,7 +291,14 @@ func _process(delta: float) -> void:
 	# flashlight follows camera aim
 	var fwd := -cam.global_transform.basis.z
 	flashlight.global_position = global_position + Vector3(0, 1.45, 0) + model.global_transform.basis.x * -0.15 + model.global_transform.basis.z * 0.2
-	flashlight.look_at(flashlight.global_position + fwd * 10.0 + Vector3(0, -0.4, 0), Vector3.UP)
+	# hand lag + breathing / walking sway (less while aiming: the beam is braced along the gun)
+	_fl_t += delta * (1.0 + clampf(Vector2(velocity.x, velocity.z).length() * 0.6, 0.0, 3.0))
+	var want := (fwd * 10.0 + Vector3(0, -0.4, 0)).normalized()
+	_fl_dir = want if _fl_dir == Vector3.ZERO else _fl_dir.slerp(want, clampf(delta * lerpf(9.0, 22.0, aim_t), 0.0, 1.0)).normalized()
+	var sway_k := lerpf(1.0, 0.25, aim_t)
+	var sway := (cam.global_transform.basis.x * sin(_fl_t * 1.3) * 0.012 + Vector3.UP * sin(_fl_t * 2.1 + 0.7) * 0.009) * sway_k
+	var fl_dir := (_fl_dir + sway).normalized()
+	flashlight.look_at(flashlight.global_position + fl_dir * 10.0, Vector3.UP)
 	UI.set_reticle(aim_t > 0.6, focus)
 	# the held weapon converges on whatever the camera ray hits
 	if aiming:

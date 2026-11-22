@@ -4789,3 +4789,15 @@ msgstr "[center][b]HẾT[/b][/center]"
 #: ui/ui.gd:1176
 msgid "Kettle Falls is behind you. The cold is not."
 msgstr "Kettle Falls đã ở lại sau lưng. Cái lạnh thì không."
+
+#: ui/ui.gd
+msgid "Graphics"
+msgstr "Đồ họa"
+
+#: ui/ui.gd
+msgid "Global illumination: On"
+msgstr "Chiếu sáng toàn cục: Bật"
+
+#: ui/ui.gd
+msgid "Global illumination: Off"
+msgstr "Chiếu sáng toàn cục: Tắt"

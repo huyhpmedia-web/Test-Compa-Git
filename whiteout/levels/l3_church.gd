@@ -189,6 +189,39 @@ func build() -> void:
 	_build_triggers()
 	_build_exit()
 	L3I.dress(self)
+	_r8_lighting()
+
+# ------------------------------------------------------------------ R8-B lighting (interior env, probes, shafts, gloss)
+const Lighting = preload("res://world/lighting.gd")
+
+func _r8_lighting() -> void:
+	# interiors: near-zero ambient, lit by candles / stained-glass moonlight / practicals + SDFGI bounce
+	env_int.ambient_light_energy = 0.07
+	env_int.volumetric_fog_density = 0.016
+	env_int.volumetric_fog_albedo = Color(0.78, 0.8, 0.86)
+	# the stained-glass and rose-window spots become the nave's hero light shafts
+	for e in _nave_spots:
+		var l: Light3D = e[0]
+		if l is SpotLight3D:
+			l.light_volumetric_fog_energy = 5.0
+			l.spot_angle_attenuation = 1.4
+			l.set_meta("hero", true)
+	# box-projected probes: nave, diner, pharmacy, hardware
+	Lighting.probe(self, Vector3(46.0, 0.04, -25.0), Vector3(15.6, 7.6, 33.6), Color(0.025, 0.028, 0.04), 0.3)
+	Lighting.probe(self, Vector3(-19.0, 0.0, -12.0), Vector3(13.6, 4.0, 11.6), Color(0.04, 0.035, 0.03), 0.3)
+	Lighting.probe(self, Vector3(-36.0, 0.0, -13.0), Vector3(11.6, 4.0, 13.6), Color(0.03, 0.035, 0.04), 0.3)
+	Lighting.probe(self, Vector3(8.0, 0.0, 13.0), Vector3(15.6, 4.0, 13.6), Color(0.04, 0.035, 0.03), 0.3)
+	# worn, waxed nave boards; melt water under the broken windows and at the doors; diner lino
+	for n in geo.get_children():
+		if n is MeshInstance3D and n.mesh is BoxMesh:
+			var bm: BoxMesh = n.mesh
+			var gp: Vector3 = n.global_position
+			if absf(gp.x - 46.0) < 0.3 and absf(gp.z + 25.0) < 0.3 and bm.size.y <= 0.11:
+				Lighting.gloss(n, 0.32)
+	Lighting.wet_patch(self, Vector3(40.0, 0.04, -28.0), 3.0, 2.2, 0.4, 0.9)
+	Lighting.wet_patch(self, Vector3(52.0, 0.04, -22.0), 2.6, 2.0, 1.1, 0.8)
+	Lighting.wet_patch(self, Vector3(46.0, 0.04, -10.0), 3.6, 2.4, 0.0, 1.0)
+	Lighting.wet_patch(self, Vector3(-19.0, 0.0, -7.5), 3.4, 2.2, 0.2, 0.9)
 
 # ------------------------------------------------------------------ ground & boundary
 func _build_world() -> void:

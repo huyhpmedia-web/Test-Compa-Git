@@ -15,6 +15,9 @@ const Interactable = preload("res://world/interactable.gd")
 const Trigger = preload("res://world/trigger.gd")
 const PlayerScript = preload("res://actors/player.gd")
 const ItemView = preload("res://ui/item_view.gd")
+const AudioZones = preload("res://world/audio_zones.gd")
+const Cutscene = preload("res://world/cutscene.gd")
+const Lighting = preload("res://world/lighting.gd")
 
 var footstep := "concrete"         # step_<footstep> sound
 var spawns := {}                   # name -> [pos, yaw]
@@ -25,6 +28,16 @@ var player: CharacterBody3D
 var _snow: GPUParticles3D
 var _flicker: Array = []
 var _t := 0.0
+# ---- R8-B lighting: per-space environments, eye adaptation, shadow budget
+var _env_zones: Array = []          # [AABB, Environment, opts] — first match wins
+var _env_outside: Environment = null   # env used when the player is in no zone
+var _zone_cur := -2
+var _zone_tick := 0.0
+var _adapt := 1.0                    # exposure multiplier easing back to 1 after a zone switch
+var _all_envs: Array = []            # every Environment built for this level (GI toggle refresh)
+var _lights_managed: Array = []
+var _shadow_tick := 0.0
+var shadow_cap := 8                  # max shadow-casting positional lights (nearest to the camera)
 
 func _ready() -> void:
 	geo = NavigationRegion3D.new()
@@ -47,6 +60,7 @@ func _ready() -> void:
 	var dress_path := "res://levels/dressing/%s_dress.gd" % name
 	if ResourceLoader.exists(dress_path):
 		load(dress_path).dress(self)
+	_lights_managed = Lighting.collect_lights(self)
 	_bake_nav()
 	_spawn_player()
 	on_enter()
@@ -64,6 +78,7 @@ func try_use_item(_id: String) -> bool:
 func _process(delta: float) -> void:
 	_t += delta
 	_guide_tick(delta)
+	_lighting_tick(delta)
 	if _snow != null and player != null:
 		_snow.global_position = player.global_position + Vector3(0, 9, 0)
 	for f in _flicker:
@@ -104,7 +119,7 @@ func env_exterior_night(snow := true, fog_density := 0.025, moon_energy := 0.35)
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
 	e.ambient_light_energy = 0.55
 	e.ambient_light_sky_contribution = 0.85
-	_common_post(e)
+	_common_post(e, true, "cold")
 	e.volumetric_fog_enabled = true
 	e.volumetric_fog_density = fog_density
 	e.volumetric_fog_albedo = Color(0.7, 0.75, 0.85)
@@ -131,22 +146,29 @@ func env_exterior_night(snow := true, fog_density := 0.025, moon_energy := 0.35)
 
 ## Dark interior. ambient: base ambient light (0.05 very dark .. 0.4 lit).
 func env_interior(ambient := 0.12, fog_density := 0.015, tint := Color(0.55, 0.6, 0.7)) -> void:
+	_set_env(make_interior_env(ambient, fog_density, tint))
+	footstep = "concrete"
+	Sfx.ambience("amb_interior")
+
+## Builds (without activating) an interior Environment: black background, near-zero tinted
+## ambient so the space is lit by its practical lights (+ SDFGI bounce), per-space grade.
+func make_interior_env(ambient := 0.12, fog_density := 0.015, tint := Color(0.55, 0.6, 0.7), grade := "") -> Environment:
 	var e := Environment.new()
 	e.background_mode = Environment.BG_COLOR
 	e.background_color = Color(0.0, 0.0, 0.0)
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	e.ambient_light_color = tint
 	e.ambient_light_energy = ambient
-	_common_post(e)
+	e.reflected_light_source = Environment.REFLECTION_SOURCE_DISABLED
+	_common_post(e, false, grade if grade != "" else str(Lighting.LEVEL_GRADE.get(String(name), "cold")))
 	e.volumetric_fog_enabled = true
 	e.volumetric_fog_density = fog_density
 	e.volumetric_fog_albedo = Color(0.8, 0.8, 0.8)
 	e.volumetric_fog_length = 40.0
-	_set_env(e)
-	footstep = "concrete"
-	Sfx.ambience("amb_interior")
+	e.volumetric_fog_ambient_inject = 0.0
+	return e
 
-func _common_post(e: Environment) -> void:
+func _common_post(e: Environment, exterior := true, grade := "cold") -> void:
 	e.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	e.tonemap_exposure = 1.1
 	e.tonemap_white = 6.0
@@ -167,6 +189,11 @@ func _common_post(e: Environment) -> void:
 	e.adjustment_contrast = 1.08
 	e.adjustment_saturation = 0.82
 	e.adjustment_brightness = 1.0
+	Lighting.apply_gi(e, exterior)
+	Lighting.apply_grade(e, grade)
+	e.set_meta("exterior", exterior)
+	if not _all_envs.has(e):
+		_all_envs.append(e)
 
 func _set_env(e: Environment) -> void:
 	if env != null:
@@ -174,6 +201,75 @@ func _set_env(e: Environment) -> void:
 	env = WorldEnvironment.new()
 	env.environment = e
 	add_child(env)
+
+# =================================================================== R8-B per-space lighting
+## Register a space with its own Environment (interior rooms of a mostly-exterior level).
+## box: AABB in world space. opts: {"sun": false (hide the moon inside), "snow": false, "name": ""}.
+func env_zone(box: AABB, e: Environment, opts := {}) -> void:
+	if _env_outside == null and env != null:
+		_env_outside = env.environment
+	_env_zones.append([box, e, opts])
+
+## Convenience: zone from a floor rect + height.
+func env_zone_rect(x0: float, z0: float, x1: float, z1: float, y0: float, y1: float, e: Environment, opts := {}) -> void:
+	env_zone(AABB(Vector3(minf(x0, x1), y0, minf(z0, z1)), Vector3(absf(x1 - x0), y1 - y0, absf(z1 - z0))), e, opts)
+
+func _lighting_tick(delta: float) -> void:
+	if player == null:
+		return
+	if not _env_zones.is_empty():
+		_zone_tick -= delta
+		if _zone_tick <= 0.0:
+			_zone_tick = 0.15
+			var p := player.global_position + Vector3(0, 0.9, 0)
+			var idx := -1
+			for i in _env_zones.size():
+				if (_env_zones[i][0] as AABB).has_point(p):
+					idx = i
+					break
+			if idx != _zone_cur:
+				_switch_zone(idx)
+	if _adapt != 1.0 and env != null and env.environment != null:
+		_adapt = move_toward(_adapt, 1.0, delta * 0.45)
+		var e := env.environment
+		e.tonemap_exposure = float(e.get_meta("exp0", 1.1)) * _adapt
+	_shadow_tick -= delta
+	if _shadow_tick <= 0.0 and not _lights_managed.is_empty():
+		_shadow_tick = 0.3
+		var eye: Vector3 = player.cam.global_position if "cam" in player and player.cam != null else player.global_position
+		Lighting.enforce_shadow_cap(_lights_managed, eye, shadow_cap)
+
+func _switch_zone(idx: int) -> void:
+	var first := _zone_cur == -2
+	_zone_cur = idx
+	if env == null:
+		return
+	var old: Environment = env.environment
+	var e: Environment = _env_outside if idx < 0 else _env_zones[idx][1]
+	var opts: Dictionary = {} if idx < 0 else _env_zones[idx][2]
+	if e == null or e == old:
+		return
+	if old != null and old.has_meta("exp0"):
+		old.tonemap_exposure = float(old.get_meta("exp0"))
+	if not e.has_meta("exp0"):
+		e.set_meta("exp0", e.tonemap_exposure)
+	env.environment = e
+	if sun != null:
+		sun.visible = bool(opts.get("sun", true))
+	if _snow != null:
+		_snow.visible = bool(opts.get("snow", idx < 0))
+	# eye adaptation: stepping into the dark starts under-exposed and opens up; stepping out starts blown
+	if not first:
+		var darker: bool = old != null and bool(old.get_meta("exterior", false)) and not bool(e.get_meta("exterior", false))
+		var brighter: bool = old != null and not bool(old.get_meta("exterior", false)) and bool(e.get_meta("exterior", false))
+		_adapt = 0.6 if darker else (1.45 if brighter else 0.85)
+		e.tonemap_exposure = float(e.get_meta("exp0")) * _adapt
+
+## Re-apply the GI setting (Options menu toggle) to every environment of this level.
+func refresh_gi() -> void:
+	for e in _all_envs:
+		if e is Environment:
+			Lighting.apply_gi(e, bool(e.get_meta("exterior", true)))
 
 func snowfall(amount := 2500) -> void:
 	_snow = GPUParticles3D.new()
@@ -739,6 +835,13 @@ func enemy(uid: String, type: String, pos: Vector3, yaw := 0.0, params := {}) ->
 ## Dialogue helper: await say([["ELIAS", "text"], ["???", "text"]])
 func say(lines: Array) -> void:
 	await UI.dialogue(lines)
+
+## R8-C cinematic: `var cs := cine()` starts a letterboxed cutscene (cinematic camera, DOF,
+## subtitles through UI.dialogue, hold E / Esc to skip); `cs.shot({...})` queues camera moves,
+## `cs.finish()` restores the gameplay camera. Under automation (tools/playtest, shot tools)
+## it is inert, so gameplay timing and flags are exactly as without it. See world/cutscene.gd.
+func cine(opts := {}) -> Node:
+	return Cutscene.start(self, opts)
 
 ## Lock player input for a scripted moment.
 func lock_player(on: bool) -> void:

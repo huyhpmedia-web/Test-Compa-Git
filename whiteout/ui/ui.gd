@@ -972,7 +972,7 @@ func _level_title(id: String) -> String:
 
 # ---- options (language)
 func open_options(back := Callable()) -> void:
-	var p := _panel(520, 330)
+	var p := _panel(520, 420)
 	var bg: Control = p.get_meta("bg")
 	bg.name = "Options"
 	var v := VBoxContainer.new()
@@ -990,6 +990,16 @@ func open_options(back := Callable()) -> void:
 		b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 		if language == code:
 			first = b
+	# R8-B: global illumination (SDFGI) toggle, persisted in user://settings.cfg [graphics] gi
+	var LightingLib = load("res://world/lighting.gd")
+	v.add_child(_label("Graphics", 16, C_DIM))
+	_button("Global illumination: On" if LightingLib.gi_enabled() else "Global illumination: Off", func():
+		LightingLib.set_gi_enabled(not LightingLib.gi_enabled())
+		var lvl = Game.current_level
+		if lvl != null and is_instance_valid(lvl) and lvl.has_method("refresh_gi"):
+			lvl.refresh_gi()
+		close_modal()
+		open_options(back), v)
 	_button("Back", func():
 		close_modal()
 		if back.is_valid():

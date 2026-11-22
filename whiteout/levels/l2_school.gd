@@ -79,6 +79,7 @@ func build() -> void:
 	_build_breath()
 	_build_indoor_fx()
 	L2I.dress(self)
+	_r8_lighting()
 	if Game.has_flag("l2_front_open") and not Game.has_flag("met_foreman"):
 		_make_finale_trigger()
 	_apply_power_visuals(true)
@@ -146,7 +147,9 @@ func _update_lamps(delta: float) -> void:
 		if m != null:
 			(m as StandardMaterial3D).emission_energy_multiplier = 0.15 + 3.0 * f
 
-func _update_env(delta: float) -> void:
+func _update_env(_delta: float) -> void:
+	# R8-B: the Environment itself is swapped per space by level.gd env zones (see _r8_lighting);
+	# here only the ambience bed follows the player.
 	if player == null or env == null:
 		return
 	var p := player.global_position
@@ -156,22 +159,47 @@ func _update_env(delta: float) -> void:
 		_inside_prev = inside
 		_basement_prev = basement
 		Sfx.ambience("amb_interior" if inside else "amb_wind")
-	var tgt_amb := 0.55
-	var tgt_fog := 0.028
-	if inside:
-		tgt_amb = 0.16
-		tgt_fog = 0.012
-	if basement:
-		tgt_amb = 0.07
-		tgt_fog = 0.010
-	var k: float = clamp(delta * 2.5, 0.0, 1.0)
-	_env_amb = lerp(_env_amb, tgt_amb, k)
-	_env_fog = lerp(_env_fog, tgt_fog, k)
-	var e := env.environment
-	e.ambient_light_energy = _env_amb
-	e.volumetric_fog_density = _env_fog
 	if _breath != null:
 		_breath.visible = true
+
+# ====================================================================== R8-B lighting (per-space envs, probes, shafts, wet floors)
+const Lighting = preload("res://world/lighting.gd")
+
+func _r8_lighting() -> void:
+	# exterior keeps the approved cold night; each interior space gets its own dark environment
+	# (near-zero ambient: the space is lit by its practicals + SDFGI bounce), sickly school grade.
+	var e_base := make_interior_env(0.045, 0.012, Color(0.55, 0.6, 0.5), "school")
+	var e_gym := make_interior_env(0.05, 0.016, Color(0.5, 0.56, 0.62), "school")
+	e_gym.volumetric_fog_albedo = Color(0.75, 0.8, 0.9)
+	var e_low := make_interior_env(0.03, 0.010, Color(0.6, 0.5, 0.4), "school")
+	env_zone_rect(-22.2, -34.3, 22.2, -11.8, YB - 0.6, FY - 0.3, e_low, {"sun": false})
+	env_zone_rect(7.0, -34.2, 22.2, -9.95, FY - 0.3, FY + HG + 0.5, e_gym, {"sun": false})
+	env_zone_rect(-22.2, -34.2, 7.0, -9.95, FY - 0.3, FY + HC + 0.5, e_base, {"sun": false})
+	# reflection probes: gym, main hall, corridor, classroom 2B, boiler room
+	Lighting.probe(self, Vector3(14.5, FY, -22.0), Vector3(14.8, HG, 23.8), Color(0.03, 0.035, 0.04), 0.3)
+	Lighting.probe(self, Vector3(0.0, FY, -16.0), Vector3(13.8, HC, 11.8), Color(0.03, 0.035, 0.03), 0.3)
+	Lighting.probe(self, Vector3(-7.5, FY, -24.0), Vector3(29.0, HC, 3.8), Color(0.03, 0.03, 0.03), 0.3)
+	Lighting.probe(self, Vector3(-14.5, FY, -30.0), Vector3(6.8, HC, 7.8), Color(0.03, 0.035, 0.03), 0.3)
+	Lighting.probe(self, Vector3(13.0, YB, -23.0), Vector3(17.8, 3.4, 21.8), Color(0.04, 0.03, 0.02), 0.3)
+	# hero shafts: moonlight through the two high gym windows across the cots
+	Lighting.shaft(self, Vector3(13.0, FY + 4.6, -10.0), Vector3(12.4, FY, -17.5), Color(0.55, 0.66, 0.95), 2.2, 16.0, 5.0)
+	Lighting.shaft(self, Vector3(20.0, FY + 4.6, -10.0), Vector3(19.0, FY, -18.0), Color(0.55, 0.66, 0.95), 1.8, 15.0, 4.5)
+	# wet / glossy floors: lacquered gym boards, polished hall marble, melt-water under the doors,
+	# the flooded locker room and the sweating boiler-room slab
+	for n in geo.get_children():
+		if n is MeshInstance3D and n.mesh is BoxMesh:
+			var bm: BoxMesh = n.mesh
+			var gp: Vector3 = n.global_position
+			if bm.size.y <= 0.31 and absf(gp.y - (FY - bm.size.y * 0.5)) < 0.05:
+				if bm.size.x > 10.0 and gp.x > 7.0 and gp.x < 22.0:
+					Lighting.gloss(n, 0.28)
+				elif bm.size.x > 10.0 and absf(gp.x) < 1.0 and gp.z < -10.0 and gp.z > -22.0:
+					Lighting.gloss(n, 0.16)
+	Lighting.wet_patch(self, Vector3(0.0, FY, -11.4), 4.2, 2.6, 0.0, 1.0)
+	Lighting.wet_patch(self, Vector3(-2.5, FY, -14.8), 3.0, 2.0, 0.7, 0.7)
+	Lighting.wet_patch(self, Vector3(12.0, FY, -11.6), 3.4, 2.2, 0.3, 0.8)
+	Lighting.wet_patch(self, Vector3(-5.0, YB, -22.0), 4.0, 3.0, 0.4, 0.9)
+	Lighting.wet_patch(self, Vector3(-9.0, YB, -27.5), 3.0, 2.5, 1.2, 0.8)
 
 func _update_fires(delta: float) -> void:
 	_fire_t -= delta

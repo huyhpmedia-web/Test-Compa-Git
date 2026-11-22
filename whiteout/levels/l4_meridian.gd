@@ -59,6 +59,7 @@ func build() -> void:
 	_break_room()
 	_pipeline_head()
 	Art.dress(self)
+	_r8_lighting()
 	_flush_leds()
 	_enemies()
 	_refresh_switches()
@@ -74,6 +75,53 @@ func _env() -> void:
 	e.volumetric_fog_length = 180.0
 	snowfall(1800)
 	footstep = "snow"
+
+# =================================================================== R8-B lighting (per-space envs, probes, shafts, gloss)
+const Lighting = preload("res://world/lighting.gd")
+
+func _r8_lighting() -> void:
+	# inside the building the exterior sky ambient is gone: sterile cyan grade, near-zero ambient,
+	# spaces lit by their own fixtures, rack LEDs and SDFGI bounce.
+	var e_lobby := make_interior_env(0.07, 0.008, Color(0.6, 0.72, 0.8), "meridian")
+	e_lobby.glow_intensity = 0.85
+	e_lobby.glow_hdr_threshold = 0.95
+	var e_noc := make_interior_env(0.05, 0.010, Color(0.45, 0.6, 0.8), "meridian")
+	e_noc.glow_intensity = 0.9
+	var e_ph := make_interior_env(0.035, 0.02, Color(0.6, 0.55, 0.45), "meridian")
+	var e_hall := make_interior_env(0.055, 0.010, Color(0.5, 0.65, 0.78), "meridian")
+	e_hall.glow_intensity = 0.9
+	e_hall.glow_hdr_threshold = 0.95
+	env_zone_rect(-8.0, -6.0, 8.0, 11.9, -1.0, HT + 0.5, e_lobby, {"snow": false})
+	env_zone_rect(-14.0, -84.0, 2.0, -66.0, -1.0, HT + 0.5, e_noc, {"sun": false, "snow": false})
+	env_zone_rect(6.0, -98.0, 30.0, -66.0, -1.0, PH_H + 0.5, e_ph, {"sun": false, "snow": false})
+	env_zone_rect(-34.0, -98.0, 50.0, -6.0, -1.0, BH, e_hall, {"sun": false, "snow": false})
+	# box-projected reflection probes (lobby glass + terrazzo, server aisles, NOC glass, pipeline hall)
+	Lighting.probe(self, Vector3(0, 0, 3), Vector3(15.8, HT, 17.8), Color(0.03, 0.04, 0.05), 0.35)
+	Lighting.probe(self, Vector3(0, 0, -21), Vector3(31.8, HT, 29.8), Color(0.02, 0.03, 0.04), 0.3)
+	Lighting.probe(self, Vector3(0, 0, -48), Vector3(31.8, HT, 23.8), Color(0.02, 0.03, 0.04), 0.3)
+	Lighting.probe(self, Vector3(33, 0, -48), Vector3(33.8, HT, 23.8), Color(0.03, 0.03, 0.03), 0.3)
+	Lighting.probe(self, Vector3(10, 0, -63), Vector3(79.8, HT, 5.8), Color(0.03, 0.035, 0.04), 0.3)
+	Lighting.probe(self, Vector3(-6, 0, -75), Vector3(15.8, HT, 17.8), Color(0.02, 0.03, 0.05), 0.3)
+	Lighting.probe(self, Vector3(18, 0, -82), Vector3(23.8, PH_H, 31.8), Color(0.04, 0.03, 0.02), 0.3)
+	# hero shafts: canopy light falling through the entrance transom; one cold-aisle down-light in
+	# Hall A; a sodium high-bay in the pipeline hall (the mine's colour, foreshadowing L5)
+	Lighting.shaft(self, Vector3(0, 4.3, 11.6), Vector3(0, 0, 3.5), Color(0.72, 0.85, 1.0), 2.4, 22.0, 4.0)
+	Lighting.shaft(self, Vector3(0, 4.35, -21.0), Vector3(0, 0, -21.5), Color(0.7, 0.88, 1.0), 2.0, 26.0, 3.5)
+	Lighting.shaft(self, Vector3(18, PH_H - 0.3, -74.0), Vector3(17, 0, -80.0), Color(1.0, 0.62, 0.3), 3.2, 24.0, 5.0)
+	# polished terrazzo lobby, sealed raised floors, melt water at the door, coolant on the plant floor
+	for n in geo.get_children():
+		if n is MeshInstance3D and n.mesh is BoxMesh:
+			var bm: BoxMesh = n.mesh
+			var gp: Vector3 = n.global_position
+			if bm.size.y <= 0.31 and absf(gp.y + bm.size.y * 0.5) < 0.05:
+				if absf(gp.x) < 0.5 and absf(gp.z - 3.0) < 0.5:
+					Lighting.gloss(n, 0.1)
+				elif absf(gp.x) < 0.5 and (absf(gp.z + 21.0) < 0.5 or absf(gp.z + 48.0) < 0.5):
+					Lighting.gloss(n, 0.3)
+	Lighting.wet_patch(self, Vector3(0, 0, 10.2), 4.5, 2.6, 0.0, 1.0)
+	Lighting.wet_patch(self, Vector3(-2.0, 0, 6.5), 2.6, 2.0, 0.6, 0.6)
+	Lighting.wet_patch(self, Vector3(30.0, 0, -50.0), 5.0, 4.0, 0.3, 1.0)
+	Lighting.wet_patch(self, Vector3(18.0, 0, -86.0), 5.0, 3.5, 1.0, 0.9)
 
 func _add_spawns() -> void:
 	add_spawn("start", Vector3(0, 0, 82), PI)

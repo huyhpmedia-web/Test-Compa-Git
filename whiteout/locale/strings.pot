@@ -4221,3 +4221,15 @@ msgstr ""
 #: ui/ui.gd:1176
 msgid "Kettle Falls is behind you. The cold is not."
 msgstr ""
+
+#: ui/ui.gd
+msgid "Graphics"
+msgstr ""
+
+#: ui/ui.gd
+msgid "Global illumination: On"
+msgstr ""
+
+#: ui/ui.gd
+msgid "Global illumination: Off"
+msgstr ""

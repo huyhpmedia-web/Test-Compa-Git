@@ -15,7 +15,7 @@ dest_files=["res://.godot/imported/tyre_n.png-5cd507ab1c5ba04bf8905071a5e76ffd.c
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

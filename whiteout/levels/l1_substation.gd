@@ -61,12 +61,13 @@ func build() -> void:
 	_exit_gate_and_school()
 	_pines()
 	# the edge of town beyond the exit gate: real houses either side of Highway 53 (backdrop, no collision)
-	Town.row(geo, -80.0, -18.0, -150.0, 1.0, Town.HOUSES, 53, {"collide": false, "lit": 0.0, "range": 160.0, "gap_min": 3.0, "gap_max": 7.0, "poles": true})
-	Town.row(geo, 18.0, 82.0, -150.0, 1.0, Town.HOUSES, 54, {"collide": false, "lit": 0.0, "range": 160.0, "gap_min": 3.0, "gap_max": 7.0})
+	Town.row(geo, -80.0, -18.0, -150.0, 1.0, Town.HOUSES, 53, {"collide": false, "lit": 0.3, "power_flag": "feeder_closed", "range": 160.0, "gap_min": 3.0, "gap_max": 7.0, "poles": true})
+	Town.row(geo, 18.0, 82.0, -150.0, 1.0, Town.HOUSES, 54, {"collide": false, "lit": 0.3, "power_flag": "feeder_closed", "range": 160.0, "gap_min": 3.0, "gap_max": 7.0})
 	# the rest of the edge of town: a gas station on the highway and a steeple behind the roofs
 	Town.building(geo, "gas_station", Vector3(-100.0, 0, -158.0), 0.0, {"collide": false, "range": 190.0})
 	Town.building(geo, "church_small", Vector3(96.0, 0, -164.0), 0.1, {"collide": false, "range": 200.0})
 	Town.building(geo, "warehouse_red", Vector3(-30.0, 0, -172.0), 0.0, {"collide": false, "range": 200.0, "shadow": false})
+	preload("res://levels/dressing/town_ext.gd").dress_l1(self)   # R8-A: yards, fences, cars, grime, edge-of-town story
 	_enemies()
 	_items_and_notes()
 	_triggers()

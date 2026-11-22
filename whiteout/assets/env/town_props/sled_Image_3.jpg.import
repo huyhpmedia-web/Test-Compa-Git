@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/sled_Image_3.jpg-191ff4d812bdcece697c0a0109f4
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

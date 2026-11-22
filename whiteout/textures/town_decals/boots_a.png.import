@@ -15,7 +15,7 @@ dest_files=["res://.godot/imported/boots_a.png-d7dd58e41bd5ea26f9a9bb8acdc10a71.
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

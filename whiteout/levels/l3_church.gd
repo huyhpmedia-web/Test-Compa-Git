@@ -189,6 +189,7 @@ func build() -> void:
 	_build_triggers()
 	_build_exit()
 	L3I.dress(self)
+	preload("res://levels/dressing/town_ext.gd").dress_l3(self)   # R8-A: storefronts, street grime, yards
 	_r8_lighting()
 
 # ------------------------------------------------------------------ R8-B lighting (interior env, probes, shafts, gloss)
@@ -281,7 +282,7 @@ func _town_row(x0: float, x1: float, zf: float, out: float, pool: Array, seed_v:
 		var w: float = b[1]
 		var d: float = b[2]
 		var gt := 1.0 - rng.randf() * 0.2
-		Town.building(geo, b[0], Vector3(x + w * 0.5, 0, zf - out * d * 0.5), yaw + rng.randf_range(-0.03, 0.03), {"collide": collide_block == Vector2.ZERO, "range": 140.0, "tint": Color(gt, gt, gt * rng.randf_range(0.93, 1.0))})
+		Town.building(geo, b[0], Vector3(x + w * 0.5, 0, zf - out * d * 0.5), yaw + rng.randf_range(-0.03, 0.03), {"collide": collide_block == Vector2.ZERO, "range": 140.0, "lit": lit * 0.6, "tint": Color(gt, gt, gt * rng.randf_range(0.93, 1.0))})
 		if rng.randf() < 0.4 and x + w + 1.5 < x1:
 			Town.building(geo, "dumpster_a" if rng.randf() < 0.5 else "mailbox_us", Vector3(x + w + 0.7, 0, zf - out * 1.5), rng.randf() * TAU, {"collide": false, "range": 70.0})
 		x += w + rng.randf_range(0.4, 1.6)
@@ -386,10 +387,9 @@ func _build_north_row() -> void:
 	var pgaps := [[2.4, 2.6, 2.6, 0.9], [6.0, 1.8, 2.5], [9.9, 3.6, 2.6, 0.9]]
 	room(px0, pz0, px1, pz1, 3.4, "tile_floor", "brick_dark", "plaster_dirty", {"s": pgaps}, -0.05)
 	_interior_floor(px0, pz0, px1, pz1, "tile_floor")
-	_block(px0, pz0, px1, pz1, true, "KETTLE FALLS PHARMACY", -36.0, 3, true)
+	_block(px0, pz0, px1, pz1, true, "", -36.0, 3, true)   # sign/awning/joinery: levels/dressing/town_ext.gd (R8-A)
 	_b(Vector3(px1 - px0, 3.4, pz1 - pz0), Vector3(-36, 5.3, -13), "brick_dark", true)
 	_storefront_glass(px0, pz1, pgaps)
-	_awning(-36.0, pz1, 1.0, 4.4, Color(0.1, 0.35, 0.22))
 	# green cross, dead but frosted
 	_b(Vector3(0.9, 0.28, 0.12), Vector3(-30.9, 3.9, pz1 + 0.3), _c(Color(0.05, 0.3, 0.14), 0.4), false)
 	_b(Vector3(0.28, 0.9, 0.12), Vector3(-30.9, 3.9, pz1 + 0.3), _c(Color(0.05, 0.3, 0.14), 0.4), false)
@@ -428,8 +428,6 @@ func _build_north_row() -> void:
 	_block(dx0, dz0, dx1, dz1, true, "", 0.0, 4, true)
 	_b(Vector3(dx1 - dx0, 3.4, dz1 - dz0), Vector3(-19, 5.3, -12), "brick", true)
 	_storefront_glass(dx0, dz1, dgaps)
-	_awning(-23.8, dz1, 1.0, 3.6, Color(0.55, 0.1, 0.1))
-	_awning(-14.0, dz1, 1.0, 3.6, Color(0.55, 0.1, 0.1))
 	# THE frozen neon sign: dead tubes, a faint red sputter
 	_b(Vector3(5.6, 1.1, 0.2), Vector3(-19, 4.6, dz1 + 0.25), _c(Color(0.1, 0.1, 0.12), 0.5, 0.3), false)
 	var neon := Label3D.new()
@@ -574,11 +572,10 @@ func _build_hardware() -> void:
 	var hgaps := [[3.0, 3.0, 2.6, 0.9], [8.0, 1.8, 2.5], [13.0, 3.0, 2.6, 0.9]]
 	room(hx0, hz0, hx1, hz1, 3.4, "wood_floor", "brick", "plaster_dirty", {"n": hgaps}, -0.05)
 	_interior_floor(hx0, hz0, hx1, hz1, "wood_floor")
-	_block(hx0, hz0, hx1, hz1, false, "LINDQVIST HARDWARE", 8.0, 4, true)
+	_block(hx0, hz0, hx1, hz1, false, "", 8.0, 4, true)   # sign/awning/joinery: levels/dressing/town_ext.gd (R8-A)
 	_b(Vector3(hx1 - hx0, 3.4, hz1 - hz0), Vector3(8, 5.3, 13), "brick", true)
 	_storefront_glass(hx0, hz0, hgaps)
 	_sign(Vector3(8.0, 3.45, 5.7), PI, "SINCE 1954 — NAILS TO NEW ROOFS", 30, Color(0.75, 0.7, 0.55), false)
-	_awning(8.0, 6.0, -1.0, 6.0, Color(0.15, 0.3, 0.18))
 	# interior partition: z=14 with office door (x=3) and storeroom opening (x=13); x=10 splits office/storeroom
 	wall(Vector2(hx0, 14.0), Vector2(hx1, 14.0), 3.4, "plaster_dirty", -0.05, 0.2, [[3.0, 1.5, 2.4], [13.0, 1.7, 2.5]])
 	wall(Vector2(10.0, 14.0), Vector2(10.0, hz1), 3.4, "plaster_dirty", -0.05, 0.2, [])

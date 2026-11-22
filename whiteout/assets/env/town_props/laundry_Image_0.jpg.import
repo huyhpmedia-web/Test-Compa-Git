@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/laundry_Image_0.jpg-29087b5c14567958b5d79c3ff
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

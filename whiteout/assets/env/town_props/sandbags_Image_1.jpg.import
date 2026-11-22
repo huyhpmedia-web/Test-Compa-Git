@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/sandbags_Image_1.jpg-f4f94c50f468e15e5c590c5d
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

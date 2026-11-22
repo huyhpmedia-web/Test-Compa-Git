@@ -688,6 +688,20 @@ func _reveal_beat(_p) -> void:
 	Sfx.music("music_tension")
 	Sfx.play("stinger_b")
 	Game.set_objective("")
+	# R8-C: finding Ruth. Long lens over Elias onto the far wall, crane up the lattice to her face,
+	# reverse on Elias, June close, the Mother wide.
+	var cs = cine()
+	var mom := Vector3(0.0, 0.0, -27.0)
+	if player != null:
+		cs.ots(player, mom + Vector3(0, 3.0, 0), 6.0, 1.0, {"fov": 24.0, "dof": 0.05, "blend": 1.0})
+	cs.shot({"from": mom + Vector3(1.5, 1.2, 13.0), "to": mom + Vector3(0.6, 3.6, 7.5), "look": mom + Vector3(0, 2.0, 0), "look_to": mom + Vector3(0, 3.4, 0), "dur": 9.0, "fov": 36.0, "dof": 0.09})
+	if player != null:
+		cs.close(player, mom, 7.0, 1.25, 0.4)
+	if _june != null and is_instance_valid(_june) and player != null:
+		cs.close(_june, player.global_position, 6.0, 1.1, -0.35, {"look_h": 1.45})
+	cs.orbit(mom, 11.0, 2.0, -25.0, 20.0, 12.0, {"look_y": 3.0, "fov": 40.0, "dof": 0.06})
+	if player != null:
+		cs.close(player, mom, 12.0, 1.1, -0.4, {"fov": 30.0})
 	await say([
 		["JUNE", "Dad. On the wall. That's Gran. That's Gran, isn't it."],
 		["RUTH", "Eli. You came. You always did come, in the end."],
@@ -701,6 +715,7 @@ func _reveal_beat(_p) -> void:
 		["JUNE", "Dad—"],
 		["ELIAS", "I've got this one. Go."],
 	])
+	cs.finish()
 	if _june != null:
 		_june.set("follow_player", false)
 		await _npc_walk(_june, Vector3(16.5, 0, 14.4))
@@ -758,6 +773,12 @@ func _mother_down() -> void:
 	lock_player(true)
 	Sfx.music("music_safe")
 	_dim_lattice(0.3)
+	# R8-C: Ruth's last words. Slow push onto the dimming lattice, Elias close.
+	var cs = cine()
+	var bpos := Vector3(0.0, 0.0, -24.0)
+	cs.shot({"from": bpos + Vector3(-3.0, 1.6, 10.0), "to": bpos + Vector3(-1.2, 2.2, 6.0), "look": bpos + Vector3(0, 2.6, 0), "dur": 10.0, "fov": 34.0, "dof": 0.1, "blend": 1.2})
+	if player != null:
+		cs.close(player, bpos, 14.0, 1.2, 0.4)
 	await get_tree().create_timer(1.5).timeout
 	await say([
 		["RUTH", "Eli..."],
@@ -766,6 +787,7 @@ func _mother_down() -> void:
 		["RUTH", "Tell June... the cold isn't the worst... Be warm. Please, be warm."],
 		["TOM?", "..."],
 	])
+	cs.finish()
 	if _june != null:
 		await _npc_walk(_june, Vector3(15.5, 0, -2.0))
 		if _june.has_method("look_at_player"):
@@ -823,6 +845,17 @@ func _station_use() -> void:
 	_ending_busy = true
 	lock_player(true)
 	Game.set_flag("l6_ending_talk")
+	# R8-C: the ending. Two handles, two faces: station insert, Elias/June shot-reverse-shot, two-shot wide.
+	var cs = cine()
+	var st := Vector3(17.2, 1.1, -4.0)
+	cs.shot({"from": st + Vector3(-1.4, 0.5, 1.6), "to": st + Vector3(-1.0, 0.35, 1.1), "look": st, "dur": 5.0, "fov": 34.0, "dof": 0.18, "blend": 1.0})
+	if player != null:
+		if _june != null and is_instance_valid(_june):
+			cs.close(_june, player.global_position, 8.0, 1.15, -0.35, {"look_h": 1.45})
+			cs.close(player, _june.global_position, 8.0, 1.2, 0.35)
+			cs.shot({"from": st + Vector3(-7.0, 1.5, 4.5), "to": st + Vector3(-6.0, 1.7, 3.0), "look": player, "look_h": 1.2, "dur": 10.0, "fov": 38.0, "dof": 0.07})
+			cs.close(_june, player.global_position, 10.0, 1.0, 0.35, {"look_h": 1.45, "fov": 28.0})
+		cs.close(player, st, 14.0, 1.1, -0.35, {"fov": 30.0})
 	await say([
 		["JUNE", "Two handles. That's it? After all this, it's two handles."],
 		["ELIAS", "Left one cuts the Meridian tie. Heat feed and power, both. Lake goes dark, town gets its grid back."],
@@ -835,6 +868,7 @@ func _station_use() -> void:
 		["JUNE", "Pick the one you can live with, and I'll stand next to you. I'm not leaving this time."],
 		["ELIAS", "Neither am I."],
 	])
+	cs.finish()
 	_show_choice()
 
 func _show_choice() -> void:

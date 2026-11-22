@@ -80,7 +80,7 @@ func on_enter() -> void:
 		Game.set_flag("l1_intro")
 		Game.set_objective("Get into Kettle Falls. Follow Highway 53 north on foot.")
 		# R8-C opening: crane down over the bucket truck nose-first in the ditch, beacons pulsing, onto Elias
-		var cs := cine()
+		var cs = cine()
 		cs.shot({"from": Vector3(-17.0, 8.5, 27.0), "to": Vector3(-12.5, 3.2, 21.5), "look": Vector3(-6.4, 0.4, 13.0),
 			"look_to": Vector3(-4.6, 0.9, 15.0), "dur": 5.5, "fov": 34.0, "blend": 0.0, "dof": 0.06})
 		if player != null:
@@ -1292,7 +1292,7 @@ func _close_feeder_sequence() -> void:
 	Game.set_flag("feeder_closed")
 	lock_player(true)
 	# R8-C: the school lights up. Breaker close-up -> yard floods on -> long lens on the school windows.
-	var cs := cine()
+	var cs = cine()
 	var bp: Vector3 = (_sw["BKR"].pivot as Node3D).global_position
 	cs.shot({"from": bp + Vector3(1.6, 0.5, 2.2), "to": bp + Vector3(1.2, 0.35, 1.7), "look": bp, "dur": 1.3, "fov": 38.0, "dof": 0.16, "blend": 0.6})
 	if player != null:
@@ -1502,7 +1502,7 @@ func _triggers() -> void:
 func _radio_call() -> void:
 	lock_player(true)
 	# R8-C: radio call staged. Close on Elias at the radio, over the shoulder up the dead road, push back in.
-	var cs := cine()
+	var cs = cine()
 	if player != null:
 		var pp := player.global_position
 		cs.close(player, pp + Vector3(1.5, 0.0, -8.0), 7.0, 1.3, 0.4)

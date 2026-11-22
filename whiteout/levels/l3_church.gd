@@ -192,7 +192,6 @@ func build() -> void:
 	_r8_lighting()
 
 # ------------------------------------------------------------------ R8-B lighting (interior env, probes, shafts, gloss)
-const Lighting = preload("res://world/lighting.gd")
 
 func _r8_lighting() -> void:
 	# interiors: near-zero ambient, lit by candles / stained-glass moonlight / practicals + SDFGI bounce
@@ -1353,7 +1352,7 @@ func _choir_reveal(_p) -> void:
 	lock_player(true)
 	# R8-C: the Choir reveal. Over the shoulder down the nave as the candles gutter, close on Elias,
 	# then a slow crane down the aisle onto the figures in the chancel and a low orbit around them.
-	var cs := cine()
+	var cs = cine()
 	var ch := Vector3(46.0, 0.4, -37.0)
 	if player != null:
 		cs.ots(player, ch + Vector3(0, 1.4, 0), 2.6, 1.0, {"fov": 36.0, "blend": 1.0})

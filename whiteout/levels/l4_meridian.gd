@@ -77,7 +77,6 @@ func _env() -> void:
 	footstep = "snow"
 
 # =================================================================== R8-B lighting (per-space envs, probes, shafts, gloss)
-const Lighting = preload("res://world/lighting.gd")
 
 func _r8_lighting() -> void:
 	# inside the building the exterior sky ambient is gone: sterile cyan grade, near-zero ambient,
@@ -489,11 +488,22 @@ func _lobby() -> void:
 
 func _lobby_greet() -> void:
 	lock_player(true)
+	# R8-C: MERIDIAN reveal. Low dolly across the lobby onto the welcome wall, Elias looking up at it,
+	# then a slow long-lens push on UPTIME 99.9997% while it talks.
+	var cs = cine()
+	var wall := Vector3(0.0, 2.6, -5.7)
+	cs.shot({"from": Vector3(-6.0, 0.9, 7.5), "to": Vector3(-3.5, 1.3, 3.5), "look": wall, "dur": 8.0, "fov": 40.0, "dof": 0.08, "blend": 1.0})
+	if player != null:
+		cs.close(player, wall, 7.0, 1.25, 0.4, {"look_h": 1.6})
+	cs.shot({"from": Vector3(1.5, 1.6, 4.0), "to": Vector3(0.6, 1.9, 0.5), "look": wall, "dur": 10.0, "fov": 24.0, "dof": 0.06, "ease": "linear"})
+	if player != null:
+		cs.ots(player, wall, 10.0, -1.0, {"fov": 34.0})
 	await say([["MERIDIAN", "Badge detected. Contractor, CORVANE SYSTEMS. Expired fourteen days ago."],
 		["MERIDIAN", "Welcome back. You are still not authorised. I have, however, lost the ability to care about that."],
 		["MERIDIAN", "Doors inside this facility are under my control. I will open them if uptime is not reduced."],
 		["ELIAS", "And if it is?"],
 		["MERIDIAN", "Then we should discuss what you can offer."]])
+	cs.finish()
 	lock_player(false)
 	Game.set_objective("Get through Hall A. MERIDIAN controls the doors.")
 
@@ -942,7 +952,19 @@ func glass_mullions() -> void:
 
 func _talk_imogen() -> void:
 	lock_player(true)
+	var cs = null
 	if not Game.has_flag("met_imogen"):
+		# R8-C: Imogen Hart reveal. Shot / reverse-shot close-ups, the NOC video wall during the Corvane lines.
+		cs = cine()
+		if player != null and _imogen != null and is_instance_valid(_imogen):
+			var ip := _imogen.global_position
+			cs.ots(player, _imogen, 6.0, 1.0, {"fov": 36.0, "blend": 1.0})
+			cs.close(_imogen, player.global_position, 9.0, 1.2, -0.35, {"look_h": 1.55})
+			cs.close(player, ip, 7.0, 1.25, 0.35)
+			cs.close(_imogen, player.global_position, 8.0, 1.0, -0.3, {"look_h": 1.55, "fov": 28.0})
+			cs.shot({"from": Vector3(-1.5, 1.7, -76.0), "to": Vector3(-4.0, 1.9, -78.0), "look": Vector3(-6.0, 2.6, -83.7), "dur": 9.0, "fov": 34.0, "dof": 0.07})
+			cs.ots(_imogen, player, 8.0, -1.0, {"fov": 34.0})
+			cs.close(_imogen, player.global_position, 12.0, 1.1, 0.35, {"look_h": 1.55, "fov": 30.0})
 		await say([["IMOGEN", "Stop there. Hands where I can see them. ...Breath fog. A pulse, I'd guess. Good enough."],
 			["ELIAS", "Elias Kade, Lakeshore Electric. I'm looking for my daughter. Fifteen, parka, knit hat. June."],
 			["IMOGEN", "Kade. ...A woman in her sixties and a girl in a hat came through the loading dock eleven hours ago."],
@@ -955,6 +977,7 @@ func _talk_imogen() -> void:
 			["IMOGEN", "Forty megawatts of warmth, delivered to a thing that eats heat. It woke. It's growing up the pipe toward everything warm."],
 			["ELIAS", "Three nights ago the grid dropped the whole town to keep this place running."],
 			["IMOGEN", "Section 4.2. Priority load. The town was cheaper to turn off."]])
+		cs.finish()
 		Game.set_flag("met_imogen")
 	if not Game.has_flag("l4_card_given"):
 		make_room_for_key("pipeline_card")

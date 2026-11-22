@@ -836,11 +836,11 @@ func enemy(uid: String, type: String, pos: Vector3, yaw := 0.0, params := {}) ->
 func say(lines: Array) -> void:
 	await UI.dialogue(lines)
 
-## R8-C cinematic: `var cs := cine()` starts a letterboxed cutscene (cinematic camera, DOF,
+## R8-C cinematic: `var cs = cine()` starts a letterboxed cutscene (cinematic camera, DOF,
 ## subtitles through UI.dialogue, hold E / Esc to skip); `cs.shot({...})` queues camera moves,
 ## `cs.finish()` restores the gameplay camera. Under automation (tools/playtest, shot tools)
 ## it is inert, so gameplay timing and flags are exactly as without it. See world/cutscene.gd.
-func cine(opts := {}) -> Node:
+func cine(opts := {}):
 	return Cutscene.start(self, opts)
 
 ## Lock player input for a scripted moment.

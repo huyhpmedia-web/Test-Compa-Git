@@ -163,7 +163,6 @@ func _update_env(_delta: float) -> void:
 		_breath.visible = true
 
 # ====================================================================== R8-B lighting (per-space envs, probes, shafts, wet floors)
-const Lighting = preload("res://world/lighting.gd")
 
 func _r8_lighting() -> void:
 	# exterior keeps the approved cold night; each interior space gets its own dark environment
@@ -1967,7 +1966,7 @@ func _foreman_scene() -> void:
 	tw.tween_property(pl, "cam_yaw", _near_angle(pl.cam_yaw, yaw), 1.4).set_trans(Tween.TRANS_SINE)
 	# R8-C: meeting the Foreman, staged. OTS toward the west yard -> long lens on the headlamp sweep ->
 	# low angle on the Foreman -> tracking the drag -> Elias alone.
-	var cs := cine()
+	var cs = cine()
 	cs.ots(pl, Vector3(-17.5, 1.6, 9.0), 1.3, 1.0, {"fov": 40.0, "blend": 0.8})
 	cs.shot({"from": pl.global_position + Vector3(-5.0, 1.3, 2.5), "to": pl.global_position + Vector3(-6.5, 1.4, 2.8),
 		"look": fm, "look_h": 2.3, "dur": 4.6, "fov": 26.0, "dof": 0.08})

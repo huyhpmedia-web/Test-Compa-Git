@@ -536,8 +536,16 @@ func _build_hoist_hall() -> void:
 		Sfx.music("music_tension")
 		if not Game.has_flag("got:mn_tag"):
 			Game.set_objective("Find a way down. Check the lamp room.")
+		# R8-C: mine discovery. Crane up the hoist hall onto the headframe and the cage, back to Elias.
+		var cs = cine()
+		cs.shot({"from": Vector3(30.5, 1.4, -3.5), "to": Vector3(32.5, 5.5, 4.5), "look": Vector3(36.5, 1.5, 0.0), "look_to": Vector3(37.0, 8.0, 0.0),
+			"dur": 6.5, "fov": 40.0, "dof": 0.06, "blend": 0.9})
+		if player != null:
+			cs.close(player, Vector3(36.5, 0.0, 0.0), 6.0, 1.3, 0.4)
 		await get_tree().create_timer(0.6).timeout
-		await say([["ELIAS", "A headframe from the fifties. They kept this place alive for the brine. The heat, the pipes. All of it."]]))
+		await say([["ELIAS", "A headframe from the fifties. They kept this place alive for the brine. The heat, the pipes. All of it."]])
+		await cs.wait_shots()
+		cs.finish())
 
 func _build_furnace() -> void:
 	var f := Node3D.new()
@@ -776,6 +784,13 @@ func _take_tag(_p) -> void:
 
 func _tag_moment() -> void:
 	lock_player(true)
+	# R8-C: Tom's tag. Macro on the tag board (114 gone, 109 still hanging), Elias close, then the hum:
+	# the camera drifts off him into the dark doorway as "Tom" speaks, and back.
+	var cs = cine()
+	var tag := Vector3(31.27, 1.68, -14.5)
+	cs.shot({"from": tag + Vector3(1.1, 0.12, 0.6), "to": tag + Vector3(0.65, 0.05, 0.28), "look": tag + Vector3(0, 0.1, -0.3), "dur": 5.0, "fov": 30.0, "dof": 0.22, "blend": 0.8})
+	if player != null:
+		cs.close(player, tag, 14.0, 1.2, 0.35)
 	await get_tree().create_timer(0.6).timeout
 	await say([["ELIAS", "114. T. KADE. They took every other tag down, after. Somebody left yours."],
 		["ELIAS", "Fifteen years, Dad. I never came back to see the one place you're still on the wall."],
@@ -783,11 +798,16 @@ func _tag_moment() -> void:
 	await get_tree().create_timer(1.0).timeout
 	_hum_beat()
 	_blink()
+	if player != null:
+		cs.cut({"from": player.global_position + Vector3(-0.6, 1.7, 0.9), "to": player.global_position + Vector3(-0.3, 1.6, 0.4),
+			"look": Vector3(37.0, 1.4, -10.0), "dur": 4.0, "fov": 30.0, "dof": 0.12, "shake": 0.02})
+		cs.close(player, tag, 12.0, 1.0, -0.35, {"fov": 28.0})
 	await get_tree().create_timer(0.35).timeout
 	await say([["TOM?", "Eli. You came back."]])
 	await get_tree().create_timer(0.5).timeout
 	await say([["ELIAS", "...No. That's the hum. Hart said it plays your dead back to you."],
 		["ELIAS", "Don't answer it. Get the lever. Get the battery. Get June."]])
+	cs.finish()
 	lock_player(false)
 	Game.set_objective("Find the hoist brake lever (south drift, 4 North) and a lamp battery (north, brine pumps).")
 

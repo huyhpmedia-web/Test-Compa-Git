@@ -43,6 +43,7 @@ var _last_ms := 0
 var skipping := false
 var finished := false
 var _noise_t := 0.0
+var _key: OmniLight3D
 
 static func automated() -> bool:
 	if force:
@@ -88,6 +89,15 @@ func _begin(opts: Dictionary) -> void:
 	attrs.dof_blur_amount = 0.1
 	cam.attributes = attrs
 	add_child(cam)
+	# soft cinematic key light for close-ups (faces otherwise go to silhouette in the night grade)
+	_key = OmniLight3D.new()
+	_key.light_color = Color(1.0, 0.9, 0.8)
+	_key.light_energy = 0.0
+	_key.omni_range = 3.2
+	_key.omni_attenuation = 1.6
+	_key.shadow_enabled = false
+	_key.light_volumetric_fog_energy = 0.0
+	add_child(_key)
 	var vp_cam := get_viewport().get_camera_3d()
 	if vp_cam != null:
 		cam.global_transform = vp_cam.global_transform
@@ -246,14 +256,14 @@ func wait_shots() -> void:
 func close(subject: Node3D, toward: Vector3, dur := 4.0, dist := 1.25, side := 0.35, opts := {}) -> Node:
 	if inert or subject == null or not is_instance_valid(subject):
 		return self
-	var head := subject.global_position + Vector3(0, float(opts.get("look_h", 1.6)), 0)
+	var head := subject.global_position + Vector3(0, float(opts.get("look_h", 1.66)), 0)
 	var d := toward - head
 	d.y = 0.0
 	d = d.normalized() if d.length() > 0.01 else Vector3.FORWARD
 	var right := d.cross(Vector3.UP).normalized()
 	var a := head + d * dist + right * side + Vector3(0, 0.05, 0)
 	var b := head + d * (dist * 0.78) + right * side * 0.8 + Vector3(0, 0.03, 0)
-	var s := {"from": a, "to": b, "look": subject, "look_h": float(opts.get("look_h", 1.6)), "dur": dur, "fov": 32.0, "dof": 0.14}
+	var s := {"from": a, "to": b, "look": subject, "look_h": float(opts.get("look_h", 1.66)), "dur": dur, "fov": 32.0, "dof": 0.07, "key": true}
 	s.merge(opts, true)
 	return shot(s)
 
@@ -360,6 +370,10 @@ func _process(delta: float) -> void:
 	attrs.dof_blur_near_enabled = focus < 30.0
 	attrs.dof_blur_near_distance = maxf(0.2, focus * 0.5)
 	attrs.dof_blur_near_transition = maxf(0.2, focus * 0.35)
+	# key light rides with the camera, slightly to its side and above, only on close shots
+	var want := 0.55 if (bool(_cur.get("key", false)) and focus < 4.0) else 0.0
+	_key.light_energy = lerpf(_key.light_energy, want, clampf(delta * 3.0, 0.0, 1.0))
+	_key.global_position = cam.global_position + cam.global_transform.basis.x * 0.7 + Vector3(0, 0.35, 0) + (look - cam.global_position) * 0.3
 
 ## Keep the camera out of walls: pull it toward the look target if level geometry is in between.
 func _safe(look: Vector3, pos: Vector3) -> Vector3:

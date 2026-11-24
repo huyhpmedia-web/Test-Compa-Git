@@ -211,9 +211,9 @@ static func collect_lights(root: Node) -> Array:
 static func enforce_shadow_cap(lights: Array, eye: Vector3, cap := 8) -> void:
 	var cands: Array = []
 	for e in lights:
-		var l: Light3D = e[0]
-		if not is_instance_valid(l) or not e[1]:
+		if not is_instance_valid(e[0]) or not e[1]:
 			continue
+		var l: Light3D = e[0]
 		if not l.is_visible_in_tree():
 			continue
 		var d := l.global_position.distance_to(eye)

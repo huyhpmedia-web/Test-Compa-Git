@@ -557,15 +557,36 @@ func _build_dialogue() -> void:
 	root.add_child(dlg_panel)
 
 ## lines: [["SPEAKER", "text"], ...] or plain strings. Awaitable.
+## R9 voice-over: audio/vo/<md5(english line)[0:12]>.ogg plays with the line when it exists (tools: audio/vo/index.json).
+var _vo: AudioStreamPlayer
+
+func _vo_play(english: String) -> float:
+	var path := "res://audio/vo/%s.ogg" % english.md5_text().substr(0, 12)
+	if not ResourceLoader.exists(path):
+		return 0.0
+	if _vo == null:
+		_vo = AudioStreamPlayer.new()
+		_vo.name = "VoicePlayer"
+		_vo.process_mode = Node.PROCESS_MODE_ALWAYS
+		_vo.bus = "SFX" if AudioServer.get_bus_index("SFX") >= 0 else "Master"
+		add_child(_vo)
+	var st: AudioStream = load(path)
+	_vo.stream = st
+	_vo.volume_db = 2.0
+	_vo.play()
+	return st.get_length()
+
 func dialogue(lines: Array) -> void:
 	_dlg_active = true
 	dlg_panel.visible = true
 	for ln in lines:
 		var who := ""
 		var txt := ""
+		var vo_len := 0.0
 		if ln is Array:
 			who = tr_fmt(ln[0])
 			txt = tr_fmt(ln[1])
+			vo_len = _vo_play(String(ln[1]))
 		else:
 			txt = tr_fmt(str(ln))
 		dlg_name.text = who
@@ -586,9 +607,11 @@ func dialogue(lines: Array) -> void:
 		while not _dlg_advance:
 			await get_tree().process_frame
 			wait += get_process_delta_time()
-			if wait > 2.5 + n * 0.06:
+			if wait > maxf(2.5 + n * 0.06, vo_len + 0.6 - t):
 				break
 		_dlg_advance = false
+		if _vo != null and _vo.playing:
+			_vo.stop()
 	dlg_panel.visible = false
 	_dlg_active = false
 	dialogue_done.emit()

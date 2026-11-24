@@ -79,3 +79,11 @@ Cutscenes 7.5 (world/cutscene.gd: camera rails, DOF, letterbox, staged story bea
 Zombies 7 (6 unified Tripo bodies, 14 variants) | Elias 7.5 | items 7.5 | inspector 8. Overall vs RE7 ~6.5.
 Remaining gaps: baked lightmaps, facial animation/lip-sync, voice-over, window parallax interiors, guard/grab mechanics.
 Higgsfield credits used: ~85 of 100 granted.
+
+## R9 round result (Nov 24 2026, lead solo) — harsh vs RE7
+Windows: interior-mapped rooms behind lit glass (parallax lamp/sofa/picture/rug; shops with aisles + counter) -> town 7.5
+Combat: guard [C]/LB (-70% frontal dmg), grab struggle (mash E, side camera, shove/stagger or bite) -> feel 7
+Life: Elias head tracks threats/interactables; NPCs look at Elias. No face rig on the Meshy mesh (no blink/lip-sync).
+L4: brownout troffers (45-55% dark). Runtime VoxelGI bake tested (1.4 s) but no measurable change under lavapipe -> not shipped.
+VO: 43 lines June/Ruth/Walt (ElevenLabs via Higgsfield, ~13 credits, radio EQ baked); Elias 31 lines unvoiced (~10 more credits).
+Chain l1->ending 155/155 PASS (harness breaks grabs). Windows zip 391 MB. Higgsfield credits used ~98/100.

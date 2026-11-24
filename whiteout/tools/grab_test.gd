@@ -21,7 +21,7 @@ func _ready() -> void:
 	var bd := 1e9
 	for e in get_tree().get_nodes_in_group("enemy"):
 		var sp: String = e.get_script().resource_path
-		if float(e.get("hp")) > 0.0 and String(e.get("state")) != "dormant" and e.global_position.distance_to(p.global_position) < bd:
+		if float(e.get("hp")) > 0.0 and not String(e.get("state")) in ["dormant", "down"] and e.get("model") != null and String(e.model.get("pose")) == "zombie" and e.global_position.distance_to(p.global_position) < bd:
 			bd = e.global_position.distance_to(p.global_position); en = e
 	if en == null:
 		print("GRABTEST FAIL no enemy"); get_tree().quit(); return

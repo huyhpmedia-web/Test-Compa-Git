@@ -619,7 +619,10 @@ func _grabber_near(from: Vector3) -> Node3D:
 		if not (e is Node3D) or not e.has_method("stagger"):
 			continue
 		var sp: String = e.get_script().resource_path if e.get_script() else ""
-		if sp.contains("boss") or float(e.get("hp")) <= 0.0:
+		if sp.contains("boss") or float(e.get("hp")) <= 0.0 or String(e.get("state")) in ["down", "dormant", "dead"]:
+			continue
+		var em = e.get("model")
+		if em != null and String(em.get("pose")) in ["crawl", "dead", "sit", "hang"]:
 			continue
 		var d: float = (e as Node3D).global_position.distance_to(from)
 		if d < bd:

@@ -70,3 +70,12 @@ R8 zombie unification (Higgsfield, lead): Tripo jobs z_flannel 92ea7ee7-4340-4fe
 z_hivis cf5a26f2-2aa2-4719-9d4e-687e4209c2f3, z_cop 7f207a47-bebb-49eb-9ca2-c1042bdaba28, z_nurse 3c61ae6b-2161-4cd5-a75e-44d8e1965ff4;
 miner concept 3b22b974-7aac-4659-825d-ad23fb1bc306. Container reset 2026-11-22 wiped the scratchpad: tools/setup_env.sh rebuilds it.
 MakeHuman data cache for rigs (anim_rigfile.py) must be re-fetched with tools/charpipe/fetch_assets.py.
+
+## R8 round result (Nov 24 2026) — lead scores vs RE7 (harsh)
+Town exteriors 7 (lit window cards on a power flag, porch/Christmas lights, fences, storefront props, decals; windows still flat cards)
+Lighting 5.5-6 (per-room interior env zones L2/L4, reflection probes, wet-floor decals, shafts, flashlight cookie+sway, per-level grades,
+SDFGI toggle in settings; no baked GI, SDFGI unverifiable on lavapipe, L4 has too many ceiling fixtures)
+Cutscenes 7.5 (world/cutscene.gd: camera rails, DOF, letterbox, staged story beats) | Audio 6.5 (buses, reverb zones, occlusion; no VO)
+Zombies 7 (6 unified Tripo bodies, 14 variants) | Elias 7.5 | items 7.5 | inspector 8. Overall vs RE7 ~6.5.
+Remaining gaps: baked lightmaps, facial animation/lip-sync, voice-over, window parallax interiors, guard/grab mechanics.
+Higgsfield credits used: ~85 of 100 granted.

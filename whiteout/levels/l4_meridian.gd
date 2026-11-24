@@ -958,6 +958,8 @@ func _talk_imogen() -> void:
 		cs = cine()
 		if player != null and _imogen != null and is_instance_valid(_imogen):
 			var ip := _imogen.global_position
+			if _imogen.has_method("look_at_player"):
+				_imogen.look_at_player()      # she turns from the video wall to face him
 			cs.ots(player, _imogen, 6.0, 1.0, {"fov": 36.0, "blend": 1.0})
 			cs.close(_imogen, player.global_position, 9.0, 1.2, -0.35, {"look_h": 1.55})
 			cs.close(player, ip, 7.0, 1.25, 0.35)

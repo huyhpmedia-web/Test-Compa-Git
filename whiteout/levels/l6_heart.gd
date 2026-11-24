@@ -698,6 +698,8 @@ func _reveal_beat(_p) -> void:
 	if player != null:
 		cs.close(player, mom, 7.0, 1.25, 0.4)
 	if _june != null and is_instance_valid(_june) and player != null:
+		if _june.has_method("look_at_player"):
+			_june.look_at_player()
 		cs.close(_june, player.global_position, 6.0, 1.1, -0.35, {"look_h": 1.45})
 	cs.orbit(mom, 11.0, 2.0, -25.0, 20.0, 12.0, {"look_y": 3.0, "fov": 40.0, "dof": 0.02})
 	if player != null:

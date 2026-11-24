@@ -196,14 +196,16 @@ func build() -> void:
 
 func _r8_lighting() -> void:
 	# interiors: near-zero ambient, lit by candles / stained-glass moonlight / practicals + SDFGI bounce
-	env_int.ambient_light_energy = 0.07
-	env_int.volumetric_fog_density = 0.016
+	env_int.ambient_light_energy = 0.085
+	env_int.volumetric_fog_density = 0.03
 	env_int.volumetric_fog_albedo = Color(0.78, 0.8, 0.86)
-	# the stained-glass and rose-window spots become the nave's hero light shafts
+	# the stained-glass and rose-window spots become the nave's hero light shafts (brighter pools, dense beams)
 	for e in _nave_spots:
 		var l: Light3D = e[0]
 		if l is SpotLight3D:
-			l.light_volumetric_fog_energy = 5.0
+			e[1] = float(e[1]) * 1.6
+			l.light_energy = e[1]
+			l.light_volumetric_fog_energy = 7.0
 			l.spot_angle_attenuation = 1.4
 			l.set_meta("hero", true)
 	# box-projected probes: nave, diner, pharmacy, hardware

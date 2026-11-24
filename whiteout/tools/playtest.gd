@@ -443,6 +443,10 @@ func capsule_free(pos: Vector3) -> bool:
 
 func place_player(pos: Vector3, face_to := Vector3.INF) -> void:
 	var p = pl()
+	if float(p.get("_grab_t")) > 0.0:
+		# R9 grab struggle: the bot cannot mash, so it breaks free the way a player would
+		warn("player was grabbed while walking; breaking free before teleport")
+		p._end_grab(true)
 	p.global_position = pos + Vector3(0, 0.06, 0)
 	p.velocity = Vector3.ZERO
 	if face_to != Vector3.INF:

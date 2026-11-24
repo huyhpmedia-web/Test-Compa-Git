@@ -35,6 +35,21 @@ func _ready() -> void:
 				Game.player.cam_pitch = float(args.pitch)
 			if args.has("aim"):
 				Input.action_press("aim")
+		if i == 8 and args.has("vgi"):
+			# R9 experiment: runtime-baked VoxelGI around a point (cx,cy,cz,sx,sy,sz)
+			var v = args.vgi.split(",")
+			var vg := VoxelGI.new()
+			vg.size = Vector3(float(v[3]), float(v[4]), float(v[5]))
+			vg.subdiv = VoxelGI.SUBDIV_128
+			Game.current_level.add_child(vg)
+			vg.global_position = Vector3(float(v[0]), float(v[1]), float(v[2]))
+			var t0 := Time.get_ticks_msec()
+			vg.bake(Game.current_level)
+			print("VGI baked in ", Time.get_ticks_msec() - t0, " ms data=", vg.data != null)
+			if args.get("nosdf", "1") == "1":
+				var we := get_tree().root.find_children("*", "WorldEnvironment", true, false)
+				for w in we:
+					(w as WorldEnvironment).environment.sdfgi_enabled = false
 	if args.has("out"):
 		get_viewport().get_texture().get_image().save_png(args.out)
 		print("SHOT_SAVED ", args.out)

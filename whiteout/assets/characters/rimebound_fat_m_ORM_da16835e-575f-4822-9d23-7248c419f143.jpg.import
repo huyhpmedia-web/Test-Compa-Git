@@ -18,7 +18,7 @@ dest_files=["res://.godot/imported/rimebound_fat_m_ORM_da16835e-575f-4822-9d23-7
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

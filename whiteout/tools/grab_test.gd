@@ -6,7 +6,7 @@ extends Node
 func _ready() -> void:
 	name = "World"
 	var out := "/tmp/grab"
-	var lv := "l2_school"
+	var lv := "l3_church"
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("out="): out = a.substr(4)
 		if a.begins_with("level="): lv = a.substr(6)
@@ -21,7 +21,7 @@ func _ready() -> void:
 	var bd := 1e9
 	for e in get_tree().get_nodes_in_group("enemy"):
 		var sp: String = e.get_script().resource_path
-		if sp.ends_with("enemy.gd") and float(e.get("hp")) > 0.0 and e.global_position.distance_to(p.global_position) < bd:
+		if float(e.get("hp")) > 0.0 and e.global_position.distance_to(p.global_position) < bd:
 			bd = e.global_position.distance_to(p.global_position); en = e
 	if en == null:
 		print("GRABTEST FAIL no enemy"); get_tree().quit(); return

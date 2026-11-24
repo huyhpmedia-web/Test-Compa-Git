@@ -1030,14 +1030,23 @@ func _update_guard(delta: float) -> void:
 	# model space -> skeleton space (model faces +Z)
 	var to_sk := skeleton.global_transform.affine_inverse() * global_transform
 	var hp := global_transform.affine_inverse() * (skeleton.global_transform * skeleton.get_bone_global_pose(hi).origin)
-	var push := 0.12 * sin(_age * 9.0) if grabbed else 0.0
-	var reach := (0.42 + push) if grabbed else 0.30
+	var push := 0.06 * sin(_age * 9.0) if grabbed else 0.0
 	for side in ["l", "r"]:
 		var sx := 1.0 if side == "l" else -1.0     # MPFB left = +X
-		# crossed: each hand ends up slightly past the midline; when grabbed the arms shove forward, apart
-		var cross := -0.07 if not grabbed else 0.16
-		var t := hp + Vector3(sx * cross, -0.06 - (0.03 if side == "l" else -0.03), reach)
-		var pole := Vector3(sx * 0.8, -1.0, -0.2).normalized()
+		var ui := skeleton.find_bone("upperarm_" + side)
+		if ui < 0:
+			continue
+		var sh := global_transform.affine_inverse() * (skeleton.global_transform * skeleton.get_bone_global_pose(ui).origin)
+		var t: Vector3
+		var pole: Vector3
+		if grabbed:
+			# arms braced against the grabber's shoulders
+			t = Vector3(sx * 0.17, hp.y - 0.2, sh.z + 0.36 + push)
+			pole = Vector3(sx * 1.0, -0.6, 0.0).normalized()
+		else:
+			# forearms crossed in front of the face, elbows down
+			t = Vector3(hp.x - sx * 0.05, hp.y - 0.03 + (0.04 if side == "l" else 0.0), sh.z + 0.22)
+			pole = Vector3(sx * 0.35, -1.0, 0.25).normalized()
 		_guard_arm(side, to_sk * t, to_sk.basis * pole, w)
 
 func _guard_arm(side: String, T: Vector3, pole: Vector3, weight: float) -> void:

@@ -320,7 +320,21 @@ func _talk() -> void:
 	await UI.dialogue(lines)
 	talked.emit()
 
+var _look_cd := 0.0
+
+## R9: living NPCs turn their head to Elias when he is near (within ~6 m and in front of them).
+func _update_npc_look(delta: float) -> void:
+	_look_cd -= delta
+	if _look_cd > 0.0 or model == null or not model.has_method("set_look_target"):
+		return
+	_look_cd = 0.25
+	var p: Node3D = Game.player if Game.player != null and is_instance_valid(Game.player) else null
+	var want := p != null and not is_dead and pose_name in ["stand", "idle", "lean", "sit", "cower", ""] \
+		and global_position.distance_to(p.global_position) < 6.0
+	model.set_look_target(p if want else null)
+
 func _physics_process(delta: float) -> void:
+	_update_npc_look(delta)
 	if not is_on_floor():
 		velocity.y -= 18.0 * delta
 	else:

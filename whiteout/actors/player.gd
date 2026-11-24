@@ -279,6 +279,37 @@ func _physics_process(delta: float) -> void:
 			_finish_reload()
 
 	_find_interactable()
+	_update_head_look(delta)
+
+## R9: Elias' head tracks the closest threat (awake enemy within 9 m) or the focused interactable.
+var _hl_cd := 0.0
+var _hl_node: Node3D
+func _update_head_look(delta: float) -> void:
+	_hl_cd -= delta
+	if _hl_cd <= 0.0:
+		_hl_cd = 0.2
+		var best: Node3D = null
+		var bd := 9.0
+		for e in get_tree().get_nodes_in_group("enemy"):
+			if not (e is Node3D) or float(e.get("hp")) <= 0.0 or String(e.get("state")) in ["dormant", "dead", "down"]:
+				continue
+			var d: float = (e as Node3D).global_position.distance_to(global_position)
+			if d < bd:
+				bd = d
+				best = e
+		if best == null and focused_interact != null and is_instance_valid(focused_interact) and focused_interact is Node3D:
+			if _hl_node == null or not is_instance_valid(_hl_node):
+				_hl_node = Node3D.new()
+				_hl_node.name = "HeadLook"
+				add_child(_hl_node)
+				_hl_node.top_level = true
+			# look_target is aimed 1.45 m above the node: put the helper so the eyes land on the object
+			_hl_node.global_position = (focused_interact as Node3D).global_position - Vector3(0, 1.45, 0)
+			best = _hl_node
+		if aiming or _grab_t > 0.0:
+			best = null
+		if model.has_method("set_look_target"):
+			model.set_look_target(best)
 
 func _process(delta: float) -> void:
 	# camera rig follows smoothly
@@ -287,7 +318,7 @@ func _process(delta: float) -> void:
 	_update_kick(delta)
 	pitch_pivot.rotation.x = cam_pitch + _ck.x
 	yaw_pivot.rotation.y = cam_yaw + _ck.y
-	arm.spring_length = lerp(2.4, 0.8, aim_t)
+	arm.spring_length = lerp(2.4, 0.8, aim_t) if _grab_t <= 0.0 else lerpf(arm.spring_length, 1.7, clampf(delta * 6.0, 0.0, 1.0))
 	var side_off: float = lerp(0.45, 0.58, aim_t)
 	# keep the shoulder-offset camera out of walls in tight corridors (the spring arm only handles the back direction)
 	var q_side := PhysicsRayQueryParameters3D.create(pitch_pivot.global_position, pitch_pivot.global_position + pitch_pivot.global_transform.basis.x * (side_off + 0.2), 1)
@@ -611,7 +642,9 @@ func _start_grab(g: Node3D, amount: int) -> void:
 	to.y = 0
 	if to.length() > 0.01:
 		model.rotation.y = atan2(to.x, to.z)
-		cam_yaw = model.rotation.y + PI
+		# camera swings to a three-quarter side view so both faces are in frame
+		cam_yaw = model.rotation.y + PI + 1.1
+		cam_pitch = -0.12
 	model.set("grabbed", true)
 	if model.has_method("hit_react_from"):
 		model.hit_react_from(g.global_position, 20.0)

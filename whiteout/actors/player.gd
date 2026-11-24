@@ -34,6 +34,13 @@ var stun := 0.0
 var step_t := 0.0
 var shake := 0.0
 var input_locked := false   # cutscenes
+var guarding := false       # R9: hold [C] / LB: forearms up, 70% less damage, cannot be grabbed from the front
+var _grab_t := 0.0          # R9: grab struggle time left (0 = not grabbed)
+var _grab_need := 0         # presses still needed to break free
+var _grab_by: Node3D = null
+var _grab_dmg := 0
+var _grab_need0 := 7
+var _guard_cd := 0.0
 var focused_interact: Node = null
 var _recoil := 0.0
 var _kick := Vector2.ZERO
@@ -164,6 +171,10 @@ func _physics_process(delta: float) -> void:
 		_shots_burst = 0
 	_recoil = max(0.0, _recoil - delta * 4.0)
 
+	_guard_cd = max(0.0, _guard_cd - delta)
+	if _grab_t > 0.0:
+		_update_grab(delta)
+		return
 	var blocked := UI.is_blocking() or input_locked or stun > 0.0
 	var in_dir := Vector2.ZERO
 	if not blocked:
@@ -175,6 +186,7 @@ func _physics_process(delta: float) -> void:
 			cam_pitch = clamp(cam_pitch - rs.y * delta * 2.0, -1.2, 0.9)
 	aiming = not blocked and (Input.is_action_pressed("aim") or Input.get_joy_axis(0, JOY_AXIS_TRIGGER_LEFT) > 0.5) and _equipped_is_gun() and reload_t <= 0.0
 	aim_t = move_toward(aim_t, 1.0 if aiming else 0.0, delta * 6.0)
+	guarding = not blocked and not aiming and reload_t <= 0.0 and (Input.is_action_pressed("guard") or Input.is_joy_button_pressed(0, JOY_BUTTON_LEFT_SHOULDER))
 	if aiming:
 		var moving := in_dir.length() > 0.1
 		focus = min(1.0, focus + delta * (0.35 if moving else 0.9))
@@ -184,8 +196,10 @@ func _physics_process(delta: float) -> void:
 	# movement relative to camera
 	var basis_y := Basis(Vector3.UP, cam_yaw)
 	var dir := basis_y * Vector3(in_dir.x, 0, in_dir.y)
-	var running := Input.is_action_pressed("sprint") and not aiming
+	var running := Input.is_action_pressed("sprint") and not aiming and not guarding
 	var spd := AIM_WALK if aiming else (RUN if running else WALK)
+	if guarding:
+		spd = WALK * 0.45
 	if Game.health_state() == "DANGER":
 		spd *= 0.7
 	# frost clouds (burster) slow the player via node meta, refreshed while inside
@@ -216,6 +230,7 @@ func _physics_process(delta: float) -> void:
 	model.rotation.y = lerp_angle(model.rotation.y, face_yaw, clamp(delta * (16.0 if aiming else 10.0), 0.0, 1.0))
 	model.move_speed = hspeed
 	model.aim = aim_t > 0.5
+	model.set("guard", guarding)
 	model.aim_pitch = cam_pitch + 0.15
 	model.pose = "normal"
 
@@ -523,8 +538,34 @@ func _quick_heal() -> void:
 
 # ---------------------------------------------------------------- damage
 func hurt(amount: int, from: Vector3 = Vector3.ZERO, grab: bool = false) -> void:
-	if invuln > 0.0 or Game.hp <= 0:
+	if invuln > 0.0 or Game.hp <= 0 or _grab_t > 0.0:
 		return
+	# R9 guard: a blow from the front (within ~110 deg) is taken on the forearms
+	if guarding and from != Vector3.ZERO:
+		var to := from - global_position
+		to.y = 0
+		var fwd := model.global_transform.basis.z
+		fwd.y = 0
+		if to.length() < 0.01 or fwd.normalized().dot(to.normalized()) > -0.35:
+			invuln = 0.5
+			stun = 0.12
+			_camera_kick("handgun", 1.6)
+			shake = 0.45
+			Sfx.play("zombie_hit", -4.0, randf_range(0.8, 0.95))
+			Sfx.play("hurt_m", -10.0)
+			if model.has_method("hit_react_from"):
+				model.hit_react_from(from, 6.0)
+			var push := global_position - from
+			push.y = 0
+			velocity += push.normalized() * 1.6
+			Game.damage(maxi(1, int(round(amount * 0.3))))
+			return
+	# R9 grab struggle: a regular enemy that gets its hands on you holds on; mash to break free
+	if grab and from != Vector3.ZERO and Game.hp > amount * 0.4:
+		var g := _grabber_near(from)
+		if g != null:
+			_start_grab(g, amount)
+			return
 	invuln = 1.4 if grab else 0.9
 	stun = 0.8 if grab else 0.35
 	if from != Vector3.ZERO and model.has_method("hit_react_from"):
@@ -539,6 +580,113 @@ func hurt(amount: int, from: Vector3 = Vector3.ZERO, grab: bool = false) -> void
 		push.y = 0
 		velocity += push.normalized() * (4.0 if grab else 2.5)
 	Game.damage(amount)
+
+func _grabber_near(from: Vector3) -> Node3D:
+	var best: Node3D = null
+	var bd := 1.2
+	for e in get_tree().get_nodes_in_group("enemy"):
+		if not (e is Node3D) or not e.has_method("stagger"):
+			continue
+		var sp: String = e.get_script().resource_path if e.get_script() else ""
+		if sp.contains("boss") or float(e.get("hp")) <= 0.0:
+			continue
+		var d: float = (e as Node3D).global_position.distance_to(from)
+		if d < bd:
+			bd = d
+			best = e
+	return best
+
+func _start_grab(g: Node3D, amount: int) -> void:
+	_grab_by = g
+	_grab_dmg = amount
+	_grab_t = 2.4
+	_grab_need = [5, 7, 9][clampi(Game.difficulty, 0, 2)]
+	_grab_need0 = _grab_need
+	invuln = 9.0
+	aiming = false
+	guarding = false
+	velocity = Vector3.ZERO
+	# face the attacker, camera swings round to watch it
+	var to := g.global_position - global_position
+	to.y = 0
+	if to.length() > 0.01:
+		model.rotation.y = atan2(to.x, to.z)
+		cam_yaw = model.rotation.y + PI
+	model.set("grabbed", true)
+	if model.has_method("hit_react_from"):
+		model.hit_react_from(g.global_position, 20.0)
+	if g.get("model") != null and g.model.has_method("play"):
+		g.model.play("grab")
+	Sfx.play("hurt_m")
+	UI.flash_damage()
+	shake = 1.0
+	Game.damage(maxi(1, int(round(amount * 0.4))))
+	UI.set_prompt("")
+	UI.grab_prompt(true)
+
+func _update_grab(delta: float) -> void:
+	_grab_t -= delta
+	var g := _grab_by
+	var alive := g != null and is_instance_valid(g) and float(g.get("hp")) > 0.0
+	velocity.x = 0
+	velocity.z = 0
+	velocity.y = -0.5
+	move_and_slide()
+	if alive:
+		# the attacker leans in on you
+		var to := global_position - g.global_position
+		to.y = 0
+		var want := global_position - to.normalized() * 0.62
+		g.global_position = g.global_position.lerp(Vector3(want.x, g.global_position.y, want.z), clampf(delta * 8.0, 0.0, 1.0))
+		g.look_at(Vector3(global_position.x, g.global_position.y, global_position.z), Vector3.UP, true)
+		if g is CharacterBody3D:
+			(g as CharacterBody3D).velocity = Vector3.ZERO
+	shake = maxf(shake, 0.25)
+	model.move_speed = 0.0
+	var pressed := Input.is_action_just_pressed("interact") or Input.is_action_just_pressed("fire") or Input.is_action_just_pressed("knife")
+	if pressed:
+		_grab_need -= 1
+		_ck.x += 0.03 * (1.0 if _grab_need % 2 == 0 else -1.0)
+		Sfx.play("hurt_m", -12.0, randf_range(0.95, 1.1))
+	UI.grab_progress(clampf(1.0 - float(_grab_need) / float(_grab_need0), 0.0, 1.0), _grab_t / 2.4)
+	if not alive or _grab_need <= 0:
+		_end_grab(true)
+	elif _grab_t <= 0.0:
+		_end_grab(false)
+
+func _end_grab(freed: bool) -> void:
+	var g := _grab_by
+	_grab_by = null
+	_grab_t = 0.0
+	model.set("grabbed", false)
+	UI.grab_prompt(false)
+	if g != null and is_instance_valid(g):
+		var push := g.global_position - global_position
+		push.y = 0
+		if freed:
+			# shove: the attacker staggers back, Elias gets a beat to act
+			Sfx.play("knife_swing", -2.0, 0.7)
+			Sfx.play_at("zombie_hit", g.global_position, -2.0, 0.75)
+			if g.has_method("stagger"):
+				g.stagger()
+			if g is CharacterBody3D:
+				(g as CharacterBody3D).velocity = push.normalized() * 5.0
+			g.global_position += push.normalized() * 0.5
+			_camera_kick("shotgun", 0.6)
+			invuln = 0.8
+			stun = 0.2
+		else:
+			# bitten: the rest of the damage lands, Elias is thrown down to his knees
+			Sfx.play_at("gore_hit", global_position, 0.0)
+			Sfx.play("hurt_m", 2.0, 0.9)
+			UI.flash_damage()
+			shake = 1.2
+			velocity += -push.normalized() * 3.0
+			invuln = 1.2
+			stun = 0.6
+			Game.damage(maxi(1, _grab_dmg - int(round(_grab_dmg * 0.4))) + 6)
+	else:
+		invuln = 0.6
 
 # ---------------------------------------------------------------- interaction
 func _find_interactable() -> void:

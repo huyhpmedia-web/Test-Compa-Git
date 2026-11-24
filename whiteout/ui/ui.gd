@@ -339,6 +339,52 @@ void fragment(){
 	reticle.draw.connect(_draw_reticle)
 	hud.add_child(reticle)
 
+## R9 grab struggle: big centred "mash E" prompt with a break-free bar and a draining timer bar.
+var _grab_box: VBoxContainer
+var _grab_bar: ColorRect
+var _grab_time: ColorRect
+var _grab_lbl: Label
+
+func grab_prompt(on: bool) -> void:
+	if _grab_box == null:
+		_grab_box = VBoxContainer.new()
+		_grab_box.anchor_left = 0.5; _grab_box.anchor_right = 0.5; _grab_box.anchor_top = 0.62; _grab_box.anchor_bottom = 0.62
+		_grab_box.offset_left = -220; _grab_box.offset_right = 220
+		_grab_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_grab_box.add_theme_constant_override("separation", 6)
+		hud.add_child(_grab_box)
+		_grab_lbl = _label("", 26, Color(1.0, 0.9, 0.8))
+		_grab_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_grab_lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+		_grab_lbl.add_theme_constant_override("outline_size", 8)
+		_grab_box.add_child(_grab_lbl)
+		for i in 2:
+			var bg := ColorRect.new()
+			bg.color = Color(0, 0, 0, 0.6)
+			bg.custom_minimum_size = Vector2(440, 12 if i == 0 else 5)
+			_grab_box.add_child(bg)
+			var fg := ColorRect.new()
+			fg.color = Color(0.95, 0.85, 0.7) if i == 0 else Color(0.75, 0.12, 0.08)
+			fg.size = Vector2(0, 12 if i == 0 else 5)
+			bg.add_child(fg)
+			if i == 0:
+				_grab_bar = fg
+			else:
+				_grab_time = fg
+	_grab_lbl.text = tr_fmt("Mash [E] to break free!")
+	_grab_box.visible = on
+	if on:
+		grab_progress(0.0, 1.0)
+
+func grab_progress(p: float, t: float) -> void:
+	if _grab_bar == null:
+		return
+	_grab_bar.size.x = 440.0 * p
+	_grab_time.size.x = 440.0 * clampf(t, 0.0, 1.0)
+	var k := 1.0 + 0.06 * sin(Time.get_ticks_msec() * 0.025)
+	_grab_lbl.scale = Vector2(k, k)
+	_grab_lbl.pivot_offset = _grab_lbl.size * 0.5
+
 func show_hud(on: bool) -> void:
 	hud.visible = on
 	_refresh_hud()
@@ -1078,7 +1124,7 @@ Inspired by the late-90s survival-horror genre. Story, characters and setting ar
 
 const CONTROLS_TEXT := """[b]WASD[/b] move   ·   [b]Shift[/b] run   ·   [b]Mouse[/b] look
 [b]Right mouse[/b] aim   ·   [b]Left mouse[/b] fire (while aiming)
-[b]R[/b] reload   ·   [b]F[/b] knife   ·   [b]Q[/b] quick turn
+[b]R[/b] reload   ·   [b]F[/b] knife   ·   [b]Q[/b] quick turn   ·   [b]C[/b] guard
 [b]E[/b] interact / advance dialogue   ·   [b]Tab[/b] inventory
 [b]H[/b] quick heal   ·   [b]1-4[/b] weapons   ·   [b]L[/b] flashlight
 [b]Esc[/b] pause / close menus

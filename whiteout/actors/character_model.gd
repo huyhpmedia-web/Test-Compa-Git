@@ -1007,9 +1007,75 @@ func _process(delta: float) -> void:
 	_apply_bone_scales()
 	_update_look(delta)
 	_update_jaw(delta)
+	_update_guard(delta)
 
 var _death_idx := 0
 var _rag_delay := -1.0
+
+# ------------------------------------------------------------------ guard (forearms crossed in front of the face)
+## Player sets `guard = true` while the guard button is held; `grabbed` pushes the arms out against a grabber instead.
+var guard := false
+var grabbed := false
+var _guard_w := 0.0
+
+func _update_guard(delta: float) -> void:
+	var want := 1.0 if ((guard or grabbed) and pose == "normal") else 0.0
+	_guard_w = move_toward(_guard_w, want, delta * (9.0 if want > 0.0 else 5.0))
+	if _guard_w < 0.01 or skeleton == null or not is_inside_tree():
+		return
+	var hi := skeleton.find_bone("head")
+	if hi < 0:
+		return
+	var w := _guard_w * _guard_w * (3.0 - 2.0 * _guard_w)
+	# model space -> skeleton space (model faces +Z)
+	var to_sk := skeleton.global_transform.affine_inverse() * global_transform
+	var hp := global_transform.affine_inverse() * (skeleton.global_transform * skeleton.get_bone_global_pose(hi).origin)
+	var push := 0.12 * sin(_age * 9.0) if grabbed else 0.0
+	var reach := (0.42 + push) if grabbed else 0.30
+	for side in ["l", "r"]:
+		var sx := 1.0 if side == "l" else -1.0     # MPFB left = +X
+		# crossed: each hand ends up slightly past the midline; when grabbed the arms shove forward, apart
+		var cross := -0.07 if not grabbed else 0.16
+		var t := hp + Vector3(sx * cross, -0.06 - (0.03 if side == "l" else -0.03), reach)
+		var pole := Vector3(sx * 0.8, -1.0, -0.2).normalized()
+		_guard_arm(side, to_sk * t, to_sk.basis * pole, w)
+
+func _guard_arm(side: String, T: Vector3, pole: Vector3, weight: float) -> void:
+	var iu := skeleton.find_bone("upperarm_" + side)
+	var il := skeleton.find_bone("lowerarm_" + side)
+	var ih := skeleton.find_bone("hand_" + side)
+	if iu < 0 or il < 0 or ih < 0:
+		return
+	var q_u0 := skeleton.get_bone_pose_rotation(iu)
+	var q_l0 := skeleton.get_bone_pose_rotation(il)
+	var gu := skeleton.get_bone_global_pose(iu)
+	var A := gu.origin
+	var B := skeleton.get_bone_global_pose(il).origin
+	var C := skeleton.get_bone_global_pose(ih).origin
+	var l1 := A.distance_to(B)
+	var l2 := B.distance_to(C)
+	var to := T - A
+	var d := clampf(to.length(), absf(l1 - l2) + 0.01, l1 + l2 - 0.004)
+	var dir := to.normalized()
+	var along := (l1 * l1 - l2 * l2 + d * d) / (2.0 * d)
+	var hgt := sqrt(maxf(l1 * l1 - along * along, 0.0))
+	var pv := pole - dir * pole.dot(dir)
+	pv = pv.normalized() if pv.length() > 0.001 else Vector3.DOWN
+	var E := A + dir * along + pv * hgt
+	var Tc := A + dir * d
+	skeleton.set_bone_global_pose(iu, Transform3D(Basis(_arc_q((B - A).normalized(), (E - A).normalized())) * gu.basis, A))
+	var gl := skeleton.get_bone_global_pose(il)
+	var gh := skeleton.get_bone_global_pose(ih)
+	skeleton.set_bone_global_pose(il, Transform3D(Basis(_arc_q((gh.origin - gl.origin).normalized(), (Tc - gl.origin).normalized())) * gl.basis, gl.origin))
+	if weight < 0.999:
+		skeleton.set_bone_pose_rotation(iu, q_u0.slerp(skeleton.get_bone_pose_rotation(iu), weight))
+		skeleton.set_bone_pose_rotation(il, q_l0.slerp(skeleton.get_bone_pose_rotation(il), weight))
+
+static func _arc_q(a: Vector3, b: Vector3) -> Quaternion:
+	var c := a.cross(b)
+	if c.length() < 1e-6:
+		return Quaternion.IDENTITY
+	return Quaternion(c.normalized(), acos(clampf(a.dot(b), -1.0, 1.0)))
 
 # ------------------------------------------------------------------ look-at head tracking (zombies watch the player)
 ## Manual yaw/pitch blend over neck + head after the animation (LookAtModifier3D's axis handling was unreliable on this rig).

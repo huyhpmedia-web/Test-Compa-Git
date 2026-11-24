@@ -44,7 +44,7 @@ func _setup_input() -> void:
 		"move_left": [KEY_A, KEY_LEFT], "move_right": [KEY_D, KEY_RIGHT],
 		"sprint": [KEY_SHIFT], "interact": [KEY_E, KEY_ENTER], "reload": [KEY_R],
 		"inventory": [KEY_TAB, KEY_I], "pause": [KEY_ESCAPE, KEY_P], "knife": [KEY_F],
-		"quick_turn": [KEY_Q], "flashlight": [KEY_L], "heal": [KEY_H],
+		"quick_turn": [KEY_Q], "guard": [KEY_C], "flashlight": [KEY_L], "heal": [KEY_H],
 		"weapon_1": [KEY_1], "weapon_2": [KEY_2], "weapon_3": [KEY_3], "weapon_4": [KEY_4],
 		"ui_back": [KEY_BACKSPACE],
 	}

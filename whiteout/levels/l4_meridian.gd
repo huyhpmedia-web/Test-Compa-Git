@@ -81,13 +81,14 @@ func _env() -> void:
 func _r8_lighting() -> void:
 	# inside the building the exterior sky ambient is gone: sterile cyan grade, near-zero ambient,
 	# spaces lit by their own fixtures, rack LEDs and SDFGI bounce.
-	var e_lobby := make_interior_env(0.07, 0.008, Color(0.6, 0.72, 0.8), "meridian")
+	var e_lobby := make_interior_env(0.05, 0.022, Color(0.6, 0.72, 0.8), "meridian")
 	e_lobby.glow_intensity = 0.85
 	e_lobby.glow_hdr_threshold = 0.95
-	var e_noc := make_interior_env(0.05, 0.010, Color(0.45, 0.6, 0.8), "meridian")
+	e_lobby.tonemap_exposure = 0.95      # cut the even CG fill: the canopy shaft and the screens carry the room
+	var e_noc := make_interior_env(0.04, 0.018, Color(0.45, 0.6, 0.8), "meridian")
 	e_noc.glow_intensity = 0.9
 	var e_ph := make_interior_env(0.035, 0.02, Color(0.6, 0.55, 0.45), "meridian")
-	var e_hall := make_interior_env(0.055, 0.010, Color(0.5, 0.65, 0.78), "meridian")
+	var e_hall := make_interior_env(0.045, 0.02, Color(0.5, 0.65, 0.78), "meridian")
 	e_hall.glow_intensity = 0.9
 	e_hall.glow_hdr_threshold = 0.95
 	env_zone_rect(-8.0, -6.0, 8.0, 11.9, -1.0, HT + 0.5, e_lobby, {"snow": false})

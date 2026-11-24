@@ -294,7 +294,7 @@ func _process(delta: float) -> void:
 	# hand lag + breathing / walking sway (less while aiming: the beam is braced along the gun)
 	_fl_t += delta * (1.0 + clampf(Vector2(velocity.x, velocity.z).length() * 0.6, 0.0, 3.0))
 	var want := (fwd * 10.0 + Vector3(0, -0.4, 0)).normalized()
-	_fl_dir = want if _fl_dir == Vector3.ZERO else _fl_dir.slerp(want, clampf(delta * lerpf(9.0, 22.0, aim_t), 0.0, 1.0)).normalized()
+	_fl_dir = want if _fl_dir == Vector3.ZERO else _fl_dir.lerp(want, clampf(delta * lerpf(9.0, 22.0, aim_t), 0.0, 1.0)).normalized()
 	var sway_k := lerpf(1.0, 0.25, aim_t)
 	var sway := (cam.global_transform.basis.x * sin(_fl_t * 1.3) * 0.012 + Vector3.UP * sin(_fl_t * 2.1 + 0.7) * 0.009) * sway_k
 	var fl_dir := (_fl_dir + sway).normalized()

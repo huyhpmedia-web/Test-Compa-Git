@@ -155,6 +155,8 @@ static func light_panels(pts: Array, y: float, size := Vector2(0.6, 1.2), along_
 		mmi.material_override = mat
 		mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		host.add_child(mmi)
+	# R9: the building runs on reduced power after the brownout - most troffers are dark,
+	# so pools of light alternate with shadow instead of an even office wash.
 	# dark frames (one multimesh for all)
 	var fm := MultiMesh.new()
 	fm.transform_format = MultiMesh.TRANSFORM_3D
@@ -200,18 +202,18 @@ static func dress(level: Node3D) -> void:
 static func _ceilings() -> void:
 	var y := 4.5 - 0.0
 	# lobby: full recessed grid
-	light_panels(grid(-6.0, 6.0, -3.6, 10.0, 2.4, 3.4), y, Vector2(0.6, 1.2), true, 11, 0.16, 0.12)
+	light_panels(grid(-6.0, 6.0, -3.6, 10.0, 3.0, 3.4), y, Vector2(0.6, 1.2), true, 11, 0.55, 0.12)
 	# armory / electrical / break room / NOC / corridor
-	light_panels(grid(-28.0, -18.0, -30.0, -14.0, 3.6, 4.0), y, Vector2(0.6, 1.2), true, 12, 0.2, 0.14)
-	light_panels(grid(-28.0, -16.0, -78.0, -68.0, 4.2, 3.4), y, Vector2(0.6, 1.2), true, 13, 0.1, 0.0, Color(1.0, 0.82, 0.58))
-	light_panels(grid(-12.0, 0.0, -82.0, -68.0, 3.0, 3.6), y, Vector2(0.6, 1.2), true, 14, 0.1, 0.18)
+	light_panels(grid(-28.0, -18.0, -30.0, -14.0, 3.6, 4.0), y, Vector2(0.6, 1.2), true, 12, 0.45, 0.14)
+	light_panels(grid(-28.0, -16.0, -78.0, -68.0, 4.2, 3.4), y, Vector2(0.6, 1.2), true, 13, 0.25, 0.0, Color(1.0, 0.82, 0.58))
+	light_panels(grid(-12.0, 0.0, -82.0, -68.0, 3.0, 3.6), y, Vector2(0.6, 1.2), true, 14, 0.4, 0.15)
 	var cor := []
 	var x := -27.0
 	while x < 50.0:
 		cor.append(Vector2(x, -63.0))
 		x += 4.5
-	light_panels(cor, y, Vector2(0.6, 1.2), false, 15, 0.14, 0.18)
-	light_panels(grid(36.0, 48.0, -34.0, -24.0, 4.0, 4.0), y, Vector2(0.6, 1.2), true, 16, 0.2, 0.2)
+	light_panels(cor, y, Vector2(0.6, 1.2), false, 15, 0.45, 0.15)
+	light_panels(grid(36.0, 48.0, -34.0, -24.0, 4.0, 4.0), y, Vector2(0.6, 1.2), true, 16, 0.45, 0.18)
 
 # ------------------------------------------------------------------ lobby
 static func _lobby() -> void:
